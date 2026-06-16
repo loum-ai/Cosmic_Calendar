@@ -8,33 +8,33 @@ import { Starfield } from "./Starfield";
  */
 export function AuroraBackground() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#08060f]">
-      {/* base */}
-      <div className="absolute inset-0 bg-[#08060f]" />
-      {/* ambient violet, upper-left — the single key light */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_72%_56%_at_8%_-4%,rgba(96,40,180,0.42),transparent_60%)]" />
-      {/* faint emerald, lower-right */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_100%_104%,rgba(10,140,104,0.26),transparent_62%)]" />
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#040208]">
+      {/* true-black base */}
+      <div className="absolute inset-0 bg-[#040208]" />
+      {/* contained amethyst glow, top-left corner only — most of the screen stays black */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_48%_36%_at_0%_-8%,rgba(150,58,224,0.55),transparent_52%)]" />
+      {/* deep magenta-indigo breath, bottom-right corner (no muddy green) */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_42%_32%_at_104%_106%,rgba(108,40,190,0.32),transparent_56%)]" />
 
-      {/* photographic smoke — feTurbulence wisp, very subtle */}
+      {/* photographic smoke — feTurbulence wisp, only near the glow, very subtle */}
       <svg
-        className="absolute -inset-[20%] h-[140%] w-[140%] opacity-[0.28] mix-blend-screen"
-        style={{ filter: "blur(8px) saturate(1.3)", animation: "velaNebulaDrift 44s ease-in-out infinite alternate" }}
+        className="absolute -inset-[20%] h-[140%] w-[140%] opacity-[0.18] mix-blend-screen"
+        style={{ filter: "blur(9px) saturate(1.35)", animation: "velaNebulaDrift 48s ease-in-out infinite alternate" }}
         preserveAspectRatio="none"
       >
         <filter id="velaSmoke">
-          <feTurbulence type="fractalNoise" baseFrequency="0.011 0.017" numOctaves="3" seed="7" stitchTiles="stitch" result="n" />
+          <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="3" seed="7" stitchTiles="stitch" result="n" />
           <feColorMatrix
             in="n"
             type="matrix"
-            values="0 0 0 0 0.5  0 0 0 0 0.28  0 0 0 0 0.95  0 0 0 1.05 -0.42"
+            values="0 0 0 0 0.62  0 0 0 0 0.20  0 0 0 0 0.90  0 0 0 1.0 -0.46"
           />
         </filter>
         <rect width="100%" height="100%" filter="url(#velaSmoke)" />
       </svg>
 
-      {/* edge vignette — crushes corners for contrast */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_90%_at_50%_50%,transparent_55%,rgba(4,2,9,0.7)_100%)]" />
+      {/* strong edge vignette — crush corners to true black for contrast */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_110%_80%_at_50%_42%,transparent_42%,rgba(2,1,6,0.85)_100%)]" />
 
       <Starfield />
     </div>

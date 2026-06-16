@@ -42,8 +42,8 @@
   }
   body {
     margin: 0;
-    background: #08060f;
-    color: #ede7f5;
+    background: #040208;
+    color: #f4effc;
     font-family: "Manrope", sans-serif;
     font-variant-emoji: text; /* glyphs as text, never emoji */
     -webkit-font-smoothing: antialiased;
@@ -67,16 +67,16 @@
     font-weight: 500;
     letter-spacing: 0.34em;
     text-transform: uppercase;
-    color: #ede7f5;
+    color: #fdfbff;
   }
-  /* proper-noun title (person name, card/sheet titles) — modest serif, solid */
+  /* proper-noun title (person name, card/sheet titles) — crisp white serif */
   .vela-name {
     font-family: "Cormorant Garamond", serif;
     font-weight: 600;
-    font-size: clamp(2rem, 9vw, 2.6rem);
+    font-size: clamp(2.1rem, 9.5vw, 2.8rem);
     line-height: 1.02;
     letter-spacing: -0.005em;
-    color: #ede7f5;
+    color: #fdfbff;
   }
   .vela-serif {
     font-family: "Cormorant Garamond", serif;
@@ -88,30 +88,30 @@
     font-size: clamp(1.45rem, 6vw, 1.7rem);
     line-height: 1.05;
     letter-spacing: -0.02em;
-    color: #ece6f6;
+    color: #f6f1ff;
   }
-  /* THE signature: all-caps lilac micro-label */
+  /* THE signature: all-caps lilac micro-label — vivid, not washed */
   .vela-label {
     font-family: "Plus Jakarta Sans", sans-serif;
     font-size: 0.66rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: rgba(196, 166, 255, 0.72);
+    color: #b69cff;
   }
   .vela-sub {
     font-family: "Manrope", sans-serif;
-    font-weight: 300;
+    font-weight: 400;
     font-size: clamp(0.8rem, 3.4vw, 0.875rem);
     line-height: 1.5;
-    color: rgba(220, 213, 244, 0.5);
+    color: rgba(210, 200, 238, 0.62);
   }
   .vela-body {
     font-family: "Manrope", sans-serif;
     font-weight: 400;
     font-size: 0.95rem;
     line-height: 1.6;
-    color: rgba(233, 227, 246, 0.82);
+    color: rgba(244, 239, 252, 0.92);
   }
   .vela-glyph {
     font-family: "Noto Sans Symbols", "Segoe UI Symbol", system-ui, sans-serif;
@@ -121,17 +121,17 @@
   /* ── GLASS (premium finish: saturate-through + dual rim + grain) ──── */
   .vela-glass {
     position: relative;
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
-    backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
-    -webkit-backdrop-filter: blur(20px) saturate(160%) brightness(1.05);
-    border: 1px solid transparent;
+    /* DARK glass over true black — reads as a defined panel, not milky soap.
+       Content (crisp white type, vivid glyphs) provides the contrast. */
+    background: linear-gradient(160deg, rgba(28, 22, 44, 0.62), rgba(10, 7, 18, 0.52));
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
     box-shadow:
-      inset 0 1px 0.5px rgba(255, 255, 255, 0.34),
-      inset 0 -1px 0.5px rgba(255, 255, 255, 0.05),
-      inset 0 0 30px rgba(150, 110, 255, 0.05),
-      0 22px 50px -24px rgba(0, 0, 0, 0.8);
+      inset 0 1px 0 rgba(255, 255, 255, 0.32),
+      0 18px 40px -22px rgba(0, 0, 0, 0.95);
   }
-  /* gradient rim-light — specular sweep, bright one corner, gone elsewhere */
+  /* crisp specular edge — bright top-left, gone elsewhere */
   .vela-glass::before {
     content: "";
     position: absolute;
@@ -140,11 +140,11 @@
     padding: 1px;
     background: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.5) 0%,
-      rgba(196, 166, 255, 0.16) 20%,
-      transparent 44%,
-      transparent 74%,
-      rgba(127, 240, 191, 0.18) 100%
+      rgba(255, 255, 255, 0.65) 0%,
+      rgba(196, 166, 255, 0.22) 16%,
+      transparent 40%,
+      transparent 78%,
+      rgba(127, 240, 191, 0.22) 100%
     );
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
@@ -217,17 +217,18 @@
 }
 
 /* ── FINISHING LAYERS: bloom + grain (instant premium) ─────────────── */
+/* very contained bloom — only the two corners glow; the rest stays true black */
 .vela-bloom {
   position: fixed;
   inset: 0;
   z-index: -5;
   pointer-events: none;
   mix-blend-mode: screen;
-  opacity: 0.45;
+  opacity: 0.5;
   background:
-    radial-gradient(ellipse 50% 38% at 18% 12%, rgba(150, 90, 255, 0.28), transparent 70%),
-    radial-gradient(ellipse 58% 44% at 88% 92%, rgba(31, 208, 126, 0.13), transparent 72%);
-  filter: blur(36px);
+    radial-gradient(ellipse 38% 26% at 4% 2%, rgba(165, 80, 255, 0.36), transparent 62%),
+    radial-gradient(ellipse 40% 30% at 98% 100%, rgba(120, 60, 230, 0.18), transparent 64%);
+  filter: blur(30px);
 }
 .vela-grain {
   position: fixed;
