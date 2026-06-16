@@ -60,6 +60,28 @@
 }
 
 @layer components {
+  /* cinematic serif hero — the loum.ai "THIS IS WHY" treatment */
+  .vela-hero {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 600;
+    font-size: clamp(3.2rem, 18vw, 6rem);
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    background: linear-gradient(
+      108deg,
+      #e7dcff 0%,
+      #b9a6f6 26%,
+      #8fe9cf 52%,
+      #c8b6ff 74%,
+      #9ff0cf 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 24px rgba(160, 110, 255, 0.35));
+    animation: velaSheenText 9s ease-in-out infinite;
+  }
   /* fluid type scale (clamp) — fixes "Schrift zu klein / nicht responsive" */
   .vela-display {
     font-family: "Plus Jakarta Sans", sans-serif;
@@ -68,6 +90,9 @@
     line-height: 1;
     letter-spacing: -0.04em;
     color: #f6f2fe;
+  }
+  .vela-serif {
+    font-family: "Cormorant Garamond", serif;
   }
   .vela-h1 {
     font-family: "Plus Jakarta Sans", sans-serif;
@@ -107,6 +132,37 @@
     backdrop-filter: blur(10px);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12),
       0 20px 48px -16px rgba(0, 0, 0, 0.7);
+  }
+  /* refraction highlight — a bright glassy edge sweeping the top of a panel */
+  .vela-refract::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.55),
+      rgba(196, 166, 255, 0.15) 22%,
+      transparent 45%,
+      transparent 70%,
+      rgba(127, 240, 191, 0.25) 100%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+}
+
+/* slow sheen drift across iridescent text */
+@keyframes velaSheenText {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
   }
 }
 

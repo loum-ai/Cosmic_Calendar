@@ -2,6 +2,7 @@ import { HelpCircle } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
 import { IridescentOrb } from "@/components/IridescentOrb";
+import { CrystalGem } from "@/components/CrystalGem";
 import { Explainable } from "@/components/Explainable";
 import { ChartWheel } from "@/components/ChartWheel";
 import { KlartextToggle } from "@/components/KlartextToggle";
@@ -171,59 +172,68 @@ export function HeuteScreen() {
   return (
     <ScreenShell>
       {/* header */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h1 className="vela-display">{PROFILE.name}</h1>
-          <p className="mt-1.5 font-body text-xs text-ink-soft/50">{PROFILE.birth}</p>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="vela-eyebrow text-lilac/70">Dein Himmel</span>
         </div>
-        <Dialog open={showHelp} onOpenChange={setShowHelp}>
-          <DialogTrigger asChild>
-            <button
-              title="Hilfe — so liest du dein Rad"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-lilac/45 bg-white/[0.06] text-lilac active:scale-90"
-            >
-              <HelpCircle className="h-4 w-4" />
-            </button>
-          </DialogTrigger>
-          <DialogContent>
-            <h2 className="font-display text-2xl font-medium text-ink">So liest du dein Rad</h2>
-            <div className="mt-5 flex flex-col gap-4">
-              {HELP_ITEMS.map((h) => (
-                <div key={h.title} className="flex items-start gap-3.5">
-                  <div className="vela-glyph flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-sm text-lilac">
-                    {h.icon}
+        <div className="flex items-center gap-2">
+          <KlartextToggle />
+          <Dialog open={showHelp} onOpenChange={setShowHelp}>
+            <DialogTrigger asChild>
+              <button
+                title="Hilfe — so liest du dein Rad"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-lilac/45 bg-white/[0.06] text-lilac active:scale-90"
+              >
+                <HelpCircle className="h-4 w-4" />
+              </button>
+            </DialogTrigger>
+            <DialogContent>
+              <h2 className="font-serif text-3xl font-semibold text-ink">So liest du dein Rad</h2>
+              <div className="mt-5 flex flex-col gap-4">
+                {HELP_ITEMS.map((h) => (
+                  <div key={h.title} className="flex items-start gap-3.5">
+                    <div className="vela-glyph flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-sm text-lilac">
+                      {h.icon}
+                    </div>
+                    <div>
+                      <div className="font-body text-[13px] font-medium text-ink/95">{h.title}</div>
+                      <p className="mt-0.5 font-body text-xs font-light leading-relaxed text-ink/70">
+                        {h.body}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <div className="font-body text-[13px] font-medium text-ink/95">{h.title}</div>
-                    <p className="mt-0.5 font-body text-xs font-light leading-relaxed text-ink/70">
-                      {h.body}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </DialogContent>
-        </Dialog>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
-      <div className="mt-3">
-        <KlartextToggle />
+      {/* cinematic name + greeting */}
+      <div className="mt-2">
+        <h1 className="font-serif text-[15vw] font-medium leading-[0.95] tracking-tight text-ink sm:text-6xl">
+          {PROFILE.name}
+        </h1>
+        <p className="mt-2 font-body text-xs tracking-wide text-ink-soft/50">{PROFILE.birth}</p>
       </div>
 
-      {/* editorial hero */}
-      <GlassPanel className="mt-5 p-5" nebula>
-        <div className="absolute -right-3 -top-2 opacity-90">
-          <IridescentOrb size={88} glyph={IMPULSE.glyph} />
+      {/* editorial hero — cinematic crystal + serif iridescent impulse */}
+      <GlassPanel className="mt-12 overflow-visible px-6 pb-7 pt-20 text-center" nebula>
+        <div className="absolute -top-12 left-1/2 -translate-x-1/2">
+          <CrystalGem size={116} glyph={IMPULSE.glyph} />
         </div>
-        <div className="relative max-w-[78%]">
-          <div className="vela-eyebrow mb-2.5 text-mint-soft">Dein heutiger Impuls</div>
-          <h3 className="font-display text-2xl font-extrabold leading-tight text-ink text-balance">
-            {lead}
-          </h3>
-          <div className="mt-3 flex items-center gap-2">
-            <div className="h-px flex-1 bg-gradient-to-r from-lilac/35 to-transparent" />
-            <span className="font-body text-[11px] text-lilac/55">Jupiter · Neptun aktiv</span>
+        <div className="relative">
+          <div className="vela-eyebrow mb-3 text-mint-soft">Dein heutiger Impuls</div>
+          <h2 className="vela-hero !text-[clamp(2.6rem,13vw,3.6rem)]">{IMPULSE.title}</h2>
+          <p className="mx-auto mt-4 max-w-[30ch] font-body text-[13px] font-light leading-relaxed text-ink/75">
+            {IMPULSE.txt}
+          </p>
+          <div className="mx-auto mt-5 flex max-w-[24ch] items-center gap-2">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-lilac/40 to-transparent" />
+            <span className="vela-glyph text-xs text-lilac/70">✦</span>
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-mint/40 to-transparent" />
           </div>
+          <p className="mt-3 font-serif text-base italic text-lilac/70">{lead}</p>
         </div>
       </GlassPanel>
 

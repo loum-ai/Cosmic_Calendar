@@ -90,8 +90,10 @@ export function LernenScreen() {
   return (
     <ScreenShell>
       <div className="mb-5">
-        <h1 className="vela-display !text-4xl">Astrologie</h1>
-        <p className="vela-sub mt-1.5">Die Bausteine des Himmels</p>
+        <h1 className="font-serif text-6xl font-medium leading-none tracking-tight text-ink">
+          Astrologie
+        </h1>
+        <p className="vela-sub mt-2">Die Bausteine des Himmels</p>
       </div>
 
       {/* featured */}

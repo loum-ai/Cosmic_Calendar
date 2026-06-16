@@ -18,20 +18,26 @@ export const GlassPanel = React.forwardRef<HTMLDivElement, GlassPanelProps>(
       <div
         ref={ref}
         className={cn(
-          "relative overflow-hidden rounded-card border border-white/[0.09] bg-white/[0.04] backdrop-blur-md shadow-glass",
+          "vela-refract relative overflow-hidden rounded-card border border-white/[0.1] backdrop-blur-xl",
+          "shadow-[inset_0_1px_0_rgba(255,255,255,0.16),inset_0_-20px_40px_-30px_rgba(120,40,220,0.5),0_28px_60px_-22px_rgba(0,0,0,0.85)]",
           interactive &&
-            "cursor-pointer transition-all duration-300 will-change-transform hover:-translate-y-1.5 hover:border-lilac/50 hover:shadow-lift active:scale-[0.98]",
+            "cursor-pointer transition-all duration-300 will-change-transform hover:-translate-y-1.5 hover:border-lilac/60 hover:shadow-lift active:scale-[0.98]",
           className,
         )}
+        style={{
+          // subtle internal nebula glass tint on every panel — never flat
+          background:
+            "linear-gradient(145deg,rgba(124,78,210,0.12),rgba(20,16,32,0.32) 46%,rgba(31,208,126,0.07))",
+        }}
         {...props}
       >
         {nebula && (
           <div
-            className="pointer-events-none absolute -right-6 -top-8 h-40 w-40 rounded-full opacity-70 animate-iris"
+            className="pointer-events-none absolute -right-8 -top-10 h-48 w-48 rounded-full opacity-80 animate-iris mix-blend-screen"
             style={{
               background:
-                "radial-gradient(circle at 50% 50%,rgba(154,79,255,0.45),rgba(31,208,126,0.22) 55%,transparent 72%)",
-              filter: "blur(26px)",
+                "radial-gradient(circle at 50% 50%,rgba(154,79,255,0.6),rgba(31,208,126,0.3) 52%,transparent 72%)",
+              filter: "blur(30px)",
             }}
           />
         )}

@@ -121,8 +121,10 @@ export function TransiteScreen() {
     <ScreenShell>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="vela-display !text-4xl">Transite</h1>
-          <p className="vela-sub mt-1.5">Was der Himmel heute auslöst</p>
+          <h1 className="font-serif text-6xl font-medium leading-none tracking-tight text-ink">
+            Transite
+          </h1>
+          <p className="vela-sub mt-2">Was der Himmel heute auslöst</p>
         </div>
       </div>
 

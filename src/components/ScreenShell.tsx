@@ -24,12 +24,14 @@ export function ScreenShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** A consistent section header used across all screens. */
+/** A consistent, editorial section header used across all screens. */
 export function SectionHead({ title, sub }: { title: string; sub?: string }) {
   return (
     <header className="mb-4">
-      <h2 className="vela-h1">{title}</h2>
-      {sub && <p className="vela-sub mt-1">{sub}</p>}
+      <h2 className="font-serif text-[2rem] font-medium leading-none tracking-tight text-ink">
+        {title}
+      </h2>
+      {sub && <p className="vela-sub mt-1.5">{sub}</p>}
     </header>
   );
 }

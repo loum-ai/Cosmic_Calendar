@@ -47,6 +47,8 @@ export default {
         },
       },
       fontFamily: {
+        // elegant high-contrast serif for the cinematic hero headlines
+        serif: ['"Cormorant Garamond"', "serif"],
         display: ['"Plus Jakarta Sans"', "sans-serif"],
         body: ['"Manrope"', "sans-serif"],
         glyph: ['"Noto Sans Symbols"', '"Segoe UI Symbol"', "system-ui", "sans-serif"],

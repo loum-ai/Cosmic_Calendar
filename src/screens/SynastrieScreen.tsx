@@ -47,8 +47,10 @@ export function SynastrieScreen() {
   return (
     <ScreenShell>
       <div>
-        <h1 className="vela-display !text-4xl">Synastrie</h1>
-        <p className="vela-sub mt-1.5">Wie ihr zusammenklingt</p>
+        <h1 className="font-serif text-6xl font-medium leading-none tracking-tight text-ink">
+          Synastrie
+        </h1>
+        <p className="vela-sub mt-2">Wie ihr zusammenklingt</p>
       </div>
 
       {/* people switcher */}

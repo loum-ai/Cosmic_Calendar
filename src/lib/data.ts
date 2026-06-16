@@ -126,6 +126,7 @@ export const COSMIC_EVENTS = [
 export const IMPULSE = {
   glyph: "♓",
   sign: "Fische",
+  title: "Vertraue der Weite",
   txt: "Dein Geist ist heute größer als deine Grenzen. Lass die Unschärfe sein — sie trägt dich weiter als jede Antwort.",
   sub: "Jupiter weitet deinen Horizont · Neptun löst die Konturen auf",
 };
