@@ -121,10 +121,9 @@ export function TransiteScreen() {
     <ScreenShell>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="font-serif text-6xl font-medium leading-none tracking-tight text-ink">
-            Transite
-          </h1>
-          <p className="vela-sub mt-2">Was der Himmel heute auslöst</p>
+          <div className="vela-label">Heute am Himmel</div>
+          <h1 className="vela-name mt-1.5">Transite</h1>
+          <p className="vela-sub mt-1.5">Was der Himmel heute auslöst</p>
         </div>
       </div>
 
@@ -133,7 +132,7 @@ export function TransiteScreen() {
       </div>
 
       {/* hero — first/strongest transit */}
-      <GlassPanel className="mt-5 flex items-center gap-4 p-5" nebula interactive onClick={() => setFull(0)}>
+      <GlassPanel className="mt-5 flex items-center gap-4 p-5" interactive onClick={() => setFull(0)}>
         <IridescentOrb size={84} glyph={TRANSITS[0].tg} glyphColor={TRANSITS[0].c} float={false} />
         <div className="min-w-0">
           <div className="vela-eyebrow mb-1.5" style={{ color: TRANSITS[0].c }}>

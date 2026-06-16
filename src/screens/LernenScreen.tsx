@@ -89,16 +89,15 @@ export function LernenScreen() {
 
   return (
     <ScreenShell>
-      <div className="mb-5">
-        <h1 className="font-serif text-6xl font-medium leading-none tracking-tight text-ink">
-          Astrologie
-        </h1>
-        <p className="vela-sub mt-2">Die Bausteine des Himmels</p>
+      <div className="mb-6">
+        <div className="vela-label">Wissen</div>
+        <h1 className="vela-name mt-1.5">Astrologie</h1>
+        <p className="vela-sub mt-1.5">Die Bausteine des Himmels</p>
       </div>
 
       {/* featured */}
       <Explainable sheet={{ kind: "asptype", key: featuredIdx }}>
-        <GlassPanel className="p-5" nebula interactive>
+        <GlassPanel className="p-5" interactive>
           <div className="vela-eyebrow mb-3 font-semibold text-lilac/75">Konzept des Tages</div>
           <div className="font-display text-2xl font-extrabold leading-tight text-ink">
             {featured.type}

@@ -1,22 +1,17 @@
-import { HelpCircle } from "lucide-react";
+import { useState } from "react";
+import { HelpCircle, X } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
 import { IridescentOrb } from "@/components/IridescentOrb";
-import { CrystalGem } from "@/components/CrystalGem";
 import { Explainable } from "@/components/Explainable";
 import { ChartWheel } from "@/components/ChartWheel";
 import { KlartextToggle } from "@/components/KlartextToggle";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useApp } from "@/store/useApp";
 import {
   ASC,
   CHART,
   HOUSE,
-  IMPULSE,
   NODES,
   PINFO,
   PROFILE,
@@ -35,27 +30,33 @@ const HELP_ITEMS = [
   { icon: "↑", title: "Frag dein Horoskop", body: "Unten rechts kannst du jederzeit eine Frage stellen — Vela antwortet aus deinem Chart." },
 ];
 
+const deg = (lon: number) => Math.floor(((lon % 30) + 30) % 30);
+
 function BigThree() {
-  const sunSign = signName(CHART[0].lon);
-  const moonSign = signName(CHART[1].lon);
-  const ascSign = signName(ASC);
   const cards = [
-    { key: "sun", glyph: "☉", label: "Sonne", sign: sunSign, color: PLANET_COLORS.sun },
-    { key: "moon", glyph: "☽", label: "Mond", sign: moonSign, color: PLANET_COLORS.moon },
-    { key: "asc", glyph: "AC", label: "Aszendent", sign: ascSign, color: PLANET_COLORS.asc },
+    { key: "sun", glyph: "☉", label: "Sonne", sign: signName(CHART[0].lon), d: deg(CHART[0].lon), accent: false },
+    { key: "moon", glyph: "☽", label: "Mond", sign: signName(CHART[1].lon), d: deg(CHART[1].lon), accent: false },
+    { key: "asc", glyph: "AC", label: "Aszendent", sign: signName(ASC), d: deg(ASC), accent: true },
   ];
   return (
-    <div className="grid grid-cols-3 gap-2.5">
+    <div className="grid grid-cols-3 gap-3">
       {cards.map((c) => (
         <Explainable key={c.key} sheet={{ kind: "planet", key: c.key }}>
-          <GlassPanel className="px-2 py-3.5 text-center" interactive>
-            <div className="vela-glyph text-xl" style={{ color: c.color }}>
+          <GlassPanel className="px-2 py-4 text-center" interactive>
+            <div
+              className="vela-glyph text-lg"
+              style={{ color: c.accent ? PLANET_COLORS.asc : "rgba(220,213,244,0.85)" }}
+            >
               {c.glyph}
             </div>
-            <div className="mt-1.5 font-body text-[11px] uppercase tracking-wide text-ink-soft/50">
-              {c.label}
+            <div className="vela-label mt-2 !text-[0.58rem]">{c.label}</div>
+            <div
+              className="vela-serif mt-0.5 text-lg font-medium"
+              style={{ color: c.accent ? PLANET_COLORS.asc : "#ece6f6" }}
+            >
+              {c.sign}
             </div>
-            <div className="font-display text-sm font-semibold text-ink">{c.sign}</div>
+            <div className="font-body text-[11px] text-ink-soft/45">{c.d}°</div>
           </GlassPanel>
         </Explainable>
       ))}
@@ -65,20 +66,18 @@ function BigThree() {
 
 function PlanetStrip() {
   return (
-    <div className="-mx-[max(16px,4vw)] flex gap-3 overflow-x-auto px-[max(16px,4vw)] pb-2">
+    <div className="-mx-[max(20px,5vw)] flex gap-3 overflow-x-auto px-[max(20px,5vw)] pb-2">
       {CHART.map((p) => {
-        const col = PLANET_COLORS[p.key] || "#e7dcff";
+        const col = PLANET_COLORS[p.key] || "#cbb8ff";
         return (
           <Explainable key={p.key} sheet={{ kind: "planet", key: p.key }} className="shrink-0">
-            <GlassPanel className="w-[200px] p-4" interactive nebula>
-              <div className="mb-3">
-                <IridescentOrb size={56} glyph={p.glyph} glyphColor={col} float={false} spin />
-              </div>
-              <div className="font-display text-base font-bold text-ink">{p.name}</div>
-              <div className="font-body text-[11px] uppercase tracking-wide" style={{ color: col }}>
+            <GlassPanel className="w-[176px] p-4" interactive>
+              <IridescentOrb size={44} glyph={p.glyph} glyphColor={col} />
+              <div className="vela-serif mt-3 text-lg font-medium text-ink">{p.name}</div>
+              <div className="vela-label mt-1 !tracking-[0.1em]" style={{ color: `${col}cc` }}>
                 {signName(p.lon)} · Haus {houseOf(p.lon)}
               </div>
-              <p className="mt-2 line-clamp-2 font-body text-xs font-light leading-relaxed text-ink/65">
+              <p className="mt-2 font-body text-xs font-light leading-relaxed text-ink/55">
                 {PINFO[p.key].role}
               </p>
             </GlassPanel>
@@ -98,31 +97,23 @@ function HouseGrid() {
         const occ = ps.length > 0;
         return (
           <Explainable key={h} sheet={{ kind: "house", key: h }}>
-            <div
-              className="flex items-center gap-3 rounded-2xl border px-3.5 py-3 transition"
-              style={{
-                background: occ ? "rgba(196,166,255,0.06)" : "rgba(255,255,255,0.02)",
-                borderColor: occ ? "rgba(196,166,255,0.2)" : "rgba(255,255,255,0.06)",
-              }}
-            >
+            <div className="vela-glass flex items-center gap-3 rounded-2xl px-4 py-3">
               <div
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-semibold"
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[11px] font-semibold"
                 style={{
-                  background: occ ? "#c4a6ff" : "rgba(255,255,255,0.06)",
-                  color: occ ? "#180f2a" : "rgba(232,226,250,0.55)",
+                  background: occ ? "rgba(196,166,255,0.16)" : "rgba(255,255,255,0.04)",
+                  color: occ ? PLANET_COLORS.asc : "rgba(232,226,250,0.4)",
                 }}
               >
                 {h}
               </div>
-              <div className="min-w-0 flex-1">
-                <div
-                  className="font-display text-[15px]"
-                  style={{ color: occ ? "#f1ecfb" : "rgba(232,226,250,0.55)", fontWeight: occ ? 600 : 400 }}
-                >
-                  {name}
-                </div>
+              <div
+                className="min-w-0 flex-1 font-body text-sm"
+                style={{ color: occ ? "#ece6f6" : "rgba(232,226,250,0.5)" }}
+              >
+                {name}
               </div>
-              <div className="vela-glyph shrink-0 text-sm text-ink-soft/70">
+              <div className="vela-glyph shrink-0 text-sm text-ink-soft/65">
                 {ps.map((p) => p.glyph).join(" ")}
               </div>
             </div>
@@ -139,24 +130,24 @@ function SignChips() {
     if (!ps.length) return null;
     return (
       <Explainable key={name} sheet={{ kind: "sign", key: name }} className="shrink-0">
-        <div className="flex items-center gap-2 rounded-pill border border-lilac/25 bg-white/[0.06] px-3.5 py-2.5">
+        <div className="vela-glass flex items-center gap-2 rounded-pill px-3.5 py-2.5">
           <span className="vela-glyph text-lilac">{SG[i]}</span>
           <span className="font-body text-xs text-ink-soft/85">{name}</span>
-          <span className="vela-glyph text-xs text-ink-soft/60">{ps.map((p) => p.glyph).join("")}</span>
+          <span className="vela-glyph text-xs text-ink-soft/55">{ps.map((p) => p.glyph).join("")}</span>
         </div>
       </Explainable>
     );
   });
   const nodeChips = NODES.map((n) => (
     <Explainable key={n.key} sheet={{ kind: "node", key: n.key }} className="shrink-0">
-      <div className="flex items-center gap-2 rounded-pill border border-planet-node/25 bg-white/[0.05] px-3.5 py-2.5">
+      <div className="vela-glass flex items-center gap-2 rounded-pill px-3.5 py-2.5">
         <span className="vela-glyph text-planet-node">{n.glyph}</span>
-        <span className="font-body text-xs text-ink-soft/70">{signName(n.lon)}</span>
+        <span className="font-body text-xs text-ink-soft/65">{signName(n.lon)}</span>
       </div>
     </Explainable>
   ));
   return (
-    <div className="-mx-[max(16px,4vw)] flex gap-2 overflow-x-auto px-[max(16px,4vw)] pb-2">
+    <div className="-mx-[max(20px,5vw)] flex gap-2 overflow-x-auto px-[max(20px,5vw)] pb-2">
       {chips}
       {nodeChips}
     </div>
@@ -166,104 +157,91 @@ function SignChips() {
 export function HeuteScreen() {
   const showHelp = useApp((s) => s.showHelp);
   const setShowHelp = useApp((s) => s.setShowHelp);
+  const [summaryOpen, setSummaryOpen] = useState(true);
   const sunSign = signName(CHART[0].lon);
-  const lead = `Dein Sternzeichen ist ${sunSign}. ${SIGNWHAT[SN.indexOf(sunSign)]}`;
+  const lead = `Dein Sternzeichen ist ${sunSign}. ${SIGNWHAT[SN.indexOf(sunSign)]} Nach außen wirkst du eher wie ${signName(ASC)} — dein Aszendent.`;
 
   return (
     <ScreenShell>
-      {/* header */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-2">
-          <span className="vela-eyebrow text-lilac/70">Dein Himmel</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <KlartextToggle />
-          <Dialog open={showHelp} onOpenChange={setShowHelp}>
-            <DialogTrigger asChild>
-              <button
-                title="Hilfe — so liest du dein Rad"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-lilac/45 bg-white/[0.06] text-lilac active:scale-90"
-              >
-                <HelpCircle className="h-4 w-4" />
-              </button>
-            </DialogTrigger>
-            <DialogContent>
-              <h2 className="font-serif text-3xl font-semibold text-ink">So liest du dein Rad</h2>
-              <div className="mt-5 flex flex-col gap-4">
-                {HELP_ITEMS.map((h) => (
-                  <div key={h.title} className="flex items-start gap-3.5">
-                    <div className="vela-glyph flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-sm text-lilac">
-                      {h.icon}
-                    </div>
-                    <div>
-                      <div className="font-body text-[13px] font-medium text-ink/95">{h.title}</div>
-                      <p className="mt-0.5 font-body text-xs font-light leading-relaxed text-ink/70">
-                        {h.body}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-
-      {/* cinematic name + greeting */}
-      <div className="mt-2">
-        <h1 className="font-serif text-[15vw] font-medium leading-[0.95] tracking-tight text-ink sm:text-6xl">
-          {PROFILE.name}
-        </h1>
-        <p className="mt-2 font-body text-xs tracking-wide text-ink-soft/50">{PROFILE.birth}</p>
-      </div>
-
-      {/* editorial hero — cinematic crystal + serif iridescent impulse */}
-      <GlassPanel className="mt-12 overflow-visible px-6 pb-7 pt-20 text-center" nebula>
-        <div className="absolute -top-12 left-1/2 -translate-x-1/2">
-          <CrystalGem size={116} glyph={IMPULSE.glyph} />
-        </div>
-        <div className="relative">
-          <div className="vela-eyebrow mb-3 text-mint-soft">Dein heutiger Impuls</div>
-          <h2 className="vela-hero !text-[clamp(2.6rem,13vw,3.6rem)]">{IMPULSE.title}</h2>
-          <p className="mx-auto mt-4 max-w-[30ch] font-body text-[13px] font-light leading-relaxed text-ink/75">
-            {IMPULSE.txt}
+      {/* header — caps label, serif name, meta, quiet help (prototype) */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="vela-label">Geburtshoroskop</div>
+          <h1 className="vela-name mt-1.5">{PROFILE.name}</h1>
+          <p className="mt-2 font-body text-[11px] uppercase tracking-[0.08em] text-ink-soft/45">
+            14 · 03 · 1996 · 07:42 · Lissabon
           </p>
-          <div className="mx-auto mt-5 flex max-w-[24ch] items-center gap-2">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-lilac/40 to-transparent" />
-            <span className="vela-glyph text-xs text-lilac/70">✦</span>
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-mint/40 to-transparent" />
-          </div>
-          <p className="mt-3 font-serif text-base italic text-lilac/70">{lead}</p>
         </div>
-      </GlassPanel>
+        <Dialog open={showHelp} onOpenChange={setShowHelp}>
+          <DialogTrigger asChild>
+            <button
+              title="Hilfe — so liest du dein Rad"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-lilac/40 bg-white/[0.05] text-lilac active:scale-90"
+            >
+              <HelpCircle className="h-4 w-4" />
+            </button>
+          </DialogTrigger>
+          <DialogContent>
+            <h2 className="vela-name !text-3xl">So liest du dein Rad</h2>
+            <div className="mt-5 flex flex-col gap-4">
+              {HELP_ITEMS.map((h) => (
+                <div key={h.title} className="flex items-start gap-3.5">
+                  <div className="vela-glyph flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.06] text-sm text-lilac">
+                    {h.icon}
+                  </div>
+                  <div>
+                    <div className="font-body text-[13px] font-medium text-ink/95">{h.title}</div>
+                    <p className="mt-0.5 font-body text-xs font-light leading-relaxed text-ink/70">{h.body}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
 
-      {/* geburtsrad */}
-      <section className="mt-8">
-        <SectionHead title="Dein Geburtsrad" sub="Tippe einen Planeten oder eine Linie" />
+      {/* Kurz gesagt — restrained summary card (the home's only "hero") */}
+      {summaryOpen && (
+        <GlassPanel className="mt-6 p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="vela-label text-mint-soft/80">Kurz gesagt</div>
+            <button
+              onClick={() => setSummaryOpen(false)}
+              className="-mr-1 -mt-1 flex h-7 w-7 items-center justify-center rounded-full text-ink-soft/45 active:scale-90"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <p className="vela-body mt-2.5 max-w-[40ch]">{lead}</p>
+        </GlassPanel>
+      )}
+
+      <div className="mt-4">
+        <KlartextToggle />
+      </div>
+
+      <section>
+        <SectionHead label="Dein Geburtsrad" title="Dein Himmel im Moment der Geburt" sub="Tippe einen Planeten oder eine Linie" />
         <ChartWheel />
       </section>
 
-      {/* überblick */}
-      <section className="mt-8">
-        <SectionHead title="Überblick" sub="Sonne, Mond & dein Aszendent" />
+      <section>
+        <SectionHead label="Überblick" title="Deine großen Drei" sub="Sonne, Mond & dein Aszendent" />
         <BigThree />
       </section>
 
-      {/* planeten */}
-      <section className="mt-8">
-        <SectionHead title="Deine Planeten" sub="Tippe jeden Punkt für seine Bedeutung" />
+      <section>
+        <SectionHead label="Deine Planeten" title="Die Kräfte in dir" sub="Tippe jeden Punkt für seine Bedeutung" />
         <PlanetStrip />
       </section>
 
-      {/* häuser */}
-      <section className="mt-8">
-        <SectionHead title="Deine Häuser" sub="12 Bereiche, wo dein Leben geschieht" />
+      <section>
+        <SectionHead label="Deine Häuser" title="Wo dein Leben geschieht" sub="12 Lebensbereiche" />
         <HouseGrid />
       </section>
 
-      {/* zeichen & knoten */}
-      <section className="mt-8">
-        <SectionHead title="Zeichen & Knoten" sub="Deine kosmischen Prägungen" />
+      <section>
+        <SectionHead label="Zeichen & Knoten" title="Deine Prägungen" sub="Tippe für die Bedeutung" />
         <SignChips />
       </section>
     </ScreenShell>

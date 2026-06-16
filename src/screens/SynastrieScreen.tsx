@@ -47,10 +47,9 @@ export function SynastrieScreen() {
   return (
     <ScreenShell>
       <div>
-        <h1 className="font-serif text-6xl font-medium leading-none tracking-tight text-ink">
-          Synastrie
-        </h1>
-        <p className="vela-sub mt-2">Wie ihr zusammenklingt</p>
+        <div className="vela-label">Beziehungen</div>
+        <h1 className="vela-name mt-1.5">Synastrie</h1>
+        <p className="vela-sub mt-1.5">Wie ihr zusammenklingt</p>
       </div>
 
       {/* people switcher */}
@@ -128,7 +127,7 @@ export function SynastrieScreen() {
       {/* results */}
       {current && !adding && (
         <section className="mt-7">
-          <GlassPanel className="flex flex-col items-center p-6 text-center" nebula>
+          <GlassPanel className="flex flex-col items-center p-6 text-center">
             <div className="relative flex items-center justify-center">
               <IridescentOrb size={70} float={false} className="-mr-4" />
               <IridescentOrb size={70} float={false} className="-ml-4" />

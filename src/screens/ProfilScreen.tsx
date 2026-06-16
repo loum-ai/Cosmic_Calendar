@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
-import { CrystalGem } from "@/components/CrystalGem";
+import { IridescentOrb } from "@/components/IridescentOrb";
 import { Explainable } from "@/components/Explainable";
 import { KlartextToggle } from "@/components/KlartextToggle";
 import { ASC, CHART, PROFILE, signName } from "@/lib/data";
@@ -26,11 +26,10 @@ export function ProfilScreen() {
     <ScreenShell>
       {/* avatar + name */}
       <div className="flex items-center gap-4">
-        <CrystalGem size={76} float={false} />
+        <IridescentOrb size={68} />
         <div className="min-w-0">
-          <h1 className="font-serif text-4xl font-medium leading-none tracking-tight text-ink">
-            {PROFILE.name}
-          </h1>
+          <div className="vela-label mb-1.5">Dein Profil</div>
+          <h1 className="vela-name !text-3xl">{PROFILE.name}</h1>
           <div className="mt-1.5 flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2fde8c]" />
             <span className="font-body text-xs text-ink-soft/55">{PROFILE.memberSince}</span>

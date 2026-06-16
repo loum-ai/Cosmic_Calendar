@@ -34,7 +34,7 @@ const GLOWS = [
 export function Starfield() {
   const stars = useMemo<Star[]>(() => {
     const rnd = mulberry32(42);
-    return Array.from({ length: 46 }, () => ({
+    return Array.from({ length: 24 }, () => ({
       left: `${(rnd() * 96 + 2).toFixed(1)}%`,
       top: `${(rnd() * 92 + 2).toFixed(1)}%`,
       size: +(rnd() * 2.5 + 1).toFixed(1),
@@ -45,7 +45,7 @@ export function Starfield() {
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden opacity-60">
       {stars.map((s, i) => (
         <span
           key={i}

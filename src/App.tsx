@@ -26,6 +26,7 @@ export default function App() {
   return (
     <div className="relative min-h-dvh w-full overflow-x-hidden text-ink">
       <AuroraBackground />
+      <div className="vela-bloom" />
 
       {/* faux status bar — matches the prototype */}
       <div className="fixed inset-x-0 top-0 z-40 mx-auto flex h-[50px] max-w-[480px] items-center justify-between px-7 pt-4 text-xs font-medium text-ink-soft/80">
@@ -41,6 +42,7 @@ export default function App() {
       <Composer />
       <TabBar />
       <SheetHost />
+      <div className="vela-grain" />
     </div>
   );
 }

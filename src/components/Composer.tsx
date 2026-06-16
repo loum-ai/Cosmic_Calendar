@@ -101,11 +101,9 @@ export function Composer() {
             <button
               onClick={() => setOpen(true)}
               title="Frag dein Horoskop"
-              className="pointer-events-auto relative flex h-[54px] w-[54px] items-center justify-center rounded-full bg-cta-gradient text-space-2 shadow-glow active:scale-90"
+              className="vela-glass pointer-events-auto relative flex h-[52px] w-[52px] items-center justify-center rounded-full text-ink-soft active:scale-90"
             >
-              <span className="absolute inset-0 rounded-full border-2 border-violet/60 animate-pulseRing" />
-              <span className="absolute inset-0 rounded-full border-2 border-cyan/50 animate-pulseRing [animation-delay:0.7s]" />
-              <ArrowUp className="h-5 w-5" strokeWidth={2.5} />
+              <ArrowUp className="h-5 w-5" strokeWidth={2} />
             </button>
           </motion.div>
         )}

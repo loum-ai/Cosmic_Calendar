@@ -17,21 +17,31 @@ export function ScreenShell({ children }: { children: React.ReactNode }) {
       animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
       exit={{ opacity: 0, x: dir * -48, filter: "blur(4px)" }}
       transition={{ duration: 0.38, ease: EASE.smooth }}
-      className="relative mx-auto min-h-full w-full max-w-[480px] px-[max(16px,4vw)] pb-[110px] pt-14"
+      className="relative mx-auto min-h-full w-full max-w-[480px] px-[max(20px,5vw)] pb-[136px] pt-[60px]"
     >
       {children}
     </motion.main>
   );
 }
 
-/** A consistent, editorial section header used across all screens. */
-export function SectionHead({ title, sub }: { title: string; sub?: string }) {
+/**
+ * Consistent section header — a calm sans title + quiet sub, with generous
+ * top air. Matches the prototype (NOT a giant serif). Optional caps label.
+ */
+export function SectionHead({
+  title,
+  sub,
+  label,
+}: {
+  title: string;
+  sub?: string;
+  label?: string;
+}) {
   return (
-    <header className="mb-4">
-      <h2 className="font-serif text-[2rem] font-medium leading-none tracking-tight text-ink">
-        {title}
-      </h2>
-      {sub && <p className="vela-sub mt-1.5">{sub}</p>}
+    <header className="mb-4 mt-10 first:mt-0">
+      {label && <div className="vela-label mb-2">{label}</div>}
+      <h2 className="vela-title">{title}</h2>
+      {sub && <p className="vela-sub mt-1">{sub}</p>}
     </header>
   );
 }
