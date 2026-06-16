@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* shadcn/ui design-token bridge — these primitives are headless; we restyle
+   them with Vela tokens, so the neutral defaults below are only fallbacks. */
+@layer base {
+  :root {
+    --background: 250 100% 3%;
+    --foreground: 255 90% 97%;
+    --card: 252 40% 8%;
+    --card-foreground: 255 90% 97%;
+    --popover: 252 40% 8%;
+    --popover-foreground: 255 90% 97%;
+    --primary: 265 100% 65%;
+    --primary-foreground: 260 30% 6%;
+    --secondary: 252 30% 14%;
+    --secondary-foreground: 255 90% 97%;
+    --muted: 252 20% 16%;
+    --muted-foreground: 255 25% 78%;
+    --accent: 188 82% 62%;
+    --accent-foreground: 260 30% 6%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 262 40% 60%;
+    --input: 252 30% 18%;
+    --ring: 265 100% 75%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    border-color: hsl(var(--border) / 0.2);
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: #01000b;
+    color: #f6f2fe;
+    font-family: "Manrope", sans-serif;
+    /* glyphs render as text, never as colorful emoji (user: "bitte keine emojis") */
+    font-variant-emoji: text;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* hide scrollbars everywhere — the prototype is chromeless */
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+  * {
+    scrollbar-width: none;
+  }
+}
+
+@layer components {
+  /* fluid type scale (clamp) — fixes "Schrift zu klein / nicht responsive" */
+  .vela-display {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.4rem, 11vw, 3.4rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: #f6f2fe;
+  }
+  .vela-h1 {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.4rem, 6vw, 1.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #f0ecff;
+  }
+  .vela-sub {
+    font-family: "Manrope", sans-serif;
+    font-weight: 300;
+    font-size: clamp(0.8rem, 3.6vw, 0.9rem);
+    color: rgba(220, 213, 244, 0.46);
+  }
+  .vela-eyebrow {
+    font-family: "Manrope", sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .vela-glyph {
+    font-family: "Noto Sans Symbols", "Segoe UI Symbol", system-ui, sans-serif;
+    font-variant-emoji: text;
+  }
+  /* iridescent chrome gradient text (loum.ai "THIS IS WHY" treatment) */
+  .vela-iris-text {
+    background: linear-gradient(110deg, #d9c6ff 0%, #bca6f6 28%, #9ff0cf 64%, #86e6bf 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  /* the signature glass panel — depth, rim-light, blur. NOT flat. */
+  .vela-glass {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(10px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 20px 48px -16px rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* comet streak (referenced via inline style in Starfield) */
+@keyframes velaComet {
+  0% {
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.65;
+  }
+  90% {
+    opacity: 0.25;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(260px, 260px) rotate(42deg);
+  }
+}
+
+/* full-bleed transit / impulse cinematic entrance */
+@keyframes velaImpulseIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+/* range slider — gradient track + glowing thumb (used by real, consequential sliders) */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #c4a6ff, #4fd6ef 50%, #2fde8c);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 32%, #fff, #e7dcff 55%, #bfa6ff);
+  box-shadow: 0 0 12px #c4a6ff, 0 0 26px #2fde8c88;
+  cursor: pointer;
+  margin-top: -8px;
+}
