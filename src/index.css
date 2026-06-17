@@ -42,8 +42,8 @@
   }
   body {
     margin: 0;
-    background: #040208;
-    color: #f4effc;
+    background: #070814;
+    color: #f3f3fb;
     font-family: "Manrope", sans-serif;
     font-variant-emoji: text; /* glyphs as text, never emoji */
     -webkit-font-smoothing: antialiased;
@@ -61,6 +61,28 @@
 @layer components {
   /* ── TYPE SYSTEM (matches the prototype's discipline) ────────────── */
 
+  /* cinematic COOL iridescent serif headline (loum.ai "THIS IS WHY") */
+  .vela-hero {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 600;
+    font-size: clamp(2.6rem, 14vw, 3.8rem);
+    line-height: 0.98;
+    letter-spacing: 0.004em;
+    background: linear-gradient(
+      108deg,
+      #ffffff 0%,
+      #dccbff 28%,
+      #a9c7ff 56%,
+      #c3f0ff 78%,
+      #ece5ff 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 22px rgba(130, 120, 255, 0.4));
+    animation: velaSheenText 9s ease-in-out infinite;
+  }
   /* brand wordmark — serif, wide-tracked caps, in empty air */
   .vela-wordmark {
     font-family: "Cormorant Garamond", serif;
@@ -90,14 +112,14 @@
     letter-spacing: -0.02em;
     color: #f6f1ff;
   }
-  /* THE signature: all-caps lilac micro-label — vivid, not washed */
+  /* THE signature: all-caps cool-lilac micro-label */
   .vela-label {
     font-family: "Plus Jakarta Sans", sans-serif;
     font-size: 0.66rem;
     font-weight: 700;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #b69cff;
+    color: #b3a6ff;
   }
   .vela-sub {
     font-family: "Manrope", sans-serif;
@@ -121,15 +143,14 @@
   /* ── GLASS (premium finish: saturate-through + dual rim + grain) ──── */
   .vela-glass {
     position: relative;
-    /* DARK glass over true black — reads as a defined panel, not milky soap.
-       Content (crisp white type, vivid glyphs) provides the contrast. */
-    background: linear-gradient(160deg, rgba(28, 22, 44, 0.62), rgba(10, 7, 18, 0.52));
-    backdrop-filter: blur(16px) saturate(120%);
-    -webkit-backdrop-filter: blur(16px) saturate(120%);
-    border: 1px solid rgba(255, 255, 255, 0.09);
+    /* luminous COOL glass — airy, clean, crisp bright edge (loum.ai). */
+    background: linear-gradient(158deg, rgba(150, 165, 230, 0.16), rgba(46, 52, 96, 0.16));
+    backdrop-filter: blur(22px) saturate(140%) brightness(1.05);
+    -webkit-backdrop-filter: blur(22px) saturate(140%) brightness(1.05);
+    border: 1px solid rgba(190, 200, 255, 0.16);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.32),
-      0 18px 40px -22px rgba(0, 0, 0, 0.95);
+      inset 0 1px 0 rgba(255, 255, 255, 0.42),
+      0 20px 46px -24px rgba(0, 0, 0, 0.82);
   }
   /* crisp specular edge — bright top-left, gone elsewhere */
   .vela-glass::before {
@@ -188,18 +209,19 @@
     position: absolute;
     inset: 0;
     border-radius: inherit;
+    /* cool iridescence — silver/lilac/cyan/ice (no warm yellow/green) */
     background: conic-gradient(
       from 200deg at 50% 50%,
-      #ff5fd2,
+      #c9b6ff,
       #8b5cff,
       #4fd6ef,
-      #2fde8c,
-      #ffd86b,
-      #ff5fd2
+      #9ec8ff,
+      #ece5ff,
+      #c9b6ff
     );
     mix-blend-mode: soft-light;
-    opacity: 0.6;
-    filter: blur(3px) saturate(1.3);
+    opacity: 0.62;
+    filter: blur(3px) saturate(1.25);
     animation: velaSpin 16s linear infinite;
   }
   .vela-orb::after {
@@ -217,18 +239,18 @@
 }
 
 /* ── FINISHING LAYERS: bloom + grain (instant premium) ─────────────── */
-/* very contained bloom — only the two corners glow; the rest stays true black */
+/* airy COOL bloom — luminous violet + cyan corners (loum.ai feel) */
 .vela-bloom {
   position: fixed;
   inset: 0;
   z-index: -5;
   pointer-events: none;
   mix-blend-mode: screen;
-  opacity: 0.5;
+  opacity: 0.62;
   background:
-    radial-gradient(ellipse 38% 26% at 4% 2%, rgba(165, 80, 255, 0.36), transparent 62%),
-    radial-gradient(ellipse 40% 30% at 98% 100%, rgba(120, 60, 230, 0.18), transparent 64%);
-  filter: blur(30px);
+    radial-gradient(ellipse 50% 36% at 6% 0%, rgba(150, 110, 255, 0.42), transparent 64%),
+    radial-gradient(ellipse 46% 34% at 98% 100%, rgba(90, 175, 255, 0.26), transparent 66%);
+  filter: blur(34px);
 }
 .vela-grain {
   position: fixed;
@@ -244,6 +266,15 @@
 @keyframes velaSpin {
   to {
     transform: rotate(360deg);
+  }
+}
+@keyframes velaSheenText {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
   }
 }
 @keyframes velaComet {

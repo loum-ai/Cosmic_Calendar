@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { HelpCircle, X } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
 import { IridescentOrb } from "@/components/IridescentOrb";
@@ -12,11 +11,11 @@ import {
   ASC,
   CHART,
   HOUSE,
+  IMPULSE,
   NODES,
   PINFO,
   PROFILE,
   SG,
-  SIGNWHAT,
   SN,
   houseOf,
   signName,
@@ -157,9 +156,6 @@ function SignChips() {
 export function HeuteScreen() {
   const showHelp = useApp((s) => s.showHelp);
   const setShowHelp = useApp((s) => s.setShowHelp);
-  const [summaryOpen, setSummaryOpen] = useState(true);
-  const sunSign = signName(CHART[0].lon);
-  const lead = `Dein Sternzeichen ist ${sunSign}. ${SIGNWHAT[SN.indexOf(sunSign)]} Nach außen wirkst du eher wie ${signName(ASC)} — dein Aszendent.`;
 
   return (
     <ScreenShell>
@@ -200,25 +196,16 @@ export function HeuteScreen() {
         </Dialog>
       </div>
 
-      {/* Kurz gesagt — restrained summary card (the home's only "hero") */}
-      {summaryOpen && (
-        <GlassPanel className="mt-6 p-5">
-          <div className="flex items-start justify-between gap-3">
-            <div className="vela-label text-mint-soft/80">Kurz gesagt</div>
-            <button
-              onClick={() => setSummaryOpen(false)}
-              className="-mr-1 -mt-1 flex h-7 w-7 items-center justify-center rounded-full text-ink-soft/45 active:scale-90"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </div>
-          <p className="vela-body mt-2.5 max-w-[40ch]">{lead}</p>
-        </GlassPanel>
-      )}
-
-      <div className="mt-4">
-        <KlartextToggle />
-      </div>
+      {/* airy loum-style hero — luminous orb + cool iridescent serif */}
+      <section className="mt-9 flex flex-col items-center text-center">
+        <IridescentOrb size={104} glyph={IMPULSE.glyph} float />
+        <div className="vela-label mt-6">Dein heutiger Impuls</div>
+        <h2 className="vela-hero mt-2.5">{IMPULSE.title}</h2>
+        <p className="vela-body mt-4 max-w-[32ch] opacity-90">{IMPULSE.txt}</p>
+        <div className="mt-6">
+          <KlartextToggle />
+        </div>
+      </section>
 
       <section>
         <SectionHead label="Dein Geburtsrad" title="Dein Himmel im Moment der Geburt" sub="Tippe einen Planeten oder eine Linie" />

@@ -8,18 +8,20 @@ import { Starfield } from "./Starfield";
  */
 export function AuroraBackground() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#040208]">
-      {/* true-black base */}
-      <div className="absolute inset-0 bg-[#040208]" />
-      {/* contained amethyst glow, top-left corner only — most of the screen stays black */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_48%_36%_at_0%_-8%,rgba(150,58,224,0.55),transparent_52%)]" />
-      {/* deep magenta-indigo breath, bottom-right corner (no muddy green) */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_42%_32%_at_104%_106%,rgba(108,40,190,0.32),transparent_56%)]" />
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#070814]">
+      {/* deep cool indigo base */}
+      <div className="absolute inset-0 bg-[#070814]" />
+      {/* luminous amethyst glow, top — airy and bright (loum.ai) */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_46%_at_22%_-8%,rgba(140,90,255,0.5),transparent_60%)]" />
+      {/* cool cyan/ice breath, lower-right */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_56%_42%_at_104%_104%,rgba(70,160,255,0.3),transparent_62%)]" />
+      {/* soft ice halo, centre — keeps the field luminous, not flat black */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_34%_at_60%_44%,rgba(150,170,255,0.12),transparent_70%)]" />
 
-      {/* photographic smoke — feTurbulence wisp, only near the glow, very subtle */}
+      {/* photographic smoke — cool violet/blue wisp */}
       <svg
-        className="absolute -inset-[20%] h-[140%] w-[140%] opacity-[0.18] mix-blend-screen"
-        style={{ filter: "blur(9px) saturate(1.35)", animation: "velaNebulaDrift 48s ease-in-out infinite alternate" }}
+        className="absolute -inset-[20%] h-[140%] w-[140%] opacity-[0.2] mix-blend-screen"
+        style={{ filter: "blur(9px) saturate(1.3)", animation: "velaNebulaDrift 48s ease-in-out infinite alternate" }}
         preserveAspectRatio="none"
       >
         <filter id="velaSmoke">
@@ -27,14 +29,14 @@ export function AuroraBackground() {
           <feColorMatrix
             in="n"
             type="matrix"
-            values="0 0 0 0 0.62  0 0 0 0 0.20  0 0 0 0 0.90  0 0 0 1.0 -0.46"
+            values="0 0 0 0 0.55  0 0 0 0 0.45  0 0 0 0 1.0  0 0 0 1.0 -0.5"
           />
         </filter>
         <rect width="100%" height="100%" filter="url(#velaSmoke)" />
       </svg>
 
-      {/* strong edge vignette — crush corners to true black for contrast */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_110%_80%_at_50%_42%,transparent_42%,rgba(2,1,6,0.85)_100%)]" />
+      {/* gentle edge vignette — airy, not crushing */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_92%_at_50%_38%,transparent_54%,rgba(3,4,12,0.7)_100%)]" />
 
       <Starfield />
     </div>
