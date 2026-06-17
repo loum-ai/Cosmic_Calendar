@@ -61,48 +61,42 @@
 @layer components {
   /* ── TYPE SYSTEM (matches the prototype's discipline) ────────────── */
 
-  /* loum.ai hero — bright line: near-white serif, WIDE tracking, uppercase */
+  /* clean SANS hero headline (no serif) */
   .vela-hero {
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 500;
-    font-size: clamp(2.2rem, 11vw, 3.3rem);
-    line-height: 1;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    background: linear-gradient(180deg, #ffffff 0%, #e4e7f4 65%, #cfd5ea 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    filter: drop-shadow(0 1px 16px rgba(150, 150, 215, 0.28));
-  }
-  /* loum.ai hero — ghost line: dim grey serif, sitting behind/above */
-  .vela-ghost {
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 500;
-    font-size: clamp(1.9rem, 9.5vw, 2.8rem);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.9rem, 8.5vw, 2.6rem);
     line-height: 1.04;
-    letter-spacing: 0.04em;
-    color: rgba(222, 224, 240, 0.32);
+    letter-spacing: -0.025em;
+    color: #f7f5ff;
   }
-  /* brand wordmark — serif, wide-tracked caps, in empty air */
+  .vela-ghost {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.4rem, 6vw, 1.8rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: rgba(222, 224, 240, 0.4);
+  }
+  /* brand wordmark — clean tracked caps */
   .vela-wordmark {
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 500;
-    letter-spacing: 0.34em;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.32em;
     text-transform: uppercase;
     color: #fdfbff;
   }
-  /* proper-noun title (person name, card/sheet titles) — crisp white serif */
+  /* proper-noun title (person name, card/sheet titles) — clean sans */
   .vela-name {
-    font-family: "Cormorant Garamond", serif;
-    font-weight: 600;
-    font-size: clamp(2.1rem, 9.5vw, 2.8rem);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 9vw, 2.6rem);
     line-height: 1.02;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.035em;
     color: #fdfbff;
   }
   .vela-serif {
-    font-family: "Cormorant Garamond", serif;
+    font-family: "Plus Jakarta Sans", sans-serif;
   }
   /* screen / section title — calm sans, NOT a giant gradient serif */
   .vela-title {

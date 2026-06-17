@@ -1,8 +1,9 @@
-import { HelpCircle, ArrowUp } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
 import { IridescentOrb } from "@/components/IridescentOrb";
 import { OrbImage } from "@/components/OrbImage";
+import { PlanetImage } from "@/components/PlanetImage";
 import { Explainable } from "@/components/Explainable";
 import { ChartWheel } from "@/components/ChartWheel";
 import { KlartextToggle } from "@/components/KlartextToggle";
@@ -12,6 +13,7 @@ import {
   ASC,
   CHART,
   HOUSE,
+  IMPULSE,
   NODES,
   PINFO,
   PROFILE,
@@ -33,24 +35,19 @@ const deg = (lon: number) => Math.floor(((lon % 30) + 30) % 30);
 
 function BigThree() {
   const cards = [
-    { key: "sun", glyph: "☉", label: "Sonne", sign: signName(CHART[0].lon), d: deg(CHART[0].lon), accent: false },
-    { key: "moon", glyph: "☽", label: "Mond", sign: signName(CHART[1].lon), d: deg(CHART[1].lon), accent: false },
-    { key: "asc", glyph: "AC", label: "Aszendent", sign: signName(ASC), d: deg(ASC), accent: true },
+    { key: "sun", img: "/planet-mars.webp", label: "Sonne", sign: signName(CHART[0].lon), d: deg(CHART[0].lon), accent: false },
+    { key: "moon", img: "/planet-moon.webp", label: "Mond", sign: signName(CHART[1].lon), d: deg(CHART[1].lon), accent: false },
+    { key: "asc", img: "/planet-exo.webp", label: "Aszendent", sign: signName(ASC), d: deg(ASC), accent: true },
   ];
   return (
     <div className="grid grid-cols-3 gap-3">
       {cards.map((c) => (
         <Explainable key={c.key} sheet={{ kind: "planet", key: c.key }}>
-          <GlassPanel className="px-2 py-4 text-center" interactive>
-            <div
-              className="vela-glyph text-lg"
-              style={{ color: c.accent ? PLANET_COLORS.asc : "rgba(220,213,244,0.85)" }}
-            >
-              {c.glyph}
-            </div>
+          <GlassPanel className="px-2 pb-4 pt-3 text-center" interactive>
+            <PlanetImage src={c.img} size={62} className="mx-auto" />
             <div className="vela-label mt-2 !text-[0.58rem]">{c.label}</div>
             <div
-              className="vela-serif mt-0.5 text-lg font-medium"
+              className="mt-0.5 font-display text-base font-bold"
               style={{ color: c.accent ? PLANET_COLORS.asc : "#ece6f6" }}
             >
               {c.sign}
@@ -153,20 +150,9 @@ function SignChips() {
   );
 }
 
-const HERO_PILLS = ["Ich fühle mich fest", "Soll ich bleiben?", "Was sehe ich nicht?"];
-
 export function HeuteScreen() {
   const showHelp = useApp((s) => s.showHelp);
   const setShowHelp = useApp((s) => s.setShowHelp);
-  const setComposerOpen = useApp((s) => s.setComposerOpen);
-  const setQ = useApp((s) => s.setQ);
-  const ask = useApp((s) => s.ask);
-
-  const askQuick = (q: string) => {
-    setQ(q);
-    setComposerOpen(true);
-    void ask(q);
-  };
 
   return (
     <ScreenShell>
@@ -207,47 +193,12 @@ export function HeuteScreen() {
         </Dialog>
       </div>
 
-      {/* loum.ai oracle hero — orb, ghost+bright serif, pills, glowing ask bar */}
-      <section className="mt-8 flex flex-col items-center text-center">
-        <OrbImage size={158} />
-        <h2 className="vela-ghost mt-7">Hör auf zu kreisen.</h2>
-        <h1 className="vela-hero mt-1.5">Fang an zu sehen</h1>
-
-        {/* suggestion pills */}
-        <div className="mt-7 flex flex-wrap justify-center gap-2">
-          {HERO_PILLS.map((p) => (
-            <button
-              key={p}
-              onClick={() => askQuick(p)}
-              className="vela-glass rounded-pill px-4 py-2 font-body text-[12.5px] text-ink-soft/85 transition active:scale-95"
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-
-        {/* glowing ask bar (the composer, loum-style) */}
-        <div className="relative mt-3.5 w-full max-w-[400px]">
-          <div
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[130%] w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-pill"
-            style={{
-              background:
-                "radial-gradient(ellipse 60% 70% at 50% 50%,rgba(150,90,255,0.5),rgba(80,200,235,0.24) 46%,transparent 72%)",
-              filter: "blur(30px)",
-            }}
-          />
-          <button
-            onClick={() => setComposerOpen(true)}
-            className="vela-glass relative flex w-full items-center gap-2 rounded-pill py-2 pl-5 pr-2 text-left active:scale-[0.99]"
-          >
-            <span className="flex-1 font-body text-[13.5px] text-ink-soft/45">Was beschäftigt dich?</span>
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-cta-gradient text-space-2">
-              <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
-            </span>
-          </button>
-        </div>
-
-        <div className="mt-6">
+      {/* hero — real planet orb + clean sans headline (no input, no serif) */}
+      <section className="mt-10 flex flex-col items-center text-center">
+        <OrbImage size={176} />
+        <h1 className="vela-hero mt-8 max-w-[14ch]">{IMPULSE.title}</h1>
+        <p className="vela-body mt-3.5 max-w-[34ch] opacity-80">{IMPULSE.txt}</p>
+        <div className="mt-7">
           <KlartextToggle />
         </div>
       </section>
