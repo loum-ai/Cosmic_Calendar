@@ -42,7 +42,7 @@
   }
   body {
     margin: 0;
-    background: #070814;
+    background: #0b0b13;
     color: #f3f3fb;
     font-family: "Manrope", sans-serif;
     font-variant-emoji: text; /* glyphs as text, never emoji */
@@ -61,27 +61,28 @@
 @layer components {
   /* ── TYPE SYSTEM (matches the prototype's discipline) ────────────── */
 
-  /* cinematic COOL iridescent serif headline (loum.ai "THIS IS WHY") */
+  /* loum.ai hero — bright line: near-white serif, WIDE tracking, uppercase */
   .vela-hero {
     font-family: "Cormorant Garamond", serif;
-    font-weight: 600;
-    font-size: clamp(2.6rem, 14vw, 3.8rem);
-    line-height: 0.98;
-    letter-spacing: 0.004em;
-    background: linear-gradient(
-      108deg,
-      #ffffff 0%,
-      #dccbff 28%,
-      #a9c7ff 56%,
-      #c3f0ff 78%,
-      #ece5ff 100%
-    );
-    background-size: 200% auto;
+    font-weight: 500;
+    font-size: clamp(2.2rem, 11vw, 3.3rem);
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #ffffff 0%, #e4e7f4 65%, #cfd5ea 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    filter: drop-shadow(0 2px 22px rgba(130, 120, 255, 0.4));
-    animation: velaSheenText 9s ease-in-out infinite;
+    filter: drop-shadow(0 1px 16px rgba(150, 150, 215, 0.28));
+  }
+  /* loum.ai hero — ghost line: dim grey serif, sitting behind/above */
+  .vela-ghost {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 500;
+    font-size: clamp(1.9rem, 9.5vw, 2.8rem);
+    line-height: 1.04;
+    letter-spacing: 0.04em;
+    color: rgba(222, 224, 240, 0.32);
   }
   /* brand wordmark — serif, wide-tracked caps, in empty air */
   .vela-wordmark {
@@ -143,14 +144,14 @@
   /* ── GLASS (premium finish: saturate-through + dual rim + grain) ──── */
   .vela-glass {
     position: relative;
-    /* luminous COOL glass — airy, clean, crisp bright edge (loum.ai). */
-    background: linear-gradient(158deg, rgba(150, 165, 230, 0.16), rgba(46, 52, 96, 0.16));
-    backdrop-filter: blur(22px) saturate(140%) brightness(1.05);
-    -webkit-backdrop-filter: blur(22px) saturate(140%) brightness(1.05);
-    border: 1px solid rgba(190, 200, 255, 0.16);
+    /* neutral dark glass (loum.ai) — clean, not tinted blue/purple */
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.022));
+    backdrop-filter: blur(22px) saturate(120%);
+    -webkit-backdrop-filter: blur(22px) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.42),
-      0 20px 46px -24px rgba(0, 0, 0, 0.82);
+      inset 0 1px 0 rgba(255, 255, 255, 0.34),
+      0 20px 46px -26px rgba(0, 0, 0, 0.85);
   }
   /* crisp specular edge — bright top-left, gone elsewhere */
   .vela-glass::before {
@@ -239,18 +240,16 @@
 }
 
 /* ── FINISHING LAYERS: bloom + grain (instant premium) ─────────────── */
-/* airy COOL bloom — luminous violet + cyan corners (loum.ai feel) */
+/* restrained top halo bloom only (loum.ai) */
 .vela-bloom {
   position: fixed;
   inset: 0;
   z-index: -5;
   pointer-events: none;
   mix-blend-mode: screen;
-  opacity: 0.62;
-  background:
-    radial-gradient(ellipse 50% 36% at 6% 0%, rgba(150, 110, 255, 0.42), transparent 64%),
-    radial-gradient(ellipse 46% 34% at 98% 100%, rgba(90, 175, 255, 0.26), transparent 66%);
-  filter: blur(34px);
+  opacity: 0.5;
+  background: radial-gradient(ellipse 52% 28% at 50% 1%, rgba(132, 100, 214, 0.36), transparent 64%);
+  filter: blur(32px);
 }
 .vela-grain {
   position: fixed;

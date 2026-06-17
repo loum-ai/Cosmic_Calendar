@@ -1,4 +1,4 @@
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, ArrowUp } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
 import { IridescentOrb } from "@/components/IridescentOrb";
@@ -153,9 +153,20 @@ function SignChips() {
   );
 }
 
+const HERO_PILLS = ["Ich fühle mich fest", "Soll ich bleiben?", "Was sehe ich nicht?"];
+
 export function HeuteScreen() {
   const showHelp = useApp((s) => s.showHelp);
   const setShowHelp = useApp((s) => s.setShowHelp);
+  const setComposerOpen = useApp((s) => s.setComposerOpen);
+  const setQ = useApp((s) => s.setQ);
+  const ask = useApp((s) => s.ask);
+
+  const askQuick = (q: string) => {
+    setQ(q);
+    setComposerOpen(true);
+    void ask(q);
+  };
 
   return (
     <ScreenShell>
@@ -196,12 +207,46 @@ export function HeuteScreen() {
         </Dialog>
       </div>
 
-      {/* airy loum-style hero — luminous orb + cool iridescent serif */}
-      <section className="mt-9 flex flex-col items-center text-center">
-        <IridescentOrb size={104} glyph={IMPULSE.glyph} float />
-        <div className="vela-label mt-6">Dein heutiger Impuls</div>
-        <h2 className="vela-hero mt-2.5">{IMPULSE.title}</h2>
-        <p className="vela-body mt-4 max-w-[32ch] opacity-90">{IMPULSE.txt}</p>
+      {/* loum.ai oracle hero — orb, ghost+bright serif, pills, glowing ask bar */}
+      <section className="mt-8 flex flex-col items-center text-center">
+        <IridescentOrb size={116} glyph={IMPULSE.glyph} float />
+        <h2 className="vela-ghost mt-7">Hör auf zu kreisen.</h2>
+        <h1 className="vela-hero mt-1.5">Fang an zu sehen</h1>
+
+        {/* suggestion pills */}
+        <div className="mt-7 flex flex-wrap justify-center gap-2">
+          {HERO_PILLS.map((p) => (
+            <button
+              key={p}
+              onClick={() => askQuick(p)}
+              className="vela-glass rounded-pill px-4 py-2 font-body text-[12.5px] text-ink-soft/85 transition active:scale-95"
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+
+        {/* glowing ask bar (the composer, loum-style) */}
+        <div className="relative mt-3.5 w-full max-w-[400px]">
+          <div
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[130%] w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-pill"
+            style={{
+              background:
+                "radial-gradient(ellipse 60% 70% at 50% 50%,rgba(150,90,255,0.5),rgba(80,200,235,0.24) 46%,transparent 72%)",
+              filter: "blur(30px)",
+            }}
+          />
+          <button
+            onClick={() => setComposerOpen(true)}
+            className="vela-glass relative flex w-full items-center gap-2 rounded-pill py-2 pl-5 pr-2 text-left active:scale-[0.99]"
+          >
+            <span className="flex-1 font-body text-[13.5px] text-ink-soft/45">Was beschäftigt dich?</span>
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-cta-gradient text-space-2">
+              <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
+            </span>
+          </button>
+        </div>
+
         <div className="mt-6">
           <KlartextToggle />
         </div>

@@ -8,35 +8,33 @@ import { Starfield } from "./Starfield";
  */
 export function AuroraBackground() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#070814]">
-      {/* deep cool indigo base */}
-      <div className="absolute inset-0 bg-[#070814]" />
-      {/* luminous amethyst glow, top — airy and bright (loum.ai) */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_46%_at_22%_-8%,rgba(140,90,255,0.5),transparent_60%)]" />
-      {/* cool cyan/ice breath, lower-right */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_56%_42%_at_104%_104%,rgba(70,160,255,0.3),transparent_62%)]" />
-      {/* soft ice halo, centre — keeps the field luminous, not flat black */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_34%_at_60%_44%,rgba(150,170,255,0.12),transparent_70%)]" />
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#0b0b13]">
+      {/* near-neutral dark charcoal-navy base (loum.ai) */}
+      <div className="absolute inset-0 bg-[#0b0b13]" />
+      {/* one soft cool halo, top-centre behind the hero orb — restrained */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_56%_30%_at_50%_6%,rgba(126,96,214,0.34),transparent_60%)]" />
+      {/* very faint cool wash, lower — keeps it from going dead flat */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_120%,rgba(60,70,130,0.18),transparent_64%)]" />
 
-      {/* photographic smoke — cool violet/blue wisp */}
+      {/* whisper of photographic smoke, cool/neutral */}
       <svg
-        className="absolute -inset-[20%] h-[140%] w-[140%] opacity-[0.2] mix-blend-screen"
-        style={{ filter: "blur(9px) saturate(1.3)", animation: "velaNebulaDrift 48s ease-in-out infinite alternate" }}
+        className="absolute -inset-[20%] h-[140%] w-[140%] opacity-[0.12] mix-blend-screen"
+        style={{ filter: "blur(10px) saturate(1.1)", animation: "velaNebulaDrift 52s ease-in-out infinite alternate" }}
         preserveAspectRatio="none"
       >
         <filter id="velaSmoke">
-          <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="3" seed="7" stitchTiles="stitch" result="n" />
+          <feTurbulence type="fractalNoise" baseFrequency="0.013 0.02" numOctaves="3" seed="7" stitchTiles="stitch" result="n" />
           <feColorMatrix
             in="n"
             type="matrix"
-            values="0 0 0 0 0.55  0 0 0 0 0.45  0 0 0 0 1.0  0 0 0 1.0 -0.5"
+            values="0 0 0 0 0.55  0 0 0 0 0.5  0 0 0 0 0.85  0 0 0 1.0 -0.55"
           />
         </filter>
         <rect width="100%" height="100%" filter="url(#velaSmoke)" />
       </svg>
 
-      {/* gentle edge vignette — airy, not crushing */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_92%_at_50%_38%,transparent_54%,rgba(3,4,12,0.7)_100%)]" />
+      {/* gentle vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_95%_at_50%_36%,transparent_56%,rgba(4,4,9,0.68)_100%)]" />
 
       <Starfield />
     </div>
