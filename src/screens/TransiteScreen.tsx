@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
-import { IridescentOrb } from "@/components/IridescentOrb";
+import { OrbImage } from "@/components/OrbImage";
 import { useApp } from "@/store/useApp";
 import { COSMIC_EVENTS, TRANSITS } from "@/lib/data";
 import { EASE } from "@/lib/tokens";
@@ -74,7 +74,7 @@ function TransitFull() {
 
           {/* hero orb */}
           <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-7">
-            <IridescentOrb size={150} glyph={tr.tg} glyphColor={tr.c} />
+            <OrbImage size={170} />
           </div>
 
           {/* content */}
@@ -133,7 +133,7 @@ export function TransiteScreen() {
 
       {/* hero — first/strongest transit */}
       <GlassPanel className="mt-5 flex items-center gap-4 p-5" interactive onClick={() => setFull(0)}>
-        <IridescentOrb size={84} glyph={TRANSITS[0].tg} glyphColor={TRANSITS[0].c} float={false} />
+        <OrbImage size={88} float={false} />
         <div className="min-w-0">
           <div className="vela-eyebrow mb-1.5" style={{ color: TRANSITS[0].c }}>
             Stärkster Einfluss

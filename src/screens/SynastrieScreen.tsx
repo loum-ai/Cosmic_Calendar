@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
-import { IridescentOrb } from "@/components/IridescentOrb";
+import { OrbImage } from "@/components/OrbImage";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -129,8 +129,8 @@ export function SynastrieScreen() {
         <section className="mt-7">
           <GlassPanel className="flex flex-col items-center p-6 text-center">
             <div className="relative flex items-center justify-center">
-              <IridescentOrb size={70} float={false} className="-mr-4" />
-              <IridescentOrb size={70} float={false} className="-ml-4" />
+              <OrbImage size={74} float={false} className="-mr-5" />
+              <OrbImage size={74} float={false} className="-ml-5" />
             </div>
             <div className="mt-4 vela-eyebrow text-mint-soft">Resonanz</div>
             <div className="font-display text-5xl font-extrabold vela-iris-text">{resonance}%</div>

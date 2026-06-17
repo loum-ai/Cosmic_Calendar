@@ -2,6 +2,7 @@ import { HelpCircle, ArrowUp } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
 import { IridescentOrb } from "@/components/IridescentOrb";
+import { OrbImage } from "@/components/OrbImage";
 import { Explainable } from "@/components/Explainable";
 import { ChartWheel } from "@/components/ChartWheel";
 import { KlartextToggle } from "@/components/KlartextToggle";
@@ -11,7 +12,6 @@ import {
   ASC,
   CHART,
   HOUSE,
-  IMPULSE,
   NODES,
   PINFO,
   PROFILE,
@@ -209,7 +209,7 @@ export function HeuteScreen() {
 
       {/* loum.ai oracle hero — orb, ghost+bright serif, pills, glowing ask bar */}
       <section className="mt-8 flex flex-col items-center text-center">
-        <IridescentOrb size={116} glyph={IMPULSE.glyph} float />
+        <OrbImage size={158} />
         <h2 className="vela-ghost mt-7">Hör auf zu kreisen.</h2>
         <h1 className="vela-hero mt-1.5">Fang an zu sehen</h1>
 

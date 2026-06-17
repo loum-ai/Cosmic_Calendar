@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
-import { IridescentOrb } from "@/components/IridescentOrb";
+import { OrbImage } from "@/components/OrbImage";
 import { Explainable } from "@/components/Explainable";
 import { KlartextToggle } from "@/components/KlartextToggle";
 import { ASC, CHART, PROFILE, signName } from "@/lib/data";
@@ -26,7 +26,7 @@ export function ProfilScreen() {
     <ScreenShell>
       {/* avatar + name */}
       <div className="flex items-center gap-4">
-        <IridescentOrb size={68} />
+        <OrbImage size={72} float={false} />
         <div className="min-w-0">
           <div className="vela-label mb-1.5">Dein Profil</div>
           <h1 className="vela-name !text-3xl">{PROFILE.name}</h1>
