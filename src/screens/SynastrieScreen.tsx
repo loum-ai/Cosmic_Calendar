@@ -95,11 +95,23 @@ export function SynastrieScreen() {
       {(adding || people.length === 0) && (
         <GlassPanel className="mt-5 p-5">
           <SectionHead title="Wen möchtest du vergleichen?" sub="Name & Geburtsdatum genügen" />
-          <div className="flex flex-col gap-3">
-            <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-            <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-            <Input placeholder="Geburtszeit (optional)" />
-            <Input placeholder="Geburtsort (optional)" />
+          <div className="flex flex-col gap-3.5">
+            <label className="block">
+              <span className="vela-label mb-1.5 block !text-[0.6rem]">Name</span>
+              <Input placeholder="z. B. Jonas" value={name} onChange={(e) => setName(e.target.value)} />
+            </label>
+            <label className="block">
+              <span className="vela-label mb-1.5 block !text-[0.6rem]">Geburtsdatum</span>
+              <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+            </label>
+            <label className="block">
+              <span className="vela-label mb-1.5 block !text-[0.6rem]">Geburtszeit · optional</span>
+              <Input type="time" />
+            </label>
+            <label className="block">
+              <span className="vela-label mb-1.5 block !text-[0.6rem]">Geburtsort · optional</span>
+              <Input placeholder="z. B. Berlin" />
+            </label>
           </div>
           <div className="mt-4">
             <div className="vela-eyebrow mb-2 text-lilac/70">Beziehung</div>
