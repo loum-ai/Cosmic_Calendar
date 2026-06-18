@@ -6,6 +6,9 @@ import { OrbImage } from "@/components/OrbImage";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useApp } from "@/store/useApp";
+import { CHART, signName } from "@/lib/data";
+import { PLANET_COLORS } from "@/lib/tokens";
 
 const CATEGORIES = [
   { key: "partner", label: "Partner", color: "#ff8fb0", glyph: "♥" },
@@ -21,6 +24,8 @@ interface Person {
 }
 
 export function SynastrieScreen() {
+  const setComposerOpen = useApp((s) => s.setComposerOpen);
+  const ask = useApp((s) => s.ask);
   const [people, setPeople] = useState<Person[]>([]);
   const [sel, setSel] = useState(0);
   const [adding, setAdding] = useState(true);
@@ -135,17 +140,51 @@ export function SynastrieScreen() {
             <div className="mt-4 vela-eyebrow text-mint-soft">Resonanz</div>
             <div className="font-display text-5xl font-extrabold vela-iris-text">{resonance}%</div>
             <p className="mt-2 font-body text-xs font-light text-ink/65">
-              Du & {current.name} · {catMeta(current.cat).label}
+              Du & {current.name} · {catMeta(current.cat).label} · Beispiel-Auswertung
             </p>
           </GlassPanel>
 
           <SectionHead title="Wie ihr verbunden seid" sub="Die stärksten Berührungspunkte" />
           <div className="flex flex-col gap-2.5">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="h-16 animate-pulse rounded-card border border-white/[0.06] bg-white/[0.035]" />
+            {[
+              {
+                glyph: "☉",
+                color: PLANET_COLORS.sun,
+                title: "Eure Kerne",
+                text: `Deine ${signName(CHART[0].lon)}-Sonne trifft auf ${current.name} — ihr zieht euch gerade dort an, wo ihr verschieden seid.`,
+              },
+              {
+                glyph: "♀",
+                color: PLANET_COLORS.venus,
+                title: "Nähe & Zuneigung",
+                text: "Ihr findet schnell einen gemeinsamen Geschmack. Zärtlichkeit und kleine Gesten fallen euch leicht.",
+              },
+              {
+                glyph: "☿",
+                color: PLANET_COLORS.mercury,
+                title: "Wie ihr redet",
+                text: "Im Gespräch trefft ihr euch rasch — etwas Reibung hält es lebendig statt langweilig.",
+              },
+            ].map((t) => (
+              <GlassPanel key={t.title} className="flex items-start gap-3.5 p-3.5">
+                <span className="vela-glyph mt-0.5 text-xl" style={{ color: t.color }}>
+                  {t.glyph}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="font-display text-sm font-semibold text-ink">{t.title}</div>
+                  <p className="mt-1 font-body text-xs font-light leading-relaxed text-ink/70">{t.text}</p>
+                </div>
+              </GlassPanel>
             ))}
           </div>
-          <Button variant="glass" className="mt-4 w-full">
+          <Button
+            variant="glass"
+            className="mt-4 w-full"
+            onClick={() => {
+              setComposerOpen(true);
+              void ask(`Wie passe ich mit ${current.name} zusammen?`);
+            }}
+          >
             Tiefere Deutung anfragen
           </Button>
         </section>
