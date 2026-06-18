@@ -7,6 +7,7 @@ import { Explainable } from "@/components/Explainable";
 import { ChartWheel } from "@/components/ChartWheel";
 import { KlartextToggle } from "@/components/KlartextToggle";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 import { useApp } from "@/store/useApp";
 import {
   ASC,
@@ -97,27 +98,25 @@ function HouseGrid() {
         return (
           <Explainable key={h} sheet={{ kind: "house", key: h }}>
             <div
-              className={`flex items-center gap-3 rounded-2xl px-4 py-3 ${occ ? "vela-card-soft" : "vela-glass"}`}
+              className={cn(
+                "flex items-center gap-3 rounded-2xl px-4 py-3",
+                occ ? "vela-card-soft" : "vela-glass",
+              )}
             >
               <div
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[12px] font-bold"
-                style={{
-                  background: occ ? "rgba(139,92,246,0.28)" : "rgba(255,255,255,0.05)",
-                  color: occ ? "#d6c9ff" : "rgba(255,255,255,0.55)",
-                }}
+                className={cn(
+                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[12px] font-bold",
+                  occ ? "bg-violet/25 text-lilac" : "bg-surface text-txt-2",
+                )}
               >
                 {h}
               </div>
               <div
-                className="min-w-0 flex-1 font-body text-sm"
-                style={{ color: occ ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.6)" }}
+                className={cn("min-w-0 flex-1 font-body text-sm", occ ? "text-txt" : "text-txt-2")}
               >
                 {name}
               </div>
-              <div
-                className="vela-glyph shrink-0 text-base"
-                style={{ color: occ ? "rgba(214,201,255,0.95)" : "transparent" }}
-              >
+              <div className={cn("vela-glyph shrink-0 text-base", occ ? "text-lilac" : "text-transparent")}>
                 {ps.map((p) => p.glyph).join(" ")}
               </div>
             </div>

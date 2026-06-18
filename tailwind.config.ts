@@ -25,6 +25,17 @@ export default {
         // accent / lilac used for borders & rim-lights
         lilac: "#b9a8ff",
         "mint-soft": "#7defd6",
+        // ── semantic surface / line / text tokens (single source of truth;
+        //    use these instead of inline rgba literals) ──
+        surface: "rgba(255,255,255,0.04)",
+        "surface-2": "rgba(255,255,255,0.07)",
+        card: "rgba(120,80,255,0.06)",
+        line: "rgba(255,255,255,0.08)",
+        "line-soft": "rgba(255,255,255,0.06)",
+        "line-accent": "rgba(150,100,255,0.25)",
+        txt: "rgba(255,255,255,0.95)",
+        "txt-2": "rgba(255,255,255,0.62)",
+        "txt-3": "rgba(255,255,255,0.40)",
         // planet semantic colors
         planet: {
           sun: "#ffd9a0",
