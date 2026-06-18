@@ -1,4 +1,4 @@
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, ArrowUp } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
 import { IridescentOrb } from "@/components/IridescentOrb";
@@ -33,6 +33,8 @@ const HELP_ITEMS = [
   { icon: "△", title: "Die Linien", body: "Verbindungen zwischen Planeten — wie deine Kräfte miteinander sprechen." },
   { icon: "↑", title: "Frag dein Horoskop", body: "Unten rechts kannst du jederzeit eine Frage stellen — Vela antwortet aus deinem Chart." },
 ];
+
+const HERO_PILLS = ["Was macht mich aus?", "Wie liebe ich?", "Wo liegt meine Kraft?"];
 
 const deg = (lon: number) => Math.floor(((lon % 30) + 30) % 30);
 
@@ -156,6 +158,8 @@ function SignChips() {
 export function HeuteScreen() {
   const showHelp = useApp((s) => s.showHelp);
   const setShowHelp = useApp((s) => s.setShowHelp);
+  const setComposerOpen = useApp((s) => s.setComposerOpen);
+  const ask = useApp((s) => s.ask);
 
   return (
     <ScreenShell>
@@ -196,12 +200,41 @@ export function HeuteScreen() {
         </Dialog>
       </div>
 
-      {/* hero — daily-message glow surface: real planet orb + impact headline */}
-      <section className="vela-daily relative mt-10 flex flex-col items-center px-6 py-9 text-center">
-        <OrbImage size={176} />
-        <h1 className="vela-hero mt-8 max-w-[14ch]">{IMPULSE.title}</h1>
-        <p className="vela-body mt-3.5 max-w-[34ch]">{IMPULSE.txt}</p>
-        <div className="mt-7">
+      {/* hero — loum.ai oracle look: ghosted lead + glowing wide-tracked
+          headline, luminous orb, suggestion pills and a glowing ask bar */}
+      <section className="relative mt-6 flex flex-col items-center px-2 text-center">
+        <div className="vela-oracle-ghost">Impuls des Tages</div>
+        <h1 className="vela-oracle-head mt-2 max-w-[15ch]">{IMPULSE.title}</h1>
+
+        <OrbImage size={172} className="my-7" />
+
+        <p className="vela-body max-w-[32ch]">{IMPULSE.txt}</p>
+
+        {/* suggestion pills — seed the composer */}
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          {HERO_PILLS.map((p) => (
+            <button
+              key={p}
+              onClick={() => {
+                setComposerOpen(true);
+                void ask(p);
+              }}
+              className="rounded-pill border border-lilac/30 bg-white/[0.06] px-3.5 py-2 font-body text-[12px] text-ink-soft/85 backdrop-blur-md transition hover:border-lilac/50 active:scale-95"
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+
+        {/* glowing ask bar — opens the composer */}
+        <button onClick={() => setComposerOpen(true)} className="vela-askbar mt-4">
+          <span>Frag dein Horoskop…</span>
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cta-gradient text-white">
+            <ArrowUp className="h-4 w-4" strokeWidth={2.4} />
+          </span>
+        </button>
+
+        <div className="mt-6">
           <KlartextToggle />
         </div>
       </section>
