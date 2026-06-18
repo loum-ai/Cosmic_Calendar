@@ -16,7 +16,7 @@ function DateScrubber() {
   d.setDate(d.getDate() + offset);
   const label = d.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" });
   return (
-    <div className="flex items-center gap-2 rounded-pill border border-white/10 bg-white/[0.05] px-1.5 py-1.5 backdrop-blur-md">
+    <div className="flex items-center gap-2 rounded-pill border border-line bg-surface px-1.5 py-1.5 backdrop-blur-md">
       <button
         onClick={() => setOffset((o) => o - 1)}
         className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft/70 active:scale-90"
@@ -149,7 +149,7 @@ export function TransiteScreen() {
       {/* transit list */}
       <section className="mt-8">
         <SectionHead title="Deine Transite" sub="Tippe für die ganze Geschichte" />
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3">
           {TRANSITS.map((tr, i) => (
             <GlassPanel key={i} className="flex items-center gap-3.5 p-3.5" interactive onClick={() => setFull(i)}>
               <span className="vela-glyph text-2xl" style={{ color: tr.c }}>
@@ -172,7 +172,7 @@ export function TransiteScreen() {
       {/* cosmic newsfeed */}
       <section className="mt-8">
         <SectionHead title="Am Himmel" sub="Größere kosmische Wetterlagen" />
-        <div className="flex flex-col gap-2.5">
+        <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3">
           {COSMIC_EVENTS.map((e, i) => (
             <GlassPanel key={i} className="flex items-start gap-3.5 p-3.5">
               <span className="vela-glyph mt-0.5 text-xl text-lilac">{e.icon}</span>

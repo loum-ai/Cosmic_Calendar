@@ -90,7 +90,7 @@ function PlanetStrip() {
 
 function HouseGrid() {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-3">
       {HOUSE.map((name, i) => {
         const h = i + 1;
         const ps = CHART.filter((p) => houseOf(p.lon) === h);
