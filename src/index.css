@@ -1,0 +1,329 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* shadcn/ui token bridge — headless primitives, restyled with Vela tokens. */
+@layer base {
+  :root {
+    --background: 250 100% 3%;
+    --foreground: 255 90% 97%;
+    --card: 252 40% 8%;
+    --card-foreground: 255 90% 97%;
+    --popover: 252 40% 8%;
+    --popover-foreground: 255 90% 97%;
+    --primary: 265 100% 65%;
+    --primary-foreground: 260 30% 6%;
+    --secondary: 252 30% 14%;
+    --secondary-foreground: 255 90% 97%;
+    --muted: 252 20% 16%;
+    --muted-foreground: 255 25% 78%;
+    --accent: 188 82% 62%;
+    --accent-foreground: 260 30% 6%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 262 40% 60%;
+    --input: 252 30% 18%;
+    --ring: 265 100% 75%;
+    --radius: 0.75rem;
+    /* reusable fine-grain texture (premium "film" finish) */
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    border-color: hsl(var(--border) / 0.2);
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: #0b0b13;
+    color: #f3f3fb;
+    font-family: "Manrope", sans-serif;
+    font-variant-emoji: text; /* glyphs as text, never emoji */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+  * {
+    scrollbar-width: none;
+  }
+}
+
+@layer components {
+  /* ── TYPE SYSTEM (matches the prototype's discipline) ────────────── */
+
+  /* clean SANS hero headline (no serif) */
+  .vela-hero {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.9rem, 8.5vw, 2.6rem);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    color: #f7f5ff;
+  }
+  .vela-ghost {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.4rem, 6vw, 1.8rem);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: rgba(222, 224, 240, 0.4);
+  }
+  /* brand wordmark — clean tracked caps */
+  .vela-wordmark {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: #fdfbff;
+  }
+  /* proper-noun title (person name, card/sheet titles) — clean sans */
+  .vela-name {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 9vw, 2.6rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    color: #fdfbff;
+  }
+  .vela-serif {
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+  /* screen / section title — calm sans, NOT a giant gradient serif */
+  .vela-title {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.45rem, 6vw, 1.7rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #f6f1ff;
+  }
+  /* THE signature: all-caps cool-lilac micro-label */
+  .vela-label {
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #b3a6ff;
+  }
+  .vela-sub {
+    font-family: "Manrope", sans-serif;
+    font-weight: 400;
+    font-size: clamp(0.8rem, 3.4vw, 0.875rem);
+    line-height: 1.5;
+    color: rgba(210, 200, 238, 0.62);
+  }
+  .vela-body {
+    font-family: "Manrope", sans-serif;
+    font-weight: 400;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: rgba(244, 239, 252, 0.92);
+  }
+  .vela-glyph {
+    font-family: "Noto Sans Symbols", "Segoe UI Symbol", system-ui, sans-serif;
+    font-variant-emoji: text;
+  }
+
+  /* ── GLASS (premium finish: saturate-through + dual rim + grain) ──── */
+  .vela-glass {
+    position: relative;
+    /* neutral dark glass (loum.ai) — clean, not tinted blue/purple */
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.022));
+    backdrop-filter: blur(22px) saturate(120%);
+    -webkit-backdrop-filter: blur(22px) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.34),
+      0 20px 46px -26px rgba(0, 0, 0, 0.85);
+  }
+  /* crisp specular edge — bright top-left, gone elsewhere */
+  .vela-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.65) 0%,
+      rgba(196, 166, 255, 0.22) 16%,
+      transparent 40%,
+      transparent 78%,
+      rgba(127, 240, 191, 0.22) 100%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  /* per-panel grain */
+  .vela-glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: var(--grain);
+    background-size: 200px;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+  }
+
+  /* ── PURE-CSS IRIDESCENT ORB (soft-light film, hard specular) ─────── */
+  .vela-orb {
+    position: relative;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 32% 28%,
+      #fbf7ff 0%,
+      #cdb4ff 18%,
+      #7b4fd8 48%,
+      #2a1758 82%,
+      #160a30 100%
+    );
+    box-shadow:
+      inset -22px -22px 50px rgba(10, 4, 30, 0.9),
+      inset 12px 14px 34px rgba(255, 255, 255, 0.2),
+      0 24px 60px -22px rgba(120, 60, 255, 0.6);
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .vela-orb::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    /* cool iridescence — silver/lilac/cyan/ice (no warm yellow/green) */
+    background: conic-gradient(
+      from 200deg at 50% 50%,
+      #c9b6ff,
+      #8b5cff,
+      #4fd6ef,
+      #9ec8ff,
+      #ece5ff,
+      #c9b6ff
+    );
+    mix-blend-mode: soft-light;
+    opacity: 0.62;
+    filter: blur(3px) saturate(1.25);
+    animation: velaSpin 16s linear infinite;
+  }
+  .vela-orb::after {
+    content: "";
+    position: absolute;
+    top: 15%;
+    left: 23%;
+    width: 26%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #fff 0%, rgba(255, 255, 255, 0.55) 30%, transparent 65%);
+    filter: blur(1px);
+    mix-blend-mode: screen;
+  }
+}
+
+/* ── FINISHING LAYERS: bloom + grain (instant premium) ─────────────── */
+/* restrained top halo bloom only (loum.ai) */
+.vela-bloom {
+  position: fixed;
+  inset: 0;
+  z-index: -5;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.5;
+  background: radial-gradient(ellipse 52% 28% at 50% 1%, rgba(132, 100, 214, 0.36), transparent 64%);
+  filter: blur(32px);
+}
+.vela-grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background-image: var(--grain);
+  background-size: 220px;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+}
+
+@keyframes velaSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes velaSheenText {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+@keyframes velaComet {
+  0% {
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.55;
+  }
+  90% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(260px, 260px) rotate(42deg);
+  }
+}
+@keyframes velaImpulseIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+@keyframes velaNebulaDrift {
+  from {
+    transform: translate(0, 0) scale(1.05);
+  }
+  to {
+    transform: translate(-4%, 3%) scale(1.16);
+  }
+}
+
+/* range slider — gradient track + glowing thumb (real, consequential sliders) */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #c4a6ff, #4fd6ef 50%, #2fde8c);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 32%, #fff, #e7dcff 55%, #bfa6ff);
+  box-shadow: 0 0 12px #c4a6ff, 0 0 26px #2fde8c88;
+  cursor: pointer;
+  margin-top: -8px;
+}
