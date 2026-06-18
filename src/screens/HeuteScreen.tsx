@@ -90,7 +90,7 @@ function PlanetStrip() {
 
 function HouseGrid() {
   return (
-    <div className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-3">
+    <div className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-3 xl:grid-cols-1">
       {HOUSE.map((name, i) => {
         const h = i + 1;
         const ps = CHART.filter((p) => houseOf(p.lon) === h);
@@ -207,68 +207,76 @@ export function HeuteScreen() {
         </Dialog>
       </div>
 
-      {/* the reading — the reason you open a horoscope app, as the bold
-          violet-gradient studio card */}
-      <div className="vela-card-grad mt-6 p-6">
-        <span className="vela-watermark vela-glyph -right-4 -top-6 text-[140px]">{IMPULSE.glyph}</span>
-        <div className="relative">
-          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">
-            Dein Tag · {IMPULSE.sign}
+      {/* desktop dashboard: two columns on xl; natural stack on mobile */}
+      <div className="mt-6 xl:grid xl:grid-cols-[1.25fr_1fr] xl:gap-8 xl:items-start">
+        {/* primary column — the reading, today's influence, the chart */}
+        <div className="flex min-w-0 flex-col gap-6">
+          <div className="vela-card-grad p-6 lg:p-7">
+            <span className="vela-watermark vela-glyph -right-4 -top-6 text-[140px]">{IMPULSE.glyph}</span>
+            <div className="relative">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">
+                Dein Tag · {IMPULSE.sign}
+              </div>
+              <h2 className="mt-2 font-display text-[26px] font-bold leading-[1.12] lg:text-[34px]">
+                {IMPULSE.title}
+              </h2>
+              <p className="mt-3 font-body text-[14px] leading-relaxed text-white/85 lg:text-[15px]">
+                {IMPULSE.txt}
+              </p>
+              <p className="mt-3 font-body text-[11px] leading-relaxed text-white/55">{IMPULSE.sub}</p>
+            </div>
           </div>
-          <h2 className="mt-2 font-display text-[26px] font-bold leading-[1.12]">{IMPULSE.title}</h2>
-          <p className="mt-3 font-body text-[14px] leading-relaxed text-white/85">{IMPULSE.txt}</p>
-          <p className="mt-3 font-body text-[11px] leading-relaxed text-white/55">{IMPULSE.sub}</p>
+
+          <KlartextToggle />
+
+          <section>
+            <SectionHead label="Heute am Himmel" title="Was dich heute bewegt" sub="Tippe für alle Transite" />
+            <button
+              onClick={() => setTab("transite")}
+              className="vela-card-soft flex w-full items-center gap-3.5 p-4 text-left active:scale-[0.99]"
+            >
+              <span className="vela-glyph text-2xl" style={{ color: TRANSITS[0].c }}>
+                {TRANSITS[0].tg}
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="font-display text-sm font-semibold text-ink">{TRANSITS[0].title}</div>
+                <p className="mt-1 line-clamp-2 font-body text-xs font-light text-ink/65">{TRANSITS[0].txt}</p>
+              </div>
+              <ChevronRight className="h-4 w-4 shrink-0 text-ink-soft/40" />
+            </button>
+          </section>
+
+          <section>
+            <SectionHead label="Dein Geburtsrad" title="Dein Himmel im Moment der Geburt" sub="Tippe einen Planeten oder eine Linie" />
+            <div className="vela-chart-bg rounded-[28px]">
+              <ChartWheel />
+            </div>
+          </section>
+        </div>
+
+        {/* secondary column — overview & exploration */}
+        <div className="mt-6 flex min-w-0 flex-col gap-6 xl:mt-0">
+          <section>
+            <SectionHead label="Überblick" title="Deine großen Drei" sub="Sonne, Mond & dein Aszendent" />
+            <BigThree />
+          </section>
+
+          <section>
+            <SectionHead label="Deine Planeten" title="Die Kräfte in dir" sub="Tippe jeden Punkt für seine Bedeutung" />
+            <PlanetStrip />
+          </section>
+
+          <section>
+            <SectionHead label="Deine Häuser" title="Wo dein Leben geschieht" sub="12 Lebensbereiche" />
+            <HouseGrid />
+          </section>
+
+          <section>
+            <SectionHead label="Zeichen & Knoten" title="Deine Prägungen" sub="Tippe für die Bedeutung" />
+            <SignChips />
+          </section>
         </div>
       </div>
-
-      <div className="mt-3">
-        <KlartextToggle />
-      </div>
-
-      {/* what's moving you today — quick link into the transits */}
-      <section className="mt-7">
-        <SectionHead label="Heute am Himmel" title="Was dich heute bewegt" sub="Tippe für alle Transite" />
-        <button
-          onClick={() => setTab("transite")}
-          className="vela-card-soft flex w-full items-center gap-3.5 p-4 text-left active:scale-[0.99]"
-        >
-          <span className="vela-glyph text-2xl" style={{ color: TRANSITS[0].c }}>
-            {TRANSITS[0].tg}
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="font-display text-sm font-semibold text-ink">{TRANSITS[0].title}</div>
-            <p className="mt-1 line-clamp-2 font-body text-xs font-light text-ink/65">{TRANSITS[0].txt}</p>
-          </div>
-          <ChevronRight className="h-4 w-4 shrink-0 text-ink-soft/40" />
-        </button>
-      </section>
-
-      <section>
-        <SectionHead label="Dein Geburtsrad" title="Dein Himmel im Moment der Geburt" sub="Tippe einen Planeten oder eine Linie" />
-        <div className="vela-chart-bg rounded-[28px]">
-          <ChartWheel />
-        </div>
-      </section>
-
-      <section>
-        <SectionHead label="Überblick" title="Deine großen Drei" sub="Sonne, Mond & dein Aszendent" />
-        <BigThree />
-      </section>
-
-      <section>
-        <SectionHead label="Deine Planeten" title="Die Kräfte in dir" sub="Tippe jeden Punkt für seine Bedeutung" />
-        <PlanetStrip />
-      </section>
-
-      <section>
-        <SectionHead label="Deine Häuser" title="Wo dein Leben geschieht" sub="12 Lebensbereiche" />
-        <HouseGrid />
-      </section>
-
-      <section>
-        <SectionHead label="Zeichen & Knoten" title="Deine Prägungen" sub="Tippe für die Bedeutung" />
-        <SignChips />
-      </section>
     </ScreenShell>
   );
 }
