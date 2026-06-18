@@ -39,7 +39,7 @@ export function ChartWheel() {
   }
 
   return (
-    <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="mx-auto w-full max-w-[320px]">
+    <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="mx-auto h-auto w-full">
       {/* outer + inner rings */}
       <circle cx={C} cy={C} r={138} fill="none" stroke="rgba(139,92,246,0.32)" />
       <circle cx={C} cy={C} r={118} fill="none" stroke="rgba(139,92,246,0.16)" />
