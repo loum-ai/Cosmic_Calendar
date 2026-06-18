@@ -4,6 +4,7 @@ import { TabBar } from "@/components/TabBar";
 import { Composer } from "@/components/Composer";
 import { SheetHost } from "@/components/SheetHost";
 import { CoachHint } from "@/components/CoachHint";
+import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { useApp } from "@/store/useApp";
 import { HeuteScreen } from "@/screens/HeuteScreen";
 import { TransiteScreen } from "@/screens/TransiteScreen";
@@ -39,6 +40,7 @@ export default function App() {
       <Composer />
       <TabBar />
       <SheetHost />
+      <TutorialOverlay />
       <div className="vela-grain" />
     </div>
   );

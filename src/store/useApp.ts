@@ -39,6 +39,10 @@ export interface AppState {
   coachSeen: boolean;
   dismissCoach: () => void;
 
+  // per-screen first-visit tutorial carousel (persisted in localStorage)
+  seenTut: Record<string, boolean>;
+  markTutSeen: (tab: TabKey) => void;
+
   // lernen category
   learnCat: string;
   setLearnCat: (c: string) => void;
@@ -96,6 +100,24 @@ export const useApp = create<AppState>((set, get) => ({
 
   coachSeen: false,
   dismissCoach: () => set({ coachSeen: true }),
+
+  seenTut: (() => {
+    try {
+      return JSON.parse(localStorage.getItem("vela_seen_tut") || "{}");
+    } catch {
+      return {};
+    }
+  })(),
+  markTutSeen: (tab) =>
+    set((s) => {
+      const next = { ...s.seenTut, [tab]: true };
+      try {
+        localStorage.setItem("vela_seen_tut", JSON.stringify(next));
+      } catch {
+        /* ignore */
+      }
+      return { seenTut: next };
+    }),
 
   learnCat: "lplaneten",
   setLearnCat: (c) => set({ learnCat: c }),
