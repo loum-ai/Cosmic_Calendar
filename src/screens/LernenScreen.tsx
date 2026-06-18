@@ -97,18 +97,23 @@ export function LernenScreen() {
 
       {/* featured */}
       <Explainable sheet={{ kind: "asptype", key: featuredIdx }}>
-        <GlassPanel className="p-5" interactive>
-          <div className="vela-eyebrow mb-3 font-semibold text-lilac/75">Konzept des Tages</div>
-          <div className="font-display text-2xl font-extrabold leading-tight text-ink">
-            {featured.type}
+        <div className="vela-card-grad p-6 active:scale-[0.99]">
+          <span className="vela-watermark vela-glyph -right-3 -top-5 text-[120px]">{featured.g}</span>
+          <div className="relative">
+            <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">
+              Konzept des Tages
+            </div>
+            <div className="mt-2 font-display text-2xl font-extrabold leading-tight text-white">
+              {featured.type}
+            </div>
+            <div className="mt-1 font-body text-[11px] uppercase tracking-wide text-white/65">
+              {featured.nat}
+            </div>
+            <p className="mt-3 font-body text-[13px] font-light leading-relaxed text-white/85">
+              {featured.plain}
+            </p>
           </div>
-          <div className="mt-1 font-body text-[11px] uppercase tracking-wide text-lilac/70">
-            {featured.nat}
-          </div>
-          <p className="mt-3 font-body text-[13px] font-light leading-relaxed text-ink/80">
-            {featured.plain}
-          </p>
-        </GlassPanel>
+        </div>
       </Explainable>
 
       {/* category pills */}
