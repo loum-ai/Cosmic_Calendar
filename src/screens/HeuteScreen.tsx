@@ -96,23 +96,28 @@ function HouseGrid() {
         const occ = ps.length > 0;
         return (
           <Explainable key={h} sheet={{ kind: "house", key: h }}>
-            <div className="vela-glass flex items-center gap-3 rounded-2xl px-4 py-3">
+            <div
+              className={`flex items-center gap-3 rounded-2xl px-4 py-3 ${occ ? "vela-card-soft" : "vela-glass"}`}
+            >
               <div
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-[11px] font-semibold"
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[12px] font-bold"
                 style={{
-                  background: occ ? "rgba(196,166,255,0.16)" : "rgba(255,255,255,0.04)",
-                  color: occ ? PLANET_COLORS.asc : "rgba(232,226,250,0.4)",
+                  background: occ ? "rgba(139,92,246,0.28)" : "rgba(255,255,255,0.05)",
+                  color: occ ? "#d6c9ff" : "rgba(255,255,255,0.55)",
                 }}
               >
                 {h}
               </div>
               <div
                 className="min-w-0 flex-1 font-body text-sm"
-                style={{ color: occ ? "#ece6f6" : "rgba(232,226,250,0.5)" }}
+                style={{ color: occ ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.6)" }}
               >
                 {name}
               </div>
-              <div className="vela-glyph shrink-0 text-sm text-ink-soft/65">
+              <div
+                className="vela-glyph shrink-0 text-base"
+                style={{ color: occ ? "rgba(214,201,255,0.95)" : "transparent" }}
+              >
                 {ps.map((p) => p.glyph).join(" ")}
               </div>
             </div>

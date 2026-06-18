@@ -271,21 +271,24 @@
     position: relative;
     overflow: hidden;
     border-radius: 24px;
-    background: linear-gradient(155deg, #8b5cf6 0%, #6d28d9 54%, #4c1d95 100%);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: linear-gradient(150deg, #a78bfa 0%, #8b5cf6 40%, #7c3aed 72%, #6d28d9 100%);
+    border: 1px solid rgba(196, 181, 253, 0.4);
     box-shadow:
-      0 20px 54px -20px rgba(124, 58, 237, 0.7),
-      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      0 22px 60px -18px rgba(139, 92, 246, 0.85),
+      0 0 0 1px rgba(167, 139, 250, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.28);
     color: #ffffff;
   }
-  /* top-light sheen so the gradient reads like a lit surface, not flat fill */
+  /* top-light sheen + a teal kiss in the far corner (the palette's 2nd accent) */
   .vela-card-grad::before {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    background: radial-gradient(ellipse 90% 60% at 18% -10%, rgba(255, 255, 255, 0.24), transparent 60%);
+    background:
+      radial-gradient(ellipse 80% 55% at 15% -10%, rgba(255, 255, 255, 0.32), transparent 55%),
+      radial-gradient(ellipse 60% 60% at 110% 120%, rgba(45, 212, 191, 0.28), transparent 55%);
   }
   /* secondary surface — violet→teal tinted glass (the palette's two accents) */
   .vela-card-soft {
