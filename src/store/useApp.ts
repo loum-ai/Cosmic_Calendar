@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { SheetDescriptor } from "@/lib/sheets";
+import { localOracle } from "@/lib/oracle";
 
 export type TabKey = "heute" | "transite" | "synastrie" | "lernen" | "profil";
 
@@ -21,6 +22,7 @@ export interface AppState {
   q: string;
   setQ: (v: string) => void;
   answer: string;
+  demo: boolean; // true when the answer came from the local offline oracle
   loading: boolean;
   ask: (question?: string) => Promise<void>;
   clearAnswer: () => void;
@@ -64,12 +66,13 @@ export const useApp = create<AppState>((set, get) => ({
   q: "",
   setQ: (v) => set({ q: v }),
   answer: "",
+  demo: false,
   loading: false,
-  clearAnswer: () => set({ answer: "" }),
+  clearAnswer: () => set({ answer: "", demo: false }),
   ask: async (question) => {
     const q = (question ?? get().q).trim();
     if (!q || get().loading) return;
-    set({ loading: true, answer: "", q });
+    set({ loading: true, answer: "", demo: false, q });
     try {
       const res = await fetch("/api/ask", {
         method: "POST",
@@ -78,13 +81,10 @@ export const useApp = create<AppState>((set, get) => ({
       });
       if (!res.ok) throw new Error(String(res.status));
       const data = (await res.json()) as { answer?: string };
-      set({ answer: data.answer || "Keine Antwort erhalten.", loading: false });
+      set({ answer: data.answer || localOracle(q), demo: !data.answer, loading: false });
     } catch {
-      set({
-        answer:
-          "Die Verbindung zum Horoskop klappt gerade nicht. Sobald der ANTHROPIC_API_KEY gesetzt ist (siehe DEPLOY.md), antwortet Vela hier in Klartext auf deine Frage.",
-        loading: false,
-      });
+      // No backend (e.g. static GitHub Pages) — answer locally from the chart.
+      set({ answer: localOracle(q), demo: true, loading: false });
     }
   },
 

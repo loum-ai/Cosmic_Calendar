@@ -25,6 +25,7 @@ export function Composer() {
   const setQ = useApp((s) => s.setQ);
   const ask = useApp((s) => s.ask);
   const answer = useApp((s) => s.answer);
+  const demo = useApp((s) => s.demo);
   const loading = useApp((s) => s.loading);
   const clearAnswer = useApp((s) => s.clearAnswer);
 
@@ -41,8 +42,13 @@ export function Composer() {
             className="pointer-events-auto bg-[linear-gradient(180deg,transparent,rgba(5,5,10,0.86)_60%)] px-3.5 pb-2 pt-3 backdrop-blur-md"
           >
             {answer && (
-              <div className="mb-2 max-h-44 overflow-y-auto rounded-card border border-lilac/25 bg-[rgba(20,16,32,0.92)] p-3.5 font-body text-[13px] font-light leading-relaxed text-ink/85">
-                {answer}
+              <div className="mb-2 max-h-44 overflow-y-auto rounded-card border border-lilac/25 bg-[rgba(20,16,32,0.92)] p-3.5">
+                {demo && (
+                  <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-pill border border-[rgba(139,92,246,0.35)] bg-[rgba(139,92,246,0.12)] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[rgba(139,92,246,0.95)]">
+                    Demo · aus deinem Chart
+                  </div>
+                )}
+                <p className="font-body text-[13px] font-light leading-relaxed text-ink/85">{answer}</p>
               </div>
             )}
             <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1">

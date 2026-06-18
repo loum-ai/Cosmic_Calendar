@@ -28,11 +28,9 @@ export default function App() {
       <AuroraBackground />
       <div className="vela-bloom" />
 
-      {/* faux status bar — matches the prototype */}
-      <div className="fixed inset-x-0 top-0 z-40 mx-auto flex h-[50px] max-w-[480px] items-center justify-between px-7 pt-4 text-xs font-medium text-ink-soft/80">
-        <span>9:41</span>
-        <span className="h-[9px] w-[17px] rounded-sm border border-ink-soft/50" />
-      </div>
+      {/* desktop / tablet: frame the 480px column so it reads as an intentional
+          app panel instead of a lonely strip floating in a black void */}
+      <div className="pointer-events-none fixed inset-y-0 left-1/2 -z-[1] hidden w-[480px] -translate-x-1/2 border-x border-white/[0.06] bg-white/[0.012] md:block" />
 
       <AnimatePresence mode="wait">
         <Screen key={tab} />

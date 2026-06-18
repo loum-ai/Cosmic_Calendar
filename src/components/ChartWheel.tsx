@@ -41,9 +41,9 @@ export function ChartWheel() {
   return (
     <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="mx-auto w-full max-w-[320px]">
       {/* outer + inner rings */}
-      <circle cx={C} cy={C} r={138} fill="none" stroke="rgba(139,92,246,0.22)" />
-      <circle cx={C} cy={C} r={118} fill="none" stroke="rgba(139,92,246,0.12)" />
-      <circle cx={C} cy={C} r={62} fill="none" stroke="rgba(139,92,246,0.14)" />
+      <circle cx={C} cy={C} r={138} fill="none" stroke="rgba(139,92,246,0.32)" />
+      <circle cx={C} cy={C} r={118} fill="none" stroke="rgba(139,92,246,0.16)" />
+      <circle cx={C} cy={C} r={62} fill="none" stroke="rgba(139,92,246,0.18)" />
 
       {/* zodiac segments + glyphs */}
       {SG.map((g, i) => {
@@ -52,12 +52,12 @@ export function ChartWheel() {
         const [gx, gy] = pt(start + 15, 128);
         return (
           <g key={i}>
-            <line x1={C} y1={C} x2={lx} y2={ly} stroke="rgba(139,92,246,0.09)" />
+            <line x1={C} y1={C} x2={lx} y2={ly} stroke="rgba(139,92,246,0.12)" />
             <text
               x={gx}
               y={gy}
-              fill="rgba(255,255,255,0.30)"
-              fontSize={11}
+              fill="rgba(255,255,255,0.55)"
+              fontSize={12}
               textAnchor="middle"
               dominantBaseline="central"
               fontFamily='"Noto Sans Symbols","Segoe UI Symbol",system-ui,sans-serif'

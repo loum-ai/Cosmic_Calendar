@@ -87,14 +87,19 @@ export function ProfilScreen() {
         <SectionHead title="Einstellungen" />
         <GlassPanel className="p-1">
           {SETTINGS.map((s, i) => (
-            <button
+            <div
               key={s}
-              className="flex w-full items-center justify-between px-4 py-3.5 text-left transition active:bg-white/[0.04]"
+              className="flex w-full items-center justify-between px-4 py-3.5 text-left"
               style={{ borderTop: i ? "1px solid rgba(255,255,255,0.06)" : undefined }}
             >
               <span className="font-body text-[13px] text-ink/85">{s}</span>
-              <ChevronRight className="h-4 w-4 text-ink-soft/40" />
-            </button>
+              <span className="flex items-center gap-2">
+                <span className="rounded-pill border border-white/10 px-2 py-0.5 text-[9px] uppercase tracking-[0.1em] text-ink-soft/40">
+                  Bald
+                </span>
+                <ChevronRight className="h-4 w-4 text-ink-soft/30" />
+              </span>
+            </div>
           ))}
         </GlassPanel>
       </section>
