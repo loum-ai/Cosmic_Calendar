@@ -19,7 +19,7 @@ export function TabBar() {
   const setTab = useApp((s) => s.setTab);
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto flex h-[68px] max-w-[480px] items-start justify-around border-t border-white/[0.06] bg-[rgba(6,5,12,0.82)] px-6 pt-4 backdrop-blur-2xl">
+    <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto flex h-[68px] max-w-[480px] items-start justify-around border-t border-white/[0.07] bg-[rgba(10,10,20,0.85)] px-6 pt-4 backdrop-blur-[24px]">
       {TABS.map(({ key, label, Icon }) => {
         const active = tab === key;
         return (
@@ -30,15 +30,17 @@ export function TabBar() {
             title={label}
             className={cn(
               "flex flex-1 flex-col items-center gap-2 pt-0.5 transition-colors duration-300",
-              active ? "text-ink-soft" : "text-[rgba(200,192,228,0.32)]",
+              active
+                ? "text-violet [filter:drop-shadow(0_0_6px_rgba(139,92,246,0.5))]"
+                : "text-[rgba(200,192,228,0.32)]",
             )}
           >
             <Icon className="h-[21px] w-[21px]" strokeWidth={1.6} />
-            {/* quiet active dot instead of loud labels + glow (prototype restraint) */}
+            {/* quiet active dot reinforces the violet glow */}
             <span
               className={cn(
                 "h-1 w-1 rounded-full transition-all duration-300",
-                active ? "bg-lilac shadow-[0_0_6px_rgba(180,150,250,0.8)]" : "bg-transparent",
+                active ? "bg-violet shadow-[0_0_6px_rgba(139,92,246,0.8)]" : "bg-transparent",
               )}
             />
           </button>

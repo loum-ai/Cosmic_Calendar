@@ -3,15 +3,15 @@
  * where Tailwind classes don't reach. Mirrors tailwind.config.ts.
  */
 export const COLORS = {
-  space: "#01000b",
-  space2: "#0a0712",
-  ink: "#f6f2fe",
-  inkSoft: "#f3eefe",
-  violet: "#9a4fff",
-  cyan: "#4fd6ef",
-  mint: "#1fd07e",
-  lilac: "#c4a6ff",
-  mintSoft: "#7df0bf",
+  space: "#06060F",
+  space2: "#0a0a18",
+  ink: "#f6f3ff",
+  inkSoft: "#f3effe",
+  violet: "#8B5CF6",
+  cyan: "#2DD4BF",
+  mint: "#2DD4BF",
+  lilac: "#b9a8ff",
+  mintSoft: "#7defd6",
 } as const;
 
 export const PLANET_COLORS: Record<string, string> = {
@@ -29,7 +29,7 @@ export const PLANET_COLORS: Record<string, string> = {
   node_s: "#9bc0ff",
 };
 
-export const CTA_GRADIENT = "linear-gradient(135deg,#9a4fff,#4fd6ef 55%,#1fd07e)";
+export const CTA_GRADIENT = "linear-gradient(135deg,#8B5CF6,#6D28D9)";
 
 /** spring-ish easings used across the prototype */
 export const EASE = {

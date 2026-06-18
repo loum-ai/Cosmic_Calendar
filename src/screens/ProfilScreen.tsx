@@ -31,7 +31,7 @@ export function ProfilScreen() {
           <div className="vela-label mb-1.5">Dein Profil</div>
           <h1 className="vela-name !text-3xl">{PROFILE.name}</h1>
           <div className="mt-1.5 flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2fde8c]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2dd4bf]" />
             <span className="font-body text-xs text-ink-soft/55">{PROFILE.memberSince}</span>
           </div>
         </div>
@@ -62,8 +62,12 @@ export function ProfilScreen() {
           {big.map((b) => (
             <Explainable key={b.key} sheet={{ kind: "planet", key: b.key }} className="flex-1">
               <div
-                className="flex flex-col items-center gap-1 rounded-pill border px-2 py-3"
-                style={{ borderColor: `${b.color}55`, background: `${b.color}14` }}
+                className="flex flex-col items-center gap-1 rounded-[14px] border px-3 py-3.5"
+                style={{
+                  background: "linear-gradient(135deg, rgba(139,92,246,0.15), rgba(45,212,191,0.08))",
+                  borderColor: "rgba(139,92,246,0.3)",
+                  boxShadow: "0 0 24px rgba(139,92,246,0.1)",
+                }}
               >
                 <span className="vela-glyph text-lg" style={{ color: b.color }}>
                   {b.glyph}

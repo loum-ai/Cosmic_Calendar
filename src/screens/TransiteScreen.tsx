@@ -55,12 +55,12 @@ function TransitFull() {
           transition={{ duration: 0.42, ease: EASE.smooth }}
           className="fixed inset-0 z-[80] flex flex-col"
         >
-          <div className="absolute inset-0 bg-[#01000b]" />
+          <div className="absolute inset-0 bg-[#06060F]" />
           <div
             className="absolute inset-0"
             style={{ background: `radial-gradient(ellipse 90% 55% at 50% 0%,${tr.c}28,transparent 60%)` }}
           />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(1,0,11,0.3)_0%,transparent_30%,transparent_60%,rgba(1,0,11,0.98)_100%)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,6,15,0.3)_0%,transparent_30%,transparent_60%,rgba(6,6,15,0.98)_100%)]" />
 
           {/* top bar */}
           <div className="relative z-10 flex items-center justify-end px-4 pt-12">

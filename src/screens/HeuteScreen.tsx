@@ -76,7 +76,7 @@ function PlanetStrip() {
               <div className="vela-label mt-1 !tracking-[0.1em]" style={{ color: `${col}cc` }}>
                 {signName(p.lon)} · Haus {houseOf(p.lon)}
               </div>
-              <p className="mt-2 font-body text-xs font-light leading-relaxed text-ink/55">
+              <p className="vela-keyword mt-2 leading-relaxed">
                 {PINFO[p.key].role}
               </p>
             </GlassPanel>
@@ -196,11 +196,11 @@ export function HeuteScreen() {
         </Dialog>
       </div>
 
-      {/* hero — real planet orb + clean sans headline (no input, no serif) */}
-      <section className="mt-10 flex flex-col items-center text-center">
+      {/* hero — daily-message glow surface: real planet orb + impact headline */}
+      <section className="vela-daily relative mt-10 flex flex-col items-center px-6 py-9 text-center">
         <OrbImage size={176} />
         <h1 className="vela-hero mt-8 max-w-[14ch]">{IMPULSE.title}</h1>
-        <p className="vela-body mt-3.5 max-w-[34ch] opacity-80">{IMPULSE.txt}</p>
+        <p className="vela-body mt-3.5 max-w-[34ch]">{IMPULSE.txt}</p>
         <div className="mt-7">
           <KlartextToggle />
         </div>
@@ -208,7 +208,9 @@ export function HeuteScreen() {
 
       <section>
         <SectionHead label="Dein Geburtsrad" title="Dein Himmel im Moment der Geburt" sub="Tippe einen Planeten oder eine Linie" />
-        <ChartWheel />
+        <div className="vela-chart-bg rounded-[28px]">
+          <ChartWheel />
+        </div>
       </section>
 
       <section>

@@ -14,16 +14,16 @@ export function KlartextToggle() {
       onClick={toggle}
       title="Astrologie-Begriffe in Klartext übersetzen"
       className={cn(
-        "flex items-center gap-2 rounded-pill border px-3 py-1.5 font-body text-[11px] transition active:scale-95",
+        "flex items-center gap-2 rounded-pill border px-[18px] py-2 font-body text-[13px] font-medium transition active:scale-95",
         klartext
           ? "border-mint/50 bg-mint/15 text-mint-soft"
-          : "border-lilac/30 bg-white/[0.06] text-ink-soft/70",
+          : "border-[rgba(139,92,246,0.35)] bg-[rgba(139,92,246,0.12)] text-[rgba(139,92,246,0.9)]",
       )}
     >
       <span
         className={cn(
           "h-1.5 w-1.5 rounded-full transition",
-          klartext ? "bg-mint shadow-[0_0_6px_#2fde8c]" : "bg-ink-soft/40",
+          klartext ? "bg-mint shadow-[0_0_6px_#2dd4bf]" : "bg-[rgba(139,92,246,0.9)]",
         )}
       />
       Klartext

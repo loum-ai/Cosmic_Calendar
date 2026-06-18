@@ -8,15 +8,15 @@ import { Starfield } from "./Starfield";
  */
 export function AuroraBackground() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#0b0b13]">
-      {/* near-neutral dark charcoal-navy base (loum.ai) */}
-      <div className="absolute inset-0 bg-[#0b0b13]" />
-      {/* one soft cool halo, top-centre behind the hero orb — restrained */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_56%_30%_at_50%_6%,rgba(126,96,214,0.34),transparent_60%)]" />
-      {/* very faint cool wash, lower — keeps it from going dead flat */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_50%_120%,rgba(60,70,130,0.18),transparent_64%)]" />
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#06060F]">
+      {/* deep-space near-black anthracite base */}
+      <div className="absolute inset-0 bg-[#06060F]" />
+      {/* violet wash bleeding down from above the hero */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(120,80,255,0.18),transparent_60%)]" />
+      {/* faint teal pool, lower-right — the secondary accent */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_80%_82%,rgba(45,212,191,0.07),transparent_55%)]" />
 
-      {/* whisper of photographic smoke, cool/neutral */}
+      {/* whisper of photographic smoke, cool violet */}
       <svg
         className="absolute -inset-[20%] h-[140%] w-[140%] opacity-[0.12] mix-blend-screen"
         style={{ filter: "blur(10px) saturate(1.1)", animation: "velaNebulaDrift 52s ease-in-out infinite alternate" }}
@@ -27,14 +27,14 @@ export function AuroraBackground() {
           <feColorMatrix
             in="n"
             type="matrix"
-            values="0 0 0 0 0.55  0 0 0 0 0.5  0 0 0 0 0.85  0 0 0 1.0 -0.55"
+            values="0 0 0 0 0.55  0 0 0 0 0.4  0 0 0 0 0.95  0 0 0 1.0 -0.55"
           />
         </filter>
         <rect width="100%" height="100%" filter="url(#velaSmoke)" />
       </svg>
 
       {/* gentle vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_95%_at_50%_36%,transparent_56%,rgba(4,4,9,0.68)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_120%_95%_at_50%_36%,transparent_56%,rgba(3,3,8,0.72)_100%)]" />
 
       <Starfield />
     </div>

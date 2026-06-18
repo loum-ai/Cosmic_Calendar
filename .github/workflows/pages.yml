@@ -2,7 +2,7 @@ name: Deploy preview to GitHub Pages
 
 on:
   push:
-    branches: [claude/vela-design-impl-nbuip2]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
