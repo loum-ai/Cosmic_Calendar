@@ -10,6 +10,8 @@ const singleFile = process.env.SINGLEFILE === "1";
 export default defineConfig({
   base: singleFile ? "./" : "/",
   plugins: [react(), ...(singleFile ? [viteSingleFile()] : [])],
+  // inline all assets (incl. webp images) into the single HTML for offline preview
+  build: singleFile ? { assetsInlineLimit: 100_000_000 } : {},
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

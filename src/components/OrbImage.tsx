@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import orbSrc from "@/assets/orb-planet.webp";
 
 /**
  * The hero orb — a real rendered iridescent planet (from the brand moodboard),
@@ -27,7 +28,7 @@ export function OrbImage({
         }}
       />
       <img
-        src="/orb-planet.webp"
+        src={orbSrc}
         alt=""
         draggable={false}
         className="relative h-full w-full select-none object-contain"

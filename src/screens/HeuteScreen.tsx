@@ -23,6 +23,9 @@ import {
   signName,
 } from "@/lib/data";
 import { PLANET_COLORS } from "@/lib/tokens";
+import marsSrc from "@/assets/planet-mars.webp";
+import moonSrc from "@/assets/planet-moon.webp";
+import exoSrc from "@/assets/planet-exo.webp";
 
 const HELP_ITEMS = [
   { icon: "✦", title: "Tippe alles, was leuchtet", body: "Jeder Planet, jede Linie, jedes Haus öffnet eine Erklärung in Klartext." },
@@ -35,9 +38,9 @@ const deg = (lon: number) => Math.floor(((lon % 30) + 30) % 30);
 
 function BigThree() {
   const cards = [
-    { key: "sun", img: "/planet-mars.webp", label: "Sonne", sign: signName(CHART[0].lon), d: deg(CHART[0].lon), accent: false },
-    { key: "moon", img: "/planet-moon.webp", label: "Mond", sign: signName(CHART[1].lon), d: deg(CHART[1].lon), accent: false },
-    { key: "asc", img: "/planet-exo.webp", label: "Aszendent", sign: signName(ASC), d: deg(ASC), accent: true },
+    { key: "sun", img: marsSrc, label: "Sonne", sign: signName(CHART[0].lon), d: deg(CHART[0].lon), accent: false },
+    { key: "moon", img: moonSrc, label: "Mond", sign: signName(CHART[1].lon), d: deg(CHART[1].lon), accent: false },
+    { key: "asc", img: exoSrc, label: "Aszendent", sign: signName(ASC), d: deg(ASC), accent: true },
   ];
   return (
     <div className="grid grid-cols-3 gap-3">
