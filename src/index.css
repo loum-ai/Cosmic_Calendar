@@ -265,6 +265,63 @@
       0 0 22px rgba(139, 92, 246, 0.55),
       0 0 46px rgba(139, 92, 246, 0.32);
   }
+  /* ── STUDIO CARDS (halolab reference, built in the Vela palette) ───── */
+  /* the bold violet-gradient feature card — the standout surface */
+  .vela-card-grad {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    background: linear-gradient(155deg, #8b5cf6 0%, #6d28d9 54%, #4c1d95 100%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow:
+      0 20px 54px -20px rgba(124, 58, 237, 0.7),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+  /* top-light sheen so the gradient reads like a lit surface, not flat fill */
+  .vela-card-grad::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(ellipse 90% 60% at 18% -10%, rgba(255, 255, 255, 0.24), transparent 60%);
+  }
+  /* secondary surface — violet→teal tinted glass (the palette's two accents) */
+  .vela-card-soft {
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    background: linear-gradient(150deg, rgba(139, 92, 246, 0.18), rgba(45, 212, 191, 0.07));
+    border: 1px solid rgba(150, 100, 255, 0.22);
+    box-shadow: 0 12px 38px -18px rgba(0, 0, 0, 0.55);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .vela-card-soft:hover {
+    border-color: rgba(150, 100, 255, 0.4);
+    box-shadow: 0 12px 40px -16px rgba(139, 92, 246, 0.4);
+  }
+  /* stat / accent chip used inside studio cards */
+  .vela-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+  }
+  /* large translucent zodiac watermark glyph in a card corner */
+  .vela-watermark {
+    position: absolute;
+    pointer-events: none;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.1);
+  }
+
   /* glowing "ask bar" — the oracle input affordance */
   .vela-askbar {
     display: flex;

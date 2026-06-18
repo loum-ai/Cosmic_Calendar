@@ -131,17 +131,20 @@ export function TransiteScreen() {
         <DateScrubber />
       </div>
 
-      {/* hero — first/strongest transit */}
-      <GlassPanel className="mt-5 flex items-center gap-4 p-5" interactive onClick={() => setFull(0)}>
-        <OrbImage size={88} float={false} />
+      {/* hero — first/strongest transit, as the bold studio card */}
+      <button
+        onClick={() => setFull(0)}
+        className="vela-card-grad mt-5 flex w-full items-center gap-4 p-5 text-left active:scale-[0.99]"
+      >
+        <OrbImage size={84} float={false} />
         <div className="min-w-0">
-          <div className="vela-eyebrow mb-1.5" style={{ color: TRANSITS[0].c }}>
+          <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">
             Stärkster Einfluss
           </div>
-          <div className="font-display text-lg font-bold leading-tight text-ink">{TRANSITS[0].title}</div>
-          <p className="mt-1.5 line-clamp-2 font-body text-xs font-light text-ink/65">{TRANSITS[0].txt}</p>
+          <div className="font-display text-lg font-bold leading-tight text-white">{TRANSITS[0].title}</div>
+          <p className="mt-1.5 line-clamp-2 font-body text-xs font-light text-white/80">{TRANSITS[0].txt}</p>
         </div>
-      </GlassPanel>
+      </button>
 
       {/* transit list */}
       <section className="mt-8">
