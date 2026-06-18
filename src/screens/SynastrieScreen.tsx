@@ -71,9 +71,9 @@ export function SynastrieScreen() {
                 }}
                 className={cn(
                   "flex shrink-0 items-center gap-2 rounded-pill border px-3.5 py-2 transition active:scale-95",
-                  sel === i && !adding ? "bg-white/[0.1]" : "bg-white/[0.04]",
+                  sel === i && !adding ? "bg-surface-2" : "bg-surface",
                 )}
-                style={{ borderColor: sel === i && !adding ? `${m.color}88` : "rgba(255,255,255,0.1)" }}
+                style={{ borderColor: sel === i && !adding ? `${m.color}88` : "var(--border-subtle)" }}
               >
                 <span className="vela-glyph text-sm" style={{ color: m.color }}>
                   {m.glyph}
@@ -84,7 +84,7 @@ export function SynastrieScreen() {
           })}
           <button
             onClick={() => setAdding(true)}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-lilac/30 bg-white/[0.06] text-lilac active:scale-90"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-lilac/30 bg-surface text-lilac active:scale-90"
           >
             <Plus className="h-4 w-4" />
           </button>
@@ -124,9 +124,9 @@ export function SynastrieScreen() {
                     "flex items-center gap-1.5 rounded-pill border px-3 py-1.5 font-body text-[11px] transition active:scale-95",
                   )}
                   style={{
-                    borderColor: cat === c.key ? `${c.color}88` : "rgba(255,255,255,0.1)",
-                    background: cat === c.key ? `${c.color}1f` : "rgba(255,255,255,0.04)",
-                    color: cat === c.key ? c.color : "rgba(220,213,244,0.62)",
+                    borderColor: cat === c.key ? `${c.color}88` : "var(--border-subtle)",
+                    background: cat === c.key ? `${c.color}1f` : "var(--bg-surface)",
+                    color: cat === c.key ? c.color : "var(--text-secondary)",
                   }}
                 >
                   <span className="vela-glyph">{c.glyph}</span>
@@ -157,7 +157,7 @@ export function SynastrieScreen() {
           </GlassPanel>
 
           <SectionHead title="Wie ihr verbunden seid" sub="Die stärksten Berührungspunkte" />
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3">
             {[
               {
                 glyph: "☉",

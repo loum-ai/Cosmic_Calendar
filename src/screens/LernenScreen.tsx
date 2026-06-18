@@ -129,7 +129,7 @@ export function LernenScreen() {
                   "shrink-0 rounded-pill border px-4 py-2 font-body text-xs transition active:scale-95",
                   active
                     ? "border-lilac/55 bg-lilac/[0.18] font-semibold text-ink-soft"
-                    : "border-white/[0.09] bg-white/[0.05] text-ink-soft/60",
+                    : "border-line bg-surface text-txt-2",
                 )}
               >
                 {c.label}
@@ -140,12 +140,12 @@ export function LernenScreen() {
       </div>
 
       <SectionHead title="Erkunden" />
-      <div className="flex flex-col gap-2.5">
+      <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3">
         {items.map((it) => (
           <Explainable key={it.title} sheet={it.sheet}>
             <GlassPanel className="flex items-center gap-3.5 p-3.5" interactive>
               <div
-                className="vela-glyph flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-lg"
+                className="vela-glyph flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-lg"
                 style={{ color: it.color }}
               >
                 {it.glyph}
