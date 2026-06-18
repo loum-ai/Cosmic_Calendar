@@ -5,26 +5,44 @@
 /* shadcn/ui token bridge — headless primitives, restyled with Vela tokens. */
 @layer base {
   :root {
-    --background: 250 100% 3%;
-    --foreground: 255 90% 97%;
-    --card: 252 40% 8%;
-    --card-foreground: 255 90% 97%;
-    --popover: 252 40% 8%;
-    --popover-foreground: 255 90% 97%;
-    --primary: 265 100% 65%;
-    --primary-foreground: 260 30% 6%;
-    --secondary: 252 30% 14%;
-    --secondary-foreground: 255 90% 97%;
-    --muted: 252 20% 16%;
+    /* shadcn/ui HSL bridge — retuned to the deep-space violet palette */
+    --background: 240 43% 4%;
+    --foreground: 255 100% 98%;
+    --card: 248 35% 7%;
+    --card-foreground: 255 100% 98%;
+    --popover: 248 35% 7%;
+    --popover-foreground: 255 100% 98%;
+    --primary: 258 90% 66%;
+    --primary-foreground: 248 40% 6%;
+    --secondary: 250 30% 14%;
+    --secondary-foreground: 255 100% 98%;
+    --muted: 250 20% 16%;
     --muted-foreground: 255 25% 78%;
-    --accent: 188 82% 62%;
-    --accent-foreground: 260 30% 6%;
+    --accent: 172 66% 50%;
+    --accent-foreground: 248 40% 6%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
-    --border: 262 40% 60%;
-    --input: 252 30% 18%;
-    --ring: 265 100% 75%;
+    --border: 258 60% 60%;
+    --input: 250 30% 18%;
+    --ring: 258 90% 75%;
     --radius: 0.75rem;
+
+    /* ── Deep-Space Glassmorphism design tokens (verbindlich) ───────── */
+    --bg-base: #06060f;
+    --bg-surface: rgba(255, 255, 255, 0.04);
+    --bg-surface-hover: rgba(255, 255, 255, 0.07);
+    --bg-card: rgba(120, 80, 255, 0.06);
+    --border-subtle: rgba(255, 255, 255, 0.08);
+    --border-accent: rgba(150, 100, 255, 0.25);
+    --accent-primary: #8b5cf6;
+    --accent-glow: rgba(139, 92, 246, 0.35);
+    --accent-teal: #2dd4bf;
+    --text-primary: rgba(255, 255, 255, 0.95);
+    --text-secondary: rgba(255, 255, 255, 0.55);
+    --text-muted: rgba(255, 255, 255, 0.3);
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.07);
+    --shadow-accent: 0 0 20px rgba(139, 92, 246, 0.3);
+
     /* reusable fine-grain texture (premium "film" finish) */
     --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
@@ -42,8 +60,12 @@
   }
   body {
     margin: 0;
-    background: #0b0b13;
-    color: #f3f3fb;
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 80, 255, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(45, 212, 191, 0.05) 0%, transparent 50%),
+      var(--bg-base);
+    color: var(--text-primary);
     font-family: "Manrope", sans-serif;
     font-variant-emoji: text; /* glyphs as text, never emoji */
     -webkit-font-smoothing: antialiased;
@@ -61,14 +83,14 @@
 @layer components {
   /* ── TYPE SYSTEM (matches the prototype's discipline) ────────────── */
 
-  /* clean SANS hero headline (no serif) */
+  /* clean SANS hero headline — the daily-message impact line */
   .vela-hero {
     font-family: "Plus Jakarta Sans", sans-serif;
-    font-weight: 800;
-    font-size: clamp(1.9rem, 8.5vw, 2.6rem);
-    line-height: 1.04;
-    letter-spacing: -0.025em;
-    color: #f7f5ff;
+    font-weight: 700;
+    font-size: clamp(28px, 7vw, 36px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
   }
   .vela-ghost {
     font-family: "Plus Jakarta Sans", sans-serif;
@@ -98,56 +120,83 @@
   .vela-serif {
     font-family: "Plus Jakarta Sans", sans-serif;
   }
-  /* screen / section title — calm sans, NOT a giant gradient serif */
+  /* H2 — section title, calm sans */
   .vela-title {
     font-family: "Plus Jakarta Sans", sans-serif;
-    font-weight: 700;
-    font-size: clamp(1.45rem, 6vw, 1.7rem);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    color: #f6f1ff;
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: rgba(255, 255, 255, 0.9);
   }
-  /* THE signature: all-caps cool-lilac micro-label */
-  .vela-label {
+  /* THE signature: all-caps violet micro-label */
+  .vela-label,
+  .vela-eyebrow {
     font-family: "Plus Jakarta Sans", sans-serif;
-    font-size: 0.66rem;
-    font-weight: 700;
-    letter-spacing: 0.16em;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #b3a6ff;
+    color: var(--accent-primary);
+    opacity: 0.8;
   }
   .vela-sub {
     font-family: "Manrope", sans-serif;
     font-weight: 400;
-    font-size: clamp(0.8rem, 3.4vw, 0.875rem);
+    font-size: 14px;
     line-height: 1.5;
-    color: rgba(210, 200, 238, 0.62);
+    color: var(--text-secondary);
   }
   .vela-body {
     font-family: "Manrope", sans-serif;
     font-weight: 400;
-    font-size: 0.95rem;
+    font-size: 14px;
     line-height: 1.6;
-    color: rgba(244, 239, 252, 0.92);
+    color: rgba(255, 255, 255, 0.72);
+  }
+  /* keyword / tag whisper inside planet cards */
+  .vela-keyword {
+    font-family: "Manrope", sans-serif;
+    font-size: 11px;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.35);
+  }
+  /* iridescent gradient text (resonance %, accents) */
+  .vela-iris-text {
+    background: linear-gradient(110deg, #c4b5ff 0%, #8b5cf6 48%, #2dd4bf 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
   .vela-glyph {
     font-family: "Noto Sans Symbols", "Segoe UI Symbol", system-ui, sans-serif;
     font-variant-emoji: text;
   }
 
-  /* ── GLASS (premium finish: saturate-through + dual rim + grain) ──── */
+  /* ── GLASS (deep-space glassmorphism: blur + hairline rim + grain) ── */
   .vela-glass {
     position: relative;
-    /* neutral dark glass (loum.ai) — clean, not tinted blue/purple */
-    background: linear-gradient(160deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.022));
-    backdrop-filter: blur(22px) saturate(120%);
-    -webkit-backdrop-filter: blur(22px) saturate(120%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.34),
-      0 20px 46px -26px rgba(0, 0, 0, 0.85);
+    background: var(--bg-surface);
+    backdrop-filter: blur(20px) saturate(115%);
+    -webkit-backdrop-filter: blur(20px) saturate(115%);
+    border: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-card);
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
   }
-  /* crisp specular edge — bright top-left, gone elsewhere */
+  /* every card lifts toward the violet on hover */
+  .vela-glass:hover {
+    background: var(--bg-surface-hover);
+    border-color: var(--border-accent);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      0 0 20px rgba(139, 92, 246, 0.15);
+  }
+  /* crisp specular edge — bright top-left, fades to a faint violet corner */
   .vela-glass::before {
     content: "";
     position: absolute;
@@ -156,11 +205,11 @@
     padding: 1px;
     background: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.65) 0%,
-      rgba(196, 166, 255, 0.22) 16%,
-      transparent 40%,
-      transparent 78%,
-      rgba(127, 240, 191, 0.22) 100%
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(150, 100, 255, 0.18) 18%,
+      transparent 42%,
+      transparent 80%,
+      rgba(139, 92, 246, 0.18) 100%
     );
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
@@ -178,6 +227,20 @@
     opacity: 0.035;
     mix-blend-mode: overlay;
     pointer-events: none;
+  }
+
+  /* ── DAILY-MESSAGE GLOW SURFACE (section 9) ───────────────────────── */
+  .vela-daily {
+    background:
+      radial-gradient(ellipse at center top, rgba(139, 92, 246, 0.08) 0%, transparent 70%),
+      rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(139, 92, 246, 0.12);
+    border-radius: 24px;
+  }
+
+  /* ── CHART WHEEL BACKDROP (section 10) ────────────────────────────── */
+  .vela-chart-bg {
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
   }
 
   /* ── PURE-CSS IRIDESCENT ORB (soft-light film, hard specular) ─────── */
@@ -234,15 +297,15 @@
 }
 
 /* ── FINISHING LAYERS: bloom + grain (instant premium) ─────────────── */
-/* restrained top halo bloom only (loum.ai) */
+/* restrained top halo bloom — violet glow above the hero */
 .vela-bloom {
   position: fixed;
   inset: 0;
   z-index: -5;
   pointer-events: none;
   mix-blend-mode: screen;
-  opacity: 0.5;
-  background: radial-gradient(ellipse 52% 28% at 50% 1%, rgba(132, 100, 214, 0.36), transparent 64%);
+  opacity: 0.55;
+  background: radial-gradient(ellipse 52% 28% at 50% 1%, rgba(139, 92, 246, 0.4), transparent 64%);
   filter: blur(32px);
 }
 .vela-grain {
@@ -315,15 +378,15 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 4px;
-  background: linear-gradient(90deg, #c4a6ff, #4fd6ef 50%, #2fde8c);
+  background: linear-gradient(90deg, #b9a8ff, #8b5cf6 50%, #2dd4bf);
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: radial-gradient(circle at 36% 32%, #fff, #e7dcff 55%, #bfa6ff);
-  box-shadow: 0 0 12px #c4a6ff, 0 0 26px #2fde8c88;
+  background: radial-gradient(circle at 36% 32%, #fff, #e7dcff 55%, #b9a8ff);
+  box-shadow: 0 0 12px #8b5cf6, 0 0 26px rgba(45, 212, 191, 0.53);
   cursor: pointer;
   margin-top: -8px;
 }

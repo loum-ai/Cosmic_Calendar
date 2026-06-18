@@ -12,18 +12,19 @@ export default {
   theme: {
     extend: {
       colors: {
-        // base
-        space: "#01000b",
-        "space-2": "#0a0712",
-        ink: "#f6f2fe",
-        "ink-soft": "#f3eefe",
-        // primary CTA gradient stops
-        violet: "#9a4fff",
-        cyan: "#4fd6ef",
-        mint: "#1fd07e",
+        // base — deep-space near-black anthracite
+        space: "#06060F",
+        "space-2": "#0a0a18",
+        ink: "#f6f3ff",
+        "ink-soft": "#f3effe",
+        // primary accent — violet/lilac glow system
+        violet: "#8B5CF6",
+        // secondary punctual accent — teal
+        cyan: "#2DD4BF",
+        mint: "#2DD4BF",
         // accent / lilac used for borders & rim-lights
-        lilac: "#c4a6ff",
-        "mint-soft": "#7df0bf",
+        lilac: "#b9a8ff",
+        "mint-soft": "#7defd6",
         // planet semantic colors
         planet: {
           sun: "#ffd9a0",
@@ -59,17 +60,19 @@ export default {
         pill: "999px",
       },
       boxShadow: {
-        // rim-light + soft long drop, the signature glass card shadow
+        // deep drop + hairline rim — the signature glass card shadow
         glass:
-          "inset 0 1px 0 rgba(255,255,255,0.14), 0 20px 48px -16px rgba(0,0,0,0.7)",
-        glow: "0 14px 32px -8px rgba(120,90,200,0.7), 0 0 0 6px rgba(120,90,200,0.12)",
-        lift: "0 22px 48px -14px rgba(110,38,220,0.72), 0 0 0 1px rgba(196,166,255,0.42)",
+          "0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.07)",
+        // violet glow halo for FABs / primary CTAs
+        glow: "0 4px 24px rgba(139,92,246,0.5), 0 0 0 1px rgba(255,255,255,0.1)",
+        // hover lift — deep drop + soft violet bloom
+        lift: "0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(139,92,246,0.2)",
       },
       backgroundImage: {
         "cta-gradient":
-          "linear-gradient(135deg,#9a4fff,#4fd6ef 55%,#1fd07e)",
+          "linear-gradient(135deg,#8B5CF6,#6D28D9)",
         "iris-text":
-          "linear-gradient(110deg,#d9c6ff 0%,#bca6f6 28%,#9ff0cf 64%,#86e6bf 100%)",
+          "linear-gradient(110deg,#c4b5ff 0%,#8B5CF6 48%,#2DD4BF 100%)",
       },
       keyframes: {
         velaSpin: { to: { transform: "rotate(360deg)" } },
