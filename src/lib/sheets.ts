@@ -21,8 +21,9 @@ import {
   houseOf,
   signName,
 } from "./data";
+import { GLOSSARY } from "./glossary";
 
-export type SheetKind = "planet" | "node" | "house" | "sign" | "aspect" | "asptype";
+export type SheetKind = "planet" | "node" | "house" | "sign" | "aspect" | "asptype" | "glossary";
 
 export interface SheetDescriptor {
   kind: SheetKind;
@@ -65,12 +66,14 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
 
   if (kind === "planet") {
     if (key === "asc") {
+      const si = SN.indexOf(signName(ASC));
       return {
         title: "Aszendent",
         glyph: "AC",
         color: "#c4a6ff",
         sections: [
-          { label: "Was ist das?", body: PINFO.asc.what },
+          { label: "Was — die Maske nach außen", body: PINFO.asc.what },
+          { label: `Wie — Aszendent in ${signName(ASC)}`, body: SIGNWHAT[si] },
           { label: "Bei dir", body: `Dein Aszendent steht in ${signName(ASC)}.`, accent: MINT },
         ],
       };
@@ -78,20 +81,24 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
     const p = CHART.find((x) => x.key === key);
     if (!p) return null;
     const info = PINFO[p.key];
+    const si = SN.indexOf(signName(p.lon));
+    const h = p.house ?? houseOf(p.lon);
     const asp = computeAspects().filter((a) => a.A.key === p.key || a.B.key === p.key);
     return {
       title: `${p.name} — ${info.role}`,
       glyph: p.glyph,
       color: "#e7dcff",
       sections: [
-        { label: "Was ist das?", body: info.what },
-        { label: "Bei dir", body: `${p.txt} Steht in ${signName(p.lon)}, Haus ${houseOf(p.lon)}.`, accent: MINT },
+        { label: "Was — der Planet", body: info.what },
+        { label: `Wie — ${p.name} in ${signName(p.lon)}`, body: SIGNWHAT[si] },
+        { label: `Wo — ${h}. Haus · ${HOUSE[h - 1]}`, body: HOUSEWHAT[h - 1] },
+        { label: "Bei dir", body: p.txt, accent: MINT },
       ],
       relations: asp.map((a) => {
         const other = a.A.key === p.key ? a.B : a.A;
         return {
           key: a.key,
-          label: `${a.def.type} zu ${other.name}`,
+          label: `${a.def.type} zu ${other.name} · ${a.orb.toFixed(1)}°`,
           color: a.def.c,
           glyph: a.def.g,
           text: relText(a),
@@ -166,6 +173,21 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       sections: [
         { label: "Was ist das?", body: a.def.plain },
         { label: "Bei dir", body: relText(a), accent: MINT },
+        { label: "Genauigkeit", body: `${a.orb.toFixed(1)}° Orbis — je enger, desto stärker wirkt die Verbindung.` },
+      ],
+    };
+  }
+
+  if (kind === "glossary") {
+    const e = GLOSSARY[String(key).toLowerCase()];
+    if (!e) return null;
+    return {
+      title: e.term,
+      glyph: "?",
+      color: "#b9a8ff",
+      sections: [
+        { label: "Klartext", body: e.short },
+        { label: "Einfach gesagt", body: `Statt „${e.term}" kannst du auch sagen: ${e.plain}.` },
       ],
     };
   }

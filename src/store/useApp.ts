@@ -2,6 +2,15 @@ import { create } from "zustand";
 import type { SheetDescriptor } from "@/lib/sheets";
 import { localOracle } from "@/lib/oracle";
 
+// remember the last pointer position so the sheet can open as a popover at
+// the click on desktop (instead of being docked at the bottom)
+let lastPointer = { x: 0, y: 0 };
+if (typeof window !== "undefined") {
+  window.addEventListener("pointerdown", (e) => {
+    lastPointer = { x: e.clientX, y: e.clientY };
+  }, true);
+}
+
 export type TabKey = "heute" | "transite" | "synastrie" | "lernen" | "profil";
 
 const TAB_ORDER: TabKey[] = ["heute", "transite", "synastrie", "lernen", "profil"];
@@ -11,10 +20,16 @@ export interface AppState {
   tabDir: 1 | -1; // 1 = slide from right, -1 = slide from left
   setTab: (t: TabKey) => void;
 
-  // tap-to-understand bottom sheet
+  // tap-to-understand sheet (bottom sheet on mobile, popover on desktop)
   sheet: SheetDescriptor | null;
+  anchor: { x: number; y: number } | null;
   openSheet: (s: SheetDescriptor) => void;
   closeSheet: () => void;
+
+  // full-page detail view (for planets/positions — "eine neue Seite")
+  detail: SheetDescriptor | null;
+  openDetail: (s: SheetDescriptor) => void;
+  closeDetail: () => void;
 
   // Q&A composer (the product hook — reachable everywhere)
   composerOpen: boolean;
@@ -62,8 +77,13 @@ export const useApp = create<AppState>((set, get) => ({
     }),
 
   sheet: null,
-  openSheet: (s) => set({ sheet: s }),
+  anchor: null,
+  openSheet: (s) => set({ sheet: s, anchor: { ...lastPointer } }),
   closeSheet: () => set({ sheet: null }),
+
+  detail: null,
+  openDetail: (s) => set({ detail: s }),
+  closeDetail: () => set({ detail: null }),
 
   composerOpen: false,
   setComposerOpen: (v) => set({ composerOpen: v }),

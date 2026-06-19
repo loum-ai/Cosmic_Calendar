@@ -63,6 +63,7 @@ export default {
         serif: ['"Cormorant Garamond"', "serif"],
         display: ['"Plus Jakarta Sans"', "sans-serif"],
         body: ['"Manrope"', "sans-serif"],
+        mono: ['"Space Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
         glyph: ['"Noto Sans Symbols"', '"Segoe UI Symbol"', "system-ui", "sans-serif"],
       },
       borderRadius: {

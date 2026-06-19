@@ -25,21 +25,24 @@ export function Explainable({
   ...props
 }: ExplainableProps) {
   const openSheet = useApp((s) => s.openSheet);
+  const openDetail = useApp((s) => s.openDetail);
   const dismissCoach = useApp((s) => s.dismissCoach);
   const Comp = as as React.ElementType;
+  // planets & nodes open a full detail page; everything else the bottom sheet
+  const open = () => {
+    dismissCoach();
+    if (sheet.kind === "planet" || sheet.kind === "node") openDetail(sheet);
+    else openSheet(sheet);
+  };
   return (
     <Comp
       role="button"
       tabIndex={0}
-      onClick={() => {
-        dismissCoach();
-        openSheet(sheet);
-      }}
+      onClick={open}
       onKeyDown={(e: React.KeyboardEvent) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          dismissCoach();
-          openSheet(sheet);
+          open();
         }
       }}
       className={cn(

@@ -3,6 +3,7 @@ import { AuroraBackground } from "@/components/AuroraBackground";
 import { TabBar } from "@/components/TabBar";
 import { Composer } from "@/components/Composer";
 import { SheetHost } from "@/components/SheetHost";
+import { DetailView } from "@/components/DetailView";
 import { CoachHint } from "@/components/CoachHint";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { useApp } from "@/store/useApp";
@@ -27,7 +28,6 @@ export default function App() {
   return (
     <div className="relative min-h-dvh w-full overflow-x-hidden text-ink">
       <AuroraBackground />
-      <div className="vela-bloom" />
 
       {/* content is offset by the desktop sidebar; full-bleed on mobile */}
       <div className="lg:pl-[240px]">
@@ -40,6 +40,7 @@ export default function App() {
       <Composer />
       <TabBar />
       <SheetHost />
+      <DetailView />
       <TutorialOverlay />
       <div className="vela-grain" />
     </div>

@@ -18,9 +18,9 @@ interface Slide {
  */
 const TUTORIALS: Record<TabKey, Slide[]> = {
   heute: [
-    { eyebrow: "Heute", title: "Dein Tag, aus deinem Himmel gelesen", body: "Jeden Tag eine persönliche Deutung — in Klartext, nicht in Fachjargon. Genau für deinen Moment.", glyph: "✦" },
-    { eyebrow: "Dein Geburtsrad", title: "Der Himmel im Moment deiner Geburt", body: "Der Kreis zeigt, wo Sonne, Mond und Planeten standen, als du geboren wurdest. Tippe alles, was leuchtet.", glyph: "☉" },
-    { eyebrow: "Deine großen Drei", title: "Wer du bist, in drei Zeichen", body: "Sonne (dein Wesen), Mond (dein Gefühl) und Aszendent (deine Wirkung) — der schnellste Einstieg in dein Chart.", glyph: "☽" },
+    { eyebrow: "HEUTE", title: "Was heute am Himmel steht", body: "Die exakte Tageslage deiner Planeten — übersetzt in eine klare, brauchbare Deutung. Kein Eso-Schaum.", glyph: "✦" },
+    { eyebrow: "DEIN GEBURTSRAD", title: "Der Himmel im Moment deiner Geburt", body: "Jeder Punkt auf Grad genau. Tippe ihn an — die Bedeutung kommt in Klartext.", glyph: "☉" },
+    { eyebrow: "GROSSE DREI", title: "Sonne, Mond, Aszendent", body: "Dein Wesen, dein Gefühl, deine Wirkung — die drei Koordinaten, mit denen alles anfängt.", glyph: "☽" },
   ],
   transite: [
     { eyebrow: "Transite", title: "Was der Himmel heute auslöst", body: "Die Planeten bewegen sich weiter — und berühren dein Geburtsbild. Hier siehst du, was das gerade für dich bedeutet.", glyph: "♃" },
@@ -64,10 +64,10 @@ export function TutorialOverlay() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-[95] flex flex-col bg-[#06060F]"
+        className="fixed inset-0 z-[95] flex flex-col bg-[#050509]"
       >
-        {/* deep-space backdrop */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_55%_at_50%_-10%,rgba(120,80,255,0.28),transparent_60%),radial-gradient(ellipse_60%_40%_at_50%_120%,rgba(45,212,191,0.08),transparent_55%)]" />
+        {/* deep-space backdrop — one tight, restrained glow, no haze */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_48%_28%_at_50%_-6%,rgba(116,96,200,0.12),transparent_55%)]" />
         {/* huge glyph watermark */}
         <AnimatePresence mode="wait">
           <motion.span

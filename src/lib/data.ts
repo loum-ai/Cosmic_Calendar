@@ -12,6 +12,8 @@ export interface Planet {
   glyph: string;
   lon: number;
   txt: string;
+  house?: number;
+  retro?: boolean;
 }
 
 export interface AspectDef {
@@ -30,31 +32,40 @@ export interface Aspect {
   A: Planet;
   B: Planet;
   def: AspectDef;
+  orb: number;
 }
 
 export const PROFILE = {
-  name: "Amelie Sturm",
-  birth: "14. März 1996 · 07:42 · Lissabon",
-  memberSince: "Mitglied seit März 2024",
+  name: "Laura",
+  birth: "7. September 1987 · 18:50 · Starnberg",
+  memberSince: "Wassermann-Aszendent · 48°00′ N · 11°21′ E",
 };
 
-export const ASC = 12;
+// Aszendent Wassermann 21°00′, MC Schütze 11°36′
+export const ASC = 321.0;
+export const MC = 251.6;
+
+// Placidus house cusps (longitudes), house 1..12 — from the real chart
+export const CUSPS = [321.0, 16.05, 49.4, 71.6, 90.43, 110.77, 141.0, 196.05, 229.4, 251.6, 270.43, 290.77];
 
 export const CHART: Planet[] = [
-  { key: "sun", name: "Sonne", glyph: "☉", lon: 354, txt: "Dein Kern sucht Auflösung und Verbindung — du fühlst, bevor du denkst." },
-  { key: "moon", name: "Mond", glyph: "☽", lon: 188, txt: "Dein Inneres findet Ruhe im Gegenüber und in der Balance." },
-  { key: "mercury", name: "Merkur", glyph: "☿", lon: 340, txt: "Du denkst in Bildern und Ahnungen, selten in Listen." },
-  { key: "venus", name: "Venus", glyph: "♀", lon: 2, txt: "Du näherst dich der Liebe direkt, mutig, ohne Umweg." },
-  { key: "mars", name: "Mars", glyph: "♂", lon: 288, txt: "Deine Kraft ist geduldig und zielt weit über den Moment hinaus." },
-  { key: "jupiter", name: "Jupiter", glyph: "♃", lon: 249, txt: "Dein Wachstum liegt darin, den Horizont immer wieder zu weiten." },
-  { key: "saturn", name: "Saturn", glyph: "♄", lon: 336, txt: "Deine Aufgabe: im Grenzenlosen tragfähige Grenzen zu finden." },
-  { key: "chiron", name: "Chiron", glyph: "⚷", lon: 28, txt: "Deine wunde Stelle — und genau dort liegt deine Gabe, andere zu verstehen." },
-  { key: "lilith", name: "Lilith", glyph: "⚸", lon: 145, txt: "Wo du dich nicht zähmen lässt — dein wildes, eigensinniges Feuer." },
+  { key: "sun", name: "Sonne", glyph: "☉", lon: 164.52, house: 7, txt: "Dein Kern wirkt über das Gegenüber — Klarheit, Sorgfalt, ein Dienst an der Beziehung." },
+  { key: "moon", name: "Mond", glyph: "☽", lon: 343.73, house: 1, txt: "Dein Gefühl ist durchlässig und sofort sichtbar — du spürst Räume, bevor du sie betrittst." },
+  { key: "mercury", name: "Merkur", glyph: "☿", lon: 180.2, house: 7, txt: "Du denkst in Abwägung und Dialog — Sprache ist deine Brücke zum anderen." },
+  { key: "venus", name: "Venus", glyph: "♀", lon: 168.73, house: 7, txt: "Du liebst genau und im Detail — Zuneigung zeigt sich bei dir als Sorgfalt." },
+  { key: "mars", name: "Mars", glyph: "♂", lon: 160.1, house: 7, txt: "Deine Kraft arbeitet präzise und im Miteinander, selten im Alleingang." },
+  { key: "jupiter", name: "Jupiter", glyph: "♃", lon: 29.13, house: 2, retro: true, txt: "Wachstum durch mutiges Anfangen — und über das Vertrauen in den eigenen Wert." },
+  { key: "saturn", name: "Saturn", glyph: "♄", lon: 254.83, house: 10, txt: "Deine Aufgabe: aus Überzeugung Struktur bauen — sichtbar im Beruf." },
+  { key: "uranus", name: "Uranus", glyph: "♅", lon: 262.73, house: 10, txt: "Dein Eigensinn zeigt sich im Beruf — unabhängig, vorausdenkend, ungern geführt." },
+  { key: "neptune", name: "Neptun", glyph: "♆", lon: 275.25, house: 11, retro: true, txt: "Deine Träume binden sich an Gemeinschaft und Zukunft." },
+  { key: "pluto", name: "Pluto", glyph: "♇", lon: 217.87, house: 8, txt: "Wandlung im Tiefen — Macht, Bindung, Regeneration." },
+  { key: "chiron", name: "Chiron", glyph: "⚷", lon: 88.25, house: 4, txt: "Deine wunde Stelle liegt in Herkunft und Verstandenwerden — und genau dort heilst du andere." },
+  { key: "lilith", name: "Lilith", glyph: "⚸", lon: 122.27, house: 6, txt: "Dein Ungezähmtes will im Alltag gesehen werden — auf deine eigene Art." },
 ];
 
 export const NODES: Planet[] = [
-  { key: "node_n", name: "Aufsteigender Knoten", glyph: "☊", lon: 100, txt: "" },
-  { key: "node_s", name: "Absteigender Knoten", glyph: "☋", lon: 280, txt: "" },
+  { key: "node_n", name: "Aufsteigender Knoten", glyph: "☊", lon: 3.27, house: 1, retro: true, txt: "" },
+  { key: "node_s", name: "Absteigender Knoten", glyph: "☋", lon: 183.27, house: 7, retro: true, txt: "" },
 ];
 
 export const SN = ["Widder", "Stier", "Zwillinge", "Krebs", "Löwe", "Jungfrau", "Waage", "Skorpion", "Schütze", "Steinbock", "Wassermann", "Fische"];
@@ -94,6 +105,9 @@ export const PINFO: Record<string, { role: string; what: string }> = {
   mars: { role: "dein Antrieb", what: "Mars ist deine Energie und dein Mut — wie du handelst und dich durchsetzt." },
   jupiter: { role: "dein Wachstum", what: "Jupiter steht für Wachstum, Vertrauen und Sinn — wo du dich weitest." },
   saturn: { role: "deine Struktur", what: "Saturn ist Disziplin und Reife — wo du lernst, dranbleibst und stabil wirst." },
+  uranus: { role: "dein Eigensinn", what: "Uranus ist die Kraft des Erwachens — Originalität, Freiheit, plötzliche Wendung. Wo du anders bist und es sein darfst." },
+  neptune: { role: "deine Sehnsucht", what: "Neptun steht für Fantasie, Spiritualität und Auflösung — das, was sich den Sinnen entzieht und in Bildern spricht." },
+  pluto: { role: "deine Wandlung", what: "Pluto ist Transformation, Tiefe und Macht — was stirbt, damit Neues entstehen kann." },
   asc: { role: "dein Auftreten", what: "Der Aszendent ist, wie du auf andere wirkst — dein erster Eindruck nach außen." },
   chiron: { role: "deine Wunde & Gabe", what: "Chiron ist die verletzliche Stelle, an der du Schmerz kennst — und gerade dadurch andere heilen und verstehen kannst." },
   lilith: { role: "dein Wildes", what: "Lilith (der schwarze Mond) steht für das Ungezähmte und Tabuisierte in dir — wo du dich nicht anpassen willst." },
@@ -150,7 +164,7 @@ export function computeAspects(): Aspect[] {
       d = Math.min(d, 360 - d);
       for (const def of ASPDEF) {
         if (Math.abs(d - def.a) <= orb) {
-          out.push({ key: CHART[i].key + "_" + CHART[j].key, A: CHART[i], B: CHART[j], def });
+          out.push({ key: CHART[i].key + "_" + CHART[j].key, A: CHART[i], B: CHART[j], def, orb: Math.abs(d - def.a) });
           break;
         }
       }
