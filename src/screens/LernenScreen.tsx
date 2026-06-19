@@ -88,11 +88,13 @@ export function LernenScreen() {
       </div>
 
       <SectionHead title="Erkunden" />
-      <div>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {items.map((it) => (
           <Explainable key={it.title} sheet={it.sheet}>
-            <div className="flex items-center gap-3.5 border-b border-line-soft py-3 transition hover:opacity-80">
-              <span className="vela-glyph w-7 shrink-0 text-center text-lg text-lilac">{it.glyph}</span>
+            <div className="vela-tile vela-tile-hover flex items-center gap-3.5 p-4">
+              <span className="vela-glyph flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet/15 text-base text-lilac">
+                {it.glyph}
+              </span>
               <div className="min-w-0 flex-1">
                 <div className="font-display text-sm font-semibold text-txt">{it.title}</div>
                 <div className="font-body text-xs text-txt-2">{it.sub}</div>

@@ -233,6 +233,26 @@
     mask-composite: exclude;
     pointer-events: none;
   }
+  /* ── PREMIUM TILE — crisp depth, no frosted haze (the real card) ───── */
+  .vela-tile {
+    position: relative;
+    border-radius: 18px;
+    background: linear-gradient(158deg, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0.018) 60%, rgba(120, 90, 220, 0.05) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+      0 12px 32px -14px rgba(0, 0, 0, 0.7),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .vela-tile-hover:hover {
+    border-color: rgba(150, 120, 255, 0.3);
+    box-shadow:
+      0 16px 40px -14px rgba(0, 0, 0, 0.7),
+      0 0 28px -8px rgba(139, 92, 246, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+  }
+
   /* per-panel grain */
   .vela-glass::after {
     content: "";

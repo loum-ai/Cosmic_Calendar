@@ -43,7 +43,7 @@ const HELP_ITEMS = [
 function PlanetCard({ k, glyph, name, meta, role }: { k: string; glyph: string; name: string; meta: string; role?: string }) {
   return (
     <Explainable sheet={{ kind: "planet", key: k }} className="h-full">
-      <div className="vela-glass flex h-full items-start gap-3 rounded-2xl p-4">
+      <div className="vela-tile vela-tile-hover flex h-full items-start gap-3 p-4">
         <IridescentOrb size={40} glyph={glyph} glyphColor={LILAC} />
         <div className="min-w-0">
           <div className="font-display text-[15px] font-semibold leading-tight text-txt">{name}</div>
@@ -239,7 +239,7 @@ export function HeuteScreen() {
       {/* today's sky */}
       <section className="mt-10">
         <SectionHead label="Heute am Himmel" title="Was dich heute bewegt" sub="Tippe für alle Transite" />
-        <button onClick={() => setTab("transite")} className="flex w-full items-center gap-3.5 border-y border-line-soft py-4 text-left transition hover:opacity-80">
+        <button onClick={() => setTab("transite")} className="vela-tile vela-tile-hover flex w-full items-center gap-3.5 p-4 text-left">
           <span className="vela-glyph text-2xl text-lilac">{TRANSITS[0].tg}</span>
           <div className="min-w-0 flex-1">
             <div className="font-display text-sm font-semibold text-txt">{TRANSITS[0].title}</div>

@@ -109,12 +109,14 @@ export function TransiteScreen() {
       {/* transit list — plain rows */}
       <section className="mt-12">
         <SectionHead label="Deine Transite" title="Was dich gerade bewegt" sub="Tippe für die ganze Geschichte" />
-        <div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {TRANSITS.map((tr, i) => (
-            <button key={i} onClick={() => setFull(i)} className="flex w-full items-center gap-3.5 border-b border-line-soft py-3.5 text-left transition hover:opacity-80">
-              <span className="vela-glyph text-xl text-lilac">{tr.tg}</span>
-              <div className="min-w-0 flex-1 font-display text-sm font-semibold text-txt">{tr.title}</div>
-              <span className="font-mono text-[11px]" style={{ color: IMPACT_COLOR[tr.impact] }}>{tr.impact}</span>
+            <button key={i} onClick={() => setFull(i)} className="vela-tile vela-tile-hover flex items-center gap-4 p-4 text-left">
+              <span className="vela-glyph text-2xl text-lilac">{tr.tg}</span>
+              <div className="min-w-0 flex-1">
+                <div className="font-display text-sm font-semibold leading-snug text-txt">{tr.title}</div>
+                <div className="mt-1 font-mono text-[10px]" style={{ color: IMPACT_COLOR[tr.impact] }}>{IMPACT_LABEL[tr.impact]}</div>
+              </div>
               <ChevronRight className="h-4 w-4 shrink-0 text-txt-3" />
             </button>
           ))}
@@ -124,14 +126,14 @@ export function TransiteScreen() {
       {/* cosmic weather — plain rows */}
       <section className="mt-10">
         <SectionHead label="Am Himmel" title="Kosmische Wetterlage" sub="Größere Bewegungen über allen" />
-        <div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {COSMIC_EVENTS.map((e, i) => (
-            <div key={i} className="flex items-start gap-3.5 border-b border-line-soft py-3.5">
-              <span className="vela-glyph mt-0.5 text-lg text-lilac">{e.icon}</span>
+            <div key={i} className="vela-tile flex items-start gap-3.5 p-4">
+              <span className="vela-glyph mt-0.5 text-xl text-lilac">{e.icon}</span>
               <div className="min-w-0 flex-1">
                 <div className="font-display text-sm font-semibold text-txt">{e.label}</div>
-                <div className="font-mono text-[10px] text-txt-3">{e.sub}</div>
-                <p className="mt-1 font-body text-xs leading-relaxed text-txt-2">{e.txt}</p>
+                <div className="mt-0.5 font-mono text-[10px] text-txt-3">{e.sub}</div>
+                <p className="mt-1.5 font-body text-xs leading-relaxed text-txt-2">{e.txt}</p>
               </div>
             </div>
           ))}
