@@ -31,6 +31,8 @@ const HELP_ITEMS = [
 ];
 
 const deg = (lon: number) => Math.floor(((lon % 30) + 30) % 30);
+const sg = (lon: number) => SG[Math.floor(((((lon % 360) + 360) % 360) / 30))];
+const pad = (n: number) => String(n).padStart(2, "0");
 const pc = (key: string) => PLANET_COLORS[key] || "#c4b5ff";
 
 /** One consistent planet tile used everywhere (no more clashing styles). */
@@ -41,7 +43,7 @@ function PlanetTile({ k, glyph, color, name, meta, role }: { k: string; glyph: s
         <IridescentOrb size={40} glyph={glyph} glyphColor={color} />
         <div className="min-w-0">
           <div className="font-display text-[15px] font-semibold leading-tight text-txt">{name}</div>
-          <div className="mt-0.5 font-body text-[10px] font-semibold uppercase tracking-[0.07em]" style={{ color }}>
+          <div className="mt-0.5 font-mono text-[11px] leading-tight" style={{ color }}>
             {meta}
           </div>
           {role && <p className="vela-keyword mt-1.5">{role}</p>}
@@ -115,7 +117,9 @@ export function HeuteScreen() {
   const hour = now.getHours();
   const greeting = hour < 11 ? "Guten Morgen" : hour < 17 ? "Guten Tag" : "Guten Abend";
   const todayLabel = now.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" });
+  const dateShort = now.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
   const firstName = PROFILE.name.split(" ")[0];
+  const ephemeris = `☉ ${sg(CHART[0].lon)} ${pad(deg(CHART[0].lon))}°    ☽ ${sg(CHART[1].lon)} ${pad(deg(CHART[1].lon))}°    AC ${sg(ASC)} ${pad(deg(ASC))}°`;
 
   const bigThree = [
     { k: "sun", glyph: "☉", color: pc("sun"), label: "Sonne", sign: signName(CHART[0].lon), d: deg(CHART[0].lon) },
@@ -172,12 +176,12 @@ export function HeuteScreen() {
           <div className="vela-card-grad p-6">
             <span className="vela-watermark vela-glyph -right-4 -top-6 text-[130px]">{IMPULSE.glyph}</span>
             <div className="relative">
-              <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">
-                Dein Tag · {IMPULSE.sign}
-              </div>
-              <h2 className="mt-2 font-display text-[26px] font-bold leading-[1.12] lg:text-[30px]">{IMPULSE.title}</h2>
+              <div className="font-mono text-[11px] tracking-[0.04em] text-white/70">HEUTE · {dateShort}</div>
+              <h2 className="mt-2.5 font-display text-[26px] font-bold leading-[1.12] lg:text-[30px]">{IMPULSE.title}</h2>
               <p className="mt-3 font-body text-[14px] leading-relaxed text-white/85">{IMPULSE.txt}</p>
-              <p className="mt-3 font-body text-[11px] leading-relaxed text-white/55">{IMPULSE.sub}</p>
+              <div className="my-4 h-px bg-[linear-gradient(90deg,rgba(255,255,255,0.28),transparent)]" />
+              <div className="font-mono text-[11px] leading-relaxed text-white/80">{ephemeris}</div>
+              <p className="mt-2 font-mono text-[10px] leading-relaxed text-white/45">{IMPULSE.sub}</p>
             </div>
           </div>
           <div className="mt-3">
@@ -194,7 +198,7 @@ export function HeuteScreen() {
                 <div className="min-w-0">
                   <div className="vela-label !text-[0.55rem]">{b.label}</div>
                   <div className="font-display text-base font-bold leading-tight text-txt">{b.sign}</div>
-                  <div className="font-body text-[11px] text-txt-3">{b.d}°</div>
+                  <div className="font-mono text-[11px] text-txt-3">{pad(b.d)}°</div>
                 </div>
               </div>
             </Explainable>
@@ -230,7 +234,7 @@ export function HeuteScreen() {
               glyph={p.glyph}
               color={pc(p.key)}
               name={p.name}
-              meta={`${signName(p.lon)} · Haus ${houseOf(p.lon)}`}
+              meta={`${sg(p.lon)} ${pad(deg(p.lon))}° · H${houseOf(p.lon)}`}
               role={PINFO[p.key].role}
             />
           ))}

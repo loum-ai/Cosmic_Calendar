@@ -154,6 +154,26 @@
     line-height: 1.6;
     color: rgba(255, 255, 255, 0.72);
   }
+  /* ── OBSERVATORY: monospace data readout (the instrument's voice) ──── */
+  .vela-data {
+    font-family: "Space Mono", ui-monospace, "SFMono-Regular", monospace;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    color: var(--accent-teal);
+    font-variant-emoji: text;
+  }
+  .vela-data-dim {
+    font-family: "Space Mono", ui-monospace, "SFMono-Regular", monospace;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+  }
+  /* hairline blueprint rule */
+  .vela-rule {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.14), transparent);
+  }
+
   /* keyword / tag whisper inside planet cards */
   .vela-keyword {
     font-family: "Manrope", sans-serif;

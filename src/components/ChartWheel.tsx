@@ -40,10 +40,33 @@ export function ChartWheel() {
 
   return (
     <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="mx-auto h-auto w-full">
+      {/* instrument crosshair — faint cardinal axes */}
+      <line x1={C - 150} y1={C} x2={C + 150} y2={C} stroke="rgba(255,255,255,0.06)" strokeWidth={0.8} />
+      <line x1={C} y1={C - 150} x2={C} y2={C + 150} stroke="rgba(255,255,255,0.06)" strokeWidth={0.8} />
+
       {/* outer + inner rings */}
+      <circle cx={C} cy={C} r={145} fill="none" stroke="rgba(45,212,191,0.28)" strokeWidth={0.8} />
       <circle cx={C} cy={C} r={138} fill="none" stroke="rgba(139,92,246,0.32)" />
       <circle cx={C} cy={C} r={118} fill="none" stroke="rgba(139,92,246,0.16)" />
       <circle cx={C} cy={C} r={62} fill="none" stroke="rgba(139,92,246,0.18)" />
+
+      {/* degree scale — minor every 5°, major every 30° (the instrument feel) */}
+      {Array.from({ length: 72 }).map((_, t) => {
+        const major = t % 6 === 0;
+        const [x1, y1] = pt(t * 5, 145);
+        const [x2, y2] = pt(t * 5, major ? 134 : 140);
+        return (
+          <line
+            key={"tick" + t}
+            x1={x1}
+            y1={y1}
+            x2={x2}
+            y2={y2}
+            stroke={major ? "rgba(45,212,191,0.5)" : "rgba(45,212,191,0.22)"}
+            strokeWidth={major ? 1 : 0.5}
+          />
+        );
+      })}
 
       {/* zodiac segments + glyphs */}
       {SG.map((g, i) => {
