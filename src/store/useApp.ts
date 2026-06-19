@@ -16,6 +16,11 @@ export interface AppState {
   openSheet: (s: SheetDescriptor) => void;
   closeSheet: () => void;
 
+  // full-page detail view (for planets/positions — "eine neue Seite")
+  detail: SheetDescriptor | null;
+  openDetail: (s: SheetDescriptor) => void;
+  closeDetail: () => void;
+
   // Q&A composer (the product hook — reachable everywhere)
   composerOpen: boolean;
   setComposerOpen: (v: boolean) => void;
@@ -64,6 +69,10 @@ export const useApp = create<AppState>((set, get) => ({
   sheet: null,
   openSheet: (s) => set({ sheet: s }),
   closeSheet: () => set({ sheet: null }),
+
+  detail: null,
+  openDetail: (s) => set({ detail: s }),
+  closeDetail: () => set({ detail: null }),
 
   composerOpen: false,
   setComposerOpen: (v) => set({ composerOpen: v }),

@@ -24,7 +24,7 @@ interface Row {
  *  monospace voice. Every row taps through to its interpretation. */
 export function PositionsTable() {
   const [open, setOpen] = useState(false);
-  const openSheet = useApp((s) => s.openSheet);
+  const openDetail = useApp((s) => s.openDetail);
 
   const rows: Row[] = [
     { glyph: "AC", color: pc("asc"), name: "Aszendent", lon: ASC, house: 1, sheet: { kind: "planet", key: "asc" } },
@@ -43,23 +43,21 @@ export function PositionsTable() {
     .join("   ");
 
   return (
-    <div className="vela-glass overflow-hidden rounded-2xl">
-      <button onClick={() => setOpen((o) => !o)} className="flex w-full items-center justify-between px-4 py-3.5">
-        <span className="vela-label">Positionen · Tabelle</span>
+    <div>
+      <button onClick={() => setOpen((o) => !o)} className="flex w-full items-center justify-between py-2">
+        <span className="vela-label">Alle Positionen</span>
         <ChevronDown className={cn("h-4 w-4 text-txt-2 transition-transform duration-300", open && "rotate-180")} />
       </button>
 
       {open && (
-        <div className="border-t border-line">
+        <div className="mt-1">
           {rows.map((r) => (
             <button
               key={r.name}
-              onClick={() => openSheet(r.sheet)}
-              className="flex w-full items-center gap-3 border-t border-line-soft px-4 py-2.5 text-left transition first:border-t-0 hover:bg-surface"
+              onClick={() => openDetail(r.sheet)}
+              className="flex w-full items-center gap-3 border-t border-line-soft py-2.5 text-left transition first:border-t-0 hover:opacity-70"
             >
-              <span className="vela-glyph w-5 shrink-0 text-center text-base" style={{ color: r.color }}>
-                {r.glyph}
-              </span>
+              <span className="vela-glyph w-5 shrink-0 text-center text-base text-lilac">{r.glyph}</span>
               <span className="flex-1 truncate font-body text-[13px] text-txt">{r.name}</span>
               <span className="font-mono text-[11px] text-txt-2">
                 {SG[sgi(r.lon)]} {pad(deg(r.lon))}°
@@ -67,7 +65,7 @@ export function PositionsTable() {
               <span className="w-9 text-right font-mono text-[11px] text-txt-3">H{r.house}</span>
             </button>
           ))}
-          <div className="border-t border-line px-4 py-3 font-mono text-[11px] text-mint">{elementStr}</div>
+          <div className="mt-2 border-t border-line-soft pt-3 font-mono text-[11px] text-mint">{elementStr}</div>
         </div>
       )}
     </div>
