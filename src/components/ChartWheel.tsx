@@ -1,5 +1,5 @@
 import { useApp } from "@/store/useApp";
-import { CHART, NODES, SG, computeAspects } from "@/lib/data";
+import { ASC, CHART, CUSPS, MC, NODES, SG, computeAspects } from "@/lib/data";
 
 /**
  * Birth-chart wheel — a refined, near-monochrome instrument (no rainbow).
@@ -37,10 +37,6 @@ export function ChartWheel() {
 
   return (
     <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="mx-auto h-auto w-full">
-      {/* faint cardinal crosshair */}
-      <line x1={C - 150} y1={C} x2={C + 150} y2={C} stroke="rgba(255,255,255,0.05)" strokeWidth={0.8} />
-      <line x1={C} y1={C - 150} x2={C} y2={C + 150} stroke="rgba(255,255,255,0.05)" strokeWidth={0.8} />
-
       {/* rings — quiet violet/white */}
       <circle cx={C} cy={C} r={145} fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth={0.8} />
       <circle cx={C} cy={C} r={138} fill="none" stroke="rgba(255,255,255,0.10)" />
@@ -77,6 +73,43 @@ export function ChartWheel() {
               {g}
             </text>
           </g>
+        );
+      })}
+
+      {/* Placidus house cusps + numbers (AC & MC emphasised) */}
+      {CUSPS.map((c, i) => {
+        const [hx, hy] = pt(c, 138);
+        const isAngle = i === 0 || i === 9;
+        const next = CUSPS[(i + 1) % 12];
+        const span = (((next - c) % 360) + 360) % 360;
+        const [nx, ny] = pt(c + span / 2, 70);
+        return (
+          <g key={"cusp" + i}>
+            <line
+              x1={C}
+              y1={C}
+              x2={hx}
+              y2={hy}
+              stroke={isAngle ? "rgba(255,255,255,0.34)" : "rgba(255,255,255,0.08)"}
+              strokeWidth={isAngle ? 1.2 : 0.5}
+            />
+            <text x={nx} y={ny} fill="rgba(255,255,255,0.32)" fontSize={8} textAnchor="middle" dominantBaseline="central" fontFamily="'Space Mono',ui-monospace,monospace">
+              {i + 1}
+            </text>
+          </g>
+        );
+      })}
+
+      {/* AC / MC labels */}
+      {[
+        { l: "AC", lon: ASC },
+        { l: "MC", lon: MC },
+      ].map((m) => {
+        const [x, y] = pt(m.lon, 154);
+        return (
+          <text key={m.l} x={x} y={y} fill="rgba(255,255,255,0.7)" fontSize={9} fontWeight={700} textAnchor="middle" dominantBaseline="central" fontFamily="'Space Mono',ui-monospace,monospace">
+            {m.l}
+          </text>
         );
       })}
 

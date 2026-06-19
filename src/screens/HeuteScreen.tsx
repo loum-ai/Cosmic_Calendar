@@ -58,7 +58,7 @@ function HouseGrid() {
     <div className="flex flex-col gap-2 lg:grid lg:grid-cols-2 lg:gap-3">
       {HOUSE.map((name, i) => {
         const h = i + 1;
-        const ps = CHART.filter((p) => houseOf(p.lon) === h);
+        const ps = CHART.filter((p) => (p.house ?? houseOf(p.lon)) === h);
         const occ = ps.length > 0;
         return (
           <Explainable key={h} sheet={{ kind: "house", key: h }}>
@@ -208,7 +208,7 @@ export function HeuteScreen() {
               k={p.key}
               glyph={p.glyph}
               name={p.name}
-              meta={`${SG[sgi(p.lon)]} ${pad(deg(p.lon))}° · H${houseOf(p.lon)}`}
+              meta={`${SG[sgi(p.lon)]} ${pad(deg(p.lon))}° · H${p.house ?? houseOf(p.lon)}`}
               role={PINFO[p.key].role}
             />
           ))}

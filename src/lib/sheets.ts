@@ -81,7 +81,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
     if (!p) return null;
     const info = PINFO[p.key];
     const si = SN.indexOf(signName(p.lon));
-    const h = houseOf(p.lon);
+    const h = p.house ?? houseOf(p.lon);
     const asp = computeAspects().filter((a) => a.A.key === p.key || a.B.key === p.key);
     return {
       title: `${p.name} — ${info.role}`,
@@ -97,7 +97,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         const other = a.A.key === p.key ? a.B : a.A;
         return {
           key: a.key,
-          label: `${a.def.type} zu ${other.name}`,
+          label: `${a.def.type} zu ${other.name} · ${a.orb.toFixed(1)}°`,
           color: a.def.c,
           glyph: a.def.g,
           text: relText(a),
@@ -172,6 +172,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       sections: [
         { label: "Was ist das?", body: a.def.plain },
         { label: "Bei dir", body: relText(a), accent: MINT },
+        { label: "Genauigkeit", body: `${a.orb.toFixed(1)}° Orbis — je enger, desto stärker wirkt die Verbindung.` },
       ],
     };
   }

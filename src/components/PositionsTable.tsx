@@ -17,6 +17,7 @@ interface Row {
   name: string;
   lon: number;
   house: number;
+  retro?: boolean;
   sheet: SheetDescriptor;
 }
 
@@ -28,8 +29,8 @@ export function PositionsTable() {
 
   const rows: Row[] = [
     { glyph: "AC", color: pc("asc"), name: "Aszendent", lon: ASC, house: 1, sheet: { kind: "planet", key: "asc" } },
-    ...CHART.map((p) => ({ glyph: p.glyph, color: pc(p.key), name: p.name, lon: p.lon, house: houseOf(p.lon), sheet: { kind: "planet", key: p.key } as SheetDescriptor })),
-    ...NODES.map((n) => ({ glyph: n.glyph, color: pc(n.key), name: n.name, lon: n.lon, house: houseOf(n.lon), sheet: { kind: "node", key: n.key } as SheetDescriptor })),
+    ...CHART.map((p) => ({ glyph: p.glyph, color: pc(p.key), name: p.name, lon: p.lon, house: p.house ?? houseOf(p.lon), retro: p.retro, sheet: { kind: "planet", key: p.key } as SheetDescriptor })),
+    ...NODES.map((n) => ({ glyph: n.glyph, color: pc(n.key), name: n.name, lon: n.lon, house: n.house ?? houseOf(n.lon), retro: n.retro, sheet: { kind: "node", key: n.key } as SheetDescriptor })),
   ];
 
   // element distribution (Feuer/Erde/Luft/Wasser) across the planets
@@ -60,7 +61,7 @@ export function PositionsTable() {
               <span className="vela-glyph w-5 shrink-0 text-center text-base text-lilac">{r.glyph}</span>
               <span className="flex-1 truncate font-body text-[13px] text-txt">{r.name}</span>
               <span className="font-mono text-[11px] text-txt-2">
-                {SG[sgi(r.lon)]} {pad(deg(r.lon))}°
+                {SG[sgi(r.lon)]} {pad(deg(r.lon))}°{r.retro ? " ℞" : ""}
               </span>
               <span className="w-9 text-right font-mono text-[11px] text-txt-3">H{r.house}</span>
             </button>
