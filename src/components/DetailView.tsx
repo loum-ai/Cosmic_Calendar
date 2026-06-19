@@ -24,9 +24,9 @@ export function DetailView() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 40 }}
           transition={{ duration: 0.32, ease: EASE.smooth }}
-          className="fixed inset-0 z-[88] overflow-y-auto bg-[#06060F]"
+          className="fixed inset-0 z-[88] overflow-y-auto bg-[#050509]"
         >
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(120,80,255,0.16),transparent_60%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_46%_24%_at_50%_-6%,rgba(116,96,200,0.09),transparent_55%)]" />
 
           <div className="relative mx-auto w-full max-w-[680px] px-[max(22px,6vw)] pb-24 pt-[calc(env(safe-area-inset-top,0px)+1.5rem)]">
             <button

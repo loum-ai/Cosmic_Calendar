@@ -28,7 +28,6 @@ export default function App() {
   return (
     <div className="relative min-h-dvh w-full overflow-x-hidden text-ink">
       <AuroraBackground />
-      <div className="vela-bloom" />
 
       {/* content is offset by the desktop sidebar; full-bleed on mobile */}
       <div className="lg:pl-[240px]">

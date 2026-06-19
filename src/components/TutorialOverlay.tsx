@@ -64,10 +64,10 @@ export function TutorialOverlay() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-[95] flex flex-col bg-[#06060F]"
+        className="fixed inset-0 z-[95] flex flex-col bg-[#050509]"
       >
-        {/* deep-space backdrop */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_55%_at_50%_-10%,rgba(120,80,255,0.28),transparent_60%),radial-gradient(ellipse_60%_40%_at_50%_120%,rgba(45,212,191,0.08),transparent_55%)]" />
+        {/* deep-space backdrop — one tight, restrained glow, no haze */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_48%_28%_at_50%_-6%,rgba(116,96,200,0.12),transparent_55%)]" />
         {/* huge glyph watermark */}
         <AnimatePresence mode="wait">
           <motion.span
