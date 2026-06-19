@@ -65,12 +65,14 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
 
   if (kind === "planet") {
     if (key === "asc") {
+      const si = SN.indexOf(signName(ASC));
       return {
         title: "Aszendent",
         glyph: "AC",
         color: "#c4a6ff",
         sections: [
-          { label: "Was ist das?", body: PINFO.asc.what },
+          { label: "Was — die Maske nach außen", body: PINFO.asc.what },
+          { label: `Wie — Aszendent in ${signName(ASC)}`, body: SIGNWHAT[si] },
           { label: "Bei dir", body: `Dein Aszendent steht in ${signName(ASC)}.`, accent: MINT },
         ],
       };
@@ -78,14 +80,18 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
     const p = CHART.find((x) => x.key === key);
     if (!p) return null;
     const info = PINFO[p.key];
+    const si = SN.indexOf(signName(p.lon));
+    const h = houseOf(p.lon);
     const asp = computeAspects().filter((a) => a.A.key === p.key || a.B.key === p.key);
     return {
       title: `${p.name} — ${info.role}`,
       glyph: p.glyph,
       color: "#e7dcff",
       sections: [
-        { label: "Was ist das?", body: info.what },
-        { label: "Bei dir", body: `${p.txt} Steht in ${signName(p.lon)}, Haus ${houseOf(p.lon)}.`, accent: MINT },
+        { label: "Was — der Planet", body: info.what },
+        { label: `Wie — ${p.name} in ${signName(p.lon)}`, body: SIGNWHAT[si] },
+        { label: `Wo — ${h}. Haus · ${HOUSE[h - 1]}`, body: HOUSEWHAT[h - 1] },
+        { label: "Bei dir", body: p.txt, accent: MINT },
       ],
       relations: asp.map((a) => {
         const other = a.A.key === p.key ? a.B : a.A;

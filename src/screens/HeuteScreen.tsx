@@ -3,6 +3,7 @@ import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { IridescentOrb } from "@/components/IridescentOrb";
 import { Explainable } from "@/components/Explainable";
 import { ChartWheel } from "@/components/ChartWheel";
+import { PositionsTable } from "@/components/PositionsTable";
 import { KlartextToggle } from "@/components/KlartextToggle";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
@@ -206,8 +207,13 @@ export function HeuteScreen() {
         </div>
       </section>
 
+      {/* the chart's data — collapsible positions table */}
+      <section className="mt-8">
+        <PositionsTable />
+      </section>
+
       {/* below the hero */}
-      <section className="mt-10 lg:mt-12">
+      <section className="mt-10">
         <SectionHead label="Heute am Himmel" title="Was dich heute bewegt" sub="Tippe für alle Transite" />
         <button
           onClick={() => setTab("transite")}
