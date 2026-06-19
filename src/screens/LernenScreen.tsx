@@ -1,23 +1,13 @@
+import { ChevronRight } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
-import { GlassPanel } from "@/components/GlassPanel";
 import { Explainable } from "@/components/Explainable";
 import { useApp } from "@/store/useApp";
 import { cn } from "@/lib/utils";
-import {
-  ASPDEF,
-  CHART,
-  HOUSE,
-  NODES,
-  PINFO,
-  SG,
-  SIGNMEAN,
-  SN,
-} from "@/lib/data";
+import { ASPDEF, CHART, HOUSE, NODES, PINFO, SG, SIGNMEAN, SN } from "@/lib/data";
 import type { SheetDescriptor } from "@/lib/sheets";
 
 interface LearnItem {
   glyph: string;
-  color: string;
   title: string;
   sub: string;
   sheet: SheetDescriptor;
@@ -34,46 +24,16 @@ const CATS = [
 function itemsFor(cat: string): LearnItem[] {
   switch (cat) {
     case "lzeichen":
-      return SN.map((name, i) => ({
-        glyph: SG[i],
-        color: "#c4a6ff",
-        title: name,
-        sub: SIGNMEAN[i].split(" · ")[0],
-        sheet: { kind: "sign", key: name },
-      }));
+      return SN.map((name, i) => ({ glyph: SG[i], title: name, sub: SIGNMEAN[i].split(" · ")[0], sheet: { kind: "sign", key: name } }));
     case "lhaeuser":
-      return HOUSE.map((name, i) => ({
-        glyph: String(i + 1),
-        color: "#c4a6ff",
-        title: `Haus ${i + 1}`,
-        sub: name,
-        sheet: { kind: "house", key: i + 1 },
-      }));
+      return HOUSE.map((name, i) => ({ glyph: String(i + 1), title: `Haus ${i + 1}`, sub: name, sheet: { kind: "house", key: i + 1 } }));
     case "laspekte":
-      return ASPDEF.map((d, i) => ({
-        glyph: d.g,
-        color: d.c,
-        title: d.type,
-        sub: d.nat,
-        sheet: { kind: "asptype", key: i },
-      }));
+      return ASPDEF.map((d, i) => ({ glyph: d.g, title: d.type, sub: d.nat, sheet: { kind: "asptype", key: i } }));
     case "lknoten":
-      return NODES.map((n) => ({
-        glyph: n.glyph,
-        color: "#9bc0ff",
-        title: n.name,
-        sub: PINFO[n.key].role,
-        sheet: { kind: "node", key: n.key },
-      }));
+      return NODES.map((n) => ({ glyph: n.glyph, title: n.name, sub: PINFO[n.key].role, sheet: { kind: "node", key: n.key } }));
     case "lplaneten":
     default:
-      return CHART.map((p) => ({
-        glyph: p.glyph,
-        color: "#e7dcff",
-        title: p.name,
-        sub: PINFO[p.key].role,
-        sheet: { kind: "planet", key: p.key },
-      }));
+      return CHART.map((p) => ({ glyph: p.glyph, title: p.name, sub: PINFO[p.key].role, sheet: { kind: "planet", key: p.key } }));
   }
 }
 
@@ -81,43 +41,33 @@ export function LernenScreen() {
   const learnCat = useApp((s) => s.learnCat);
   const setLearnCat = useApp((s) => s.setLearnCat);
 
-  // featured "Konzept des Tages" — guarded so it can never render empty
   const featuredIdx = new Date().getDate() % ASPDEF.length;
   const featured = ASPDEF[featuredIdx] ?? ASPDEF[0];
-
   const items = itemsFor(learnCat);
 
   return (
     <ScreenShell>
-      <div className="mb-6">
-        <div className="vela-label">Wissen</div>
-        <h1 className="vela-name mt-1.5">Astrologie</h1>
-        <p className="vela-sub mt-1.5">Die Bausteine des Himmels</p>
-      </div>
+      <div className="vela-label">Wissen</div>
+      <h1 className="mt-1.5 font-display text-2xl font-bold leading-tight text-txt">Astrologie</h1>
+      <p className="mt-1 font-mono text-[12px] text-txt-2">Die Bausteine des Himmels — in Klartext</p>
 
-      {/* featured */}
+      {/* concept of the day — editorial, no box */}
       <Explainable sheet={{ kind: "asptype", key: featuredIdx }}>
-        <div className="vela-card-grad p-6 active:scale-[0.99]">
-          <span className="vela-watermark vela-glyph -right-3 -top-5 text-[120px]">{featured.g}</span>
-          <div className="relative">
-            <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">
-              Konzept des Tages
-            </div>
-            <div className="mt-2 font-display text-2xl font-extrabold leading-tight text-white">
-              {featured.type}
-            </div>
-            <div className="mt-1 font-body text-[11px] uppercase tracking-wide text-white/65">
-              {featured.nat}
-            </div>
-            <p className="mt-3 font-body text-[13px] font-light leading-relaxed text-white/85">
-              {featured.plain}
-            </p>
+        <div className="mt-7 border-y border-line-soft py-7 transition hover:opacity-90">
+          <div className="font-mono text-[11px] text-mint">KONZEPT DES TAGES</div>
+          <div className="mt-3 font-display text-[clamp(26px,4vw,36px)] font-extrabold leading-[1.06] tracking-[-0.02em] text-txt">
+            {featured.type}
           </div>
+          <div className="mt-1 font-mono text-[11px] uppercase text-txt-3">{featured.nat}</div>
+          <p className="mt-4 max-w-[48ch] font-body text-[14px] leading-relaxed text-txt-2">{featured.plain}</p>
+          <span className="mt-3 inline-flex items-center gap-1 font-body text-[12px] text-lilac">
+            Mehr dazu <ChevronRight className="h-3.5 w-3.5" />
+          </span>
         </div>
       </Explainable>
 
       {/* category pills */}
-      <div className="-mx-[max(16px,4vw)] mt-6 overflow-x-auto px-[max(16px,4vw)]">
+      <div className="-mx-[max(16px,4vw)] mt-7 overflow-x-auto px-[max(16px,4vw)]">
         <div className="flex w-max gap-2">
           {CATS.map((c) => {
             const active = learnCat === c.key;
@@ -127,9 +77,7 @@ export function LernenScreen() {
                 onClick={() => setLearnCat(c.key)}
                 className={cn(
                   "shrink-0 rounded-pill border px-4 py-2 font-body text-xs transition active:scale-95",
-                  active
-                    ? "border-lilac/55 bg-lilac/[0.18] font-semibold text-ink-soft"
-                    : "border-line bg-surface text-txt-2",
+                  active ? "border-lilac/55 bg-lilac/[0.18] font-semibold text-txt" : "border-line bg-surface text-txt-2",
                 )}
               >
                 {c.label}
@@ -140,22 +88,17 @@ export function LernenScreen() {
       </div>
 
       <SectionHead title="Erkunden" />
-      <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3">
+      <div>
         {items.map((it) => (
           <Explainable key={it.title} sheet={it.sheet}>
-            <GlassPanel className="flex items-center gap-3.5 p-3.5" interactive>
-              <div
-                className="vela-glyph flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-lg"
-                style={{ color: it.color }}
-              >
-                {it.glyph}
-              </div>
+            <div className="flex items-center gap-3.5 border-b border-line-soft py-3 transition hover:opacity-80">
+              <span className="vela-glyph w-7 shrink-0 text-center text-lg text-lilac">{it.glyph}</span>
               <div className="min-w-0 flex-1">
-                <div className="font-display text-sm font-semibold text-ink">{it.title}</div>
-                <div className="font-body text-xs font-light text-ink-soft/60">{it.sub}</div>
+                <div className="font-display text-sm font-semibold text-txt">{it.title}</div>
+                <div className="font-body text-xs text-txt-2">{it.sub}</div>
               </div>
-              <span className="text-ink-soft/40">›</span>
-            </GlassPanel>
+              <ChevronRight className="h-4 w-4 shrink-0 text-txt-3" />
+            </div>
           </Explainable>
         ))}
       </div>
