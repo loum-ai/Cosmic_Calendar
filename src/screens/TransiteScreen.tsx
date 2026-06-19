@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
-import { GlassPanel } from "@/components/GlassPanel";
-import { OrbImage } from "@/components/OrbImage";
 import { useApp } from "@/store/useApp";
 import { COSMIC_EVENTS, TRANSITS } from "@/lib/data";
 import { EASE } from "@/lib/tokens";
 
-const IMPACT_COLOR: Record<string, string> = { "+": "#2fde8c", "-": "#ff8fb0", "~": "#f8c050" };
+const IMPACT_COLOR: Record<string, string> = { "+": "#2dd4bf", "-": "#ff8fb0", "~": "#c9b6ff" };
+const IMPACT_LABEL: Record<string, string> = { "+": "fördernd", "-": "fordernd", "~": "gemischt" };
 
 function DateScrubber() {
   const [offset, setOffset] = useState(0);
@@ -16,27 +15,19 @@ function DateScrubber() {
   d.setDate(d.getDate() + offset);
   const label = d.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" });
   return (
-    <div className="flex items-center gap-2 rounded-pill border border-line bg-surface px-1.5 py-1.5 backdrop-blur-md">
-      <button
-        onClick={() => setOffset((o) => o - 1)}
-        className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft/70 active:scale-90"
-      >
+    <div className="flex items-center gap-2 rounded-pill border border-line bg-surface px-1.5 py-1.5">
+      <button onClick={() => setOffset((o) => o - 1)} className="flex h-8 w-8 items-center justify-center rounded-full text-txt-2 active:scale-90">
         <ChevronLeft className="h-4 w-4" />
       </button>
-      <span className="flex-1 text-center font-body text-xs text-ink-soft/85">
-        {offset === 0 ? "Heute" : label}
-      </span>
-      <button
-        onClick={() => setOffset((o) => o + 1)}
-        className="flex h-8 w-8 items-center justify-center rounded-full text-ink-soft/70 active:scale-90"
-      >
+      <span className="flex-1 text-center font-mono text-[12px] text-txt-2">{offset === 0 ? "Heute" : label}</span>
+      <button onClick={() => setOffset((o) => o + 1)} className="flex h-8 w-8 items-center justify-center rounded-full text-txt-2 active:scale-90">
         <ChevronRight className="h-4 w-4" />
       </button>
     </div>
   );
 }
 
-/** Cinematic full-bleed transit detail. Close works via X, backdrop, ESC. */
+/** Full-page transit detail. Close via X, backdrop, ESC. */
 function TransitFull() {
   const i = useApp((s) => s.fullTransit);
   const setFull = useApp((s) => s.setFullTransit);
@@ -49,62 +40,36 @@ function TransitFull() {
       {i !== null && (
         <motion.div
           key={i}
-          initial={{ opacity: 0, scale: 0.96, filter: "blur(10px)" }}
-          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-          exit={{ opacity: 0, scale: 1.04, filter: "blur(12px)" }}
-          transition={{ duration: 0.42, ease: EASE.smooth }}
-          className="fixed inset-0 z-[80] flex flex-col"
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 40 }}
+          transition={{ duration: 0.32, ease: EASE.smooth }}
+          className="fixed inset-0 z-[80] overflow-y-auto bg-[#050509]"
         >
-          <div className="absolute inset-0 bg-[#06060F]" />
-          <div
-            className="absolute inset-0"
-            style={{ background: `radial-gradient(ellipse 90% 55% at 50% 0%,${tr.c}28,transparent 60%)` }}
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,6,15,0.3)_0%,transparent_30%,transparent_60%,rgba(6,6,15,0.98)_100%)]" />
-
-          {/* top bar */}
-          <div className="relative z-10 flex items-center justify-end px-4 pt-12">
-            <button
-              onClick={() => setFull(null)}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/[0.08] text-ink-soft/80 active:scale-90"
-            >
-              <X className="h-4 w-4" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_46%_26%_at_50%_-6%,rgba(116,96,200,0.12),transparent_55%)]" />
+          <div className="relative mx-auto w-full max-w-[680px] px-[max(22px,6vw)] pb-24 pt-[calc(env(safe-area-inset-top,0px)+1.5rem)]">
+            <button onClick={() => setFull(null)} className="mb-8 flex items-center gap-2 font-body text-sm text-txt-2 transition hover:text-txt">
+              <ChevronLeft className="h-4 w-4" /> Zurück
             </button>
-          </div>
 
-          {/* hero orb */}
-          <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-7">
-            <OrbImage size={170} />
-          </div>
-
-          {/* content */}
-          <div className="relative z-10 px-7 pb-16">
-            <h2 className="font-display text-3xl font-extrabold leading-tight text-ink text-balance">
+            <div className="font-mono text-[11px]" style={{ color: IMPACT_COLOR[tr.impact] }}>
+              TRANSIT · {IMPACT_LABEL[tr.impact]}
+            </div>
+            <h2 className="mt-3 font-display text-[clamp(28px,7vw,40px)] font-extrabold leading-[1.05] tracking-[-0.02em] text-txt text-balance">
               {tr.title}
             </h2>
-            <p className="mt-3.5 font-body text-sm font-light leading-relaxed text-ink/70">{tr.txt}</p>
-            <div className="my-5 h-px" style={{ background: `linear-gradient(90deg,${tr.c}66,transparent)` }} />
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setFull(((i ?? 0) - 1 + n) % n)}
-                className="flex h-12 w-12 items-center justify-center rounded-full border border-white/12 bg-white/[0.06] text-ink-soft/80 active:scale-90"
-              >
+            <p className="mt-5 max-w-[56ch] font-body text-[15px] leading-relaxed text-txt-2">{tr.txt}</p>
+
+            <div className="mt-10 flex items-center gap-3">
+              <button onClick={() => setFull(((i ?? 0) - 1 + n) % n)} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-txt-2 active:scale-90">
                 <ChevronLeft className="h-5 w-5" />
               </button>
               <div className="flex flex-1 justify-center gap-1.5">
                 {TRANSITS.map((_, di) => (
-                  <span
-                    key={di}
-                    className="h-1.5 rounded-full transition-all"
-                    style={{ width: di === i ? 24 : 6, background: di === i ? tr.c : "rgba(255,255,255,0.22)" }}
-                  />
+                  <span key={di} className="h-1.5 rounded-full transition-all" style={{ width: di === i ? 22 : 6, background: di === i ? "#8b5cf6" : "rgba(255,255,255,0.22)" }} />
                 ))}
               </div>
-              <button
-                onClick={() => setFull(((i ?? 0) + 1) % n)}
-                className="flex h-12 w-12 items-center justify-center rounded-full active:scale-90"
-                style={{ background: `${tr.c}22`, border: `1px solid ${tr.c}55`, color: "#f3eefe" }}
-              >
+              <button onClick={() => setFull(((i ?? 0) + 1) % n)} className="flex h-11 w-11 items-center justify-center rounded-full bg-cta-gradient text-white active:scale-90">
                 <ChevronRight className="h-5 w-5" />
               </button>
             </div>
@@ -119,69 +84,56 @@ export function TransiteScreen() {
   const setFull = useApp((s) => s.setFullTransit);
   return (
     <ScreenShell>
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="vela-label">Heute am Himmel</div>
-          <h1 className="vela-name mt-1.5">Transite</h1>
-          <p className="vela-sub mt-1.5">Was der Himmel heute auslöst</p>
-        </div>
-      </div>
+      <div className="vela-label">Heute am Himmel</div>
+      <h1 className="mt-1.5 font-display text-2xl font-bold leading-tight text-txt">Transite</h1>
+      <p className="mt-1 font-mono text-[12px] text-txt-2">Was der Himmel gerade in deinem Chart auslöst</p>
 
-      <div className="mt-4">
+      <div className="mt-5 max-w-[360px]">
         <DateScrubber />
       </div>
 
-      {/* hero — first/strongest transit, as the bold studio card */}
-      <button
-        onClick={() => setFull(0)}
-        className="vela-card-grad mt-5 flex w-full items-center gap-4 p-5 text-left active:scale-[0.99]"
-      >
-        <OrbImage size={84} float={false} />
-        <div className="min-w-0">
-          <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/75">
-            Stärkster Einfluss
-          </div>
-          <div className="font-display text-lg font-bold leading-tight text-white">{TRANSITS[0].title}</div>
-          <p className="mt-1.5 line-clamp-2 font-body text-xs font-light text-white/80">{TRANSITS[0].txt}</p>
+      {/* strongest influence — editorial, no box */}
+      <button onClick={() => setFull(0)} className="mt-9 block w-full text-left transition hover:opacity-90">
+        <div className="font-mono text-[11px]" style={{ color: IMPACT_COLOR[TRANSITS[0].impact] }}>
+          STÄRKSTER EINFLUSS · {IMPACT_LABEL[TRANSITS[0].impact]}
         </div>
+        <h2 className="mt-3 font-display text-[clamp(24px,3vw,34px)] font-extrabold leading-[1.08] tracking-[-0.02em] text-txt">
+          {TRANSITS[0].title}
+        </h2>
+        <p className="mt-3 max-w-[46ch] font-body text-[14px] leading-relaxed text-txt-2">{TRANSITS[0].txt}</p>
+        <span className="mt-3 inline-flex items-center gap-1 font-body text-[12px] text-lilac">
+          Ganze Geschichte <ChevronRight className="h-3.5 w-3.5" />
+        </span>
       </button>
 
-      {/* transit list */}
-      <section className="mt-8">
-        <SectionHead title="Deine Transite" sub="Tippe für die ganze Geschichte" />
-        <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3">
+      {/* transit list — plain rows */}
+      <section className="mt-12">
+        <SectionHead label="Deine Transite" title="Was dich gerade bewegt" sub="Tippe für die ganze Geschichte" />
+        <div>
           {TRANSITS.map((tr, i) => (
-            <GlassPanel key={i} className="flex items-center gap-3.5 p-3.5" interactive onClick={() => setFull(i)}>
-              <span className="vela-glyph text-2xl" style={{ color: tr.c }}>
-                {tr.tg}
-              </span>
-              <div className="min-w-0 flex-1">
-                <div className="font-display text-sm font-semibold text-ink">{tr.title}</div>
-              </div>
-              <span
-                className="flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold"
-                style={{ color: IMPACT_COLOR[tr.impact], background: `${IMPACT_COLOR[tr.impact]}1f` }}
-              >
-                {tr.impact}
-              </span>
-            </GlassPanel>
+            <button key={i} onClick={() => setFull(i)} className="flex w-full items-center gap-3.5 border-b border-line-soft py-3.5 text-left transition hover:opacity-80">
+              <span className="vela-glyph text-xl text-lilac">{tr.tg}</span>
+              <div className="min-w-0 flex-1 font-display text-sm font-semibold text-txt">{tr.title}</div>
+              <span className="font-mono text-[11px]" style={{ color: IMPACT_COLOR[tr.impact] }}>{tr.impact}</span>
+              <ChevronRight className="h-4 w-4 shrink-0 text-txt-3" />
+            </button>
           ))}
         </div>
       </section>
 
-      {/* cosmic newsfeed */}
-      <section className="mt-8">
-        <SectionHead title="Am Himmel" sub="Größere kosmische Wetterlagen" />
-        <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3">
+      {/* cosmic weather — plain rows */}
+      <section className="mt-10">
+        <SectionHead label="Am Himmel" title="Kosmische Wetterlage" sub="Größere Bewegungen über allen" />
+        <div>
           {COSMIC_EVENTS.map((e, i) => (
-            <GlassPanel key={i} className="flex items-start gap-3.5 p-3.5">
-              <span className="vela-glyph mt-0.5 text-xl text-lilac">{e.icon}</span>
+            <div key={i} className="flex items-start gap-3.5 border-b border-line-soft py-3.5">
+              <span className="vela-glyph mt-0.5 text-lg text-lilac">{e.icon}</span>
               <div className="min-w-0 flex-1">
-                <div className="font-display text-sm font-semibold text-ink">{e.label}</div>
-                <div className="font-body text-[11px] text-ink-soft/50">{e.sub}</div>
-                <p className="mt-1 font-body text-xs font-light leading-relaxed text-ink/65">{e.txt}</p>
+                <div className="font-display text-sm font-semibold text-txt">{e.label}</div>
+                <div className="font-mono text-[10px] text-txt-3">{e.sub}</div>
+                <p className="mt-1 font-body text-xs leading-relaxed text-txt-2">{e.txt}</p>
               </div>
-            </GlassPanel>
+            </div>
           ))}
         </div>
       </section>

@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
-import { GlassPanel } from "@/components/GlassPanel";
 import { OrbImage } from "@/components/OrbImage";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useApp } from "@/store/useApp";
 import { CHART, signName } from "@/lib/data";
-import { PLANET_COLORS } from "@/lib/tokens";
 
 const CATEGORIES = [
   { key: "partner", label: "Partner", color: "#ff8fb0", glyph: "♥" },
@@ -53,8 +51,8 @@ export function SynastrieScreen() {
     <ScreenShell>
       <div>
         <div className="vela-label">Beziehungen</div>
-        <h1 className="vela-name mt-1.5">Synastrie</h1>
-        <p className="vela-sub mt-1.5">Wie ihr zusammenklingt</p>
+        <h1 className="mt-1.5 font-display text-2xl font-bold leading-tight text-txt">Synastrie</h1>
+        <p className="mt-1 font-mono text-[12px] text-txt-2">Wie ihr zusammenklingt</p>
       </div>
 
       {/* people switcher */}
@@ -93,7 +91,7 @@ export function SynastrieScreen() {
 
       {/* add form */}
       {(adding || people.length === 0) && (
-        <GlassPanel className="mt-5 p-5">
+        <div className="mt-6 border-t border-line pt-2">
           <SectionHead title="Wen möchtest du vergleichen?" sub="Name & Geburtsdatum genügen" />
           <div className="flex flex-col gap-3.5">
             <label className="block">
@@ -138,60 +136,43 @@ export function SynastrieScreen() {
           <Button variant="cta" className="mt-5 w-full" disabled={!canSave} onClick={save}>
             Verbindung berechnen
           </Button>
-        </GlassPanel>
+        </div>
       )}
 
       {/* results */}
       {current && !adding && (
         <section className="mt-7">
-          <GlassPanel className="flex flex-col items-center p-6 text-center">
+          <div className="flex flex-col items-center py-8 text-center">
             <div className="relative flex items-center justify-center">
-              <OrbImage size={74} float={false} className="-mr-5" />
-              <OrbImage size={74} float={false} className="-ml-5" />
+              <OrbImage size={64} float={false} className="-mr-4" />
+              <OrbImage size={64} float={false} className="-ml-4" />
             </div>
-            <div className="mt-4 vela-eyebrow text-mint-soft">Resonanz</div>
-            <div className="font-display text-5xl font-extrabold vela-iris-text">{resonance}%</div>
-            <p className="mt-2 font-body text-xs font-light text-ink/65">
-              Du & {current.name} · {catMeta(current.cat).label} · Beispiel-Auswertung
+            <div className="mt-5 font-mono text-[11px] text-mint">RESONANZ</div>
+            <div className="font-display text-6xl font-extrabold vela-iris-text">{resonance}%</div>
+            <p className="mt-2 font-mono text-[11px] text-txt-2">
+              Du &amp; {current.name} · {catMeta(current.cat).label} · Beispiel
             </p>
-          </GlassPanel>
+          </div>
 
           <SectionHead title="Wie ihr verbunden seid" sub="Die stärksten Berührungspunkte" />
-          <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-2 lg:gap-3">
+          <div>
             {[
-              {
-                glyph: "☉",
-                color: PLANET_COLORS.sun,
-                title: "Eure Kerne",
-                text: `Deine ${signName(CHART[0].lon)}-Sonne trifft auf ${current.name} — ihr zieht euch gerade dort an, wo ihr verschieden seid.`,
-              },
-              {
-                glyph: "♀",
-                color: PLANET_COLORS.venus,
-                title: "Nähe & Zuneigung",
-                text: "Ihr findet schnell einen gemeinsamen Geschmack. Zärtlichkeit und kleine Gesten fallen euch leicht.",
-              },
-              {
-                glyph: "☿",
-                color: PLANET_COLORS.mercury,
-                title: "Wie ihr redet",
-                text: "Im Gespräch trefft ihr euch rasch — etwas Reibung hält es lebendig statt langweilig.",
-              },
+              { glyph: "☉", title: "Eure Kerne", text: `Deine ${signName(CHART[0].lon)}-Sonne trifft auf ${current.name} — ihr zieht euch gerade dort an, wo ihr verschieden seid.` },
+              { glyph: "♀", title: "Nähe & Zuneigung", text: "Ihr findet schnell einen gemeinsamen Geschmack. Zärtlichkeit und kleine Gesten fallen euch leicht." },
+              { glyph: "☿", title: "Wie ihr redet", text: "Im Gespräch trefft ihr euch rasch — etwas Reibung hält es lebendig statt langweilig." },
             ].map((t) => (
-              <GlassPanel key={t.title} className="flex items-start gap-3.5 p-3.5">
-                <span className="vela-glyph mt-0.5 text-xl" style={{ color: t.color }}>
-                  {t.glyph}
-                </span>
+              <div key={t.title} className="flex items-start gap-3.5 border-b border-line-soft py-3.5">
+                <span className="vela-glyph mt-0.5 text-xl text-lilac">{t.glyph}</span>
                 <div className="min-w-0 flex-1">
-                  <div className="font-display text-sm font-semibold text-ink">{t.title}</div>
-                  <p className="mt-1 font-body text-xs font-light leading-relaxed text-ink/70">{t.text}</p>
+                  <div className="font-display text-sm font-semibold text-txt">{t.title}</div>
+                  <p className="mt-1 font-body text-xs leading-relaxed text-txt-2">{t.text}</p>
                 </div>
-              </GlassPanel>
+              </div>
             ))}
           </div>
           <Button
             variant="glass"
-            className="mt-4 w-full"
+            className="mt-6 w-full"
             onClick={() => {
               setComposerOpen(true);
               void ask(`Wie passe ich mit ${current.name} zusammen?`);
