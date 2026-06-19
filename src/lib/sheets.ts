@@ -21,8 +21,9 @@ import {
   houseOf,
   signName,
 } from "./data";
+import { GLOSSARY } from "./glossary";
 
-export type SheetKind = "planet" | "node" | "house" | "sign" | "aspect" | "asptype";
+export type SheetKind = "planet" | "node" | "house" | "sign" | "aspect" | "asptype" | "glossary";
 
 export interface SheetDescriptor {
   kind: SheetKind;
@@ -173,6 +174,20 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         { label: "Was ist das?", body: a.def.plain },
         { label: "Bei dir", body: relText(a), accent: MINT },
         { label: "Genauigkeit", body: `${a.orb.toFixed(1)}° Orbis — je enger, desto stärker wirkt die Verbindung.` },
+      ],
+    };
+  }
+
+  if (kind === "glossary") {
+    const e = GLOSSARY[String(key).toLowerCase()];
+    if (!e) return null;
+    return {
+      title: e.term,
+      glyph: "?",
+      color: "#b9a8ff",
+      sections: [
+        { label: "Klartext", body: e.short },
+        { label: "Einfach gesagt", body: `Statt „${e.term}" kannst du auch sagen: ${e.plain}.` },
       ],
     };
   }

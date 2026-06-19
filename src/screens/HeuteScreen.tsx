@@ -5,14 +5,17 @@ import { Explainable } from "@/components/Explainable";
 import { ChartWheel } from "@/components/ChartWheel";
 import { PositionsTable } from "@/components/PositionsTable";
 import { KlartextToggle } from "@/components/KlartextToggle";
+import { Term } from "@/components/Term";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useApp } from "@/store/useApp";
+import type { SheetDescriptor } from "@/lib/sheets";
 import {
   ASC,
   CHART,
   HOUSE,
   IMPULSE,
+  MC,
   NODES,
   PINFO,
   PROFILE,
@@ -115,13 +118,16 @@ export function HeuteScreen() {
 
   // slim dashboard — the few values that matter most
   const venus = CHART.find((p) => p.key === "venus")!;
+  const nodeN = NODES.find((n) => n.key === "node_n")!;
   const nodeS = NODES.find((n) => n.key === "node_s")!;
-  const dash = [
-    { label: "Sonne", lon: CHART[0].lon, sheet: { kind: "planet", key: "sun" } as const },
-    { label: "Mond", lon: CHART[1].lon, sheet: { kind: "planet", key: "moon" } as const },
-    { label: "Venus", lon: venus.lon, sheet: { kind: "planet", key: "venus" } as const },
-    { label: "Aszendent", lon: ASC, sheet: { kind: "planet", key: "asc" } as const },
-    { label: "Südl. Knoten", lon: nodeS.lon, sheet: { kind: "node", key: "node_s" } as const },
+  const dash: { label: string; lon: number; sheet: SheetDescriptor | null }[] = [
+    { label: "Sonne", lon: CHART[0].lon, sheet: { kind: "planet", key: "sun" } },
+    { label: "Mond", lon: CHART[1].lon, sheet: { kind: "planet", key: "moon" } },
+    { label: "Venus", lon: venus.lon, sheet: { kind: "planet", key: "venus" } },
+    { label: "Aszendent", lon: ASC, sheet: { kind: "planet", key: "asc" } },
+    { label: "MC", lon: MC, sheet: null },
+    { label: "☊ Nordknoten", lon: nodeN.lon, sheet: { kind: "node", key: "node_n" } },
+    { label: "☋ Südknoten", lon: nodeS.lon, sheet: { kind: "node", key: "node_s" } },
   ];
 
   // notable positions = the most-aspected planets (the "loudest" voices)
@@ -185,16 +191,31 @@ export function HeuteScreen() {
 
           {/* slim dashboard — the few values that matter, no box */}
           <div className="mt-8 flex flex-wrap gap-x-7 gap-y-4 border-t border-line-soft pt-6">
-            {dash.map((d) => (
-              <button key={d.label} onClick={() => openDetail(d.sheet)} className="text-left transition hover:opacity-70">
-                <div className="vela-label !text-[0.55rem]">{d.label}</div>
-                <div className="mt-1 font-display text-[15px] font-bold text-txt">{signName(d.lon)}</div>
-                <div className="font-mono text-[11px] text-txt-2">
-                  {SG[sgi(d.lon)]} {pad(deg(d.lon))}°
-                </div>
-              </button>
-            ))}
+            {dash.map((d) => {
+              const inner = (
+                <>
+                  <div className="vela-label !text-[0.55rem]">{d.label}</div>
+                  <div className="mt-1 font-display text-[15px] font-bold text-txt">{signName(d.lon)}</div>
+                  <div className="font-mono text-[11px] text-txt-2">
+                    {SG[sgi(d.lon)]} {pad(deg(d.lon))}°
+                  </div>
+                </>
+              );
+              return d.sheet ? (
+                <button key={d.label} onClick={() => openDetail(d.sheet!)} className="text-left transition hover:opacity-70">
+                  {inner}
+                </button>
+              ) : (
+                <div key={d.label}>{inner}</div>
+              );
+            })}
           </div>
+
+          {/* Klartext-Begriffe — tap any dotted term for a plain explanation */}
+          <p className="mt-5 max-w-[44ch] font-body text-[12px] leading-relaxed text-txt-3">
+            Neu hier? Tippe unterstrichene Begriffe wie <Term k="mondknoten">Mondknoten</Term>,{" "}
+            <Term k="aszendent">Aszendent</Term> oder <Term k="haus">Haus</Term> — du bekommst sie sofort in Klartext.
+          </p>
         </div>
       </section>
 
