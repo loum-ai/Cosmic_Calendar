@@ -22,7 +22,7 @@ const SheetContent = React.forwardRef<
 
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay className="fixed inset-0 z-[60] bg-[rgba(4,4,10,0.62)] backdrop-blur-[3px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+      <DialogPrimitive.Overlay className="fixed inset-0 z-[60] bg-[rgba(4,4,10,0.4)] duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
       <DialogPrimitive.Content
         ref={ref}
         onTouchStart={(e) => (startY.current = e.touches[0].clientY)}
@@ -33,7 +33,7 @@ const SheetContent = React.forwardRef<
           startY.current = null;
         }}
         className={cn(
-          "fixed inset-x-0 bottom-0 z-[61] mx-auto max-h-[88vh] w-full max-w-[480px] overflow-y-auto rounded-t-sheet border-t border-lilac/25 bg-[rgba(20,16,32,0.97)] px-6 pb-10 pt-4 shadow-[0_-30px_70px_-20px_rgba(0,0,0,0.85)] backdrop-blur-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+          "fixed inset-x-0 bottom-0 z-[61] mx-auto max-h-[82vh] w-full max-w-[480px] overflow-y-auto rounded-t-[28px] border-t border-line bg-[rgba(16,14,26,0.98)] px-6 pb-10 pt-3 shadow-[0_-30px_70px_-20px_rgba(0,0,0,0.85)] duration-300 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
           className,
         )}
         {...props}

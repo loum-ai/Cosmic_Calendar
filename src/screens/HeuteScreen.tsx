@@ -106,7 +106,7 @@ export function HeuteScreen() {
   const showHelp = useApp((s) => s.showHelp);
   const setShowHelp = useApp((s) => s.setShowHelp);
   const setTab = useApp((s) => s.setTab);
-  const openDetail = useApp((s) => s.openDetail);
+  const openInfo = useApp((s) => s.openInfo);
 
   const now = new Date();
   const hour = now.getHours();
@@ -201,7 +201,7 @@ export function HeuteScreen() {
                 </>
               );
               return d.sheet ? (
-                <button key={d.label} onClick={() => openDetail(d.sheet!)} className="text-left transition hover:opacity-70">
+                <button key={d.label} onClick={() => openInfo(d.sheet!)} className="text-left transition hover:opacity-70">
                   {inner}
                 </button>
               ) : (

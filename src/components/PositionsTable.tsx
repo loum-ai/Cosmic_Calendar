@@ -25,7 +25,7 @@ interface Row {
  *  monospace voice. Every row taps through to its interpretation. */
 export function PositionsTable() {
   const [open, setOpen] = useState(false);
-  const openDetail = useApp((s) => s.openDetail);
+  const openInfo = useApp((s) => s.openInfo);
 
   const rows: Row[] = [
     { glyph: "AC", color: pc("asc"), name: "Aszendent", lon: ASC, house: 1, sheet: { kind: "planet", key: "asc" } },
@@ -55,7 +55,7 @@ export function PositionsTable() {
           {rows.map((r) => (
             <button
               key={r.name}
-              onClick={() => openDetail(r.sheet)}
+              onClick={() => openInfo(r.sheet)}
               className="flex w-full items-center gap-3 border-t border-line-soft py-2.5 text-left transition first:border-t-0 hover:opacity-70"
             >
               <span className="vela-glyph w-5 shrink-0 text-center text-base text-lilac">{r.glyph}</span>
