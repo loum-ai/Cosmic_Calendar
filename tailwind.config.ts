@@ -33,9 +33,9 @@ export default {
         line: "rgba(255,255,255,0.08)",
         "line-soft": "rgba(255,255,255,0.06)",
         "line-accent": "rgba(150,100,255,0.25)",
-        txt: "rgba(255,255,255,0.95)",
-        "txt-2": "rgba(255,255,255,0.62)",
-        "txt-3": "rgba(255,255,255,0.40)",
+        txt: "rgba(255,255,255,0.96)",
+        "txt-2": "rgba(255,255,255,0.74)",
+        "txt-3": "rgba(255,255,255,0.52)",
         // planet semantic colors
         planet: {
           sun: "#ffd9a0",
