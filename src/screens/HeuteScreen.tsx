@@ -1,6 +1,6 @@
 import { HelpCircle, ChevronRight } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
-import { IridescentOrb } from "@/components/IridescentOrb";
+import { GlyphBadge } from "@/components/GlyphBadge";
 import { Explainable } from "@/components/Explainable";
 import { ChartWheel } from "@/components/ChartWheel";
 import { PositionsTable } from "@/components/PositionsTable";
@@ -27,7 +27,6 @@ import {
   signName,
 } from "@/lib/data";
 
-const LILAC = "#b9a8ff";
 const deg = (lon: number) => Math.floor(((lon % 30) + 30) % 30);
 const sgi = (lon: number) => Math.floor(((((lon % 360) + 360) % 360) / 30));
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -44,7 +43,7 @@ function PlanetCard({ k, glyph, name, meta, role }: { k: string; glyph: string; 
   return (
     <Explainable sheet={{ kind: "planet", key: k }} className="h-full">
       <div className="vela-tile vela-tile-hover flex h-full items-start gap-3 p-4">
-        <IridescentOrb size={40} glyph={glyph} glyphColor={LILAC} />
+        <GlyphBadge glyph={glyph} size={44} />
         <div className="min-w-0">
           <div className="font-display text-[15px] font-semibold leading-tight text-txt">{name}</div>
           <div className="mt-0.5 font-mono text-[11px] text-lilac">{meta}</div>

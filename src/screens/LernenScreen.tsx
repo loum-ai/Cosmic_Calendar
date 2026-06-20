@@ -1,6 +1,7 @@
 import { ChevronRight } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { Explainable } from "@/components/Explainable";
+import { GlyphBadge } from "@/components/GlyphBadge";
 import { useApp } from "@/store/useApp";
 import { cn } from "@/lib/utils";
 import { ASPDEF, CHART, HOUSE, NODES, PINFO, SG, SIGNMEAN, SN } from "@/lib/data";
@@ -92,9 +93,7 @@ export function LernenScreen() {
         {items.map((it) => (
           <Explainable key={it.title} sheet={it.sheet}>
             <div className="vela-tile vela-tile-hover flex items-center gap-3.5 p-4">
-              <span className="vela-glyph flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet/15 text-base text-lilac">
-                {it.glyph}
-              </span>
+              <GlyphBadge glyph={it.glyph} size={38} />
               <div className="min-w-0 flex-1">
                 <div className="font-display text-sm font-semibold text-txt">{it.title}</div>
                 <div className="font-body text-xs text-txt-2">{it.sub}</div>
