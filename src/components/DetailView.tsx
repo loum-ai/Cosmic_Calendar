@@ -12,7 +12,7 @@ import { EASE } from "@/lib/tokens";
 export function DetailView() {
   const detail = useApp((s) => s.detail);
   const close = useApp((s) => s.closeDetail);
-  const openDetail = useApp((s) => s.openDetail);
+  const openInfo = useApp((s) => s.openInfo);
   const content = detail ? resolveSheet(detail) : null;
 
   return (
@@ -66,7 +66,7 @@ export function DetailView() {
                   {content.relations.map((r) => (
                     <button
                       key={r.key}
-                      onClick={() => openDetail({ kind: "aspect", key: r.key })}
+                      onClick={() => openInfo({ kind: "aspect", key: r.key })}
                       className="flex items-start gap-3 border-t border-line-soft py-4 text-left transition first:border-t-0 hover:opacity-80"
                     >
                       <span className="vela-glyph mt-0.5 text-lg" style={{ color: r.color }}>

@@ -20,8 +20,7 @@ function pt(lonDeg: number, r: number): [number, number] {
 }
 
 export function ChartWheel() {
-  const openDetail = useApp((s) => s.openDetail);
-  const openSheet = useApp((s) => s.openSheet);
+  const openInfo = useApp((s) => s.openInfo);
   const dismissCoach = useApp((s) => s.dismissCoach);
   const aspects = computeAspects();
 
@@ -129,7 +128,7 @@ export function ChartWheel() {
             style={{ cursor: "pointer" }}
             onClick={() => {
               dismissCoach();
-              openSheet({ kind: "aspect", key: a.key });
+              openInfo({ kind: "aspect", key: a.key });
             }}
           />
         );
@@ -144,7 +143,7 @@ export function ChartWheel() {
             style={{ cursor: "pointer" }}
             onClick={() => {
               dismissCoach();
-              openDetail({ kind: "node", key: n.key });
+              openInfo({ kind: "node", key: n.key });
             }}
           >
             <circle cx={x} cy={y} r={11} fill={DOT} stroke={RIM} strokeWidth={1} />
@@ -164,7 +163,7 @@ export function ChartWheel() {
             style={{ cursor: "pointer" }}
             onClick={() => {
               dismissCoach();
-              openDetail({ kind: "planet", key: p.key });
+              openInfo({ kind: "planet", key: p.key });
             }}
           >
             <circle cx={x} cy={y} r={12} fill={DOT} stroke={RIM} strokeWidth={1} />

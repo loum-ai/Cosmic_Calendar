@@ -30,6 +30,7 @@ export interface AppState {
   detail: SheetDescriptor | null;
   openDetail: (s: SheetDescriptor) => void;
   closeDetail: () => void;
+  openInfo: (s: SheetDescriptor) => void;
 
   // Q&A composer (the product hook — reachable everywhere)
   composerOpen: boolean;
@@ -84,6 +85,14 @@ export const useApp = create<AppState>((set, get) => ({
   detail: null,
   openDetail: (s) => set({ detail: s }),
   closeDetail: () => set({ detail: null }),
+
+  // smart router: desktop opens planets/nodes as a page, everything else as
+  // a popover; mobile keeps ONE gentle bottom sheet for everything.
+  openInfo: (d) => {
+    const desktop = typeof window !== "undefined" && window.matchMedia("(min-width:1024px)").matches;
+    if (desktop && (d.kind === "planet" || d.kind === "node")) set({ detail: d });
+    else set({ sheet: d, anchor: { ...lastPointer } });
+  },
 
   composerOpen: false,
   setComposerOpen: (v) => set({ composerOpen: v }),

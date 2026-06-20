@@ -24,15 +24,13 @@ export function Explainable({
   as = "div",
   ...props
 }: ExplainableProps) {
-  const openSheet = useApp((s) => s.openSheet);
-  const openDetail = useApp((s) => s.openDetail);
+  const openInfo = useApp((s) => s.openInfo);
   const dismissCoach = useApp((s) => s.dismissCoach);
   const Comp = as as React.ElementType;
-  // planets & nodes open a full detail page; everything else the bottom sheet
+  // one router: page on desktop for planets/nodes, gentle sheet on mobile
   const open = () => {
     dismissCoach();
-    if (sheet.kind === "planet" || sheet.kind === "node") openDetail(sheet);
-    else openSheet(sheet);
+    openInfo(sheet);
   };
   return (
     <Comp
