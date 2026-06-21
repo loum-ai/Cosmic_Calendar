@@ -1,6 +1,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Download } from "lucide-react";
+import { Download, Sparkles, Loader2 } from "lucide-react";
+import { subjectTask, useReading } from "@/lib/genReadings";
 import { ChartWheel } from "@/components/ChartWheel";
 import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
 import { CHART, ASC, PROFILE, SN, PINFO, signName, computeAspects, IS_DEMO } from "@/lib/data";
@@ -257,6 +258,31 @@ export function ChartExplorer() {
   );
 }
 
+function GeneratedReading({ sel, fallback }: { sel: SheetDescriptor; fallback?: string }) {
+  const st = subjectTask(sel);
+  const { text, loading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st);
+  if (!st) {
+    return fallback ? (
+      <div className="rounded-2xl border border-mint/25 bg-mint/[0.06] p-3.5">
+        <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[9.5px] font-bold uppercase tracking-[0.18em] text-mint"><span className="inline-block h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2dd4bf]" /> Bei dir</div>
+        <p className="font-body text-[15px] font-medium leading-[1.55] text-white">{fallback}</p>
+      </div>
+    ) : null;
+  }
+  return (
+    <div className="rounded-2xl border border-mint/30 bg-mint/[0.07] p-3.5">
+      <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[9.5px] font-bold uppercase tracking-[0.18em] text-mint"><Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich</div>
+      {text ? (
+        <p className="font-body text-[15px] font-medium leading-[1.55] text-white">{text}</p>
+      ) : loading ? (
+        <div className="flex items-center gap-2 text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="font-body text-[13px]">Vela liest dein Bild …</span></div>
+      ) : (
+        <p className="font-body text-[14px] leading-[1.55] text-white">{fallback ?? "—"}</p>
+      )}
+    </div>
+  );
+}
+
 function AspectGroup({ title, tone, accent, items, sel, onPick }: { title: string; tone: string; accent: string; items: ReturnType<typeof computeAspects>; sel: string | null; onPick: (d: SheetDescriptor) => void }) {
   return (
     <div className="rounded-card border border-[rgba(255,255,255,0.08)] bg-surface p-4">
@@ -411,16 +437,8 @@ function DetailView({ content, sel, onPick }: { content: NonNullable<ReturnType<
             </div>
           </div>
         ))}
-        {/* personal — accent card */}
-        {content.sections.filter((s) => s.accent).map((s, i) => (
-          <div key={`a${i}`} className="rounded-2xl border border-mint/25 bg-mint/[0.06] p-3.5">
-            <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[9.5px] font-bold uppercase tracking-[0.18em] text-mint">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2dd4bf]" />
-              {s.label}
-            </div>
-            <p className="font-body text-[15px] font-medium leading-[1.55] text-white">{s.body}</p>
-          </div>
-        ))}
+        {/* personal — Vela's generated reading (grounded), template as fallback */}
+        <GeneratedReading sel={sel} fallback={content.sections.find((s) => s.accent)?.body} />
       </div>
 
       {content.relations && content.relations.length > 0 && (

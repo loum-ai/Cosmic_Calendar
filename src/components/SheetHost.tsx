@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { X, Loader2, Sparkles } from "lucide-react";
 import { useApp } from "@/store/useApp";
-import { resolveSheet, type SheetContent } from "@/lib/sheets";
+import { resolveSheet, type SheetContent, type SheetDescriptor } from "@/lib/sheets";
 import { Sheet, SheetContent as SheetShell } from "@/components/ui/sheet";
 import { GlyphBadge } from "@/components/GlyphBadge";
+import { subjectTask, useReading } from "@/lib/genReadings";
 
 function useIsDesktop() {
   const [d, setD] = useState(false);
@@ -18,8 +19,10 @@ function useIsDesktop() {
 }
 
 /** The shared content (title + was/wie/wo + relations) for both surfaces. */
-function Body({ content }: { content: SheetContent }) {
+function Body({ content, descriptor }: { content: SheetContent; descriptor: SheetDescriptor | null }) {
   const openSheet = useApp((s) => s.openSheet);
+  const st = subjectTask(descriptor);
+  const { text: genText, loading: genLoading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st);
 
   const general = content.sections.filter((s) => !s.accent && /^was/i.test(s.label));
   const placements = content.sections.filter((s) => !s.accent && !/^was/i.test(s.label));
@@ -56,16 +59,32 @@ function Body({ content }: { content: SheetContent }) {
           </div>
         )}
 
-        {/* PERSONAL — "Bei dir": the punchline, a bright accent card */}
-        {personal.map((sec) => (
-          <div key={sec.label} className="rounded-2xl border border-mint/25 bg-mint/[0.06] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+        {/* PERSONAL — Vela's generated reading (grounded in the chart), or the
+            template "Bei dir" for views that aren't a single subject (signs/houses) */}
+        {st ? (
+          <div className="rounded-2xl border border-mint/30 bg-mint/[0.07] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
             <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-mint">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2dd4bf]" />
-              {sec.label}
+              <Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich
             </div>
-            <p className="font-body text-[16px] font-medium leading-[1.55] text-white">{sec.body}</p>
+            {genText ? (
+              <p className="font-body text-[16px] font-medium leading-[1.55] text-white">{genText}</p>
+            ) : genLoading ? (
+              <div className="flex items-center gap-2 text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="font-body text-[13px]">Vela liest dein Bild …</span></div>
+            ) : (
+              <p className="font-body text-[15px] leading-[1.55] text-white">{personal[0]?.body ?? "Tippe erneut, um die Deutung zu laden."}</p>
+            )}
           </div>
-        ))}
+        ) : (
+          personal.map((sec) => (
+            <div key={sec.label} className="rounded-2xl border border-mint/25 bg-mint/[0.06] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+              <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-mint">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2dd4bf]" />
+                {sec.label}
+              </div>
+              <p className="font-body text-[16px] font-medium leading-[1.55] text-white">{sec.body}</p>
+            </div>
+          ))
+        )}
 
         {content.relations && content.relations.length > 0 && (
           <div className="border-t border-line pt-5">
@@ -125,7 +144,7 @@ export function SheetHost() {
           >
             <X className="h-4 w-4" />
           </button>
-          <Body content={content} />
+          <Body content={content} descriptor={sheet} />
         </div>
       </div>
     );
@@ -135,7 +154,7 @@ export function SheetHost() {
   return (
     <Sheet open={!!content} onOpenChange={(o) => !o && closeSheet()}>
       <SheetShell>
-        <Body content={content} />
+        <Body content={content} descriptor={sheet} />
       </SheetShell>
     </Sheet>
   );
