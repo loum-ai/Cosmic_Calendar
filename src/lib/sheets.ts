@@ -57,11 +57,17 @@ export interface SheetContent {
 
 const MINT = "#2fde8c";
 
-function relText(a: { A: { key: string; name: string }; B: { key: string; name: string }; def: { verb: string } }): string {
+function relText(a: {
+  A: { key: string; name: string; lon: number; house?: number };
+  B: { key: string; name: string; lon: number; house?: number };
+  def: { verb: string };
+}): string {
   const tA = THEME[a.A.key] || a.A.name;
   const tBraw = THEME[a.B.key] || a.B.name;
   const tB = tBraw.charAt(0).toLowerCase() + tBraw.slice(1);
-  return `${tA} und ${tB} ${a.def.verb}.`;
+  const hA = a.A.house ?? houseOf(a.A.lon);
+  const hB = a.B.house ?? houseOf(a.B.lon);
+  return `${tA} und ${tB} ${a.def.verb}. Konkret heißt das bei dir: ${a.A.name} in ${signName(a.A.lon)} (${hA}. Haus) trifft auf ${a.B.name} in ${signName(a.B.lon)} (${hB}. Haus).`;
 }
 
 export function resolveSheet(d: SheetDescriptor): SheetContent | null {
