@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { TabBar } from "@/components/TabBar";
@@ -25,7 +26,13 @@ const SCREENS = {
 export default function App() {
   const tab = useApp((s) => s.tab);
   const chartVersion = useApp((s) => s.chartVersion);
+  const refreshInterpretation = useApp((s) => s.refreshInterpretation);
   const Screen = SCREENS[tab];
+
+  // Fetch the real AI interpretation for the active chart once on load.
+  useEffect(() => {
+    refreshInterpretation();
+  }, [refreshInterpretation]);
 
   return (
     <div className="relative min-h-dvh w-full overflow-x-hidden text-ink">

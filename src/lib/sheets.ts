@@ -24,6 +24,7 @@ import {
 } from "./data";
 import { GLOSSARY } from "./glossary";
 import { READINGS, ASPECT_TEXT } from "./readings";
+import { aiSign, aiHouse, aiAspect } from "./interpret";
 
 export type SheetKind = "planet" | "node" | "house" | "sign" | "aspect" | "asptype" | "glossary";
 
@@ -75,7 +76,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         color: "#c4a6ff",
         sections: [
           { label: "Was — die Maske nach außen", body: PINFO.asc.what },
-          { label: `Wie — Aszendent in ${signName(ASC)}`, body: (IS_DEMO && READINGS.asc?.sign) || SIGNWHAT[si] },
+          { label: `Wie — Aszendent in ${signName(ASC)}`, body: aiSign("asc") || (IS_DEMO && READINGS.asc?.sign) || SIGNWHAT[si] },
           { label: "Bei dir", body: `Dein Aszendent steht in ${signName(ASC)} — so trittst du auf, bevor du ein Wort sagst.`, accent: MINT },
         ],
       };
@@ -92,8 +93,8 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       color: "#e7dcff",
       sections: [
         { label: "Was — der Planet", body: info.what },
-        { label: `Wie — ${p.name} in ${signName(p.lon)}`, body: (IS_DEMO && READINGS[p.key]?.sign) || SIGNWHAT[si] },
-        { label: `Wo — ${h}. Haus · ${HOUSE[h - 1]}`, body: (IS_DEMO && READINGS[p.key]?.house) || HOUSEWHAT[h - 1] },
+        { label: `Wie — ${p.name} in ${signName(p.lon)}`, body: aiSign(p.key) || (IS_DEMO && READINGS[p.key]?.sign) || SIGNWHAT[si] },
+        { label: `Wo — ${h}. Haus · ${HOUSE[h - 1]}`, body: aiHouse(p.key) || (IS_DEMO && READINGS[p.key]?.house) || HOUSEWHAT[h - 1] },
         { label: "Bei dir", body: p.txt || `Bei dir steht ${p.name} in ${signName(p.lon)}, im ${h}. Haus.`, accent: MINT },
       ],
       relations: asp.map((a) => {
@@ -116,7 +117,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
     const idx = SN.indexOf(signName(n.lon));
     const sections: SheetSection[] = [
       { label: "Was — der Mondknoten", body: PINFO[n.key].what },
-      { label: `Wie — in ${signName(n.lon)}`, body: (IS_DEMO && r?.sign) || SIGNWHAT[idx] },
+      { label: `Wie — in ${signName(n.lon)}`, body: aiSign(n.key) || (IS_DEMO && r?.sign) || SIGNWHAT[idx] },
     ];
     if (IS_DEMO && r?.house) sections.push({ label: "Die Achse", body: r.house });
     sections.push({
@@ -178,7 +179,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       color: a.def.c,
       sections: [
         { label: "Was ist das?", body: a.def.plain },
-        { label: "Bei dir", body: (IS_DEMO && ASPECT_TEXT[a.key]) || relText(a), accent: MINT },
+        { label: "Bei dir", body: aiAspect(a.A.key, a.B.key) || (IS_DEMO && ASPECT_TEXT[a.key]) || relText(a), accent: MINT },
         { label: "Genauigkeit", body: `${a.orb.toFixed(1)}° Orbis — je enger, desto stärker wirkt die Verbindung.` },
       ],
     };

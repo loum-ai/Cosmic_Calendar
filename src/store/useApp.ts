@@ -2,7 +2,12 @@ import { create } from "zustand";
 import type { SheetDescriptor } from "@/lib/sheets";
 import { localOracle } from "@/lib/oracle";
 import { computeChart, type BirthInput } from "@/lib/compute";
-import { applyChart, signName } from "@/lib/data";
+import { applyChart, signName, PROFILE } from "@/lib/data";
+import { ensureInterpretation, clearInterpretation } from "@/lib/interpret";
+
+// Birth data behind the bundled demo chart (Laura). Used to fetch the real AI
+// interpretation when no custom chart has been onboarded yet.
+const DEMO_BIRTH: BirthInput = { date: "1987-09-07", time: "18:50", lat: 48.0, lon: 11.35 };
 
 // Persisted birth input for the active (non-demo) chart. We store the raw
 // input and recompute on load — cheap and avoids serialising chart shapes.
@@ -115,6 +120,13 @@ export interface AppState {
   savedBirth: SavedBirth | null;
   applyComputed: (b: SavedBirth) => void;
 
+  // real AI interpretation (Gemini, via edge functions) for the active chart
+  aiLoading: boolean;
+  aiReady: boolean;
+  aiError: string | null;
+  aiVersion: number; // bumps when the interpretation lands → summary re-renders
+  refreshInterpretation: () => Promise<void>;
+
   // lernen category
   learnCat: string;
   setLearnCat: (c: string) => void;
@@ -215,7 +227,26 @@ export const useApp = create<AppState>((set, get) => ({
     } catch {
       /* ignore quota */
     }
-    set((s) => ({ savedBirth: b, chartVersion: s.chartVersion + 1, onboardingOpen: false }));
+    clearInterpretation();
+    set((s) => ({ savedBirth: b, chartVersion: s.chartVersion + 1, onboardingOpen: false, aiReady: false, aiError: null }));
+    get().refreshInterpretation();
+  },
+
+  aiLoading: false,
+  aiReady: false,
+  aiError: null,
+  aiVersion: 0,
+  refreshInterpretation: async () => {
+    if (get().aiLoading) return;
+    const sb = get().savedBirth;
+    const birth: BirthInput = sb ? { date: sb.date, time: sb.time, lat: sb.lat, lon: sb.lon } : DEMO_BIRTH;
+    set({ aiLoading: true, aiError: null });
+    try {
+      const res = await ensureInterpretation(birth, PROFILE.name);
+      set((s) => ({ aiLoading: false, aiReady: res.ok, aiError: res.ok ? null : res.error ?? "Fehler", aiVersion: s.aiVersion + 1 }));
+    } catch (e) {
+      set({ aiLoading: false, aiReady: false, aiError: String(e) });
+    }
   },
 
   learnCat: "lplaneten",
