@@ -105,7 +105,7 @@ export function Onboarding() {
 
           <div className="flex items-center gap-2.5 pr-8">
             <Sparkles className="h-5 w-5 text-lilac" />
-            <DialogPrimitive.Title className="font-display text-[22px] font-bold leading-[1.12] tracking-[-0.01em] text-txt">
+            <DialogPrimitive.Title className="font-cinzel text-[24px] font-semibold leading-[1.1] tracking-wide text-white">
               Eigenes Chart berechnen
             </DialogPrimitive.Title>
           </div>
