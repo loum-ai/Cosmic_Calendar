@@ -100,6 +100,34 @@ export function skySummary(date: Date): SkySummary {
   };
 }
 
+// ── year-ahead forecast: the big slow transits over the next 12 months ──
+const SLOW = new Set(["jupiter", "saturn", "uranus", "neptune", "pluto", "chiron"]);
+export interface ForecastHit { date: Date; tName: string; tGlyph: string; nName: string; type: string; impact: "+" | "-" | "~" }
+
+export function yearAhead(natal: Planet[], from: Date): ForecastHit[] {
+  const best: Record<string, { orb: number; date: Date; t: any; n: Planet; a: typeof ASPECTS[number] }> = {};
+  for (let d = 0; d <= 366; d += 5) {
+    const date = new Date(from);
+    date.setDate(date.getDate() + d);
+    const trans = transitingBodies(date).filter((t) => SLOW.has(t.key));
+    for (const t of trans)
+      for (const n of natal) {
+        let diff = Math.abs(t.lon - norm(n.lon));
+        if (diff > 180) diff = 360 - diff;
+        for (const a of ASPECTS) {
+          const orb = Math.abs(diff - a.angle);
+          if (orb <= 1.2) {
+            const key = `${t.key}|${n.key}|${a.type}`;
+            if (!best[key] || orb < best[key].orb) best[key] = { orb, date, t, n, a };
+          }
+        }
+      }
+  }
+  return Object.values(best)
+    .sort((x, y) => x.date.getTime() - y.date.getTime())
+    .map((b) => ({ date: b.date, tName: b.t.name, tGlyph: b.t.glyph, nName: b.n.name, type: b.a.type, impact: b.a.impact }));
+}
+
 export const SIGN_GLYPH = (sign: string) => {
   const SN = ["Widder", "Stier", "Zwillinge", "Krebs", "Löwe", "Jungfrau", "Waage", "Skorpion", "Schütze", "Steinbock", "Wassermann", "Fische"];
   const i = SN.indexOf(sign);

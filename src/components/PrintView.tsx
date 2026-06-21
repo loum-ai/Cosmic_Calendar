@@ -3,7 +3,7 @@ import { ChartWheel } from "./ChartWheel";
 import { useApp } from "@/store/useApp";
 import { CHART, NODES, ASC, MC, CUSPS, PROFILE, SN, HOUSE, ASPDEF, PINFO, signName, computeAspects } from "@/lib/data";
 import { getVerification, aiSummary, aiSign, aiHouse } from "@/lib/interpret";
-import { computeTransits, skySummary } from "@/lib/transits";
+import { computeTransits, skySummary, yearAhead } from "@/lib/transits";
 
 const ELEM = ["Feuer", "Erde", "Luft", "Wasser"] as const;
 const MODE = ["kardinal", "fix", "veränderlich"] as const;
@@ -37,7 +37,7 @@ const TODAY = new Date();
 
 export interface PrintInclude {
   planets: boolean; houses: boolean; aspects: boolean; balance: boolean;
-  reading: boolean; points: boolean; transits: boolean; glossary: boolean;
+  reading: boolean; points: boolean; transits: boolean; forecast: boolean; glossary: boolean;
 }
 export const ALL_CHAPTERS: { key: keyof PrintInclude; label: string }[] = [
   { key: "planets", label: "Planetenstände" },
@@ -47,11 +47,13 @@ export const ALL_CHAPTERS: { key: keyof PrintInclude; label: string }[] = [
   { key: "reading", label: "Deine Deutung" },
   { key: "points", label: "Mondknoten, Chiron & Lilith" },
   { key: "transits", label: "Aktuelle Transite" },
+  { key: "forecast", label: "Jahresvorschau (12 Monate)" },
   { key: "glossary", label: "Zeichen & Symbole" },
 ];
 
 export function PrintView({ include }: { include?: PrintInclude }) {
-  const inc: PrintInclude = include ?? { planets: true, houses: true, aspects: true, balance: true, reading: true, points: true, transits: true, glossary: true };
+  const inc: PrintInclude = include ?? { planets: true, houses: true, aspects: true, balance: true, reading: true, points: true, transits: true, forecast: true, glossary: true };
+  const forecast = inc.forecast ? yearAhead(CHART, TODAY) : [];
   const setPrintOpen = useApp((s) => s.setPrintOpen);
   const aspects = [...computeAspects()].sort((a, b) => b.def.w - a.def.w || a.orb - b.orb);
   const verify = getVerification();
@@ -195,8 +197,24 @@ export function PrintView({ include }: { include?: PrintInclude }) {
           )}
         </Section>
 
+        {/* ── YEAR AHEAD ── */}
+        <Section show={inc.forecast} n="08" title="Jahresvorschau" sub="Die großen, langsamen Transite der nächsten 12 Monate">
+          {forecast.length ? (
+            <div className="space-y-1.5">
+              {forecast.map((f, i) => (
+                <div key={i} className="flex items-baseline justify-between gap-3 border-b border-[#f0eef5] py-1.5">
+                  <span className="font-body text-[12.5px] text-[#2a2640]">{f.tGlyph} {f.tName} {f.type} {f.nName}</span>
+                  <span className="font-mono text-[11px] text-[#7c5bbf]">{f.date.toLocaleDateString("de-DE", { month: "long", year: "numeric" })}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="font-body text-[12.5px] text-[#6c6781]">In den nächsten 12 Monaten bilden die langsamen Planeten keine exakten Aspekte zu deinem Bild — eine vergleichsweise ruhige Phase.</p>
+          )}
+        </Section>
+
         {/* ── GLOSSARY ── */}
-        <Section show={inc.glossary} n="08" title="Zeichen & Symbole">
+        <Section show={inc.glossary} n="09" title="Zeichen & Symbole">
           <div className="grid grid-cols-2 gap-x-8 gap-y-4">
             <div>
               <div className="mb-1.5 font-display text-[11px] font-bold uppercase tracking-[0.12em] text-[#7c5bbf]">Planeten</div>
