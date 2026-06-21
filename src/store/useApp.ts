@@ -1,6 +1,55 @@
 import { create } from "zustand";
 import type { SheetDescriptor } from "@/lib/sheets";
 import { localOracle } from "@/lib/oracle";
+import { computeChart, type BirthInput } from "@/lib/compute";
+import { applyChart, signName } from "@/lib/data";
+
+// Persisted birth input for the active (non-demo) chart. We store the raw
+// input and recompute on load — cheap and avoids serialising chart shapes.
+export interface SavedBirth extends BirthInput {
+  name: string;
+  place: string; // human label of the birth place
+}
+
+const CHART_KEY = "vela_chart";
+
+const MONTHS = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+
+function buildProfile(b: SavedBirth, asc: number) {
+  const [y, mo, d] = b.date.split("-").map(Number);
+  return {
+    name: b.name || "Mein Chart",
+    birth: `${d}. ${MONTHS[mo - 1]} ${y} · ${b.time} · ${b.place.split(",")[0]}`,
+    memberSince: `${signName(asc)}-Aszendent · ${b.lat.toFixed(2)}° N · ${b.lon.toFixed(2)}° E`,
+  };
+}
+
+/** Compute + activate a chart for the given birth data. Returns nothing;
+ *  callers bump chartVersion so the screen tree remounts and re-reads it. */
+function activateBirth(b: SavedBirth) {
+  const c = computeChart(b);
+  applyChart({ ...c, profile: buildProfile(b, c.asc) });
+}
+
+function loadSaved(): SavedBirth | null {
+  try {
+    const raw = localStorage.getItem(CHART_KEY);
+    return raw ? (JSON.parse(raw) as SavedBirth) : null;
+  } catch {
+    return null;
+  }
+}
+
+// Hydrate a previously saved chart before the store (and screens) first read
+// the chart data, so a returning user sees their own chart immediately.
+const _saved = loadSaved();
+if (_saved) {
+  try {
+    activateBirth(_saved);
+  } catch {
+    /* fall back to demo */
+  }
+}
 
 // remember the last pointer position so the sheet can open as a popover at
 // the click on desktop (instead of being docked at the bottom)
@@ -58,6 +107,13 @@ export interface AppState {
   // per-screen first-visit tutorial carousel (persisted in localStorage)
   seenTut: Record<string, boolean>;
   markTutSeen: (tab: TabKey) => void;
+
+  // onboarding ("Eigenes Chart berechnen") + live chart remount trigger
+  onboardingOpen: boolean;
+  setOnboardingOpen: (v: boolean) => void;
+  chartVersion: number;
+  savedBirth: SavedBirth | null;
+  applyComputed: (b: SavedBirth) => void;
 
   // lernen category
   learnCat: string;
@@ -147,6 +203,20 @@ export const useApp = create<AppState>((set, get) => ({
       }
       return { seenTut: next };
     }),
+
+  onboardingOpen: false,
+  setOnboardingOpen: (v) => set({ onboardingOpen: v }),
+  chartVersion: _saved ? 1 : 0,
+  savedBirth: _saved,
+  applyComputed: (b) => {
+    activateBirth(b); // throws on bad input — caller guards
+    try {
+      localStorage.setItem(CHART_KEY, JSON.stringify(b));
+    } catch {
+      /* ignore quota */
+    }
+    set((s) => ({ savedBirth: b, chartVersion: s.chartVersion + 1, onboardingOpen: false }));
+  },
 
   learnCat: "lplaneten",
   setLearnCat: (c) => set({ learnCat: c }),

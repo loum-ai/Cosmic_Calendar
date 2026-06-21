@@ -1,4 +1,4 @@
-import { ChevronRight, Calendar, Clock, MapPin, Compass } from "lucide-react";
+import { ChevronRight, Calendar, Clock, MapPin, Compass, Sparkles } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
 import { OrbImage } from "@/components/OrbImage";
@@ -6,22 +6,39 @@ import { Explainable } from "@/components/Explainable";
 import { KlartextToggle } from "@/components/KlartextToggle";
 import { StatChip, StatRow } from "@/components/Stat";
 import { ASC, CHART, MC, PROFILE, SG, signName } from "@/lib/data";
+import { useApp, type SavedBirth } from "@/store/useApp";
 import { cn } from "@/lib/utils";
 
 const deg = (lon: number) => Math.floor(((lon % 30) + 30) % 30);
 const sgi = (lon: number) => Math.floor(((((lon % 360) + 360) % 360) / 30));
 const pad = (n: number) => String(n).padStart(2, "0");
 
-const BIRTH_ROWS = [
+const MONTHS_ABBR = ["Jan", "Feb", "März", "Apr", "Mai", "Juni", "Juli", "Aug", "Sep", "Okt", "Nov", "Dez"];
+
+const DEMO_BIRTH_ROWS = [
   { icon: <Calendar className="h-4 w-4" />, label: "7. Sep 1987", value: "Geburtsdatum" },
   { icon: <Clock className="h-4 w-4" />, label: "18:50", value: "Uhrzeit" },
   { icon: <MapPin className="h-4 w-4" />, label: "Starnberg", value: "Geburtsort" },
   { icon: <Compass className="h-4 w-4" />, label: "48°00′N · 11°21′E", value: "Koordinaten" },
 ];
 
-const SETTINGS = ["Geburtsdaten bearbeiten", "Benachrichtigungen", "Darstellung", "Datenschutz", "Über Vela"];
+function birthRows(saved: SavedBirth | null) {
+  if (!saved) return DEMO_BIRTH_ROWS;
+  const [y, mo, d] = saved.date.split("-").map(Number);
+  return [
+    { icon: <Calendar className="h-4 w-4" />, label: `${d}. ${MONTHS_ABBR[mo - 1]} ${y}`, value: "Geburtsdatum" },
+    { icon: <Clock className="h-4 w-4" />, label: saved.time, value: "Uhrzeit" },
+    { icon: <MapPin className="h-4 w-4" />, label: saved.place.split(",")[0], value: "Geburtsort" },
+    { icon: <Compass className="h-4 w-4" />, label: `${saved.lat.toFixed(2)}° · ${saved.lon.toFixed(2)}°`, value: "Koordinaten" },
+  ];
+}
+
+const SETTINGS = ["Benachrichtigungen", "Darstellung", "Datenschutz", "Über Vela"];
 
 export function ProfilScreen() {
+  const setOnboardingOpen = useApp((s) => s.setOnboardingOpen);
+  const saved = useApp((s) => s.savedBirth);
+  const BIRTH_ROWS = birthRows(saved);
   const big = [
     { key: "sun", label: "Sonne", glyph: "☉", lon: CHART[0].lon },
     { key: "moon", label: "Mond", glyph: "☽", lon: CHART[1].lon },
@@ -54,6 +71,15 @@ export function ProfilScreen() {
           <StatChip key={r.value} icon={r.icon} label={r.label} value={r.value} className="min-w-[44%]" />
         ))}
       </StatRow>
+
+      {/* compute / edit own chart */}
+      <button
+        onClick={() => setOnboardingOpen(true)}
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-[14px] font-semibold text-space-2 shadow-glow transition active:scale-[0.98]"
+      >
+        <Sparkles className="h-4 w-4" />
+        {saved ? "Geburtsdaten ändern" : "Eigenes Chart berechnen"}
+      </button>
 
       {/* angles & lights */}
       <section className="mt-8">
