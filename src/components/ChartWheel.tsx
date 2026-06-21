@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useApp } from "@/store/useApp";
 import type { SheetDescriptor } from "@/lib/sheets";
 import { ASC, CHART, CUSPS, MC, NODES, SG, computeAspects } from "@/lib/data";
@@ -41,6 +42,7 @@ export function ChartWheel({ onPick, highlight }: { onPick?: (d: SheetDescriptor
   const openInfo = useApp((s) => s.openInfo);
   const dismissCoach = useApp((s) => s.dismissCoach);
   const aspects = computeAspects();
+  const [fan, setFan] = useState<number | null>(null); // open cluster index
   const pick = (d: SheetDescriptor) => {
     dismissCoach();
     (onPick ?? openInfo)(d);
@@ -55,6 +57,25 @@ export function ChartWheel({ onPick, highlight }: { onPick?: (d: SheetDescriptor
     radius[p.key] = 108 - lvl * 16;
     prev = p.lon;
   }
+
+  // group near-overlapping planets into clusters so the user can fan them out
+  const clusters: string[][] = [];
+  let cur: string[] = [];
+  prev = -999;
+  for (const p of sorted) {
+    if (cur.length && p.lon - prev < 9) cur.push(p.key);
+    else { if (cur.length) clusters.push(cur); cur = [p.key]; }
+    prev = p.lon;
+  }
+  if (cur.length) clusters.push(cur);
+  const clusterOf: Record<string, number> = {};
+  clusters.forEach((c, i) => c.forEach((k) => (clusterOf[k] = i)));
+
+  const planetClick = (key: string) => {
+    const ci = clusterOf[key];
+    if (clusters[ci] && clusters[ci].length > 1) { dismissCoach(); setFan(ci); }
+    else pick({ kind: "planet", key });
+  };
 
   return (
     <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="mx-auto h-auto w-full">
@@ -173,21 +194,51 @@ export function ChartWheel({ onPick, highlight }: { onPick?: (d: SheetDescriptor
         );
       })}
 
-      {/* planets — each its own hue */}
+      {/* planets — each its own hue; clustered ones fan out on tap */}
       {CHART.map((p) => {
         const [x, y] = pt(p.lon, radius[p.key] ?? 100);
         const col = colOf(p.key);
         const on = highlight === p.key;
+        const grouped = (clusters[clusterOf[p.key]]?.length ?? 1) > 1;
         return (
-          <g key={p.key} style={{ cursor: "pointer" }} onClick={() => pick({ kind: "planet", key: p.key })}>
+          <g key={p.key} style={{ cursor: "pointer" }} onClick={() => planetClick(p.key)}>
             <circle cx={x} cy={y} r={20} fill="#000" fillOpacity={0} style={{ pointerEvents: "all" }} />
             <circle cx={x} cy={y} r={on ? 14 : 12} fill={DOT} stroke={col} strokeWidth={on ? 2.4 : 1.6} style={{ pointerEvents: "none", filter: `drop-shadow(0 0 ${on ? 7 : 2.5}px ${col})` }} />
             <text x={x} y={y} fill={on ? INK : col} fontSize={13} fontWeight={600} textAnchor="middle" dominantBaseline="central" pointerEvents="none" fontFamily='"Noto Sans Symbols","Segoe UI Symbol",system-ui,sans-serif'>
               {p.glyph}
             </text>
+            {grouped && <circle cx={x + 9} cy={y - 9} r={2} fill="#fff" pointerEvents="none" opacity={0.85} />}
           </g>
         );
       })}
+
+      {/* cluster fan-out: pick any planet that sits on the same spot */}
+      {fan !== null && clusters[fan] && (() => {
+        const members = clusters[fan].map((k) => CHART.find((p) => p.key === k)!);
+        const avgLon = members.reduce((s, m) => s + m.lon, 0) / members.length;
+        const [ax, ay] = pt(avgLon, 120);
+        const n = members.length;
+        const sp = 32;
+        const x0 = Math.max(22, Math.min(SIZE - 22 - (n - 1) * sp, ax - ((n - 1) * sp) / 2));
+        const cy = Math.max(34, Math.min(SIZE - 30, ay));
+        return (
+          <g>
+            <rect x={0} y={0} width={SIZE} height={SIZE} fill="rgba(5,5,12,0.74)" style={{ pointerEvents: "all", cursor: "pointer" }} onClick={() => setFan(null)} />
+            <text x={C} y={18} fill="rgba(255,255,255,0.75)" fontSize={8} textAnchor="middle" fontFamily="'Space Mono',ui-monospace,monospace" letterSpacing={1}>WÄHLE EINEN PUNKT</text>
+            {members.map((m, idx) => {
+              const cx = x0 + idx * sp;
+              const c = colOf(m.key);
+              return (
+                <g key={m.key} style={{ cursor: "pointer" }} onClick={() => { setFan(null); pick({ kind: "planet", key: m.key }); }}>
+                  <circle cx={cx} cy={cy} r={16} fill={DOT} stroke={c} strokeWidth={2} style={{ filter: `drop-shadow(0 0 7px ${c})` }} />
+                  <text x={cx} y={cy} fill={c} fontSize={15} fontWeight={600} textAnchor="middle" dominantBaseline="central" pointerEvents="none" fontFamily='"Noto Sans Symbols","Segoe UI Symbol",system-ui,sans-serif'>{m.glyph}</text>
+                  <text x={cx} y={cy + 25} fill="rgba(255,255,255,0.82)" fontSize={6.5} textAnchor="middle" pointerEvents="none" fontFamily='"Plus Jakarta Sans",sans-serif'>{m.name}</text>
+                </g>
+              );
+            })}
+          </g>
+        );
+      })()}
 
       {/* centre */}
       <circle cx={C} cy={C} r={2.5} fill="rgba(255,255,255,0.7)" />
