@@ -1,21 +1,74 @@
 import { useState } from "react";
-import { X, Printer, Check } from "lucide-react";
+import { X, Printer, Check, Download, Loader2 } from "lucide-react";
 import { PrintView, ALL_CHAPTERS, type PrintInclude } from "./PrintView";
 import { useApp } from "@/store/useApp";
+import { FUNCTIONS_URL, SUPABASE_ANON } from "@/lib/supabase";
+import { CHART, PROFILE, signName, computeAspects } from "@/lib/data";
+import { computeTransits } from "@/lib/transits";
+import { aiSummary, aiSign } from "@/lib/interpret";
+import { useReadings } from "@/lib/genReadings";
+import { chartHash } from "@/lib/factsContext";
 
 const ALL_ON: PrintInclude = { planets: true, houses: true, aspects: true, balance: true, reading: true, points: true, transits: true, forecast: true, glossary: true };
 
-/** Step 1: pick which chapters go into the PDF. Step 2: the printable preview. */
+function buildSections(inc: PrintInclude): { heading: string; body: string }[] {
+  const cache = useReadings.getState().cache;
+  const ch = chartHash();
+  const g = (vk: string) => cache[ch + "|" + vk];
+  const secs: { heading: string; body: string }[] = [];
+  const ov = g("natal:overview") || aiSummary();
+  if (inc.reading && ov) secs.push({ heading: "Dein Gesamtbild", body: ov });
+  if (inc.reading) for (const p of CHART) {
+    const t = g(`planet:${p.key}`) || aiSign(p.key) || p.txt;
+    if (t) secs.push({ heading: `${p.name} — ${signName(p.lon)} · ${p.house ?? "?"}. Haus`, body: t });
+  }
+  if (inc.aspects) {
+    const lines = [...computeAspects()].sort((a, b) => a.orb - b.orb).map((a) => `${a.A.name} ${a.def.type} ${a.B.name} (${a.orb.toFixed(1)}°)`).join("\n");
+    if (lines) secs.push({ heading: "Aspekte", body: lines });
+  }
+  if (inc.transits) {
+    const tr = computeTransits(CHART, new Date()).slice(0, 8).map((t) => `${t.tName} ${t.type} ${t.nName} — ${t.txt}`).join("\n\n");
+    if (tr) secs.push({ heading: "Aktuelle Transite", body: tr });
+  }
+  return secs;
+}
+
+/** Step 1: pick which chapters go into the PDF. Step 2: preview or direct download. */
 export function PrintFlow() {
   const setPrintOpen = useApp((s) => s.setPrintOpen);
   const [inc, setInc] = useState<PrintInclude>({ ...ALL_ON });
   const [go, setGo] = useState(false);
+  const [busy, setBusy] = useState(false);
 
   if (go) return <PrintView include={inc} />;
 
   const toggle = (k: keyof PrintInclude) => setInc((s) => ({ ...s, [k]: !s[k] }));
   const setAll = (v: boolean) => setInc({ planets: v, houses: v, aspects: v, balance: v, reading: v, points: v, transits: v, forecast: v, glossary: v });
   const count = Object.values(inc).filter(Boolean).length;
+
+  async function downloadPdf() {
+    setBusy(true);
+    try {
+      const res = await fetch(`${FUNCTIONS_URL}/pdf`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` },
+        body: JSON.stringify({ name: PROFILE.name, birth: PROFILE.birth, sections: buildSections(inc) }),
+      });
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Horoskop-${String(PROFILE.name).replace(/\s+/g, "-")}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      /* ignore */
+    } finally {
+      setBusy(false);
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[rgba(4,4,10,0.74)] p-4 backdrop-blur-md lg:pl-[120px]">
@@ -51,11 +104,18 @@ export function PrintFlow() {
         </div>
 
         <button
-          onClick={() => setGo(true)}
-          disabled={count === 0}
+          onClick={downloadPdf}
+          disabled={count === 0 || busy}
           className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-white shadow-glow disabled:opacity-40"
         >
-          <Printer className="h-4 w-4" /> PDF-Vorschau erstellen
+          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} {busy ? "PDF wird erstellt …" : "PDF herunterladen"}
+        </button>
+        <button
+          onClick={() => setGo(true)}
+          disabled={count === 0}
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl border border-line px-5 py-2.5 font-body text-[13px] text-txt-2 hover:bg-surface-2 disabled:opacity-40"
+        >
+          <Printer className="h-4 w-4" /> Vorschau / Drucken
         </button>
       </div>
     </div>
