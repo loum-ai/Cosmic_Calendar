@@ -182,6 +182,20 @@ export function ProfilScreen() {
           ))}
         </GlassPanel>
       </section>
+
+      {/* astrologer entry — only outside the client view */}
+      {!viewer && (
+        <button
+          onClick={() => { window.location.hash = "#/admin"; }}
+          className="mt-6 flex w-full items-center justify-between rounded-2xl border border-line bg-surface px-4 py-3.5 text-left transition hover:border-line-accent hover:bg-surface-2"
+        >
+          <span className="flex items-center gap-2.5">
+            <ShieldCheck className="h-4 w-4 text-lilac" />
+            <span className="font-body text-[13px] text-txt">Astrologin · zum Cockpit</span>
+          </span>
+          <ChevronRight className="h-4 w-4 text-txt-3" />
+        </button>
+      )}
     </ScreenShell>
   );
 }

@@ -181,6 +181,7 @@ function Cockpit({ email }: { email: string }) {
           <div>
             <div className="vela-label">Vela · Cockpit</div>
             <h1 className="font-display text-2xl font-bold text-txt">Kundinnen</h1>
+            <p className="mt-0.5 font-body text-[12px] text-txt-3">Für jede Kundin entsteht ihre eigene, persönliche Astro-Website.</p>
           </div>
           <button onClick={() => supabase.auth.signOut()} className="flex items-center gap-1.5 rounded-pill border border-line px-3 py-1.5 font-body text-[12px] text-txt-2">
             <LogOut className="h-3.5 w-3.5" /> {email}
@@ -217,14 +218,14 @@ function Cockpit({ email }: { email: string }) {
             <button disabled={!canSubmit} onClick={createClient}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-space-2 disabled:opacity-40">
               {step ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {step || "Anlegen & Deutung erstellen"}
+              {step || "Persönliche Website erstellen"}
             </button>
             {err && <p className="font-body text-[12px] text-rose-300">{err}</p>}
           </div>
 
           {created && (
             <div className="mt-3 rounded-xl border border-amber-400/40 bg-amber-400/5 p-3">
-              <div className="font-body text-[13px] text-txt">📝 {created.name} angelegt — Deutung als <b>Entwurf</b>. Unten <b>prüfen & freigeben</b>, dann zeigt der Link die Deutung. Kundenlink:</div>
+              <div className="font-body text-[13px] text-txt">📝 Website von <b>{created.name}</b> erstellt — Deutung als <b>Entwurf</b>. Unten <b>prüfen & freigeben</b>, dann ist ihre persönliche Website live. Ihre Website:</div>
               <div className="mt-2 flex items-center gap-2">
                 <code className="min-w-0 flex-1 truncate rounded-lg bg-black/40 px-2.5 py-2 font-mono text-[11px] text-lilac">{created.link}</code>
                 <button onClick={() => copy(created.link)} className="rounded-lg border border-line p-2 text-txt-2">{copied === created.link ? <Check className="h-4 w-4 text-mint" /> : <Copy className="h-4 w-4" />}</button>
