@@ -6,9 +6,11 @@ name: UX-Test (GitHub Pages)
 # origin. The Claude Q&A (/api/ask) is Vercel-only, so on Pages it falls back
 # to the local offline oracle.
 
+# Manual trigger only: the repo's `github-pages` environment is restricted to
+# the default branch, so auto-deploying this feature branch fails. Run this
+# workflow by hand (Actions tab → Run workflow) once the branch is allowed to
+# deploy to Pages, or after merging to the default branch.
 on:
-  push:
-    branches: [claude/vela-design-impl-nbuip2]
   workflow_dispatch:
 
 permissions:
