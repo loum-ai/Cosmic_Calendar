@@ -6,7 +6,11 @@ import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
 import { CHART, ASC, PROFILE, SN, PINFO, signName, computeAspects, IS_DEMO } from "@/lib/data";
 import { ASPECT_TEXT } from "@/lib/readings";
 import { aiSummary, aiAspect, aiSign } from "@/lib/interpret";
+import { chartPatterns } from "@/lib/patterns";
 import { useApp } from "@/store/useApp";
+
+const KIND_LABEL: Record<string, string> = { muster: "Aspektmuster", fokus: "Fokus", balance: "Balance", rhythmus: "Rhythmus" };
+const KIND_COL: Record<string, string> = { muster: "#c9bcff", fokus: "#ffce6e", balance: "#46e8c4", rhythmus: "#9db6ff" };
 
 const COL: Record<string, string> = {
   sun: "#ffce6e", moon: "#d7e3ff", mercury: "#8fd0e6", venus: "#46e8c4", mars: "#ff6a52",
@@ -76,6 +80,7 @@ export function ChartExplorer() {
   const domIdx = bal.e.indexOf(Math.max(...bal.e));
   const domElem = ELEM[domIdx];
   const heroTxt = tightest ? aiAspect(tightest.A.key, tightest.B.key) || (IS_DEMO && ASPECT_TEXT[tightest.key]) || tightest.def.plain : "";
+  const patterns = chartPatterns();
 
   return (
     <div className="animate-slideUp px-5 pb-28 pt-[calc(env(safe-area-inset-top,0px)+1.4rem)] lg:px-10 lg:pt-10">
@@ -147,6 +152,27 @@ export function ChartExplorer() {
               </div>
             </button>
           </section>
+        )}
+
+        {/* ── BESONDERE MUSTER (whole-chart synthesis) ── */}
+        {patterns.length > 0 && (
+          <Section title="Besondere Muster" hint={`${patterns.length}`} sub="Was dein Bild als Ganzes auszeichnet — über die einzelnen Stellungen hinaus.">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {patterns.map((p) => (
+                <div key={p.id} className="relative overflow-hidden rounded-card border border-[rgba(150,120,255,0.18)] bg-glasswash p-5">
+                  <span className="pointer-events-none absolute -right-2 -top-4 font-glyph text-[64px] leading-none opacity-[0.06]" style={{ color: KIND_COL[p.kind] }}>{p.glyphs[0] ?? "✦"}</span>
+                  <div className="relative">
+                    <div className="mb-1.5 flex items-center gap-2">
+                      {p.glyphs.length > 0 && <span className="font-glyph text-[17px]" style={{ color: KIND_COL[p.kind] }}>{p.glyphs.join(" ")}</span>}
+                      <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.16em]" style={{ color: KIND_COL[p.kind] }}>{KIND_LABEL[p.kind]}</span>
+                    </div>
+                    <h3 className="font-cinzel text-[19px] font-semibold leading-tight text-white">{p.title}</h3>
+                    <p className="mt-1.5 font-body text-[13px] leading-relaxed text-txt-2">{p.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Section>
         )}
 
         {/* ── DIE GROSSEN DREI ── */}

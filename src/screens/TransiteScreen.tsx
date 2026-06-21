@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, RotateCcw, X } from "lucide-react";
 import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { useApp } from "@/store/useApp";
 import { CHART } from "@/lib/data";
@@ -33,47 +33,57 @@ function TransitFull({ hits }: { hits: TransitHit[] }) {
   const tr = hits[i];
   const n = hits.length;
 
+  const c = IMPACT_COLOR[tr.impact];
   return (
     <AnimatePresence>
-      {i !== null && (
+      <motion.div
+        key="backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={() => setFull(null)}
+        className="fixed inset-0 z-[80] flex items-center justify-center bg-[rgba(4,4,10,0.72)] p-4 backdrop-blur-md lg:pl-[120px]"
+      >
         <motion.div
           key={i}
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 40 }}
-          transition={{ duration: 0.32, ease: EASE.smooth }}
-          className="fixed inset-0 z-[80] overflow-y-auto bg-[#050509]"
+          initial={{ opacity: 0, y: 16, scale: 0.985 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 12 }}
+          transition={{ duration: 0.28, ease: EASE.smooth }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative max-h-[88vh] w-full max-w-[560px] overflow-y-auto rounded-card border border-[rgba(150,120,255,0.28)] bg-stage p-6 shadow-glass lg:p-8"
         >
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_46%_26%_at_50%_-6%,rgba(116,96,200,0.12),transparent_55%)]" />
-          <div className="relative mx-auto w-full max-w-[680px] px-[max(22px,6vw)] pb-24 pt-[calc(env(safe-area-inset-top,0px)+1.5rem)]">
-            <button onClick={() => setFull(null)} className="mb-8 flex items-center gap-2 font-body text-sm text-txt-2 transition hover:text-txt">
-              <ChevronLeft className="h-4 w-4" /> Zurück
-            </button>
-
-            <div className="font-mono text-[11px]" style={{ color: IMPACT_COLOR[tr.impact] }}>
-              TRANSIT · {IMPACT_LABEL[tr.impact]} · {tr.orb.toFixed(1)}° Orbis
+          <span className="pointer-events-none absolute -right-6 -top-10 font-glyph text-[150px] leading-none opacity-[0.08]" style={{ color: c }}>{tr.tGlyph}</span>
+          <div className="relative">
+            <div className="flex items-start justify-between gap-3">
+              <div className="font-mono text-[11px]" style={{ color: c }}>TRANSIT · {IMPACT_LABEL[tr.impact]} · {tr.orb.toFixed(1)}° Orbis</div>
+              <button onClick={() => setFull(null)} className="-mr-1 -mt-1 flex h-8 w-8 items-center justify-center rounded-full text-txt-3 transition hover:text-txt">
+                <X className="h-4 w-4" />
+              </button>
             </div>
-            <h2 className="mt-3 font-display text-[clamp(28px,7vw,40px)] font-extrabold leading-[1.05] tracking-[-0.02em] text-txt text-balance">
-              {tr.title}
-            </h2>
-            <p className="mt-5 max-w-[56ch] font-body text-[15px] leading-relaxed text-txt-2">{tr.txt}</p>
+            <h2 className="mt-3 font-cinzel text-[28px] font-semibold leading-tight text-white lg:text-[34px]">{tr.title}</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <span className="rounded-pill border border-line bg-surface px-2.5 py-1 font-body text-[11px] text-txt-2">laufend: {tr.tName}{tr.tRetro ? " ℞" : ""}</span>
+              <span className="rounded-pill border border-line bg-surface px-2.5 py-1 font-body text-[11px] text-txt-2">dein {tr.nName}</span>
+            </div>
+            <p className="mt-4 font-body text-[15px] leading-relaxed text-txt-2">{tr.txt}</p>
 
-            <div className="mt-10 flex items-center gap-3">
-              <button onClick={() => setFull(((i ?? 0) - 1 + n) % n)} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-txt-2 active:scale-90">
+            <div className="mt-7 flex items-center gap-3">
+              <button onClick={() => setFull((i - 1 + n) % n)} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-txt-2 active:scale-90">
                 <ChevronLeft className="h-5 w-5" />
               </button>
-              <div className="flex flex-1 justify-center gap-1.5">
+              <div className="flex flex-1 flex-wrap justify-center gap-1.5">
                 {hits.slice(0, 12).map((_, di) => (
                   <span key={di} className="h-1.5 rounded-full transition-all" style={{ width: di === i ? 22 : 6, background: di === i ? "#8b5cf6" : "rgba(255,255,255,0.22)" }} />
                 ))}
               </div>
-              <button onClick={() => setFull(((i ?? 0) + 1) % n)} className="flex h-11 w-11 items-center justify-center rounded-full bg-cta-gradient text-white active:scale-90">
+              <button onClick={() => setFull((i + 1) % n)} className="flex h-11 w-11 items-center justify-center rounded-full bg-cta-gradient text-white active:scale-90">
                 <ChevronRight className="h-5 w-5" />
               </button>
             </div>
           </div>
         </motion.div>
-      )}
+      </motion.div>
     </AnimatePresence>
   );
 }
