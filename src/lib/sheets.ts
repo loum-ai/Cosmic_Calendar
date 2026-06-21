@@ -22,7 +22,7 @@ import {
   signName,
 } from "./data";
 import { GLOSSARY } from "./glossary";
-import { READINGS } from "./readings";
+import { READINGS, ASPECT_TEXT } from "./readings";
 
 export type SheetKind = "planet" | "node" | "house" | "sign" | "aspect" | "asptype" | "glossary";
 
@@ -177,7 +177,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       color: a.def.c,
       sections: [
         { label: "Was ist das?", body: a.def.plain },
-        { label: "Bei dir", body: relText(a), accent: MINT },
+        { label: "Bei dir", body: ASPECT_TEXT[a.key] ?? relText(a), accent: MINT },
         { label: "Genauigkeit", body: `${a.orb.toFixed(1)}° Orbis — je enger, desto stärker wirkt die Verbindung.` },
       ],
     };

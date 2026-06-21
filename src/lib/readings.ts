@@ -91,3 +91,51 @@ export const READINGS: Record<string, { sign?: string; house?: string }> = {
       "Der absteigende Mondknoten in der Waage ist dein Vertrautes: Harmonie, Ausgleich, Beziehung, Anpassung — das, was dir leichtfällt und worin du dich gut auskennst. Genau das darfst du nach und nach loslassen, um in die Richtung deines aufsteigenden Knotens (Widder, mehr Eigenständigkeit) zu wachsen.",
   },
 };
+
+/**
+ * Specific aspect interpretations, keyed by the computed aspect's pair key
+ * (e.g. "sun_moon"). One aspect per pair, so the pair key is unique.
+ * Falls back to the generic relation text where not present.
+ */
+export const ASPECT_TEXT: Record<string, string> = {
+  sun_moon:
+    "Sonne und Mond stehen sich gegenüber — dein Wille und dein Gefühl ziehen manchmal in verschiedene Richtungen. Das kann innere Spannung geben, vor allem in nahen Beziehungen. Geboren unter einem Vollmond: deine Aufgabe ist, beide Seiten in dir zu versöhnen.",
+  sun_venus:
+    "Sonne und Venus eng beisammen betonen Charme, Kunstsinn und Geselligkeit. Du genießt Schönheit und die Gesellschaft anderer, wirkst optimistisch und hast ein feines Gespür für Geschmack.",
+  sun_mars:
+    "Sonne und Mars verschmelzen zu Tatkraft — ein Aspekt von Machern und Entdeckern. Du hast viel Energie und Mut; achte nur auf plötzliche Erschöpfung nach zu viel Vollgas.",
+  sun_saturn:
+    "Sonne im Spannungswinkel zu Saturn: Hindernisse fordern dich heraus — sie können lähmen oder zu Bestleistung anspornen. Oft ein leiser Selbstzweifel, der durch gute, sichtbare Arbeit zu echtem Selbstvertrauen reift.",
+  sun_uranus:
+    "Sonne im Reibungswinkel zu Uranus macht dich ausgeprägt eigenständig und unkonventionell. Du willst anders sein und deine Einzigartigkeit zeigen — mit Autoritäten tust du dich schwer.",
+  sun_neptune:
+    "Sonne im Fluss mit Neptun schenkt Feingefühl, Vorstellungskraft, Intuition und Kunstsinn. Du bist mitfühlend und harmoniebedürftig — was manchmal auf Kosten von Ordnung und Struktur geht.",
+  moon_venus:
+    "Mond gegenüber Venus kann Gefühle und echte Bedürfnisse durcheinanderbringen — in der Liebe fällt die Wahl manchmal schwer. Klarheit darüber, was du wirklich brauchst, ist hier dein Schlüssel.",
+  moon_mars:
+    "Mond gegenüber Mars bringt emotionale Spannung und Impulsivität. Du spürst Konflikte stark und weißt sie auch zu führen — Ruhe und Sesshaftigkeit musst du dir bewusst erlauben.",
+  moon_saturn:
+    "Mond im Spannungswinkel zu Saturn macht es schwer, Gefühle zu zeigen — leicht versteckst du dich hinter einer Maske. Du brauchst ein stabiles Zuhause, um dich sicher zu fühlen; achte auf die Neigung zu Schwermut.",
+  moon_uranus:
+    "Mond im Reibungswinkel zu Uranus bringt emotionale Unruhe und den Drang nach plötzlicher Veränderung. Du liebst Unkonventionelles und brauchst Freiheit auch im Gefühlsleben.",
+  moon_pluto:
+    "Mond im Fluss mit Pluto schenkt ein tiefes, intensives Gefühlsleben. Du erlebst Emotionen stark und äußerst sie offen — und hast oft eine besonders intensive Bindung zur Mutter.",
+  mercury_neptune:
+    "Merkur im Spannungswinkel zu Neptun macht das Denken bildreich, aber unscharf — du träumst, änderst leicht die Meinung und brauchst kreative Menschen um dich. Klare Fakten und Struktur sind dein Gegengewicht.",
+  venus_saturn:
+    "Venus im Spannungswinkel zu Saturn macht dich in der Liebe vorsichtig und zurückhaltend — manchmal aus Angst vor Verlust. Du ordnest Gefühle gern der Vernunft unter; echte Wärme zuzulassen ist dein Wachstum.",
+  venus_uranus:
+    "Venus im Reibungswinkel zu Uranus erlebt Beziehung schnell als Einschränkung der Freiheit. Deine Gefühle wechseln, du liebst unkonventionell und brauchst Raum — Beständigkeit will geübt sein.",
+  mars_saturn:
+    "Mars im Spannungswinkel zu Saturn: Begonnenes zu Ende zu bringen fällt schwer, wenn Hindernisse auftauchen. Deine Lektion ist Ausdauer — dranbleiben, auch wenn der erste Schwung weg ist.",
+  mars_neptune:
+    "Mars im Fluss mit Neptun schenkt Phantasie, Idealismus und künstlerisches Talent. Die Kehrseite: im Praktischen bist du manchmal weniger geerdet, als dein Können vermuten lässt.",
+  mars_pluto:
+    "Mars im Zusammenspiel mit Pluto macht dich gründlich, ausdauernd und strategisch. Hast du ein Ziel, lässt du dich kaum abbringen — du erreichst es oft trotz aller Hindernisse.",
+  jupiter_uranus:
+    "Jupiter im Fluss mit Uranus schenkt geistige Unabhängigkeit und einen positiven Idealismus. Du denkst frei, willst Wirkung haben und deine Sicht der Dinge auch zeigen.",
+  jupiter_neptune:
+    "Jupiter im Fluss mit Neptun gibt Mitgefühl, Reformideale und künstlerisch-spirituelle Neigungen. Du spürst das größere Ganze — halte deine Visionen mit etwas Bodenhaftung lebendig.",
+  neptune_pluto:
+    "Neptun und Pluto im sanften Zusammenspiel ist ein langer Generationsaspekt — er steht für eine friedensstiftende, transformative Grundhaltung deiner Zeit.",
+};
