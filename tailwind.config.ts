@@ -33,9 +33,9 @@ export default {
         line: "rgba(255,255,255,0.08)",
         "line-soft": "rgba(255,255,255,0.06)",
         "line-accent": "rgba(150,100,255,0.25)",
-        txt: "rgba(255,255,255,0.96)",
-        "txt-2": "rgba(255,255,255,0.74)",
-        "txt-3": "rgba(255,255,255,0.52)",
+        txt: "rgba(255,255,255,0.98)",
+        "txt-2": "rgba(255,255,255,0.86)",
+        "txt-3": "rgba(255,255,255,0.66)",
         // planet semantic colors
         planet: {
           sun: "#ffd9a0",
@@ -87,12 +87,13 @@ export default {
           "linear-gradient(135deg,#8B5CF6,#6D28D9)",
         "iris-text":
           "linear-gradient(110deg,#c4b5ff 0%,#8B5CF6 48%,#2DD4BF 100%)",
-        // deep, glassy chart-stage backdrop — lavender bloom over plum/ink
+        // deep, near-black chart-stage so bright wheel lines + text pop;
+        // a single tight violet bloom for identity, not a desaturating wash
         "stage":
-          "radial-gradient(120% 90% at 30% 12%, rgba(150,110,255,0.28) 0%, rgba(90,60,170,0.10) 38%, rgba(12,10,26,0.0) 70%), linear-gradient(160deg, #15122a 0%, #0c0a18 60%, #08070f 100%)",
-        // soft lilac wash for floating glass panels
+          "radial-gradient(90% 70% at 78% 8%, rgba(139,92,246,0.20) 0%, transparent 52%), linear-gradient(165deg, #0c0a16 0%, #08070f 55%, #050409 100%)",
+        // panel surface — quiet, slightly cool, high enough contrast for body text
         "glasswash":
-          "linear-gradient(155deg, rgba(185,168,255,0.10) 0%, rgba(120,90,220,0.05) 50%, rgba(255,255,255,0.02) 100%)",
+          "linear-gradient(155deg, rgba(120,95,210,0.10) 0%, rgba(20,18,34,0.55) 45%, rgba(10,9,18,0.7) 100%)",
       },
       keyframes: {
         velaSpin: { to: { transform: "rotate(360deg)" } },
