@@ -1,5 +1,6 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Download } from "lucide-react";
 import { ChartWheel } from "@/components/ChartWheel";
 import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
 import { CHART, PROFILE, HOUSE, signName, computeAspects, IS_DEMO } from "@/lib/data";
@@ -20,6 +21,7 @@ const isDesktop = () => typeof window !== "undefined" && window.matchMedia("(min
 export function ChartExplorer() {
   useApp((s) => s.aiVersion); // re-render when a reading lands
   const openInfo = useApp((s) => s.openInfo);
+  const setPrintOpen = useApp((s) => s.setPrintOpen);
   const [sel, setSel] = useState<SheetDescriptor | null>(null);
 
   // selecting drives the desktop side-panel; on mobile it opens the native sheet
@@ -37,12 +39,20 @@ export function ChartExplorer() {
     <div className="animate-slideUp px-5 pb-28 pt-[calc(env(safe-area-inset-top,0px)+1.4rem)] lg:px-10 lg:pt-10">
       <div className="mx-auto w-full max-w-[1180px]">
         {/* header */}
-        <header className="mb-6">
-          <div className="vela-label mb-1.5">Geburtsbild</div>
-          <h1 className="font-cinzel text-[34px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_26px_rgba(139,92,246,0.4)] lg:text-[52px]">
-            {PROFILE.name}
-          </h1>
-          <p className="mt-2.5 font-body text-[13px] text-txt-2">{PROFILE.birth}</p>
+        <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div className="vela-label mb-1.5">Geburtsbild</div>
+            <h1 className="font-cinzel text-[34px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_26px_rgba(139,92,246,0.4)] lg:text-[52px]">
+              {PROFILE.name}
+            </h1>
+            <p className="mt-2.5 font-body text-[13px] text-txt-2">{PROFILE.birth}</p>
+          </div>
+          <button
+            onClick={() => setPrintOpen(true)}
+            className="flex items-center gap-2 rounded-pill border border-line-accent bg-surface px-4 py-2.5 font-display text-[13px] font-semibold text-txt transition hover:bg-surface-2"
+          >
+            <Download className="h-4 w-4 text-lilac" /> Horoskop herunterladen
+          </button>
         </header>
 
         {/* chart stage + live reading (desktop) */}

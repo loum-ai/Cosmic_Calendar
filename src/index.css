@@ -515,6 +515,44 @@
   }
 }
 
+/* ── PRINTABLE HOROSCOPE ──────────────────────────────────────────── */
+.print-ink {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  .print-paper,
+  .print-paper * {
+    visibility: visible !important;
+  }
+  .print-paper {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-break {
+    break-before: page;
+  }
+  .print-avoid {
+    break-inside: avoid;
+  }
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+}
+
 /* range slider — gradient track + glowing thumb (real, consequential sliders) */
 input[type="range"] {
   -webkit-appearance: none;
