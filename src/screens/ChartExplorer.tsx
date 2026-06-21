@@ -51,6 +51,7 @@ export function ChartExplorer() {
   useApp((s) => s.aiVersion); // re-render when a reading lands
   const openInfo = useApp((s) => s.openInfo);
   const setPrintOpen = useApp((s) => s.setPrintOpen);
+  const viewer = useApp((s) => s.viewerMode);
   const [sel, setSel] = useState<SheetDescriptor | null>(null);
 
   // selecting drives the desktop side-panel; on mobile it opens the native sheet
@@ -88,20 +89,31 @@ export function ChartExplorer() {
   return (
     <div className="animate-slideUp px-5 pb-28 pt-[calc(env(safe-area-inset-top,0px)+1.4rem)] lg:px-10 lg:pt-10">
       <div className="mx-auto w-full max-w-[1180px]">
-        {/* header */}
+        {/* header — viewer = the client's own website; else demo / own chart */}
         <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <div className="vela-label mb-1.5">Geburtsbild</div>
+            <div className="vela-label mb-1.5 flex items-center gap-2">
+              {viewer ? "Deine persönliche Astro-Website" : "Geburtsbild"}
+              {!viewer && IS_DEMO && <span className="rounded-pill border border-line px-2 py-0.5 font-mono text-[9px] tracking-wide text-txt-3">BEISPIEL</span>}
+            </div>
             <h1 className="font-cinzel text-[34px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_26px_rgba(139,92,246,0.4)] lg:text-[52px]">
-              {PROFILE.name}
+              {viewer ? `Willkommen, ${String(PROFILE.name).split(" ")[0]}` : PROFILE.name}
             </h1>
-            <p className="mt-2.5 font-body text-[13px] text-txt-2">{PROFILE.birth}</p>
+            <p className="mt-2.5 font-body text-[13px] text-txt-2">
+              {viewer
+                ? "Dein Geburtshoroskop — von deiner Astrologin für dich erstellt."
+                : IS_DEMO
+                ? "Beispiel-Horoskop — so erlebt deine Kundin ihre eigene Astro-Website."
+                : PROFILE.birth}
+            </p>
           </div>
           <button
             onClick={() => setPrintOpen(true)}
-            className="flex items-center gap-2 rounded-pill border border-line-accent bg-surface px-4 py-2.5 font-display text-[13px] font-semibold text-txt transition hover:bg-surface-2"
+            className={`flex items-center gap-2 rounded-pill px-4 py-2.5 font-display text-[13px] font-semibold transition ${
+              viewer ? "bg-cta-gradient text-space-2 shadow-glow" : "border border-line-accent bg-surface text-txt hover:bg-surface-2"
+            }`}
           >
-            <Download className="h-4 w-4 text-lilac" /> Horoskop herunterladen
+            <Download className={`h-4 w-4 ${viewer ? "" : "text-lilac"}`} /> {viewer ? "Mein Horoskop als PDF" : "Horoskop herunterladen"}
           </button>
         </header>
 
