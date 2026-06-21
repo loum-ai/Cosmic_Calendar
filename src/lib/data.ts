@@ -112,6 +112,14 @@ export const THEME: Record<string, string> = {
   mars: "Deine Energie",
   jupiter: "Dein Wachstum",
   saturn: "Deine Disziplin",
+  uranus: "Dein Freiheitsdrang",
+  neptune: "Deine Sehnsucht",
+  pluto: "Deine Wandlungskraft",
+  chiron: "Deine verletzliche Gabe",
+  lilith: "Dein Ungezähmtes",
+  node_n: "Dein Wachstumsweg",
+  node_s: "Dein Vertrautes",
+  asc: "Dein Auftreten",
 };
 
 export const ASPDEF: AspectDef[] = [

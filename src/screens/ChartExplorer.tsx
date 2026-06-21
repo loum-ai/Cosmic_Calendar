@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Download } from "lucide-react";
 import { ChartWheel } from "@/components/ChartWheel";
 import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
-import { CHART, PROFILE, HOUSE, signName, computeAspects, IS_DEMO } from "@/lib/data";
+import { CHART, ASC, PROFILE, SN, PINFO, signName, computeAspects, IS_DEMO } from "@/lib/data";
 import { ASPECT_TEXT } from "@/lib/readings";
 import { aiSummary, aiAspect, aiSign } from "@/lib/interpret";
 import { useApp } from "@/store/useApp";
@@ -14,6 +14,30 @@ const COL: Record<string, string> = {
   chiron: "#8fd0ff", lilith: "#e3a8d6", asc: "#c9b6ff",
 };
 const col = (k: string) => COL[k] ?? "#cbb9ff";
+
+const FLOW = ["Trigon", "Sextil", "Konjunktion"];
+const PLANET_GROUPS: { label: string; keys: string[] }[] = [
+  { label: "Persönlich", keys: ["sun", "moon", "mercury", "venus", "mars"] },
+  { label: "Sozial", keys: ["jupiter", "saturn"] },
+  { label: "Transpersonal", keys: ["uranus", "neptune", "pluto"] },
+  { label: "Weitere Punkte", keys: ["chiron", "lilith"] },
+];
+const ELEM = ["Feuer", "Erde", "Luft", "Wasser"];
+const ELEM_COL = ["#ff6a52", "#46e8c4", "#8fd0e6", "#9db6ff"];
+const MODE = ["kardinal", "fix", "veränderlich"];
+const MODE_COL = ["#cda6ff", "#ffce6e", "#79e6d6"];
+
+function balance() {
+  const e = [0, 0, 0, 0];
+  const m = [0, 0, 0];
+  for (const p of CHART) {
+    const si = SN.indexOf(signName(p.lon));
+    if (si < 0) continue;
+    e[si % 4]++;
+    m[si % 3]++;
+  }
+  return { e, m, total: CHART.length };
+}
 const selKey = (d: SheetDescriptor | null) => (d ? `${d.kind}:${d.key}` : "overview");
 const isDesktop = () => typeof window !== "undefined" && window.matchMedia("(min-width:1024px)").matches;
 
@@ -34,6 +58,24 @@ export function ChartExplorer() {
   const highlight = sel && (sel.kind === "aspect" || sel.kind === "planet" || sel.kind === "node") ? String(sel.key) : null;
   const content = sel ? resolveSheet(sel) : null;
   const planets = CHART;
+
+  const sun = CHART.find((p) => p.key === "sun");
+  const moon = CHART.find((p) => p.key === "moon");
+  const big3 = [
+    { key: "sun", glyph: "☉", role: "Sonne · Wesenskern", sign: signName(sun?.lon ?? 0), sub: `${sun?.house ?? "?"}. Haus`, color: col("sun") },
+    { key: "moon", glyph: "☽", role: "Mond · Gefühl", sign: signName(moon?.lon ?? 0), sub: `${moon?.house ?? "?"}. Haus`, color: col("moon") },
+    { key: "asc", glyph: "AC", role: "Aszendent · Auftreten", sign: signName(ASC), sub: "Wie du wirkst", color: col("asc") },
+  ];
+  const flow = aspects.filter((a) => FLOW.includes(a.def.type));
+  const tension = aspects.filter((a) => !FLOW.includes(a.def.type));
+  const bal = balance();
+
+  // canonical hero: the chart's most defining note, derived (not hardcoded) —
+  // the most exact major aspect + the dominant element.
+  const tightest = [...aspects].sort((a, b) => a.orb - b.orb)[0];
+  const domIdx = bal.e.indexOf(Math.max(...bal.e));
+  const domElem = ELEM[domIdx];
+  const heroTxt = tightest ? aiAspect(tightest.A.key, tightest.B.key) || (IS_DEMO && ASPECT_TEXT[tightest.key]) || tightest.def.plain : "";
 
   return (
     <div className="animate-slideUp px-5 pb-28 pt-[calc(env(safe-area-inset-top,0px)+1.4rem)] lg:px-10 lg:pt-10">
@@ -85,87 +127,98 @@ export function ChartExplorer() {
           </aside>
         </div>
 
-        {/* ── ASPEKTE ── */}
-        <Section title="Aspekte" hint={`${aspects.length} Verbindungen`} sub="Wie deine Kräfte zusammenspielen — tippe für die Deutung.">
-          <div className="grid gap-2 sm:grid-cols-2">
-            {aspects.map((a) => {
-              const txt = aiAspect(a.A.key, a.B.key) || (IS_DEMO && ASPECT_TEXT[a.key]) || a.def.plain;
-              const on = highlight === a.key;
+        {/* ── HERO: the chart's single most defining note (computed) ── */}
+        {tightest && (
+          <section className="mt-7">
+            <button
+              onClick={() => select({ kind: "aspect", key: tightest.key })}
+              className="relative w-full overflow-hidden rounded-card border border-[rgba(150,120,255,0.35)] bg-stage p-6 text-left shadow-glass transition hover:border-lilac/60 lg:p-8"
+            >
+              <span className="pointer-events-none absolute -right-6 -top-10 font-glyph text-[150px] leading-none opacity-[0.07]" style={{ color: tightest.def.c }}>{tightest.def.g}</span>
+              <div className="relative">
+                <div className="vela-label">Deine Signatur · {domElem}-betont</div>
+                <h2 className="mt-2 font-cinzel text-[26px] font-semibold leading-tight text-white lg:text-[34px]">
+                  <span style={{ color: col(tightest.A.key) }}>{tightest.A.name}</span>{" "}
+                  <span className="text-txt-2">{tightest.def.type}</span>{" "}
+                  <span style={{ color: col(tightest.B.key) }}>{tightest.B.name}</span>
+                </h2>
+                <div className="mt-1 font-mono text-[11px] text-txt-3">exaktester Aspekt · {tightest.orb.toFixed(1)}° Orbis</div>
+                {heroTxt && <p className="mt-3 max-w-[60ch] font-body text-[14px] leading-relaxed text-txt-2">{heroTxt}</p>}
+              </div>
+            </button>
+          </section>
+        )}
+
+        {/* ── DIE GROSSEN DREI ── */}
+        <Section title="Die großen Drei" sub="Kern, Gefühl, Auftreten — deine Identitäts-Achse.">
+          <div className="grid gap-3 sm:grid-cols-3">
+            {big3.map((b) => (
+              <button
+                key={b.key}
+                onClick={() => select({ kind: "planet", key: b.key })}
+                className="group relative overflow-hidden rounded-card border border-[rgba(150,120,255,0.2)] bg-glasswash p-5 text-left transition hover:border-line-accent"
+              >
+                <span className="pointer-events-none absolute -right-3 -top-7 font-glyph text-[92px] leading-none opacity-[0.08]" style={{ color: b.color }}>{b.glyph}</span>
+                <span className="relative font-glyph text-[24px]" style={{ color: b.color }}>{b.glyph}</span>
+                <div className="relative mt-2 vela-label">{b.role}</div>
+                <div className="relative mt-0.5 font-cinzel text-[24px] font-semibold leading-none text-white">{b.sign}</div>
+                <div className="relative mt-1.5 font-body text-[12px] text-txt-3">{b.sub}</div>
+              </button>
+            ))}
+          </div>
+        </Section>
+
+        {/* ── ASPEKTE (grouped) ── */}
+        <Section title="Aspekte" hint={`${aspects.length}`} sub="Wie deine Kräfte zusammenspielen.">
+          <div className="grid gap-4 lg:grid-cols-2">
+            <AspectGroup title="Im Fluss" tone="leicht & unterstützend" accent="#2fde8c" items={flow} sel={highlight} onPick={select} />
+            <AspectGroup title="Unter Spannung" tone="Reibung & Antrieb" accent="#aa5cff" items={tension} sel={highlight} onPick={select} />
+          </div>
+        </Section>
+
+        {/* ── PLANETEN (banded by reach) ── */}
+        <Section title="Planeten" sub="Von persönlich nah bis transpersonal weit.">
+          <div className="space-y-6">
+            {PLANET_GROUPS.map((g) => {
+              const items = g.keys.map((k) => CHART.find((p) => p.key === k)).filter(Boolean) as typeof CHART;
+              if (!items.length) return null;
               return (
-                <button
-                  key={a.key}
-                  onClick={() => select({ kind: "aspect", key: a.key })}
-                  style={{ borderColor: on ? a.def.c : undefined }}
-                  className={`group flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition ${
-                    on ? "bg-surface-2" : "border-[rgba(255,255,255,0.1)] bg-surface hover:border-line-accent hover:bg-surface-2"
-                  }`}
-                >
-                  <span className="flex shrink-0 items-center font-glyph text-[17px]" style={{ color: a.def.c }}>
-                    <span style={{ color: col(a.A.key) }}>{a.A.glyph}</span>
-                    <span className="mx-1 opacity-90">{a.def.g}</span>
-                    <span style={{ color: col(a.B.key) }}>{a.B.glyph}</span>
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-baseline justify-between gap-2">
-                      <span className="font-display text-[13px] font-semibold text-txt">
-                        {a.A.name} <span style={{ color: a.def.c }}>{a.def.type}</span> {a.B.name}
-                      </span>
-                      <span className="shrink-0 font-mono text-[10px] text-txt-3">{a.orb.toFixed(1)}°</span>
-                    </span>
-                    <span className="mt-0.5 line-clamp-1 font-body text-[12px] text-txt-3">{txt}</span>
-                  </span>
-                </button>
+                <div key={g.label}>
+                  <div className="mb-2.5 flex items-center gap-3">
+                    <span className="vela-label">{g.label}</span>
+                    <span className="h-px flex-1 bg-line" />
+                  </div>
+                  <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                    {items.map((p) => <PlanetCard key={p.key} p={p} on={highlight === p.key} onPick={select} />)}
+                  </div>
+                </div>
               );
             })}
           </div>
         </Section>
 
-        {/* ── PLANETEN ── */}
-        <Section title="Planeten" hint={`${planets.length}`} sub="Wo die Kräfte deines Bildes stehen.">
-          <div className="grid gap-2 sm:grid-cols-2">
-            {planets.map((p) => {
-              const h = p.house ?? 1;
-              const on = highlight === p.key;
-              return (
-                <button
-                  key={p.key}
-                  onClick={() => select({ kind: "planet", key: p.key })}
-                  className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition ${
-                    on ? "border-line-accent bg-surface-2" : "border-[rgba(255,255,255,0.1)] bg-surface hover:border-line-accent hover:bg-surface-2"
-                  }`}
-                >
-                  <span
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border font-glyph text-[18px]"
-                    style={{ color: col(p.key), borderColor: `${col(p.key)}55`, background: `${col(p.key)}12` }}
-                  >
-                    {p.glyph}
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block font-display text-[13.5px] font-semibold text-txt">{p.name}</span>
-                    <span className="block font-body text-[12px] text-txt-3">
-                      {signName(p.lon)} · {h}. Haus · {HOUSE[h - 1]}
-                    </span>
-                  </span>
-                </button>
-              );
-            })}
+        {/* ── VERTEILUNG ── */}
+        <Section title="Verteilung" sub="Die Mischung aus Elementen und Modi in deinem Bild.">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Bars title="Elemente" labels={ELEM} values={bal.e} total={bal.total} colors={ELEM_COL} />
+            <Bars title="Modi" labels={MODE} values={bal.m} total={bal.total} colors={MODE_COL} />
           </div>
         </Section>
 
-        {/* ── DEUTUNG ── */}
+        {/* ── DEUTUNG (editorial) ── */}
         <Section title="Deine Deutung" sub="Dein Bild in Worten.">
-          <div className="rounded-card border border-[rgba(150,120,255,0.16)] bg-glasswash p-5 lg:p-6">
-            {aiSummary() && <p className="font-body text-[14.5px] leading-relaxed text-txt">{aiSummary()}</p>}
-            <div className={`${aiSummary() ? "mt-4 border-t border-line pt-4" : ""} space-y-3`}>
+          <div className="rounded-card border border-[rgba(150,120,255,0.16)] bg-glasswash p-5 lg:p-7">
+            {aiSummary() && <p className="font-serif text-[18px] italic leading-[1.6] text-txt">{aiSummary()}</p>}
+            <div className={`${aiSummary() ? "mt-6 border-t border-line pt-6" : ""} grid gap-x-6 gap-y-5 sm:grid-cols-2`}>
               {planets.map((p) => {
                 const t = aiSign(p.key) || p.txt;
                 if (!t) return null;
                 return (
-                  <button key={p.key} onClick={() => select({ kind: "planet", key: p.key })} className="flex w-full gap-3 text-left">
-                    <span className="mt-0.5 font-glyph text-[15px]" style={{ color: col(p.key) }}>{p.glyph}</span>
-                    <span className="font-body text-[13.5px] leading-relaxed text-txt-2">
-                      <span className="font-semibold text-txt">{p.name}: </span>
-                      {t}
+                  <button key={p.key} onClick={() => select({ kind: "planet", key: p.key })} className="flex gap-3 text-left">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border font-glyph text-[17px]" style={{ color: col(p.key), borderColor: `${col(p.key)}55`, background: `${col(p.key)}12` }}>{p.glyph}</span>
+                    <span>
+                      <span className="block font-display text-[12.5px] font-semibold text-txt">{p.name} · {signName(p.lon)}</span>
+                      <span className="mt-0.5 block font-body text-[13px] leading-relaxed text-txt-2">{t}</span>
                     </span>
                   </button>
                 );
@@ -173,6 +226,77 @@ export function ChartExplorer() {
             </div>
           </div>
         </Section>
+      </div>
+    </div>
+  );
+}
+
+function AspectGroup({ title, tone, accent, items, sel, onPick }: { title: string; tone: string; accent: string; items: ReturnType<typeof computeAspects>; sel: string | null; onPick: (d: SheetDescriptor) => void }) {
+  return (
+    <div className="rounded-card border border-[rgba(255,255,255,0.08)] bg-surface p-4">
+      <div className="mb-3 flex items-baseline justify-between">
+        <span className="font-display text-[14px] font-bold text-txt">{title}</span>
+        <span className="font-body text-[11px] text-txt-3">{tone}</span>
+      </div>
+      <div className="space-y-1">
+        {items.length ? (
+          items.map((a) => {
+            const on = sel === a.key;
+            const strength = Math.max(0.14, 1 - a.orb / 8);
+            return (
+              <button key={a.key} onClick={() => onPick({ kind: "aspect", key: a.key })} className={`flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left transition ${on ? "bg-surface-2" : "hover:bg-surface-2"}`}>
+                <span className="shrink-0 font-glyph text-[15px]">
+                  <span style={{ color: col(a.A.key) }}>{a.A.glyph}</span>
+                  <span className="mx-0.5" style={{ color: accent }}>{a.def.g}</span>
+                  <span style={{ color: col(a.B.key) }}>{a.B.glyph}</span>
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-body text-[12.5px] text-txt-2">{a.A.name} {a.def.type} {a.B.name}</span>
+                  <span className="mt-1 block h-1 w-full overflow-hidden rounded-full bg-white/10">
+                    <span className="block h-full rounded-full" style={{ width: `${strength * 100}%`, background: accent }} />
+                  </span>
+                </span>
+                <span className="shrink-0 font-mono text-[10px] text-txt-3">{a.orb.toFixed(1)}°</span>
+              </button>
+            );
+          })
+        ) : (
+          <p className="py-1 font-body text-[12px] text-txt-3">Keine in dieser Gruppe.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PlanetCard({ p, on, onPick }: { p: (typeof CHART)[number]; on: boolean; onPick: (d: SheetDescriptor) => void }) {
+  const h = p.house ?? 1;
+  const role = PINFO[p.key]?.role ?? "";
+  return (
+    <button onClick={() => onPick({ kind: "planet", key: p.key })} className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition ${on ? "border-line-accent bg-surface-2" : "border-[rgba(255,255,255,0.1)] bg-surface hover:border-line-accent hover:bg-surface-2"}`}>
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border font-glyph text-[19px]" style={{ color: col(p.key), borderColor: `${col(p.key)}55`, background: `${col(p.key)}12` }}>{p.glyph}</span>
+      <span className="min-w-0">
+        <span className="block font-display text-[13.5px] font-semibold text-txt">{p.name}</span>
+        <span className="block font-body text-[12px] text-txt-2">{signName(p.lon)} · {h}. Haus</span>
+        {role && <span className="block truncate font-body text-[11px] text-txt-3">{role}</span>}
+      </span>
+    </button>
+  );
+}
+
+function Bars({ title, labels, values, total, colors }: { title: string; labels: string[]; values: number[]; total: number; colors: string[] }) {
+  return (
+    <div className="rounded-card border border-[rgba(255,255,255,0.08)] bg-surface p-5">
+      <div className="vela-label mb-3">{title}</div>
+      <div className="space-y-2.5">
+        {labels.map((l, i) => (
+          <div key={l} className="flex items-center gap-3">
+            <span className="w-24 font-body text-[12.5px] text-txt-2">{l}</span>
+            <span className="h-2 flex-1 overflow-hidden rounded-full bg-white/10">
+              <span className="block h-full rounded-full" style={{ width: `${total ? (values[i] / total) * 100 : 0}%`, background: colors[i] }} />
+            </span>
+            <span className="w-4 text-right font-mono text-[11px] text-txt-3">{values[i]}</span>
+          </div>
+        ))}
       </div>
     </div>
   );
