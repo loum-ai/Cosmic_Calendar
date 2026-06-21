@@ -111,15 +111,19 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
   if (kind === "node") {
     const n = NODES.find((x) => x.key === key);
     if (!n) return null;
-    return {
-      title: n.name,
-      glyph: n.glyph,
-      color: "#9bc0ff",
-      sections: [
-        { label: "Was ist das?", body: PINFO[n.key].what },
-        { label: "Bei dir", body: `${n.name} steht in ${signName(n.lon)}. ${SIGNWHAT[SN.indexOf(signName(n.lon))]}`, accent: MINT },
-      ],
-    };
+    const r = READINGS[n.key];
+    const idx = SN.indexOf(signName(n.lon));
+    const sections: SheetSection[] = [
+      { label: "Was — der Mondknoten", body: PINFO[n.key].what },
+      { label: `Wie — in ${signName(n.lon)}`, body: r?.sign ?? SIGNWHAT[idx] },
+    ];
+    if (r?.house) sections.push({ label: "Die Achse", body: r.house });
+    sections.push({
+      label: "Bei dir",
+      body: `${n.name} steht in ${signName(n.lon)}, Haus ${n.house ?? houseOf(n.lon)}.`,
+      accent: MINT,
+    });
+    return { title: n.name, glyph: n.glyph, color: "#9bc0ff", sections };
   }
 
   if (kind === "house") {
