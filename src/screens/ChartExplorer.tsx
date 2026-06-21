@@ -82,6 +82,8 @@ export function ChartExplorer() {
   const domElem = ELEM[domIdx];
   const heroTxt = tightest ? aiAspect(tightest.A.key, tightest.B.key) || (IS_DEMO && ASPECT_TEXT[tightest.key]) || tightest.def.plain : "";
   const patterns = chartPatterns();
+  // hybrid "core": generate a holistic overview for this chart (cached)
+  const overview = useReading("natal:overview", "Schreibe ein einfühlsames, konkretes Gesamtbild dieser Person aus ihrem Geburtsbild — Kernpersönlichkeit, größte Stärken, zentrale Herausforderung und der rote Faden ihrer Entwicklung. 5–7 Sätze, Du-Form, Klartext, ohne Aufzählung.");
 
   return (
     <div className="animate-slideUp px-5 pb-28 pt-[calc(env(safe-area-inset-top,0px)+1.4rem)] lg:px-10 lg:pt-10">
@@ -235,7 +237,13 @@ export function ChartExplorer() {
         {/* ── DEUTUNG (editorial) ── */}
         <Section title="Deine Deutung" sub="Dein Bild in Worten.">
           <div className="rounded-card border border-[rgba(150,120,255,0.16)] bg-glasswash p-5 lg:p-7">
-            {aiSummary() && <p className="font-serif text-[18px] italic leading-[1.6] text-txt">{aiSummary()}</p>}
+            {aiSummary() ? (
+              <p className="font-serif text-[18px] italic leading-[1.6] text-txt">{aiSummary()}</p>
+            ) : overview.text ? (
+              <p className="font-serif text-[18px] italic leading-[1.6] text-txt">{overview.text}</p>
+            ) : overview.loading ? (
+              <div className="flex items-center gap-2 text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="font-body text-[13.5px]">Vela schreibt dein Gesamtbild …</span></div>
+            ) : null}
             <div className={`${aiSummary() ? "mt-6 border-t border-line pt-6" : ""} grid gap-x-6 gap-y-5 sm:grid-cols-2`}>
               {planets.map((p) => {
                 const t = aiSign(p.key) || p.txt;
