@@ -1,7 +1,8 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Download, Sparkles, Loader2 } from "lucide-react";
-import { subjectTask, useReading } from "@/lib/genReadings";
+import { subjectTask, useReading, useReadings } from "@/lib/genReadings";
+import { chartContext } from "@/lib/factsContext";
 import { ChartWheel } from "@/components/ChartWheel";
 import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
 import { CHART, ASC, PROFILE, SN, PINFO, signName, computeAspects, IS_DEMO } from "@/lib/data";
@@ -85,6 +86,17 @@ export function ChartExplorer() {
   const patterns = chartPatterns();
   // hybrid "core": generate a holistic overview for this chart (cached)
   const overview = useReading("natal:overview", "Schreibe ein einfühlsames, konkretes Gesamtbild dieser Person aus ihrem Geburtsbild — Kernpersönlichkeit, größte Stärken, zentrale Herausforderung und der rote Faden ihrer Entwicklung. 5–7 Sätze, Du-Form, Klartext, ohne Aufzählung.");
+
+  // pre-warm the core readings (Sonne/Mond/Aszendent) so the first tap is instant
+  useEffect(() => {
+    const req = useReadings.getState().request;
+    const ctx = chartContext();
+    for (const k of ["sun", "moon", "asc"]) {
+      const st = subjectTask({ kind: "planet", key: k });
+      if (st) req(st.viewKey, ctx, st.task);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="animate-slideUp px-5 pb-28 pt-[calc(env(safe-area-inset-top,0px)+1.4rem)] lg:px-10 lg:pt-10">
