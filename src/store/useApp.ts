@@ -4,6 +4,8 @@ import { localOracle } from "@/lib/oracle";
 import { computeChart, type BirthInput } from "@/lib/compute";
 import { applyChart, signName, PROFILE } from "@/lib/data";
 import { ensureInterpretation, clearInterpretation } from "@/lib/interpret";
+import { supabase } from "@/lib/supabase";
+import { chartContext, chartHash, shortHash } from "@/lib/factsContext";
 
 // Birth data behind the bundled demo chart (Laura). Used to fetch the real AI
 // interpretation when no custom chart has been onboarded yet.
@@ -184,16 +186,19 @@ export const useApp = create<AppState>((set, get) => ({
     if (!q || get().loading) return;
     set({ loading: true, answer: "", demo: false, q });
     try {
-      const res = await fetch("/api/ask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: q }),
+      // grounded generation from the chart facts (cached per chart + question)
+      const { data, error } = await supabase.functions.invoke("generate", {
+        body: {
+          chart_hash: chartHash(),
+          cacheKey: "q:" + shortHash(q),
+          context: chartContext(),
+          task: `Die Person fragt dich: "${q}". Antworte als Vela auf Basis ihres Geburtsbildes — konkret, ehrlich und ermutigend, 3–5 Sätze. Beziehe dich auf passende Stellungen aus den Fakten.`,
+        },
       });
-      if (!res.ok) throw new Error(String(res.status));
-      const data = (await res.json()) as { answer?: string };
-      set({ answer: data.answer || localOracle(q), demo: !data.answer, loading: false });
+      if (error || !data?.text) throw new Error("no answer");
+      set({ answer: data.text, demo: false, loading: false });
     } catch {
-      // No backend (e.g. static GitHub Pages) — answer locally from the chart.
+      // last resort (function unreachable) — offline, chart-grounded fallback
       set({ answer: localOracle(q), demo: true, loading: false });
     }
   },
