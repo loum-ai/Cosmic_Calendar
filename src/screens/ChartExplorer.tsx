@@ -296,14 +296,18 @@ function AspectGroup({ title, tone, accent, items, sel, onPick }: { title: strin
 
 function PlanetCard({ p, on, onPick }: { p: (typeof CHART)[number]; on: boolean; onPick: (d: SheetDescriptor) => void }) {
   const h = p.house ?? 1;
-  const role = PINFO[p.key]?.role ?? "";
+  // plain-language meaning: the personal reading if we have it, else the
+  // general "what this planet is" — so a card never reads as bare jargon.
+  const meaning = aiSign(p.key) || p.txt || PINFO[p.key]?.what || "";
   return (
-    <button onClick={() => onPick({ kind: "planet", key: p.key })} className={`flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition ${on ? "border-line-accent bg-surface-2" : "border-[rgba(255,255,255,0.1)] bg-surface hover:border-line-accent hover:bg-surface-2"}`}>
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border font-glyph text-[19px]" style={{ color: col(p.key), borderColor: `${col(p.key)}55`, background: `${col(p.key)}12` }}>{p.glyph}</span>
+    <button onClick={() => onPick({ kind: "planet", key: p.key })} className={`flex items-start gap-3 rounded-2xl border px-3.5 py-3 text-left transition ${on ? "border-line-accent bg-surface-2" : "border-[rgba(255,255,255,0.1)] bg-surface hover:border-line-accent hover:bg-surface-2"}`}>
+      <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border font-glyph text-[19px]" style={{ color: col(p.key), borderColor: `${col(p.key)}55`, background: `${col(p.key)}12` }}>{p.glyph}</span>
       <span className="min-w-0">
-        <span className="block font-display text-[13.5px] font-semibold text-txt">{p.name}</span>
-        <span className="block font-body text-[12px] text-txt-2">{signName(p.lon)} · {h}. Haus</span>
-        {role && <span className="block truncate font-body text-[11px] text-txt-3">{role}</span>}
+        <span className="flex flex-wrap items-baseline gap-x-2">
+          <span className="font-display text-[13.5px] font-semibold text-txt">{p.name}</span>
+          <span className="font-body text-[11px] text-txt-3">{signName(p.lon)} · {h}. Haus</span>
+        </span>
+        {meaning && <span className="mt-1 block line-clamp-2 font-body text-[12.5px] leading-snug text-txt-2">{meaning}</span>}
       </span>
     </button>
   );
