@@ -6,6 +6,7 @@ import { SheetHost } from "@/components/SheetHost";
 import { DetailView } from "@/components/DetailView";
 import { CoachHint } from "@/components/CoachHint";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
+import { Onboarding } from "@/components/Onboarding";
 import { useApp } from "@/store/useApp";
 import { HeuteScreen } from "@/screens/HeuteScreen";
 import { TransiteScreen } from "@/screens/TransiteScreen";
@@ -23,6 +24,7 @@ const SCREENS = {
 
 export default function App() {
   const tab = useApp((s) => s.tab);
+  const chartVersion = useApp((s) => s.chartVersion);
   const Screen = SCREENS[tab];
 
   return (
@@ -32,7 +34,7 @@ export default function App() {
       {/* content is offset by the desktop sidebar; full-bleed on mobile */}
       <div className="lg:pl-[240px]">
         <AnimatePresence mode="wait">
-          <Screen key={tab} />
+          <Screen key={`${tab}-${chartVersion}`} />
         </AnimatePresence>
       </div>
 
@@ -41,6 +43,7 @@ export default function App() {
       <TabBar />
       <SheetHost />
       <DetailView />
+      <Onboarding />
       <TutorialOverlay />
       <div className="vela-grain" />
     </div>

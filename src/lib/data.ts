@@ -35,20 +35,26 @@ export interface Aspect {
   orb: number;
 }
 
-export const PROFILE = {
+// The active chart. Defaults to the bespoke demo (Laura); applyChart()
+// swaps in a freshly computed chart for any birth data. Exported as `let`
+// so importers see the live value; screens remount on chartVersion to
+// re-read it. IS_DEMO gates the hand-written bespoke texts to the demo only.
+export let IS_DEMO = true;
+
+export let PROFILE = {
   name: "Laura",
   birth: "7. September 1987 · 18:50 · Starnberg",
   memberSince: "Wassermann-Aszendent · 48°00′ N · 11°21′ E",
 };
 
 // Aszendent Wassermann 21°00′, MC Schütze 11°36′
-export const ASC = 321.0;
-export const MC = 251.6;
+export let ASC = 321.0;
+export let MC = 251.6;
 
 // Placidus house cusps (longitudes), house 1..12 — from the real chart
-export const CUSPS = [321.0, 16.05, 49.4, 71.6, 90.43, 110.77, 141.0, 196.05, 229.4, 251.6, 270.43, 290.77];
+export let CUSPS = [321.0, 16.05, 49.4, 71.6, 90.43, 110.77, 141.0, 196.05, 229.4, 251.6, 270.43, 290.77];
 
-export const CHART: Planet[] = [
+export let CHART: Planet[] = [
   { key: "sun", name: "Sonne", glyph: "☉", lon: 164.52, house: 7, txt: "Dein Kern wirkt über das Gegenüber — Klarheit, Sorgfalt, ein Dienst an der Beziehung." },
   { key: "moon", name: "Mond", glyph: "☽", lon: 343.73, house: 1, txt: "Dein Gefühl ist durchlässig und sofort sichtbar — du spürst Räume, bevor du sie betrittst." },
   { key: "mercury", name: "Merkur", glyph: "☿", lon: 180.2, house: 7, txt: "Du denkst in Abwägung und Dialog — Sprache ist deine Brücke zum anderen." },
@@ -63,10 +69,29 @@ export const CHART: Planet[] = [
   { key: "lilith", name: "Lilith", glyph: "⚸", lon: 122.27, house: 6, txt: "Dein Ungezähmtes will im Alltag gesehen werden — auf deine eigene Art." },
 ];
 
-export const NODES: Planet[] = [
+export let NODES: Planet[] = [
   { key: "node_n", name: "Aufsteigender Knoten", glyph: "☊", lon: 3.27, house: 1, retro: true, txt: "" },
   { key: "node_s", name: "Absteigender Knoten", glyph: "☋", lon: 183.27, house: 7, retro: true, txt: "" },
 ];
+
+/** Swap in a freshly computed chart (any birth data). Disables the demo's
+ *  bespoke texts so generic sign/house interpretations are used instead. */
+export function applyChart(c: {
+  planets: Planet[];
+  nodes: Planet[];
+  asc: number;
+  mc: number;
+  cusps: number[];
+  profile: { name: string; birth: string; memberSince: string };
+}): void {
+  CHART = c.planets;
+  NODES = c.nodes;
+  ASC = c.asc;
+  MC = c.mc;
+  CUSPS = c.cusps;
+  PROFILE = c.profile;
+  IS_DEMO = false;
+}
 
 export const SN = ["Widder", "Stier", "Zwillinge", "Krebs", "Löwe", "Jungfrau", "Waage", "Skorpion", "Schütze", "Steinbock", "Wassermann", "Fische"];
 export const SG = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"];

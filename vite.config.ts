@@ -17,6 +17,9 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // The package's "module" field points at an unpublished src/ entry;
+      // pin it to the built CJS bundle so Vite/Rollup can resolve it.
+      "circular-natal-horoscope-js": path.resolve(__dirname, "./node_modules/circular-natal-horoscope-js/dist/index.js"),
     },
   },
 });
