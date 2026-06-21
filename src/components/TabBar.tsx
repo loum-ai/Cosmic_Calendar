@@ -44,7 +44,7 @@ export function TabBar() {
             className={cn(
               "group relative flex flex-1 flex-col items-center gap-1 rounded-2xl py-1.5 transition-colors duration-300",
               "lg:flex-none lg:gap-1 lg:px-1 lg:py-2.5",
-              active ? "text-lilac" : "text-[rgba(200,192,228,0.5)] hover:text-ink",
+              active ? "text-lilac" : "text-[rgba(214,206,240,0.74)] hover:text-ink",
             )}
           >
             <span

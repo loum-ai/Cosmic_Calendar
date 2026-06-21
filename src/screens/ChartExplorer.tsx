@@ -30,9 +30,11 @@ export function ChartExplorer() {
         {/* header */}
         <header className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
-            <div className="vela-label">Geburtsbild</div>
-            <h1 className="font-cinzel text-[26px] font-semibold tracking-wide text-txt lg:text-[34px]">{PROFILE.name}</h1>
-            <p className="mt-0.5 font-body text-[12.5px] text-txt-3">{PROFILE.birth}</p>
+            <div className="vela-label mb-1">Geburtsbild</div>
+            <h1 className="font-cinzel text-[32px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_24px_rgba(139,92,246,0.35)] lg:text-[46px]">
+              {PROFILE.name}
+            </h1>
+            <p className="mt-2 font-body text-[13px] text-txt-2">{PROFILE.birth}</p>
           </div>
           <div className="flex gap-2">
             {[
@@ -64,7 +66,7 @@ export function ChartExplorer() {
                   onClick={() => setSel({ kind: "aspect", key: a.key })}
                   style={{ borderColor: on ? a.def.c : undefined }}
                   className={`flex shrink-0 items-center gap-2 rounded-pill border px-3 py-2 transition ${
-                    on ? "bg-surface-2" : "border-line bg-surface hover:bg-surface-2"
+                    on ? "bg-surface-2" : "border-[rgba(255,255,255,0.14)] bg-surface hover:bg-surface-2"
                   }`}
                 >
                   <span className="font-glyph text-[15px] text-txt" style={{ color: a.def.c }}>
@@ -82,7 +84,7 @@ export function ChartExplorer() {
         {/* stage + detail */}
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(340px,400px)]">
           {/* chart stage */}
-          <section className="relative overflow-hidden rounded-card border border-line bg-stage p-5 shadow-glass lg:p-8">
+          <section className="relative overflow-hidden rounded-card border border-[rgba(150,120,255,0.22)] bg-stage p-5 shadow-glass lg:p-8">
             <div className="pointer-events-none absolute -right-12 -top-12 h-44 w-44 rounded-full bg-violet/20 blur-3xl" />
             <div className="relative mx-auto w-full max-w-[460px]">
               <ChartWheel onPick={setSel} highlight={highlight} />
@@ -105,7 +107,7 @@ export function ChartExplorer() {
           </section>
 
           {/* detail panel */}
-          <aside className="rounded-card border border-line bg-glasswash p-5 shadow-glass backdrop-blur-xl lg:p-6">
+          <aside className="rounded-card border border-[rgba(150,120,255,0.18)] bg-glasswash p-5 shadow-glass backdrop-blur-xl lg:p-6">
             <AnimatePresence mode="wait">
               <motion.div
                 key={selKey(sel)}
@@ -129,8 +131,8 @@ function Overview({ onPick }: { onPick: (d: SheetDescriptor) => void }) {
   return (
     <div>
       <div className="vela-label">Überblick</div>
-      <h2 className="mt-1 font-serif text-[24px] font-semibold leading-tight text-txt">Dein Bild auf einen Blick</h2>
-      <p className="mt-3 font-body text-[13.5px] leading-relaxed text-txt-2">
+      <h2 className="mt-1.5 font-display text-[15px] font-semibold uppercase tracking-[0.1em] text-txt-2">Dein Bild auf einen Blick</h2>
+      <p className="mt-3 font-body text-[14px] leading-relaxed text-txt-2">
         {summary ||
           "Tippe oben auf einen Aspekt oder im Rad auf einen Planeten — die Deutung erscheint hier. So liest du dein Chart Stück für Stück, in Klartext."}
       </p>
@@ -170,10 +172,10 @@ function DetailView({ content, onPick }: { content: NonNullable<ReturnType<typeo
       <div className="mt-4 space-y-3.5">
         {content.sections.map((s, i) => (
           <div key={i}>
-            <div className="font-body text-[10.5px] font-semibold uppercase tracking-[0.14em]" style={{ color: s.accent || "rgba(255,255,255,0.42)" }}>
+            <div className="font-body text-[10.5px] font-semibold uppercase tracking-[0.14em]" style={{ color: s.accent || "#c9bcff" }}>
               {s.label}
             </div>
-            <p className="mt-1 font-body text-[13px] leading-relaxed text-txt-2">{s.body}</p>
+            <p className="mt-1 font-body text-[13.5px] leading-relaxed text-txt-2">{s.body}</p>
           </div>
         ))}
       </div>
