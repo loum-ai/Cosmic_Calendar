@@ -59,6 +59,8 @@ export default {
         },
       },
       fontFamily: {
+        // wide, engraved all-caps display serif (à la LOUM "THE ANSWER")
+        cinzel: ['"Cinzel"', '"Cormorant Garamond"', "serif"],
         // elegant high-contrast serif for the cinematic hero headlines
         serif: ['"Cormorant Garamond"', "serif"],
         display: ['"Plus Jakarta Sans"', "sans-serif"],
@@ -85,6 +87,12 @@ export default {
           "linear-gradient(135deg,#8B5CF6,#6D28D9)",
         "iris-text":
           "linear-gradient(110deg,#c4b5ff 0%,#8B5CF6 48%,#2DD4BF 100%)",
+        // deep, glassy chart-stage backdrop — lavender bloom over plum/ink
+        "stage":
+          "radial-gradient(120% 90% at 30% 12%, rgba(150,110,255,0.28) 0%, rgba(90,60,170,0.10) 38%, rgba(12,10,26,0.0) 70%), linear-gradient(160deg, #15122a 0%, #0c0a18 60%, #08070f 100%)",
+        // soft lilac wash for floating glass panels
+        "glasswash":
+          "linear-gradient(155deg, rgba(185,168,255,0.10) 0%, rgba(120,90,220,0.05) 50%, rgba(255,255,255,0.02) 100%)",
       },
       keyframes: {
         velaSpin: { to: { transform: "rotate(360deg)" } },

@@ -8,14 +8,14 @@ import { CoachHint } from "@/components/CoachHint";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { Onboarding } from "@/components/Onboarding";
 import { useApp } from "@/store/useApp";
-import { HeuteScreen } from "@/screens/HeuteScreen";
+import { ChartExplorer } from "@/screens/ChartExplorer";
 import { TransiteScreen } from "@/screens/TransiteScreen";
 import { SynastrieScreen } from "@/screens/SynastrieScreen";
 import { LernenScreen } from "@/screens/LernenScreen";
 import { ProfilScreen } from "@/screens/ProfilScreen";
 
 const SCREENS = {
-  heute: HeuteScreen,
+  heute: ChartExplorer,
   transite: TransiteScreen,
   synastrie: SynastrieScreen,
   lernen: LernenScreen,
@@ -33,7 +33,7 @@ export function MainApp() {
     <div className="relative min-h-dvh w-full overflow-x-hidden text-ink">
       <AuroraBackground />
 
-      <div className="lg:pl-[240px]">
+      <div className="lg:pl-[120px]">
         <AnimatePresence mode="wait">
           <Screen key={`${tab}-${chartVersion}`} />
         </AnimatePresence>

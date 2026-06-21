@@ -1,4 +1,5 @@
 import { useApp } from "@/store/useApp";
+import type { SheetDescriptor } from "@/lib/sheets";
 import { ASC, CHART, CUSPS, MC, NODES, SG, computeAspects } from "@/lib/data";
 
 /**
@@ -19,10 +20,14 @@ function pt(lonDeg: number, r: number): [number, number] {
   return [C + r * Math.cos(a), C - r * Math.sin(a)];
 }
 
-export function ChartWheel() {
+export function ChartWheel({ onPick, highlight }: { onPick?: (d: SheetDescriptor) => void; highlight?: string | null } = {}) {
   const openInfo = useApp((s) => s.openInfo);
   const dismissCoach = useApp((s) => s.dismissCoach);
   const aspects = computeAspects();
+  const pick = (d: SheetDescriptor) => {
+    dismissCoach();
+    (onPick ?? openInfo)(d);
+  };
 
   const sorted = [...CHART].sort((a, b) => a.lon - b.lon);
   const radius: Record<string, number> = {};
@@ -116,6 +121,7 @@ export function ChartWheel() {
       {aspects.map((a) => {
         const [x1, y1] = pt(a.A.lon, radius[a.A.key] ?? 100);
         const [x2, y2] = pt(a.B.lon, radius[a.B.key] ?? 100);
+        const on = highlight === a.key;
         return (
           <line
             key={a.key}
@@ -123,13 +129,10 @@ export function ChartWheel() {
             y1={y1}
             x2={x2}
             y2={y2}
-            stroke="rgba(176,160,255,0.16)"
-            strokeWidth={0.8}
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              dismissCoach();
-              openInfo({ kind: "aspect", key: a.key });
-            }}
+            stroke={on ? a.def.c : "rgba(176,160,255,0.16)"}
+            strokeWidth={on ? 1.8 : 0.8}
+            style={{ cursor: "pointer", filter: on ? `drop-shadow(0 0 5px ${a.def.c})` : undefined }}
+            onClick={() => pick({ kind: "aspect", key: a.key })}
           />
         );
       })}
@@ -137,16 +140,10 @@ export function ChartWheel() {
       {/* nodes */}
       {NODES.map((n) => {
         const [x, y] = pt(n.lon, 90);
+        const on = highlight === n.key;
         return (
-          <g
-            key={n.key}
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              dismissCoach();
-              openInfo({ kind: "node", key: n.key });
-            }}
-          >
-            <circle cx={x} cy={y} r={11} fill={DOT} stroke={RIM} strokeWidth={1} />
+          <g key={n.key} style={{ cursor: "pointer" }} onClick={() => pick({ kind: "node", key: n.key })}>
+            <circle cx={x} cy={y} r={on ? 13 : 11} fill={DOT} stroke={on ? "#9bc0ff" : RIM} strokeWidth={on ? 1.8 : 1} style={{ filter: on ? "drop-shadow(0 0 6px rgba(155,192,255,0.8))" : undefined }} />
             <text x={x} y={y} fill={INK} fontSize={11} textAnchor="middle" dominantBaseline="central" fontFamily='"Noto Sans Symbols","Segoe UI Symbol",system-ui,sans-serif'>
               {n.glyph}
             </text>
@@ -157,16 +154,10 @@ export function ChartWheel() {
       {/* planets */}
       {CHART.map((p) => {
         const [x, y] = pt(p.lon, radius[p.key] ?? 100);
+        const on = highlight === p.key;
         return (
-          <g
-            key={p.key}
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              dismissCoach();
-              openInfo({ kind: "planet", key: p.key });
-            }}
-          >
-            <circle cx={x} cy={y} r={12} fill={DOT} stroke={RIM} strokeWidth={1} />
+          <g key={p.key} style={{ cursor: "pointer" }} onClick={() => pick({ kind: "planet", key: p.key })}>
+            <circle cx={x} cy={y} r={on ? 14 : 12} fill={DOT} stroke={on ? "#c4a6ff" : RIM} strokeWidth={on ? 2 : 1} style={{ filter: on ? "drop-shadow(0 0 7px rgba(196,166,255,0.9))" : undefined }} />
             <text x={x} y={y} fill={INK} fontSize={13} textAnchor="middle" dominantBaseline="central" fontFamily='"Noto Sans Symbols","Segoe UI Symbol",system-ui,sans-serif'>
               {p.glyph}
             </text>

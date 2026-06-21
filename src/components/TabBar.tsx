@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Sparkles, Orbit, Heart, BookOpen, User } from "lucide-react";
 
 const TABS: { key: TabKey; label: string; Icon: typeof Sparkles }[] = [
-  { key: "heute", label: "Heute", Icon: Sparkles },
+  { key: "heute", label: "Chart", Icon: Sparkles },
   { key: "transite", label: "Transite", Icon: Orbit },
   { key: "synastrie", label: "Synastrie", Icon: Heart },
   { key: "lernen", label: "Lernen", Icon: BookOpen },
@@ -11,8 +11,8 @@ const TABS: { key: TabKey; label: string; Icon: typeof Sparkles }[] = [
 ];
 
 /**
- * Adaptive navigation: a frosted bottom tab bar on mobile, a real vertical
- * sidebar (logo + labelled items) on desktop.
+ * Floating navigation: a detached glass pill at the bottom on mobile, and a
+ * detached, rounded glass rail on the left on desktop.
  */
 export function TabBar() {
   const tab = useApp((s) => s.tab);
@@ -21,19 +21,16 @@ export function TabBar() {
   return (
     <nav
       className={cn(
-        "fixed z-40 bg-[rgba(10,10,20,0.85)] backdrop-blur-[24px]",
-        // mobile: bottom bar
-        "inset-x-0 bottom-0 mx-auto flex h-[68px] max-w-[480px] items-start justify-around border-t border-line px-6 pt-4",
-        // desktop: left sidebar
-        "lg:inset-y-0 lg:left-0 lg:right-auto lg:mx-0 lg:h-full lg:w-[240px] lg:max-w-none lg:flex-col lg:items-stretch lg:justify-start lg:gap-1.5 lg:border-r lg:border-t-0 lg:px-4 lg:pt-9",
+        "fixed z-40 border border-[rgba(185,168,255,0.14)] bg-[rgba(14,12,28,0.72)] shadow-[0_12px_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl",
+        // mobile: floating pill above the bottom edge
+        "inset-x-0 bottom-[max(env(safe-area-inset-bottom,0px),16px)] mx-auto flex h-[64px] w-[min(420px,calc(100%-28px))] items-center justify-around rounded-pill px-4",
+        // desktop: detached vertical glass rail, left
+        "lg:inset-y-0 lg:left-5 lg:right-auto lg:bottom-auto lg:top-1/2 lg:mx-0 lg:h-auto lg:w-[80px] lg:-translate-y-1/2 lg:flex-col lg:justify-center lg:gap-1 lg:rounded-[28px] lg:px-3 lg:py-5",
       )}
     >
-      {/* brand — desktop only */}
-      <div className="hidden lg:mb-6 lg:flex lg:items-center lg:gap-2.5 lg:px-2">
-        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-cta-gradient text-white">
-          <Sparkles className="h-4 w-4" />
-        </span>
-        <span className="vela-wordmark text-[15px]">VELA</span>
+      {/* brand mark — desktop only */}
+      <div className="hidden lg:mb-3 lg:flex lg:h-11 lg:w-11 lg:items-center lg:justify-center lg:rounded-2xl lg:bg-cta-gradient lg:text-white lg:shadow-glow">
+        <Sparkles className="h-5 w-5" />
       </div>
 
       {TABS.map(({ key, label, Icon }) => {
@@ -45,21 +42,20 @@ export function TabBar() {
             aria-label={label}
             title={label}
             className={cn(
-              "flex flex-1 flex-col items-center gap-2 pt-0.5 transition-colors duration-300",
-              "lg:flex-none lg:flex-row lg:items-center lg:justify-start lg:gap-3 lg:rounded-xl lg:px-3 lg:py-2.5",
-              active
-                ? "text-violet [filter:drop-shadow(0_0_6px_rgba(139,92,246,0.5))] lg:bg-surface lg:[filter:none]"
-                : "text-[rgba(200,192,228,0.45)] lg:hover:bg-surface",
+              "group relative flex flex-1 flex-col items-center gap-1 rounded-2xl py-1.5 transition-colors duration-300",
+              "lg:flex-none lg:gap-1 lg:px-1 lg:py-2.5",
+              active ? "text-lilac" : "text-[rgba(200,192,228,0.5)] hover:text-ink",
             )}
           >
-            <Icon className="h-[21px] w-[21px]" strokeWidth={1.6} />
-            <span className="hidden font-body text-sm font-medium lg:inline">{label}</span>
             <span
               className={cn(
-                "h-1 w-1 rounded-full transition-all duration-300 lg:hidden",
-                active ? "bg-violet shadow-[0_0_6px_rgba(139,92,246,0.8)]" : "bg-transparent",
+                "flex h-9 w-9 items-center justify-center rounded-2xl transition-all duration-300",
+                active ? "bg-surface-2 shadow-[inset_0_0_0_1px_rgba(185,168,255,0.3)] [filter:drop-shadow(0_0_6px_rgba(139,92,246,0.5))]" : "group-hover:bg-surface",
               )}
-            />
+            >
+              <Icon className="h-[20px] w-[20px]" strokeWidth={1.7} />
+            </span>
+            <span className="font-body text-[10px] font-medium tracking-wide">{label}</span>
           </button>
         );
       })}
