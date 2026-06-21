@@ -7,6 +7,7 @@ import { DetailView } from "@/components/DetailView";
 import { CoachHint } from "@/components/CoachHint";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { Onboarding } from "@/components/Onboarding";
+import { PrintView } from "@/components/PrintView";
 import { useApp } from "@/store/useApp";
 import { ChartExplorer } from "@/screens/ChartExplorer";
 import { TransiteScreen } from "@/screens/TransiteScreen";
@@ -27,6 +28,7 @@ export function MainApp() {
   const tab = useApp((s) => s.tab);
   const chartVersion = useApp((s) => s.chartVersion);
   const viewer = useApp((s) => s.viewerMode);
+  const printOpen = useApp((s) => s.printOpen);
   const Screen = SCREENS[tab];
 
   return (
@@ -46,6 +48,7 @@ export function MainApp() {
       <DetailView />
       {!viewer && <Onboarding />}
       <TutorialOverlay />
+      {printOpen && <PrintView />}
       <div className="vela-grain" />
     </div>
   );

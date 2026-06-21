@@ -139,6 +139,10 @@ export interface AppState {
   // transite full-screen index
   fullTransit: number | null;
   setFullTransit: (i: number | null) => void;
+
+  // printable horoscope overlay
+  printOpen: boolean;
+  setPrintOpen: (v: boolean) => void;
 }
 
 export const useApp = create<AppState>((set, get) => ({
@@ -265,4 +269,7 @@ export const useApp = create<AppState>((set, get) => ({
 
   fullTransit: null,
   setFullTransit: (i) => set({ fullTransit: i }),
+
+  printOpen: false,
+  setPrintOpen: (v) => set({ printOpen: v }),
 }));
