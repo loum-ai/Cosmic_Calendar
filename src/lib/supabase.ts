@@ -12,3 +12,4 @@ export const supabase = createClient<Database>(URL, ANON, {
 });
 
 export const FUNCTIONS_URL = `${URL}/functions/v1`;
+export const SUPABASE_ANON = ANON;
