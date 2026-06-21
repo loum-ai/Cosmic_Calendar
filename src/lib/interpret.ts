@@ -113,3 +113,9 @@ export function clearInterpretation() {
   AI = null;
   VERIFY = null;
 }
+
+/** Inject an already-generated reading (from resolve-link) — no network call. */
+export function applyResolvedInterpretation(interp: any, verify: ChartVerification | null) {
+  AI = interp ? normalize(interp) : null;
+  VERIFY = verify ?? null;
+}

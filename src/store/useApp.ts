@@ -127,6 +127,11 @@ export interface AppState {
   aiVersion: number; // bumps when the interpretation lands → summary re-renders
   refreshInterpretation: () => Promise<void>;
 
+  // viewer (client-link) mode + manual chart-version bump (for the client view)
+  viewerMode: boolean;
+  setViewerMode: (v: boolean) => void;
+  bumpChart: () => void;
+
   // lernen category
   learnCat: string;
   setLearnCat: (c: string) => void;
@@ -227,10 +232,16 @@ export const useApp = create<AppState>((set, get) => ({
     } catch {
       /* ignore quota */
     }
+    // Public/self-compute stays dummy — no AI call here. The real Gemini reading
+    // is generated only in the admin cockpit and served via the client link.
     clearInterpretation();
     set((s) => ({ savedBirth: b, chartVersion: s.chartVersion + 1, onboardingOpen: false, aiReady: false, aiError: null }));
-    get().refreshInterpretation();
   },
+
+  // viewer (client-link) mode: hides admin/onboarding affordances
+  viewerMode: false,
+  setViewerMode: (v) => set({ viewerMode: v }),
+  bumpChart: () => set((s) => ({ chartVersion: s.chartVersion + 1, aiVersion: s.aiVersion + 1 })),
 
   aiLoading: false,
   aiReady: false,

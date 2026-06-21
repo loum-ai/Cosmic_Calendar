@@ -39,6 +39,7 @@ const SETTINGS = ["Benachrichtigungen", "Darstellung", "Datenschutz", "Über Vel
 export function ProfilScreen() {
   const setOnboardingOpen = useApp((s) => s.setOnboardingOpen);
   const saved = useApp((s) => s.savedBirth);
+  const viewer = useApp((s) => s.viewerMode);
   const aiVersion = useApp((s) => s.aiVersion);
   const aiLoading = useApp((s) => s.aiLoading);
   void aiVersion; // re-render when the interpretation lands
@@ -78,14 +79,16 @@ export function ProfilScreen() {
         ))}
       </StatRow>
 
-      {/* compute / edit own chart */}
-      <button
-        onClick={() => setOnboardingOpen(true)}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-[14px] font-semibold text-space-2 shadow-glow transition active:scale-[0.98]"
-      >
-        <Sparkles className="h-4 w-4" />
-        {saved ? "Geburtsdaten ändern" : "Eigenes Chart berechnen"}
-      </button>
+      {/* compute / edit own chart — hidden for client-link viewers */}
+      {!viewer && (
+        <button
+          onClick={() => setOnboardingOpen(true)}
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-[14px] font-semibold text-space-2 shadow-glow transition active:scale-[0.98]"
+        >
+          <Sparkles className="h-4 w-4" />
+          {saved ? "Geburtsdaten ändern" : "Erhalte dein Horoskop"}
+        </button>
+      )}
 
       {/* AI interpretation summary + data-verification badge */}
       <section className="mt-8">
@@ -98,8 +101,10 @@ export function ProfilScreen() {
               <Loader2 className="h-4 w-4 animate-spin" />
               <span className="font-body text-[13px]">Vela erstellt deine persönliche Deutung …</span>
             </div>
+          ) : viewer ? (
+            <p className="font-body text-[13px] text-txt-2">Deine persönliche Deutung wird gerade von deiner Astrologin vorbereitet.</p>
           ) : (
-            <p className="font-body text-[13px] text-txt-2">Deine Deutung wird beim Öffnen erstellt.</p>
+            <p className="font-body text-[13px] text-txt-2">Deine persönliche Deutung erstellt Vela aus deinem echten Geburtsbild — frag deine Astrologin nach deinem Zugang.</p>
           )}
           {verify?.max_dev_arcsec != null && (
             <div className="mt-3 flex items-center gap-1.5 border-t border-line-soft pt-3">
