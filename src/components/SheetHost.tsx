@@ -20,26 +20,56 @@ function useIsDesktop() {
 /** The shared content (title + was/wie/wo + relations) for both surfaces. */
 function Body({ content }: { content: SheetContent }) {
   const openSheet = useApp((s) => s.openSheet);
+
+  const general = content.sections.filter((s) => !s.accent && /^was/i.test(s.label));
+  const placements = content.sections.filter((s) => !s.accent && !/^was/i.test(s.label));
+  const personal = content.sections.filter((s) => s.accent);
+
   return (
     <>
       <div className="flex items-center gap-3.5 pr-8">
-        <GlyphBadge glyph={content.glyph} size={42} />
-        <h2 className="font-display text-[22px] font-bold leading-[1.12] tracking-[-0.01em] text-txt">{content.title}</h2>
+        <GlyphBadge glyph={content.glyph} size={46} />
+        <h2 className="font-serif text-[26px] font-semibold leading-[1.05] tracking-[0.01em] text-white">{content.title}</h2>
       </div>
 
-      <div className="mt-5 h-px w-full bg-line" />
-
       <div className="mt-5 flex flex-col gap-6">
-        {content.sections.map((sec) => (
-          <div key={sec.label} className={sec.accent ? "border-l-2 border-violet/45 pl-4" : ""}>
-            <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.16em] text-violet/65">{sec.label}</div>
-            <p className="font-body text-[15px] leading-[1.62] text-[rgba(255,255,255,0.85)]">{sec.body}</p>
+        {/* GENERAL — the encyclopedia voice: quiet, italic serif */}
+        {general.map((sec) => (
+          <div key={sec.label}>
+            <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-txt-3">{sec.label}</div>
+            <p className="font-serif text-[18px] italic leading-[1.5] text-txt-2">{sec.body}</p>
+          </div>
+        ))}
+
+        {/* PLACEMENTS — your data point: structured rows, label carries the position */}
+        {placements.length > 0 && (
+          <div className="space-y-4 border-t border-line pt-5">
+            {placements.map((sec) => (
+              <div key={sec.label} className="grid grid-cols-[auto_1fr] gap-x-3.5">
+                <div className="mt-1 h-full w-[3px] rounded-full bg-gradient-to-b from-lilac/80 to-violet/30" />
+                <div>
+                  <div className="mb-1 font-display text-[12.5px] font-bold tracking-tight text-lilac">{sec.label}</div>
+                  <p className="font-body text-[14px] leading-[1.6] text-txt-2">{sec.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* PERSONAL — "Bei dir": the punchline, a bright accent card */}
+        {personal.map((sec) => (
+          <div key={sec.label} className="rounded-2xl border border-mint/25 bg-mint/[0.06] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+            <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-mint">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2dd4bf]" />
+              {sec.label}
+            </div>
+            <p className="font-body text-[16px] font-medium leading-[1.55] text-white">{sec.body}</p>
           </div>
         ))}
 
         {content.relations && content.relations.length > 0 && (
-          <div>
-            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-violet/65">Verbindungen</div>
+          <div className="border-t border-line pt-5">
+            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-violet/75">Verbindungen</div>
             <div className="flex flex-col">
               {content.relations.map((r) => (
                 <button

@@ -239,11 +239,32 @@ function DetailView({ content, sel, onPick }: { content: NonNullable<ReturnType<
         </div>
       )}
 
-      <div className="mt-4 space-y-3.5">
-        {content.sections.map((s, i) => (
-          <div key={i}>
-            <div className="font-body text-[10.5px] font-semibold uppercase tracking-[0.14em]" style={{ color: s.accent || "#c9bcff" }}>{s.label}</div>
-            <p className="mt-1 font-body text-[13.5px] leading-relaxed text-txt-2">{s.body}</p>
+      <div className="mt-4 flex flex-col gap-4">
+        {/* general — italic serif definition */}
+        {content.sections.filter((s) => !s.accent && /^was/i.test(s.label)).map((s, i) => (
+          <div key={`g${i}`}>
+            <div className="mb-1.5 font-mono text-[9.5px] uppercase tracking-[0.18em] text-txt-3">{s.label}</div>
+            <p className="font-serif text-[16px] italic leading-[1.5] text-txt-2">{s.body}</p>
+          </div>
+        ))}
+        {/* placements — data-point rows */}
+        {content.sections.filter((s) => !s.accent && !/^was/i.test(s.label)).map((s, i) => (
+          <div key={`p${i}`} className="grid grid-cols-[auto_1fr] gap-x-3 border-t border-line pt-3.5 first:border-t-0 first:pt-0">
+            <div className="mt-1 h-full w-[3px] rounded-full bg-gradient-to-b from-lilac/80 to-violet/30" />
+            <div>
+              <div className="mb-1 font-display text-[12px] font-bold text-lilac">{s.label}</div>
+              <p className="font-body text-[13.5px] leading-[1.6] text-txt-2">{s.body}</p>
+            </div>
+          </div>
+        ))}
+        {/* personal — accent card */}
+        {content.sections.filter((s) => s.accent).map((s, i) => (
+          <div key={`a${i}`} className="rounded-2xl border border-mint/25 bg-mint/[0.06] p-3.5">
+            <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[9.5px] font-bold uppercase tracking-[0.18em] text-mint">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2dd4bf]" />
+              {s.label}
+            </div>
+            <p className="font-body text-[15px] font-medium leading-[1.55] text-white">{s.body}</p>
           </div>
         ))}
       </div>
