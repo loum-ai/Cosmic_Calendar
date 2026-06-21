@@ -35,7 +35,23 @@ function balance() {
 
 const TODAY = new Date();
 
-export function PrintView() {
+export interface PrintInclude {
+  planets: boolean; houses: boolean; aspects: boolean; balance: boolean;
+  reading: boolean; points: boolean; transits: boolean; glossary: boolean;
+}
+export const ALL_CHAPTERS: { key: keyof PrintInclude; label: string }[] = [
+  { key: "planets", label: "Planetenstände" },
+  { key: "houses", label: "Achsen & Häuser" },
+  { key: "aspects", label: "Aspekte" },
+  { key: "balance", label: "Element- & Modus-Balance" },
+  { key: "reading", label: "Deine Deutung" },
+  { key: "points", label: "Mondknoten, Chiron & Lilith" },
+  { key: "transits", label: "Aktuelle Transite" },
+  { key: "glossary", label: "Zeichen & Symbole" },
+];
+
+export function PrintView({ include }: { include?: PrintInclude }) {
+  const inc: PrintInclude = include ?? { planets: true, houses: true, aspects: true, balance: true, reading: true, points: true, transits: true, glossary: true };
   const setPrintOpen = useApp((s) => s.setPrintOpen);
   const aspects = [...computeAspects()].sort((a, b) => b.def.w - a.def.w || a.orb - b.orb);
   const verify = getVerification();
@@ -83,7 +99,7 @@ export function PrintView() {
         )}
 
         {/* ── PLANETARY POSITIONS ── */}
-        <Section n="01" title="Planetenstände">
+        <Section show={inc.planets} n="01" title="Planetenstände">
           <Table head={["Planet", "Zeichen", "Grad", "Haus", "Lauf"]}>
             {CHART.map((p) => (
               <tr key={p.key} className="border-t border-[#eceaf2]">
@@ -98,7 +114,7 @@ export function PrintView() {
         </Section>
 
         {/* ── ANGLES & HOUSES ── */}
-        <Section n="02" title="Achsen & Häuser">
+        <Section show={inc.houses} n="02" title="Achsen & Häuser">
           <div className="grid grid-cols-2 gap-x-8 gap-y-1.5">
             {angles.map((a) => (
               <Row key={a.key} l={a.name} r={`${signName(a.lon)} ${dms(a.lon)}`} bold />
@@ -110,7 +126,7 @@ export function PrintView() {
         </Section>
 
         {/* ── ASPECTS ── */}
-        <Section n="03" title="Aspekte" sub={`${aspects.length} Verbindungen, nach Stärke`}>
+        <Section show={inc.aspects} n="03" title="Aspekte" sub={`${aspects.length} Verbindungen, nach Stärke`}>
           <Table head={["Verbindung", "Aspekt", "Orbis"]}>
             {aspects.map((a) => (
               <tr key={a.key} className="border-t border-[#eceaf2]">
@@ -123,7 +139,7 @@ export function PrintView() {
         </Section>
 
         {/* ── ELEMENT / MODE BALANCE ── */}
-        <Section n="04" title="Element- & Modus-Balance">
+        <Section show={inc.balance} n="04" title="Element- & Modus-Balance">
           <div className="grid grid-cols-2 gap-8">
             <BalanceBlock title="Elemente" labels={ELEM as unknown as string[]} values={bal.e} total={bal.total} colors={["#c0392b", "#0a8f73", "#2f7d99", "#3a5bbf"]} />
             <BalanceBlock title="Modi" labels={MODE as unknown as string[]} values={bal.m} total={bal.total} colors={["#7c5bbf", "#b8860b", "#0a8f73"]} />
@@ -131,7 +147,7 @@ export function PrintView() {
         </Section>
 
         {/* ── READING ── */}
-        <Section n="05" title="Deine Deutung" breakBefore>
+        <Section show={inc.reading} n="05" title="Deine Deutung" breakBefore>
           {summary && <p className="font-body text-[13px] leading-relaxed text-[#2a2640]">{summary}</p>}
           <div className={`${summary ? "mt-4" : ""} space-y-3`}>
             {CHART.map((p) => {
@@ -152,7 +168,7 @@ export function PrintView() {
         </Section>
 
         {/* ── NODES / CHIRON / LILITH ── */}
-        <Section n="06" title="Mondknoten, Chiron & Lilith">
+        <Section show={inc.points} n="06" title="Mondknoten, Chiron & Lilith">
           <div className="space-y-2.5">
             {[...NODES, ...CHART.filter((p) => p.key === "chiron" || p.key === "lilith")].map((p) => (
               <div key={p.key} className="print-avoid">
@@ -164,7 +180,7 @@ export function PrintView() {
         </Section>
 
         {/* ── TRANSITS ── */}
-        <Section n="07" title="Aktuelle Transite" sub={`Stand ${created} · Mond in ${sky.moonSign}, Sonne in ${sky.sunSign}${sky.retro.length ? ` · rückläufig: ${sky.retro.map((r) => r.name).join(", ")}` : ""}`}>
+        <Section show={inc.transits} n="07" title="Aktuelle Transite" sub={`Stand ${created} · Mond in ${sky.moonSign}, Sonne in ${sky.sunSign}${sky.retro.length ? ` · rückläufig: ${sky.retro.map((r) => r.name).join(", ")}` : ""}`}>
           {transits.length ? (
             <div className="space-y-2.5">
               {transits.map((t, i) => (
@@ -180,7 +196,7 @@ export function PrintView() {
         </Section>
 
         {/* ── GLOSSARY ── */}
-        <Section n="08" title="Zeichen & Symbole">
+        <Section show={inc.glossary} n="08" title="Zeichen & Symbole">
           <div className="grid grid-cols-2 gap-x-8 gap-y-4">
             <div>
               <div className="mb-1.5 font-display text-[11px] font-bold uppercase tracking-[0.12em] text-[#7c5bbf]">Planeten</div>
@@ -213,7 +229,8 @@ export function PrintView() {
 function Glyph({ k, g }: { k: string; g: string }) {
   return <span className="font-glyph" style={{ color: col(k) }}>{g}</span>;
 }
-function Section({ n, title, sub, children, breakBefore }: { n: string; title: string; sub?: string; children: React.ReactNode; breakBefore?: boolean }) {
+function Section({ n, title, sub, children, breakBefore, show = true }: { n: string; title: string; sub?: string; children: React.ReactNode; breakBefore?: boolean; show?: boolean }) {
+  if (!show) return null;
   return (
     <section className={`mt-8 ${breakBefore ? "print-break" : ""}`}>
       <div className="mb-3 flex items-baseline gap-2 border-b-2 border-[#1b1830] pb-1.5">

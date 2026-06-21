@@ -7,7 +7,7 @@ import { DetailView } from "@/components/DetailView";
 import { CoachHint } from "@/components/CoachHint";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { Onboarding } from "@/components/Onboarding";
-import { PrintView } from "@/components/PrintView";
+import { PrintFlow } from "@/components/PrintFlow";
 import { useApp } from "@/store/useApp";
 import { ChartExplorer } from "@/screens/ChartExplorer";
 import { TransiteScreen } from "@/screens/TransiteScreen";
@@ -48,7 +48,7 @@ export function MainApp() {
       <DetailView />
       {!viewer && <Onboarding />}
       <TutorialOverlay />
-      {printOpen && <PrintView />}
+      {printOpen && <PrintFlow />}
       <div className="vela-grain" />
     </div>
   );
