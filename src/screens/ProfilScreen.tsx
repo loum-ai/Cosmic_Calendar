@@ -6,6 +6,7 @@ import { Explainable } from "@/components/Explainable";
 import { KlartextToggle } from "@/components/KlartextToggle";
 import { StatChip, StatRow } from "@/components/Stat";
 import { ASC, CHART, MC, PROFILE, SG, signName } from "@/lib/data";
+import { chartPatterns } from "@/lib/patterns";
 import { aiSummary, getVerification } from "@/lib/interpret";
 import { useApp, type SavedBirth } from "@/store/useApp";
 import { cn } from "@/lib/utils";
@@ -67,6 +68,23 @@ export function ProfilScreen() {
           </div>
         </div>
       </div>
+
+      {/* canonical signature — the two most defining whole-chart notes */}
+      {(() => {
+        const ps = chartPatterns().slice(0, 2);
+        if (!ps.length) return null;
+        return (
+          <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
+            {ps.map((p) => (
+              <div key={p.id} className="rounded-card border border-[rgba(150,120,255,0.18)] bg-glasswash p-4">
+                <div className="mb-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-lilac">{p.glyphs.join(" ")} Signatur</div>
+                <h3 className="font-cinzel text-[17px] font-semibold leading-tight text-white">{p.title}</h3>
+                <p className="mt-1 line-clamp-3 font-body text-[12.5px] leading-relaxed text-txt-2">{p.text}</p>
+              </div>
+            ))}
+          </div>
+        );
+      })()}
 
       <div className="mt-4">
         <KlartextToggle />
