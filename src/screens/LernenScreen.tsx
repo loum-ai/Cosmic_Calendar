@@ -1,5 +1,5 @@
 import { ChevronRight } from "lucide-react";
-import { ScreenShell, SectionHead } from "@/components/ScreenShell";
+import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { Explainable } from "@/components/Explainable";
 import { GlyphBadge } from "@/components/GlyphBadge";
 import { useApp } from "@/store/useApp";
@@ -48,9 +48,7 @@ export function LernenScreen() {
 
   return (
     <ScreenShell>
-      <div className="vela-label">Wissen</div>
-      <h1 className="mt-1.5 font-display text-2xl font-bold leading-tight text-txt">Astrologie</h1>
-      <p className="mt-1 font-mono text-[12px] text-txt-2">Die Bausteine des Himmels — in Klartext</p>
+      <PageHead label="Wissen" title="Astrologie" sub="Die Bausteine des Himmels — in Klartext" />
 
       {/* concept of the day — editorial, no box */}
       <Explainable sheet={{ kind: "asptype", key: featuredIdx }}>

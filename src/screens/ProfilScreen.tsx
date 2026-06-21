@@ -60,7 +60,7 @@ export function ProfilScreen() {
         <OrbImage size={72} float={false} />
         <div className="min-w-0">
           <div className="vela-label mb-1.5">Dein Profil</div>
-          <h1 className="font-display text-2xl font-bold leading-tight text-txt">{PROFILE.name}</h1>
+          <h1 className="font-cinzel text-[28px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_20px_rgba(139,92,246,0.35)] lg:text-[36px]">{PROFILE.name}</h1>
           <div className="mt-1.5 flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2dd4bf]" />
             <span className="font-mono text-[11px] text-txt-2">{PROFILE.memberSince}</span>

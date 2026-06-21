@@ -17,10 +17,27 @@ export function ScreenShell({ children }: { children: React.ReactNode }) {
       animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
       exit={{ opacity: 0, x: dir * -48, filter: "blur(4px)" }}
       transition={{ duration: 0.38, ease: EASE.smooth }}
-      className="relative mx-auto min-h-full w-full max-w-[480px] px-[max(20px,5vw)] pb-[136px] pt-[calc(env(safe-area-inset-top,0px)+4rem)] lg:max-w-[880px] lg:px-12 lg:pb-24 lg:pt-12 xl:max-w-[1180px]"
+      className="relative mx-auto min-h-full w-full max-w-[480px] px-[max(20px,5vw)] pb-[136px] pt-[calc(env(safe-area-inset-top,0px)+1.5rem)] lg:max-w-[880px] lg:px-12 lg:pb-24 lg:pt-10 xl:max-w-[1180px]"
     >
       {children}
     </motion.main>
+  );
+}
+
+/**
+ * Unified page header — the new Vela look: a bright caps eyebrow, a large
+ * engraved Cinzel title with a soft violet glow, and a calm subtitle. Used by
+ * every screen so headers can never drift from the chart explorer again.
+ */
+export function PageHead({ label, title, sub }: { label?: string; title: string; sub?: string }) {
+  return (
+    <header className="mb-6">
+      {label && <div className="vela-label mb-1.5">{label}</div>}
+      <h1 className="font-cinzel text-[30px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_24px_rgba(139,92,246,0.35)] lg:text-[44px]">
+        {title}
+      </h1>
+      {sub && <p className="mt-2.5 font-body text-[13.5px] text-txt-2">{sub}</p>}
+    </header>
   );
 }
 

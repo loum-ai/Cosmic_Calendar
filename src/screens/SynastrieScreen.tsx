@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import { ScreenShell, SectionHead } from "@/components/ScreenShell";
+import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { OrbImage } from "@/components/OrbImage";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -49,11 +49,7 @@ export function SynastrieScreen() {
 
   return (
     <ScreenShell>
-      <div>
-        <div className="vela-label">Beziehungen</div>
-        <h1 className="mt-1.5 font-display text-2xl font-bold leading-tight text-txt">Synastrie</h1>
-        <p className="mt-1 font-mono text-[12px] text-txt-2">Wie ihr zusammenklingt</p>
-      </div>
+      <PageHead label="Beziehungen" title="Synastrie" sub="Wie ihr zusammenklingt" />
 
       {/* people switcher */}
       {people.length > 0 && (

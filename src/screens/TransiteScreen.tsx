@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
-import { ScreenShell, SectionHead } from "@/components/ScreenShell";
+import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { useApp } from "@/store/useApp";
 import { CHART } from "@/lib/data";
 import { computeTransits, skySummary, SIGN_GLYPH, type TransitHit } from "@/lib/transits";
@@ -95,11 +95,9 @@ export function TransiteScreen() {
 
   return (
     <ScreenShell>
-      <div className="vela-label">Heute am Himmel</div>
-      <h1 className="mt-1.5 font-display text-2xl font-bold leading-tight text-txt">Transite</h1>
-      <p className="mt-1 font-mono text-[12px] text-txt-2">Was der Himmel gerade in deinem Chart auslöst</p>
+      <PageHead label="Heute am Himmel" title="Transite" sub="Was der Himmel gerade in deinem Chart auslöst" />
 
-      <div className="mt-5 max-w-[360px]">
+      <div className="max-w-[360px]">
         <DateScrubber offset={offset} setOffset={setOffset} date={date} />
       </div>
 
