@@ -3,7 +3,7 @@ import { X, Printer, Check } from "lucide-react";
 import { PrintView, ALL_CHAPTERS, type PrintInclude } from "./PrintView";
 import { useApp } from "@/store/useApp";
 
-const ALL_ON: PrintInclude = { planets: true, houses: true, aspects: true, balance: true, reading: true, points: true, transits: true, glossary: true };
+const ALL_ON: PrintInclude = { planets: true, houses: true, aspects: true, balance: true, reading: true, points: true, transits: true, forecast: true, glossary: true };
 
 /** Step 1: pick which chapters go into the PDF. Step 2: the printable preview. */
 export function PrintFlow() {
@@ -14,7 +14,7 @@ export function PrintFlow() {
   if (go) return <PrintView include={inc} />;
 
   const toggle = (k: keyof PrintInclude) => setInc((s) => ({ ...s, [k]: !s[k] }));
-  const setAll = (v: boolean) => setInc({ planets: v, houses: v, aspects: v, balance: v, reading: v, points: v, transits: v, glossary: v });
+  const setAll = (v: boolean) => setInc({ planets: v, houses: v, aspects: v, balance: v, reading: v, points: v, transits: v, forecast: v, glossary: v });
   const count = Object.values(inc).filter(Boolean).length;
 
   return (
