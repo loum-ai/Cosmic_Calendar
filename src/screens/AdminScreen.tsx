@@ -108,7 +108,9 @@ function Cockpit({ email }: { email: string }) {
   const [copied, setCopied] = useState<string | null>(null);
   const [review, setReview] = useState<{ id: string; name: string } | null>(null);
   const [reviewData, setReviewData] = useState<{ draft: any; status: string } | null>(null);
+  const [editDraft, setEditDraft] = useState<any>(null);
   const [publishing, setPublishing] = useState(false);
+  const [savedMsg, setSavedMsg] = useState(false);
 
   async function loadClients() {
     const { data } = await supabase.from("clients").select("id, name, birth_date, access_token, created_at").order("created_at", { ascending: false });
@@ -121,19 +123,31 @@ function Cockpit({ email }: { email: string }) {
 
   async function openReview(c: ClientRow) {
     setReview({ id: c.id, name: c.name });
-    setReviewData(null);
-    const { data } = await supabase.from("interpretations").select("draft, status").eq("client_id", c.id).eq("kind", "natal").maybeSingle();
-    setReviewData((data as any) ?? null);
+    setReviewData(null); setEditDraft(null); setSavedMsg(false);
+    const { data } = await supabase.from("interpretations").select("draft, edited, status").eq("client_id", c.id).eq("kind", "natal").maybeSingle();
+    const d = data as any;
+    setReviewData(d ? { draft: d.draft, status: d.status } : null);
+    setEditDraft(d ? JSON.parse(JSON.stringify(d.edited ?? d.draft ?? {})) : null);
+  }
+
+  async function saveDraft() {
+    if (!review) return;
+    setPublishing(true);
+    await supabase.from("interpretations").update({ edited: editDraft }).eq("client_id", review.id).eq("kind", "natal");
+    setPublishing(false); setSavedMsg(true); setTimeout(() => setSavedMsg(false), 1600);
   }
 
   async function publishReview() {
     if (!review) return;
     setPublishing(true);
-    await supabase.from("interpretations").update({ status: "published", published_at: new Date().toISOString() }).eq("client_id", review.id).eq("kind", "natal");
+    await supabase.from("interpretations").update({ edited: editDraft, status: "published", published_at: new Date().toISOString() }).eq("client_id", review.id).eq("kind", "natal");
     setPublishing(false);
     setReview(null);
     await loadClients();
   }
+
+  const setSummary = (v: string) => setEditDraft((d: any) => ({ ...d, summary: v }));
+  const setPlacement = (i: number, field: string, v: string) => setEditDraft((d: any) => { const p = [...(d.placements ?? [])]; p[i] = { ...p[i], [field]: v }; return { ...d, placements: p }; });
   useEffect(() => { loadClients(); }, []);
 
   useEffect(() => {
@@ -279,27 +293,39 @@ function Cockpit({ email }: { email: string }) {
                 </div>
                 <button onClick={() => setReview(null)} className="-mr-1 -mt-1 flex h-8 w-8 items-center justify-center rounded-full text-txt-3 hover:text-txt"><X className="h-4 w-4" /></button>
               </div>
-              {!reviewData ? (
+              {!reviewData || !editDraft ? (
                 <div className="mt-6 flex items-center gap-2 font-body text-[13px] text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /> Entwurf laden …</div>
               ) : (
                 <>
-                  {reviewData.status === "published" && (
-                    <div className="mt-3 flex items-center gap-1.5 rounded-lg bg-mint/10 px-2.5 py-1.5 font-body text-[12px] text-mint"><ShieldCheck className="h-3.5 w-3.5" /> Bereits freigegeben — der Kundenlink ist live.</div>
-                  )}
-                  {reviewData.draft?.summary && <p className="mt-4 font-body text-[14px] leading-relaxed text-txt">{reviewData.draft.summary}</p>}
-                  <div className="mt-4 space-y-2.5 border-t border-line pt-4">
-                    {(reviewData.draft?.placements ?? []).map((pl: any, i: number) => (
+                  <p className="mt-1.5 font-body text-[12px] text-txt-3">{reviewData.status === "published" ? "Live — Änderungen werden sofort übernommen." : "Du kannst alles bearbeiten, bevor du freigibst."}</p>
+
+                  <label className="mt-4 block">
+                    <span className="mb-1 block font-mono text-[10px] uppercase tracking-wide text-lilac">Gesamtbild</span>
+                    <textarea value={editDraft.summary ?? ""} onChange={(e) => setSummary(e.target.value)} rows={4}
+                      className="w-full rounded-xl border border-line bg-[#0c0c14] px-3 py-2.5 font-body text-[13px] leading-relaxed text-txt outline-none focus:border-lilac" />
+                  </label>
+
+                  <div className="mt-4 space-y-3 border-t border-line pt-4">
+                    {(editDraft.placements ?? []).map((pl: any, i: number) => (
                       <div key={i}>
-                        <div className="font-mono text-[10px] uppercase tracking-wide text-lilac">{pl.key}</div>
-                        {pl.sign_text && <p className="font-body text-[12.5px] leading-relaxed text-txt-2">{pl.sign_text}</p>}
-                        {pl.house_text && <p className="mt-0.5 font-body text-[12.5px] leading-relaxed text-txt-2">{pl.house_text}</p>}
+                        <div className="mb-1 font-mono text-[10px] uppercase tracking-wide text-lilac">{pl.key}</div>
+                        <textarea value={pl.sign_text ?? ""} onChange={(e) => setPlacement(i, "sign_text", e.target.value)} rows={2}
+                          className="w-full rounded-lg border border-line bg-[#0c0c14] px-2.5 py-2 font-body text-[12.5px] leading-relaxed text-txt-2 outline-none focus:border-lilac" />
+                        <textarea value={pl.house_text ?? ""} onChange={(e) => setPlacement(i, "house_text", e.target.value)} rows={2}
+                          className="mt-1 w-full rounded-lg border border-line bg-[#0c0c14] px-2.5 py-2 font-body text-[12.5px] leading-relaxed text-txt-2 outline-none focus:border-lilac" />
                       </div>
                     ))}
                   </div>
-                  <button onClick={publishReview} disabled={publishing || reviewData.status === "published"} className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-white shadow-glow disabled:opacity-40">
-                    {publishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
-                    {reviewData.status === "published" ? "Freigegeben" : "Freigeben — Link aktivieren"}
-                  </button>
+
+                  <div className="mt-5 flex gap-2">
+                    <button onClick={saveDraft} disabled={publishing} className="flex items-center justify-center gap-1.5 rounded-2xl border border-line px-4 py-3 font-body text-[13px] text-txt-2 hover:bg-surface-2 disabled:opacity-40">
+                      {savedMsg ? <Check className="h-4 w-4 text-mint" /> : null} {savedMsg ? "Gespeichert" : "Entwurf speichern"}
+                    </button>
+                    <button onClick={publishReview} disabled={publishing} className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-white shadow-glow disabled:opacity-40">
+                      {publishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+                      {reviewData.status === "published" ? "Aktualisieren" : "Freigeben — Link aktivieren"}
+                    </button>
+                  </div>
                 </>
               )}
             </div>
