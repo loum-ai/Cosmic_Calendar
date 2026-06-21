@@ -42,13 +42,13 @@ export function SynastrieScreen() {
     return () => clearTimeout(t);
   }, [placeQ, place]);
 
-  const canSave = name.trim() !== "" && date !== "" && time !== "";
+  const canSave = name.trim() !== "" && date !== "";
 
   const save = () => {
     if (!canSave) return;
     setErr(null);
     try {
-      const c = computeChart({ date, time, lat: place?.lat ?? 51.5, lon: place?.lon ?? 0 });
+      const c = computeChart({ date, time: time || "12:00", lat: place?.lat ?? 51.5, lon: place?.lon ?? 0 });
       setPeople((p) => [...p, { name: name.trim(), cat, planets: c.planets }]);
       setSel(people.length);
       setName(""); setDate(""); setTime(""); setPlaceQ(""); setPlace(null);
@@ -96,6 +96,7 @@ export function SynastrieScreen() {
               <input className={cn(inputCls, "flex-1")} type="date" value={date} onChange={(e) => setDate(e.target.value)} />
               <input className={cn(inputCls, "w-[120px]")} type="time" value={time} onChange={(e) => setTime(e.target.value)} />
             </div>
+            {!time && <p className="-mt-1 font-body text-[11px] text-txt-3">Uhrzeit unbekannt? Lass es leer — wir rechnen mit 12:00 (Mond &amp; Häuser dann ungefähr).</p>}
             <div className="relative">
               <input className={inputCls} placeholder="Geburtsort (optional)" value={placeQ} onChange={(e) => { setPlaceQ(e.target.value); setPlace(null); }} />
               {places.length > 0 && (

@@ -30,7 +30,7 @@ export function Composer() {
   const clearAnswer = useApp((s) => s.clearAnswer);
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-[74px] z-[41] mx-auto max-w-[480px] lg:bottom-6 lg:left-[240px] lg:right-0 lg:mx-0 lg:max-w-none lg:px-6">
+    <div className="pointer-events-none fixed inset-x-0 bottom-[96px] z-[41] mx-auto max-w-[480px] lg:bottom-6 lg:left-[120px] lg:right-0 lg:mx-0 lg:max-w-none lg:px-6">
       <AnimatePresence mode="wait">
         {open ? (
           <motion.div
