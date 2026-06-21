@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, RotateCcw, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, RotateCcw, X, Sparkles, Loader2 } from "lucide-react";
 import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
+import { useReading } from "@/lib/genReadings";
 import { useApp } from "@/store/useApp";
 import { CHART } from "@/lib/data";
 import { computeTransits, skySummary, SIGN_GLYPH, type TransitHit } from "@/lib/transits";
@@ -9,6 +10,24 @@ import { EASE } from "@/lib/tokens";
 
 const IMPACT_COLOR: Record<string, string> = { "+": "#2dd4bf", "-": "#ff8fb0", "~": "#c9b6ff" };
 const IMPACT_LABEL: Record<string, string> = { "+": "fördernd", "-": "fordernd", "~": "gemischt" };
+
+function TransitReading({ tr }: { tr: TransitHit }) {
+  const vk = `transit:${tr.tKey}_${tr.nKey}_${tr.type}`;
+  const task = `Deute den aktuellen Transit: Der laufende ${tr.tName} bildet ${tr.type === "Konjunktion" ? "eine" : "ein"} ${tr.type} zu ${tr.nName} im Geburtsbild (Orbis ${tr.orb.toFixed(1)}°, ${IMPACT_LABEL[tr.impact]}). Was bedeutet diese Phase konkret für die Person, worauf darf sie achten? 3–4 Sätze, Du-Form.`;
+  const { text, loading } = useReading(vk, task);
+  return (
+    <div className="mt-4 rounded-2xl border border-mint/30 bg-mint/[0.07] p-4">
+      <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-mint"><Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich</div>
+      {text ? (
+        <p className="font-body text-[15px] leading-relaxed text-white">{text}</p>
+      ) : loading ? (
+        <div className="flex items-center gap-2 text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="font-body text-[13px]">Vela liest den Transit …</span></div>
+      ) : (
+        <p className="font-body text-[14px] leading-relaxed text-white">{tr.txt}</p>
+      )}
+    </div>
+  );
+}
 
 function DateScrubber({ offset, setOffset, date }: { offset: number; setOffset: (f: (o: number) => number) => void; date: Date }) {
   const label = date.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" });
@@ -66,7 +85,8 @@ function TransitFull({ hits }: { hits: TransitHit[] }) {
               <span className="rounded-pill border border-line bg-surface px-2.5 py-1 font-body text-[11px] text-txt-2">laufend: {tr.tName}{tr.tRetro ? " ℞" : ""}</span>
               <span className="rounded-pill border border-line bg-surface px-2.5 py-1 font-body text-[11px] text-txt-2">dein {tr.nName}</span>
             </div>
-            <p className="mt-4 font-body text-[15px] leading-relaxed text-txt-2">{tr.txt}</p>
+            <TransitReading tr={tr} />
+            <p className="mt-3 font-body text-[12px] text-txt-3">{tr.txt}</p>
 
             <div className="mt-7 flex items-center gap-3">
               <button onClick={() => setFull((i - 1 + n) % n)} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-txt-2 active:scale-90">
