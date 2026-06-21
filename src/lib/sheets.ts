@@ -22,6 +22,7 @@ import {
   signName,
 } from "./data";
 import { GLOSSARY } from "./glossary";
+import { READINGS } from "./readings";
 
 export type SheetKind = "planet" | "node" | "house" | "sign" | "aspect" | "asptype" | "glossary";
 
@@ -73,8 +74,8 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         color: "#c4a6ff",
         sections: [
           { label: "Was — die Maske nach außen", body: PINFO.asc.what },
-          { label: `Wie — Aszendent in ${signName(ASC)}`, body: SIGNWHAT[si] },
-          { label: "Bei dir", body: `Dein Aszendent steht in ${signName(ASC)}.`, accent: MINT },
+          { label: `Wie — Aszendent in ${signName(ASC)}`, body: READINGS.asc?.sign ?? SIGNWHAT[si] },
+          { label: "Bei dir", body: `Dein Aszendent steht in ${signName(ASC)} — so trittst du auf, bevor du ein Wort sagst.`, accent: MINT },
         ],
       };
     }
@@ -90,8 +91,8 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       color: "#e7dcff",
       sections: [
         { label: "Was — der Planet", body: info.what },
-        { label: `Wie — ${p.name} in ${signName(p.lon)}`, body: SIGNWHAT[si] },
-        { label: `Wo — ${h}. Haus · ${HOUSE[h - 1]}`, body: HOUSEWHAT[h - 1] },
+        { label: `Wie — ${p.name} in ${signName(p.lon)}`, body: READINGS[p.key]?.sign ?? SIGNWHAT[si] },
+        { label: `Wo — ${h}. Haus · ${HOUSE[h - 1]}`, body: READINGS[p.key]?.house ?? HOUSEWHAT[h - 1] },
         { label: "Bei dir", body: p.txt, accent: MINT },
       ],
       relations: asp.map((a) => {

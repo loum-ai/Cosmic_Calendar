@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { useApp } from "@/store/useApp";
 import { resolveSheet, type SheetContent } from "@/lib/sheets";
 import { Sheet, SheetContent as SheetShell } from "@/components/ui/sheet";
+import { GlyphBadge } from "@/components/GlyphBadge";
 
 function useIsDesktop() {
   const [d, setD] = useState(false);
@@ -21,39 +22,37 @@ function Body({ content }: { content: SheetContent }) {
   const openSheet = useApp((s) => s.openSheet);
   return (
     <>
-      <div className="flex items-center gap-3 pr-8">
-        <span className="vela-glyph text-2xl" style={{ color: content.color }}>
-          {content.glyph}
-        </span>
-        <h2 className="font-display text-xl font-bold leading-tight text-txt">{content.title}</h2>
+      <div className="flex items-center gap-3.5 pr-8">
+        <GlyphBadge glyph={content.glyph} size={42} />
+        <h2 className="font-display text-[22px] font-bold leading-[1.12] tracking-[-0.01em] text-txt">{content.title}</h2>
       </div>
 
-      <div className="mt-4 flex flex-col gap-4">
+      <div className="mt-5 h-px w-full bg-line" />
+
+      <div className="mt-5 flex flex-col gap-6">
         {content.sections.map((sec) => (
-          <div key={sec.label}>
-            <div className="vela-data-dim mb-1.5 uppercase" style={{ color: sec.accent || "var(--accent-primary)" }}>
-              {sec.label}
-            </div>
-            <p className="font-body text-[13px] leading-relaxed text-txt-2">{sec.body}</p>
+          <div key={sec.label} className={sec.accent ? "border-l-2 border-violet/45 pl-4" : ""}>
+            <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.16em] text-violet/65">{sec.label}</div>
+            <p className="font-body text-[15px] leading-[1.62] text-[rgba(255,255,255,0.85)]">{sec.body}</p>
           </div>
         ))}
 
         {content.relations && content.relations.length > 0 && (
-          <div className="mt-1">
-            <div className="vela-data-dim mb-2 uppercase">Verbindungen</div>
+          <div>
+            <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.16em] text-violet/65">Verbindungen</div>
             <div className="flex flex-col">
               {content.relations.map((r) => (
                 <button
                   key={r.key}
                   onClick={() => openSheet({ kind: "aspect", key: r.key })}
-                  className="flex items-start gap-2 border-t border-line-soft py-2.5 text-left transition first:border-t-0 hover:opacity-75"
+                  className="flex items-start gap-2.5 border-t border-line-soft py-3 text-left transition first:border-t-0 hover:opacity-75"
                 >
-                  <span className="vela-glyph mt-0.5 text-sm" style={{ color: r.color }}>
+                  <span className="vela-glyph mt-0.5 text-base" style={{ color: r.color }}>
                     {r.glyph}
                   </span>
                   <div>
-                    <div className="font-body text-[13px] text-txt">{r.label}</div>
-                    <p className="mt-0.5 font-body text-xs leading-relaxed text-txt-3">{r.text}</p>
+                    <div className="font-body text-[13.5px] font-medium text-txt">{r.label}</div>
+                    <p className="mt-1 font-body text-[12.5px] leading-relaxed text-txt-3">{r.text}</p>
                   </div>
                 </button>
               ))}

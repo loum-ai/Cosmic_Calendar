@@ -47,13 +47,11 @@ export function DetailView() {
             </div>
 
             {/* sections — editorial, no boxes */}
-            <div className="mt-10 flex flex-col gap-8">
+            <div className="mt-10 flex flex-col gap-9">
               {content.sections.map((sec) => (
-                <div key={sec.label}>
-                  <div className="vela-data-dim mb-2 uppercase" style={{ color: sec.accent || "var(--accent-primary)" }}>
-                    {sec.label}
-                  </div>
-                  <p className="max-w-[58ch] font-body text-[15px] leading-relaxed text-txt-2">{sec.body}</p>
+                <div key={sec.label} className={sec.accent ? "border-l-2 border-violet/45 pl-5" : ""}>
+                  <div className="mb-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-violet/65">{sec.label}</div>
+                  <p className="max-w-[60ch] font-body text-[16.5px] leading-[1.72] text-[rgba(255,255,255,0.86)]">{sec.body}</p>
                 </div>
               ))}
             </div>
