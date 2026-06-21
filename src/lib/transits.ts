@@ -54,12 +54,14 @@ function transitingBodies(date: Date) {
 
 const lc = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
 
-function hitText(tKey: string, nKey: string, impact: string): string {
-  const tT = THEME[tKey] || tKey;
-  const nT = lc(THEME[nKey] || nKey);
-  if (impact === "+") return `${tT} unterstützt gerade ${nT} — eine Phase, in der hier vieles leichter fließt.`;
-  if (impact === "-") return `${tT} fordert gerade ${nT} heraus — Reibung, die dich wachsen lässt, wenn du hinschaust.`;
-  return `${tT} verbindet sich gerade mit ${nT} — ein Neuanfang in diesem Bereich, der Thema wird.`;
+// The transiting (sky) planet acts on YOUR natal point. Name the sky planet,
+// theme the natal point — never confuse the two.
+function hitText(tName: string, nKey: string, nName: string, impact: string): string {
+  const nT = THEME[nKey] ? `${lc(THEME[nKey])} (${nName})` : nName;
+  const sky = `Der laufende ${tName}`;
+  if (impact === "+") return `${sky} stärkt gerade ${nT} — eine Phase, in der hier vieles leichter fließt und sich öffnet. Nutze den Rückenwind.`;
+  if (impact === "-") return `${sky} fordert ${nT} heraus — Reibung, die dich wachsen lässt, wenn du hinschaust statt auszuweichen.`;
+  return `${sky} trifft auf ${nT} — ein Thema wird neu belebt und will jetzt deine Aufmerksamkeit.`;
 }
 
 export function computeTransits(natal: Planet[], date: Date): TransitHit[] {
@@ -75,7 +77,7 @@ export function computeTransits(natal: Planet[], date: Date): TransitHit[] {
           hits.push({
             tKey: t.key, tName: t.name, tGlyph: t.glyph, tRetro: t.retro,
             nKey: n.key, nName: n.name, type: a.type, orb: Math.round(orb * 10) / 10, impact: a.impact,
-            title: `${t.name} ${a.type} ${n.name}`, txt: hitText(t.key, n.key, a.impact),
+            title: `${t.name} ${a.type} ${n.name}`, txt: hitText(t.name, n.key, n.name, a.impact),
           });
           break;
         }
