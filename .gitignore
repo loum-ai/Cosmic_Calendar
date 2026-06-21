@@ -10,3 +10,4 @@ dist-ssr
 logs
 .vite
 *.tsbuildinfo
+vela-ux-test.html

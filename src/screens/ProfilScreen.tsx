@@ -1,4 +1,4 @@
-import { ChevronRight, Calendar, Clock, MapPin, Compass, Sparkles } from "lucide-react";
+import { ChevronRight, Calendar, Clock, MapPin, Compass, Sparkles, ShieldCheck, Loader2 } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
 import { OrbImage } from "@/components/OrbImage";
@@ -6,6 +6,7 @@ import { Explainable } from "@/components/Explainable";
 import { KlartextToggle } from "@/components/KlartextToggle";
 import { StatChip, StatRow } from "@/components/Stat";
 import { ASC, CHART, MC, PROFILE, SG, signName } from "@/lib/data";
+import { aiSummary, getVerification } from "@/lib/interpret";
 import { useApp, type SavedBirth } from "@/store/useApp";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +39,12 @@ const SETTINGS = ["Benachrichtigungen", "Darstellung", "Datenschutz", "Über Vel
 export function ProfilScreen() {
   const setOnboardingOpen = useApp((s) => s.setOnboardingOpen);
   const saved = useApp((s) => s.savedBirth);
+  const viewer = useApp((s) => s.viewerMode);
+  const aiVersion = useApp((s) => s.aiVersion);
+  const aiLoading = useApp((s) => s.aiLoading);
+  void aiVersion; // re-render when the interpretation lands
+  const summary = aiSummary();
+  const verify = getVerification();
   const BIRTH_ROWS = birthRows(saved);
   const big = [
     { key: "sun", label: "Sonne", glyph: "☉", lon: CHART[0].lon },
@@ -72,14 +79,43 @@ export function ProfilScreen() {
         ))}
       </StatRow>
 
-      {/* compute / edit own chart */}
-      <button
-        onClick={() => setOnboardingOpen(true)}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-[14px] font-semibold text-space-2 shadow-glow transition active:scale-[0.98]"
-      >
-        <Sparkles className="h-4 w-4" />
-        {saved ? "Geburtsdaten ändern" : "Eigenes Chart berechnen"}
-      </button>
+      {/* compute / edit own chart — hidden for client-link viewers */}
+      {!viewer && (
+        <button
+          onClick={() => setOnboardingOpen(true)}
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-[14px] font-semibold text-space-2 shadow-glow transition active:scale-[0.98]"
+        >
+          <Sparkles className="h-4 w-4" />
+          {saved ? "Geburtsdaten ändern" : "Erhalte dein Horoskop"}
+        </button>
+      )}
+
+      {/* AI interpretation summary + data-verification badge */}
+      <section className="mt-8">
+        <SectionHead title="Deine Deutung" sub="Von Vela aus deinem echten Geburtsbild" />
+        <GlassPanel className="p-4">
+          {summary ? (
+            <p className="font-body text-[13.5px] leading-relaxed text-ink/90">{summary}</p>
+          ) : aiLoading ? (
+            <div className="flex items-center gap-2 text-txt-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span className="font-body text-[13px]">Vela erstellt deine persönliche Deutung …</span>
+            </div>
+          ) : viewer ? (
+            <p className="font-body text-[13px] text-txt-2">Deine persönliche Deutung wird gerade von deiner Astrologin vorbereitet.</p>
+          ) : (
+            <p className="font-body text-[13px] text-txt-2">Deine persönliche Deutung erstellt Vela aus deinem echten Geburtsbild — frag deine Astrologin nach deinem Zugang.</p>
+          )}
+          {verify?.max_dev_arcsec != null && (
+            <div className="mt-3 flex items-center gap-1.5 border-t border-line-soft pt-3">
+              <ShieldCheck className="h-3.5 w-3.5 text-mint" />
+              <span className="font-mono text-[10px] text-txt-3">
+                Daten geprüft gegen NASA-NOVAS · Abweichung {verify.max_dev_arcsec}″
+              </span>
+            </div>
+          )}
+        </GlassPanel>
+      </section>
 
       {/* angles & lights */}
       <section className="mt-8">

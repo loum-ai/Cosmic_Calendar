@@ -1,0 +1,52 @@
+import { AnimatePresence } from "framer-motion";
+import { AuroraBackground } from "@/components/AuroraBackground";
+import { TabBar } from "@/components/TabBar";
+import { Composer } from "@/components/Composer";
+import { SheetHost } from "@/components/SheetHost";
+import { DetailView } from "@/components/DetailView";
+import { CoachHint } from "@/components/CoachHint";
+import { TutorialOverlay } from "@/components/TutorialOverlay";
+import { Onboarding } from "@/components/Onboarding";
+import { useApp } from "@/store/useApp";
+import { HeuteScreen } from "@/screens/HeuteScreen";
+import { TransiteScreen } from "@/screens/TransiteScreen";
+import { SynastrieScreen } from "@/screens/SynastrieScreen";
+import { LernenScreen } from "@/screens/LernenScreen";
+import { ProfilScreen } from "@/screens/ProfilScreen";
+
+const SCREENS = {
+  heute: HeuteScreen,
+  transite: TransiteScreen,
+  synastrie: SynastrieScreen,
+  lernen: LernenScreen,
+  profil: ProfilScreen,
+} as const;
+
+/** The tab application. Shared by the public demo and the client-link view. */
+export function MainApp() {
+  const tab = useApp((s) => s.tab);
+  const chartVersion = useApp((s) => s.chartVersion);
+  const viewer = useApp((s) => s.viewerMode);
+  const Screen = SCREENS[tab];
+
+  return (
+    <div className="relative min-h-dvh w-full overflow-x-hidden text-ink">
+      <AuroraBackground />
+
+      <div className="lg:pl-[240px]">
+        <AnimatePresence mode="wait">
+          <Screen key={`${tab}-${chartVersion}`} />
+        </AnimatePresence>
+      </div>
+
+      <CoachHint />
+      <Composer />
+      <TabBar />
+      <SheetHost />
+      <DetailView />
+      {!viewer && <Onboarding />}
+      <TutorialOverlay />
+      <div className="vela-grain" />
+    </div>
+  );
+}
