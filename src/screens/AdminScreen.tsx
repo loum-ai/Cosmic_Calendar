@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Loader2, Copy, ExternalLink, Sparkles, LogOut, Check, Eye, ShieldCheck, X } from "lucide-react";
+import { Loader2, Copy, ExternalLink, Sparkles, LogOut, Check, ShieldCheck, X, ChevronRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { searchPlace, type Place } from "@/lib/geocode";
 
@@ -111,6 +111,7 @@ function Cockpit({ email }: { email: string }) {
   const [editDraft, setEditDraft] = useState<any>(null);
   const [publishing, setPublishing] = useState(false);
   const [savedMsg, setSavedMsg] = useState(false);
+  const [creating, setCreating] = useState(false);
 
   async function loadClients() {
     const { data } = await supabase.from("clients").select("id, name, birth_date, access_token, created_at").order("created_at", { ascending: false });
@@ -190,21 +191,34 @@ function Cockpit({ email }: { email: string }) {
 
   return (
     <div className="min-h-dvh bg-[#050509] text-ink">
-      <div className="mx-auto w-full max-w-[680px] px-5 pb-24 pt-[calc(env(safe-area-inset-top,0px)+1.5rem)]">
-        <div className="flex items-center justify-between">
+      <div className="mx-auto w-full max-w-[760px] px-5 pb-24 pt-[calc(env(safe-area-inset-top,0px)+1.5rem)]">
+        {/* dashboard header */}
+        <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="vela-label">Vela · Cockpit</div>
-            <h1 className="font-display text-2xl font-bold text-txt">Kundinnen</h1>
-            <p className="mt-0.5 font-body text-[12px] text-txt-3">Für jede Kundin entsteht ihre eigene, persönliche Astro-Website.</p>
+            <div className="vela-label">Vela · Studio</div>
+            <h1 className="font-cinzel text-[30px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_22px_rgba(139,92,246,0.35)]">Dein Dashboard</h1>
+            <p className="mt-2 font-body text-[12.5px] text-txt-3">Erstelle & verwalte die persönlichen Astro-Websites deiner Kundinnen.</p>
           </div>
-          <button onClick={() => supabase.auth.signOut()} className="flex items-center gap-1.5 rounded-pill border border-line px-3 py-1.5 font-body text-[12px] text-txt-2">
-            <LogOut className="h-3.5 w-3.5" /> {email}
+          <button onClick={() => supabase.auth.signOut()} title={email} className="flex shrink-0 items-center gap-1.5 rounded-pill border border-line px-3 py-1.5 font-body text-[11px] text-txt-2">
+            <LogOut className="h-3.5 w-3.5" /> Abmelden
           </button>
         </div>
 
-        {/* create form */}
-        <section className="mt-6 rounded-2xl border border-line bg-surface p-4">
-          <h2 className="font-display text-sm font-semibold text-txt">Neue Kundin anlegen</h2>
+        {/* primary action */}
+        {!creating && (
+          <button onClick={() => { setCreating(true); setCreated(null); setErr(null); }}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-sm font-semibold text-space-2 shadow-glow transition active:scale-[0.99]">
+            <Sparkles className="h-4 w-4" /> Neue Kundin-Website erstellen
+          </button>
+        )}
+
+        {/* create form (collapsible) */}
+        {creating && (
+        <section className="mt-6 rounded-2xl border border-line-accent bg-surface p-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-sm font-semibold text-txt">Neue Kundin-Website</h2>
+            <button onClick={() => { setCreating(false); setCreated(null); }} className="flex h-7 w-7 items-center justify-center rounded-full text-txt-3 hover:text-txt"><X className="h-4 w-4" /></button>
+          </div>
           <div className="mt-3 space-y-2.5">
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name"
               className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
@@ -248,38 +262,39 @@ function Cockpit({ email }: { email: string }) {
             </div>
           )}
         </section>
+        )}
 
-        {/* list */}
-        <section className="mt-7">
-          <h2 className="mb-2 font-display text-sm font-semibold text-txt">Alle Kundinnen ({clients.length})</h2>
-          <div className="space-y-2">
-            {clients.map((c) => {
-              const link = linkFor(c.access_token);
-              return (
-                <div key={c.id} className="flex items-center gap-2.5 rounded-xl border border-line bg-surface p-3">
-                  <div className="min-w-0 flex-1">
+        {/* clients */}
+        <section className="mt-8">
+          <div className="mb-3 flex items-baseline gap-2.5">
+            <h2 className="font-cinzel text-[20px] font-semibold tracking-wide text-white">Deine Kundinnen</h2>
+            <span className="rounded-pill border border-line bg-surface px-2 py-0.5 font-mono text-[10px] text-txt-3">{clients.length}</span>
+          </div>
+          {clients.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-line bg-surface p-8 text-center">
+              <p className="font-body text-[14px] text-txt-2">Noch keine Website.</p>
+              <p className="mt-1 font-body text-[12.5px] text-txt-3">Klick oben auf „Neue Kundin-Website erstellen" und lege die erste an.</p>
+            </div>
+          ) : (
+            <div className="grid gap-2.5 sm:grid-cols-2">
+              {clients.map((c) => (
+                <button key={c.id} onClick={() => openReview(c)} className="group flex items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4 text-left transition hover:border-line-accent hover:bg-surface-2">
+                  <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="font-display text-sm font-semibold text-txt">{c.name}</span>
+                      <span className="truncate font-display text-[14px] font-semibold text-txt">{c.name}</span>
                       {c.status && (
-                        <span className={`rounded-pill px-2 py-0.5 font-mono text-[9px] uppercase tracking-wide ${c.status === "published" ? "bg-mint/15 text-mint" : "bg-amber-400/15 text-amber-300"}`}>
+                        <span className={`shrink-0 rounded-pill px-2 py-0.5 font-mono text-[9px] uppercase tracking-wide ${c.status === "published" ? "bg-mint/15 text-mint" : "bg-amber-400/15 text-amber-300"}`}>
                           {c.status === "published" ? "Live" : "Entwurf"}
                         </span>
                       )}
                     </div>
-                    <div className="font-mono text-[10px] text-txt-3">{c.birth_date}</div>
+                    <div className="mt-0.5 font-mono text-[10px] text-txt-3">{c.birth_date}</div>
                   </div>
-                  {c.status && (
-                    <button onClick={() => openReview(c)} title="Prüfen & freigeben" className="flex items-center gap-1 rounded-lg border border-line px-2.5 py-2 font-body text-[11px] text-txt-2 hover:bg-surface-2">
-                      <Eye className="h-3.5 w-3.5" /> Prüfen
-                    </button>
-                  )}
-                  <button onClick={() => copy(link)} className="rounded-lg border border-line p-2 text-txt-2">{copied === link ? <Check className="h-4 w-4 text-mint" /> : <Copy className="h-4 w-4" />}</button>
-                  <a href={link} target="_blank" className="rounded-lg border border-line p-2 text-txt-2"><ExternalLink className="h-4 w-4" /></a>
-                </div>
-              );
-            })}
-            {clients.length === 0 && <p className="font-body text-[13px] text-txt-2">Noch keine Kundinnen — lege oben die erste an.</p>}
-          </div>
+                  <span className="flex shrink-0 items-center gap-1 font-body text-[11px] text-lilac opacity-80 group-hover:opacity-100">öffnen <ChevronRight className="h-3.5 w-3.5" /></span>
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* review & publish modal */}
@@ -293,6 +308,23 @@ function Cockpit({ email }: { email: string }) {
                 </div>
                 <button onClick={() => setReview(null)} className="-mr-1 -mt-1 flex h-8 w-8 items-center justify-center rounded-full text-txt-3 hover:text-txt"><X className="h-4 w-4" /></button>
               </div>
+
+              {/* the client's own website link */}
+              {(() => {
+                const rc = clients.find((c) => c.id === review.id);
+                const link = rc ? linkFor(rc.access_token) : "";
+                return rc ? (
+                  <div className="mt-3">
+                    <div className="vela-label mb-1">Ihre Website</div>
+                    <div className="flex items-center gap-2">
+                      <code className="min-w-0 flex-1 truncate rounded-lg bg-black/40 px-2.5 py-2 font-mono text-[11px] text-lilac">{link}</code>
+                      <button onClick={() => copy(link)} title="Link kopieren" className="rounded-lg border border-line p-2 text-txt-2">{copied === link ? <Check className="h-4 w-4 text-mint" /> : <Copy className="h-4 w-4" />}</button>
+                      <a href={link} target="_blank" title="Vorschau öffnen" className="rounded-lg border border-line p-2 text-txt-2"><ExternalLink className="h-4 w-4" /></a>
+                    </div>
+                  </div>
+                ) : null;
+              })()}
+
               {!reviewData || !editDraft ? (
                 <div className="mt-6 flex items-center gap-2 font-body text-[13px] text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /> Entwurf laden …</div>
               ) : (
