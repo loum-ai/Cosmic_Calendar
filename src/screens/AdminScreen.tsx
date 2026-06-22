@@ -179,6 +179,7 @@ function Cockpit({ email }: { email: string }) {
 
       setCreated({ name, link: linkFor(client.access_token) });
       setName(""); setDate(""); setTime(""); setPlaceQ(""); setPlace(null);
+      setCreating(false);
       await loadClients();
     } catch (e: any) {
       setErr(e?.message || "Etwas ist schiefgelaufen.");
@@ -260,18 +261,19 @@ function Cockpit({ email }: { email: string }) {
             </button>
             {err && <p className="font-body text-[12px] text-rose-300">{err}</p>}
           </div>
-
-          {created && (
-            <div className="mt-3 rounded-xl border border-amber-400/40 bg-amber-400/5 p-3">
-              <div className="font-body text-[13px] text-txt">📝 Website von <b>{created.name}</b> erstellt — Deutung als <b>Entwurf</b>. Unten <b>prüfen & freigeben</b>, dann ist ihre persönliche Website live. Ihre Website:</div>
-              <div className="mt-2 flex items-center gap-2">
-                <code className="min-w-0 flex-1 truncate rounded-lg bg-black/40 px-2.5 py-2 font-mono text-[11px] text-lilac">{created.link}</code>
-                <button onClick={() => copy(created.link)} className="rounded-lg border border-line p-2 text-txt-2">{copied === created.link ? <Check className="h-4 w-4 text-mint" /> : <Copy className="h-4 w-4" />}</button>
-                <a href={created.link} target="_blank" className="rounded-lg border border-line p-2 text-txt-2"><ExternalLink className="h-4 w-4" /></a>
-              </div>
-            </div>
-          )}
         </section>
+        )}
+
+        {/* success banner (form collapses after creating) */}
+        {created && !creating && (
+          <div className="mt-4 rounded-2xl border border-amber-400/40 bg-amber-400/5 p-4">
+            <div className="font-body text-[13px] text-txt">📝 Website von <b>{created.name}</b> erstellt — Deutung als <b>Entwurf</b>. Öffne sie unten in der Liste, um sie zu <b>prüfen & freizugeben</b> — dann ist die Website live. Ihre Website-Adresse:</div>
+            <div className="mt-2 flex items-center gap-2">
+              <code className="min-w-0 flex-1 truncate rounded-lg bg-black/40 px-2.5 py-2 font-mono text-[11px] text-lilac">{created.link}</code>
+              <button onClick={() => copy(created.link)} className="rounded-lg border border-line p-2 text-txt-2">{copied === created.link ? <Check className="h-4 w-4 text-mint" /> : <Copy className="h-4 w-4" />}</button>
+              <a href={created.link} target="_blank" className="rounded-lg border border-line p-2 text-txt-2"><ExternalLink className="h-4 w-4" /></a>
+            </div>
+          </div>
         )}
 
         {/* clients */}
