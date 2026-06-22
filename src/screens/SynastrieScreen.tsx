@@ -90,15 +90,25 @@ export function SynastrieScreen() {
       {(adding || people.length === 0) && (
         <div className="mt-6 border-t border-line pt-2">
           <SectionHead title="Wen möchtest du vergleichen?" sub="Für ein echtes Vergleichsbild brauchen wir Datum, Uhrzeit und (für die Achsen) den Ort." />
-          <div className="flex flex-col gap-3">
-            <input className={inputCls} placeholder="Name (z. B. Jonas)" value={name} onChange={(e) => setName(e.target.value)} />
+          <div className="flex flex-col gap-3.5">
+            <label className="block">
+              <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Name</span>
+              <input className={inputCls} placeholder="z. B. Jonas" value={name} onChange={(e) => setName(e.target.value)} />
+            </label>
             <div className="flex gap-2.5">
-              <input className={cn(inputCls, "flex-1")} type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-              <input className={cn(inputCls, "w-[120px]")} type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+              <label className="block flex-1">
+                <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Geburtsdatum</span>
+                <input className={cn(inputCls, "w-full")} type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+              </label>
+              <label className="block w-[130px]">
+                <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Uhrzeit</span>
+                <input className={cn(inputCls, "w-full")} type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+              </label>
             </div>
-            {!time && <p className="-mt-1 font-body text-[11px] text-txt-3">Uhrzeit unbekannt? Lass es leer — wir rechnen mit 12:00 (Mond &amp; Häuser dann ungefähr).</p>}
-            <div className="relative">
-              <input className={inputCls} placeholder="Geburtsort (optional)" value={placeQ} onChange={(e) => { setPlaceQ(e.target.value); setPlace(null); }} />
+            {!time && <p className="-mt-1.5 font-body text-[11px] text-txt-3">Uhrzeit unbekannt? Lass es leer — wir rechnen mit 12:00 (Mond &amp; Häuser dann ungefähr).</p>}
+            <label className="relative block">
+              <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Geburtsort <span className="text-txt-3">· optional</span></span>
+              <input className={inputCls} placeholder="z. B. Berlin — dann aus der Liste wählen" value={placeQ} onChange={(e) => { setPlaceQ(e.target.value); setPlace(null); }} />
               {places.length > 0 && (
                 <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-xl border border-line bg-[#12121c] shadow-xl">
                   {places.map((p, i) => (
@@ -106,7 +116,7 @@ export function SynastrieScreen() {
                   ))}
                 </div>
               )}
-            </div>
+            </label>
           </div>
           <div className="mt-4">
             <div className="vela-eyebrow mb-2 text-lilac/70">Beziehung</div>

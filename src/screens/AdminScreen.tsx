@@ -219,17 +219,27 @@ function Cockpit({ email }: { email: string }) {
             <h2 className="font-display text-sm font-semibold text-txt">Neue Kundin-Website</h2>
             <button onClick={() => { setCreating(false); setCreated(null); }} className="flex h-7 w-7 items-center justify-center rounded-full text-txt-3 hover:text-txt"><X className="h-4 w-4" /></button>
           </div>
-          <div className="mt-3 space-y-2.5">
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name"
-              className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
+          <div className="mt-4 space-y-3.5">
+            <label className="block">
+              <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Name der Kundin</span>
+              <input value={name} onChange={(e) => setName(e.target.value)} placeholder="z. B. Laura"
+                className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
+            </label>
             <div className="flex gap-2.5">
-              <input value={date} onChange={(e) => setDate(e.target.value)} type="date"
-                className="flex-1 rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
-              <input value={time} onChange={(e) => setTime(e.target.value)} type="time"
-                className="w-[120px] rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
+              <label className="block flex-1">
+                <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Geburtsdatum</span>
+                <input value={date} onChange={(e) => setDate(e.target.value)} type="date"
+                  className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
+              </label>
+              <label className="block w-[130px]">
+                <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Uhrzeit</span>
+                <input value={time} onChange={(e) => setTime(e.target.value)} type="time"
+                  className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
+              </label>
             </div>
-            <div className="relative">
-              <input value={placeQ} onChange={(e) => { setPlaceQ(e.target.value); setPlace(null); }} placeholder="Geburtsort"
+            <label className="relative block">
+              <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Geburtsort</span>
+              <input value={placeQ} onChange={(e) => { setPlaceQ(e.target.value); setPlace(null); }} placeholder="z. B. Starnberg — dann aus der Liste wählen"
                 className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
               {places.length > 0 && (
                 <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-xl border border-line bg-[#12121c] shadow-xl">
@@ -241,8 +251,8 @@ function Cockpit({ email }: { email: string }) {
                   ))}
                 </div>
               )}
-            </div>
-            {place && <div className="font-mono text-[10px] text-txt-3">{place.lat.toFixed(3)}°, {place.lon.toFixed(3)}°</div>}
+            </label>
+            {place && <div className="font-mono text-[10px] text-txt-3">✓ {place.lat.toFixed(2)}°, {place.lon.toFixed(2)}°</div>}
             <button disabled={!canSubmit} onClick={createClient}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-space-2 disabled:opacity-40">
               {step ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
