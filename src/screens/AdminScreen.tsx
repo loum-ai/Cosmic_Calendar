@@ -191,13 +191,13 @@ function Cockpit({ email }: { email: string }) {
 
   return (
     <div className="min-h-dvh bg-[#050509] text-ink">
-      <div className="mx-auto w-full max-w-[760px] px-5 pb-24 pt-[calc(env(safe-area-inset-top,0px)+1.5rem)]">
+      <div className="mx-auto w-full max-w-[760px] px-6 pb-28 pt-[calc(env(safe-area-inset-top,0px)+3rem)] sm:px-8">
         {/* dashboard header */}
-        <div className="flex items-start justify-between gap-3">
-          <div>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
             <div className="vela-label">Vela · Studio</div>
-            <h1 className="font-cinzel text-[30px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_22px_rgba(139,92,246,0.35)]">Dein Dashboard</h1>
-            <p className="mt-2 font-body text-[12.5px] text-txt-3">Erstelle & verwalte die persönlichen Astro-Websites deiner Kundinnen.</p>
+            <h1 className="mt-1.5 font-cinzel text-[26px] font-semibold leading-tight tracking-wide text-white sm:text-[32px]">Dein Dashboard</h1>
+            <p className="mt-2 max-w-[44ch] font-body text-[12.5px] leading-relaxed text-txt-3">Erstelle & verwalte die persönlichen Astro-Websites deiner Kundinnen.</p>
           </div>
           <button onClick={() => supabase.auth.signOut()} title={email} className="flex shrink-0 items-center gap-1.5 rounded-pill border border-line px-3 py-1.5 font-body text-[11px] text-txt-2">
             <LogOut className="h-3.5 w-3.5" /> Abmelden
