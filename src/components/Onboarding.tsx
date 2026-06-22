@@ -171,7 +171,7 @@ export function Onboarding() {
 
             <button
               onClick={submit}
-              className="mt-1 flex items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-[15px] font-semibold text-space-2 shadow-glow transition active:scale-[0.98]"
+              className="mt-1 flex items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-[15px] font-semibold text-white shadow-glow transition active:scale-[0.98]"
             >
               <Sparkles className="h-4 w-4" />
               Chart berechnen

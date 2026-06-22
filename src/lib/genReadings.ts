@@ -3,7 +3,25 @@ import { create } from "zustand";
 import { supabase } from "./supabase";
 import { chartContext, chartHash } from "./factsContext";
 import { ASC, CHART, NODES, HOUSE, signName, computeAspects } from "./data";
+import { aiSign, aiHouse, aiAspect } from "./interpret";
 import type { SheetDescriptor } from "./sheets";
+
+/** Already-generated reading for a subject, from the stored interpretation
+ *  (one cockpit generation covers summary + every placement + aspect). Prefer
+ *  this over calling `generate` again — saves the daily quota and is instant. */
+export function storedReading(d: SheetDescriptor | null): string | null {
+  if (!d) return null;
+  if (d.kind === "planet") {
+    const s = aiSign(String(d.key));
+    const h = aiHouse(String(d.key));
+    return s || h ? [s, h].filter(Boolean).join(" ") : null;
+  }
+  if (d.kind === "aspect") {
+    const a = computeAspects().find((x) => x.key === d.key);
+    return a ? aiAspect(a.A.key, a.B.key) : null;
+  }
+  return null;
+}
 
 /**
  * Generated-readings layer. Every personal interpretation is produced on demand

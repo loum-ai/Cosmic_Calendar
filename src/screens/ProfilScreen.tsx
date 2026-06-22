@@ -101,7 +101,7 @@ export function ProfilScreen() {
       {!viewer && (
         <button
           onClick={() => setOnboardingOpen(true)}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-[14px] font-semibold text-space-2 shadow-glow transition active:scale-[0.98]"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-[14px] font-semibold text-white shadow-glow transition active:scale-[0.98]"
         >
           <Sparkles className="h-4 w-4" />
           {saved ? "Geburtsdaten ändern" : "Erhalte dein Horoskop"}

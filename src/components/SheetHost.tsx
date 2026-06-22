@@ -4,7 +4,8 @@ import { useApp } from "@/store/useApp";
 import { resolveSheet, type SheetContent, type SheetDescriptor } from "@/lib/sheets";
 import { Sheet, SheetContent as SheetShell } from "@/components/ui/sheet";
 import { GlyphBadge } from "@/components/GlyphBadge";
-import { subjectTask, useReading } from "@/lib/genReadings";
+import { subjectTask, useReading, storedReading } from "@/lib/genReadings";
+import { IS_DEMO } from "@/lib/data";
 
 function useIsDesktop() {
   const [d, setD] = useState(false);
@@ -22,7 +23,9 @@ function useIsDesktop() {
 function Body({ content, descriptor }: { content: SheetContent; descriptor: SheetDescriptor | null }) {
   const openSheet = useApp((s) => s.openSheet);
   const st = subjectTask(descriptor);
-  const { text: genText, loading: genLoading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st);
+  const stored = storedReading(descriptor);
+  const { text: genText, loading: genLoading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !stored && !IS_DEMO);
+  const personalText = stored || genText;
 
   const general = content.sections.filter((s) => !s.accent && /^was/i.test(s.label));
   const placements = content.sections.filter((s) => !s.accent && !/^was/i.test(s.label));
@@ -66,8 +69,8 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
             <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-mint">
               <Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich
             </div>
-            {genText ? (
-              <p className="font-body text-[16px] font-medium leading-[1.55] text-white">{genText}</p>
+            {personalText ? (
+              <p className="font-body text-[16px] font-medium leading-[1.55] text-white">{personalText}</p>
             ) : genLoading ? (
               <div className="flex items-center gap-2 text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="font-body text-[13px]">Vela liest dein Bild …</span></div>
             ) : (
