@@ -11,21 +11,44 @@ import { EASE } from "@/lib/tokens";
 const IMPACT_COLOR: Record<string, string> = { "+": "#2dd4bf", "-": "#ff8fb0", "~": "#c9b6ff" };
 const IMPACT_LABEL: Record<string, string> = { "+": "fördernd", "-": "fordernd", "~": "gemischt" };
 
-function TransitReading({ tr }: { tr: TransitHit }) {
+/** One transit, cinematic & full-bleed; swipe left/right to move between them. */
+function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => void; onNext: () => void }) {
+  const c = IMPACT_COLOR[tr.impact];
   const vk = `transit:${tr.tKey}_${tr.nKey}_${tr.type}`;
-  const task = `Deute den aktuellen Transit: Der laufende ${tr.tName} bildet ${tr.type === "Konjunktion" ? "eine" : "ein"} ${tr.type} zu ${tr.nName} im Geburtsbild (Orbis ${tr.orb.toFixed(1)}°, ${IMPACT_LABEL[tr.impact]}). Was bedeutet diese Phase konkret für die Person, worauf darf sie achten? 3–4 Sätze, Du-Form.`;
+  const task = `Deute den aktuellen Transit: Der laufende ${tr.tName} bildet ${tr.type === "Konjunktion" ? "eine" : "ein"} ${tr.type} zu ${tr.nName} im Geburtsbild (Orbis ${tr.orb.toFixed(1)}°, ${IMPACT_LABEL[tr.impact]}). Was bedeutet diese Phase konkret für die Person, worauf darf sie achten? 4–5 Sätze, Du-Form.`;
   const { text, loading } = useReading(vk, task);
   return (
-    <div className="mt-4 rounded-2xl border border-mint/30 bg-mint/[0.07] p-4">
-      <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-mint"><Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich</div>
-      {text ? (
-        <p className="font-body text-[15px] leading-relaxed text-white">{text}</p>
-      ) : loading ? (
-        <div className="flex items-center gap-2 text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="font-body text-[13px]">Vela liest den Transit …</span></div>
-      ) : (
-        <p className="font-body text-[14px] leading-relaxed text-white">{tr.txt}</p>
-      )}
-    </div>
+    <motion.div
+      drag="x"
+      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.45}
+      onDragEnd={(_, info) => { if (info.offset.x < -90) onNext(); else if (info.offset.x > 90) onPrev(); }}
+      initial={{ opacity: 0, x: 60 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -50 }}
+      transition={{ duration: 0.32, ease: EASE.smooth }}
+      className="absolute inset-0 flex cursor-grab flex-col items-center justify-center px-7 text-center active:cursor-grabbing"
+    >
+      <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-glyph leading-none opacity-[0.05]" style={{ color: c, fontSize: "min(62vw, 380px)" }}>{tr.tGlyph}</span>
+      <div className="relative w-full max-w-[600px]">
+        <div className="font-mono text-[11px] tracking-[0.12em]" style={{ color: c }}>TRANSIT · {IMPACT_LABEL[tr.impact].toUpperCase()} · {tr.orb.toFixed(1)}° ORBIS</div>
+        <h2 className="mt-4 font-cinzel font-semibold leading-[1.05] text-white" style={{ fontSize: "clamp(30px,8vw,52px)" }}>{tr.title}</h2>
+        <div className="mt-4 flex flex-wrap justify-center gap-2">
+          <span className="rounded-pill border border-line bg-[rgba(255,255,255,0.05)] px-3 py-1 font-body text-[11px] text-txt-2">laufend: {tr.tName}{tr.tRetro ? " ℞" : ""}</span>
+          <span className="rounded-pill border border-line bg-[rgba(255,255,255,0.05)] px-3 py-1 font-body text-[11px] text-txt-2">dein {tr.nName}</span>
+        </div>
+        <div className="mx-auto mt-6 max-w-[52ch]">
+          <div className="mb-2 flex items-center justify-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-mint"><Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich</div>
+          {text ? (
+            <p className="font-body text-[16px] leading-relaxed text-txt">{text}</p>
+          ) : loading ? (
+            <div className="flex items-center justify-center gap-2 text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="font-body text-[13px]">Vela liest den Transit …</span></div>
+          ) : (
+            <p className="font-body text-[15px] leading-relaxed text-txt-2">{tr.txt}</p>
+          )}
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -44,67 +67,40 @@ function DateScrubber({ offset, setOffset, date }: { offset: number; setOffset: 
   );
 }
 
-/** Full-page transit detail. Close via Zurück. */
+/** Full-bleed cinematic transit detail — covers the screen, swipe left/right. */
 function TransitFull({ hits }: { hits: TransitHit[] }) {
   const i = useApp((s) => s.fullTransit);
   const setFull = useApp((s) => s.setFullTransit);
   if (i === null || !hits[i]) return null;
   const tr = hits[i];
   const n = hits.length;
+  const go = (d: number) => setFull((((i + d) % n) + n) % n);
 
-  const c = IMPACT_COLOR[tr.impact];
   return (
-    <AnimatePresence>
-      <motion.div
-        key="backdrop"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={() => setFull(null)}
-        className="fixed inset-0 z-[80] flex items-center justify-center bg-[rgba(4,4,10,0.72)] p-4 backdrop-blur-md lg:pl-[120px]"
-      >
-        <motion.div
-          key={i}
-          initial={{ opacity: 0, y: 16, scale: 0.985 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 12 }}
-          transition={{ duration: 0.28, ease: EASE.smooth }}
-          onClick={(e) => e.stopPropagation()}
-          className="relative max-h-[88vh] w-full max-w-[560px] overflow-y-auto rounded-card border border-[rgba(150,120,255,0.28)] bg-stage p-6 shadow-glass lg:p-8"
-        >
-          <span className="pointer-events-none absolute -right-6 -top-10 font-glyph text-[150px] leading-none opacity-[0.08]" style={{ color: c }}>{tr.tGlyph}</span>
-          <div className="relative">
-            <div className="flex items-start justify-between gap-3">
-              <div className="font-mono text-[11px]" style={{ color: c }}>TRANSIT · {IMPACT_LABEL[tr.impact]} · {tr.orb.toFixed(1)}° Orbis</div>
-              <button onClick={() => setFull(null)} className="-mr-1 -mt-1 flex h-8 w-8 items-center justify-center rounded-full text-txt-3 transition hover:text-txt">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <h2 className="mt-3 font-cinzel text-[28px] font-semibold leading-tight text-white lg:text-[34px]">{tr.title}</h2>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <span className="rounded-pill border border-line bg-surface px-2.5 py-1 font-body text-[11px] text-txt-2">laufend: {tr.tName}{tr.tRetro ? " ℞" : ""}</span>
-              <span className="rounded-pill border border-line bg-surface px-2.5 py-1 font-body text-[11px] text-txt-2">dein {tr.nName}</span>
-            </div>
-            <TransitReading tr={tr} />
-            <p className="mt-3 font-body text-[12px] text-txt-3">{tr.txt}</p>
+    <motion.div key="tfull" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[95] overflow-hidden bg-stage">
+      <button onClick={() => setFull(null)} className="absolute right-5 top-[calc(env(safe-area-inset-top,0px)+1.1rem)] z-20 flex h-10 w-10 items-center justify-center rounded-full border border-line bg-[rgba(255,255,255,0.06)] text-txt-2 backdrop-blur active:scale-90">
+        <X className="h-5 w-5" />
+      </button>
 
-            <div className="mt-7 flex items-center gap-3">
-              <button onClick={() => setFull((i - 1 + n) % n)} className="flex h-11 w-11 items-center justify-center rounded-full border border-line text-txt-2 active:scale-90">
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <div className="flex flex-1 flex-wrap justify-center gap-1.5">
-                {hits.slice(0, 12).map((_, di) => (
-                  <span key={di} className="h-1.5 rounded-full transition-all" style={{ width: di === i ? 22 : 6, background: di === i ? "#8b5cf6" : "rgba(255,255,255,0.22)" }} />
-                ))}
-              </div>
-              <button onClick={() => setFull((i + 1) % n)} className="flex h-11 w-11 items-center justify-center rounded-full bg-cta-gradient text-white active:scale-90">
-                <ChevronRight className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+      <AnimatePresence mode="wait">
+        <TransitStage key={i} tr={tr} onPrev={() => go(-1)} onNext={() => go(1)} />
+      </AnimatePresence>
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+5.2rem)] z-10 text-center font-body text-[11px] text-txt-3">‹ wische für mehr ›</div>
+      <div className="absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+1.6rem)] z-20 flex items-center justify-center gap-4 px-6">
+        <button onClick={() => go(-1)} className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-[rgba(255,255,255,0.06)] text-txt-2 backdrop-blur active:scale-90">
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+        <div className="flex max-w-[55vw] flex-wrap justify-center gap-1.5">
+          {hits.slice(0, 12).map((_, di) => (
+            <button key={di} onClick={() => setFull(di)} className="h-1.5 rounded-full transition-all" style={{ width: di === i ? 22 : 6, background: di === i ? "#8b5cf6" : "rgba(255,255,255,0.25)" }} />
+          ))}
+        </div>
+        <button onClick={() => go(1)} className="flex h-11 w-11 items-center justify-center rounded-full bg-cta-gradient text-white active:scale-90">
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      </div>
+    </motion.div>
   );
 }
 
