@@ -17,7 +17,7 @@ export function ScreenShell({ children }: { children: React.ReactNode }) {
       animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
       exit={{ opacity: 0, x: dir * -48, filter: "blur(4px)" }}
       transition={{ duration: 0.38, ease: EASE.smooth }}
-      className="relative mx-auto min-h-full w-full max-w-[480px] px-[max(20px,5vw)] pb-[136px] pt-[calc(env(safe-area-inset-top,0px)+1.5rem)] lg:max-w-[880px] lg:px-12 lg:pb-24 lg:pt-10 xl:max-w-[1180px]"
+      className="relative mx-auto min-h-full w-full max-w-[480px] px-[max(22px,5vw)] pb-[136px] pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] lg:max-w-[880px] lg:px-12 lg:pb-24 lg:pt-10 xl:max-w-[1180px]"
     >
       {children}
     </motion.main>

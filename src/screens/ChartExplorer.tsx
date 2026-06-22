@@ -99,7 +99,7 @@ export function ChartExplorer() {
   }, []);
 
   return (
-    <div className="animate-slideUp px-5 pb-28 pt-[calc(env(safe-area-inset-top,0px)+1.4rem)] lg:px-10 lg:pt-10">
+    <div className="animate-slideUp px-6 pb-28 pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] lg:px-10 lg:pt-10">
       <div className="mx-auto w-full max-w-[1180px]">
         {/* header — viewer = the client's own website; else demo / own chart */}
         <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
