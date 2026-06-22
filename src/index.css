@@ -63,6 +63,9 @@
     min-height: 100vh;
     background: #050509;
     color: var(--text-primary);
+    /* native controls (date/time pickers, dropdowns) render dark-themed —
+       otherwise their text is dark-on-dark and the fields look empty */
+    color-scheme: dark;
     font-family: "Manrope", sans-serif;
     font-variant-emoji: text; /* glyphs as text, never emoji */
     -webkit-font-smoothing: antialiased;

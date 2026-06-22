@@ -20,6 +20,7 @@ function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => vo
   return (
     <motion.div
       drag="x"
+      dragDirectionLock
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.45}
       onDragEnd={(_, info) => { if (info.offset.x < -90) onNext(); else if (info.offset.x > 90) onPrev(); }}
@@ -27,22 +28,22 @@ function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => vo
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -50 }}
       transition={{ duration: 0.32, ease: EASE.smooth }}
-      className="absolute inset-0 flex cursor-grab flex-col items-center justify-center px-7 text-center active:cursor-grabbing"
+      className="absolute inset-0 flex cursor-grab flex-col overflow-y-auto px-7 pb-32 pt-[calc(env(safe-area-inset-top,0px)+4.75rem)] text-left active:cursor-grabbing lg:px-12"
     >
-      <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-glyph leading-none opacity-[0.05]" style={{ color: c, fontSize: "min(62vw, 380px)" }}>{tr.tGlyph}</span>
-      <div className="relative w-full max-w-[600px]">
+      <span className="pointer-events-none absolute -right-10 top-[14%] font-glyph leading-none opacity-[0.06]" style={{ color: c, fontSize: "min(52vw, 300px)" }}>{tr.tGlyph}</span>
+      <div className="relative w-full max-w-[640px]">
         <div className="font-mono text-[11px] tracking-[0.12em]" style={{ color: c }}>TRANSIT · {IMPACT_LABEL[tr.impact].toUpperCase()} · {tr.orb.toFixed(1)}° ORBIS</div>
-        <h2 className="mt-4 font-cinzel font-semibold leading-[1.05] text-white" style={{ fontSize: "clamp(30px,8vw,52px)" }}>{tr.title}</h2>
-        <div className="mt-4 flex flex-wrap justify-center gap-2">
+        <h2 className="mt-4 font-cinzel font-semibold leading-[1.06] text-white" style={{ fontSize: "clamp(30px,8vw,52px)" }}>{tr.title}</h2>
+        <div className="mt-4 flex flex-wrap gap-2">
           <span className="rounded-pill border border-line bg-[rgba(255,255,255,0.05)] px-3 py-1 font-body text-[11px] text-txt-2">laufend: {tr.tName}{tr.tRetro ? " ℞" : ""}</span>
           <span className="rounded-pill border border-line bg-[rgba(255,255,255,0.05)] px-3 py-1 font-body text-[11px] text-txt-2">dein {tr.nName}</span>
         </div>
-        <div className="mx-auto mt-6 max-w-[52ch]">
-          <div className="mb-2 flex items-center justify-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-mint"><Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich</div>
+        <div className="mt-7 max-w-[58ch]">
+          <div className="mb-2 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-mint"><Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich</div>
           {text ? (
             <p className="font-body text-[16px] leading-relaxed text-txt">{text}</p>
           ) : loading ? (
-            <div className="flex items-center justify-center gap-2 text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="font-body text-[13px]">Vela liest den Transit …</span></div>
+            <div className="flex items-center gap-2 text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="font-body text-[13px]">Vela liest den Transit …</span></div>
           ) : (
             <p className="font-body text-[15px] leading-relaxed text-txt-2">{tr.txt}</p>
           )}
