@@ -101,7 +101,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         { label: "Was — der Planet", body: info.what },
         { label: `Wie — ${p.name} in ${signName(p.lon)}`, body: aiSign(p.key) || (IS_DEMO && READINGS[p.key]?.sign) || SIGNWHAT[si] },
         { label: `Wo — ${h}. Haus · ${HOUSE[h - 1]}`, body: aiHouse(p.key) || (IS_DEMO && READINGS[p.key]?.house) || HOUSEWHAT[h - 1] },
-        { label: "Bei dir", body: p.txt || `Bei dir steht ${p.name} in ${signName(p.lon)}, im ${h}. Haus.`, accent: MINT },
+        { label: "Bei dir", body: p.txt || `${THEME[p.key] ?? p.name} drückt sich bei dir über ${signName(p.lon)} im ${h}. Haus aus — dem Bereich „${HOUSE[h - 1]}". ${SIGNWHAT[si] ?? ""} Genau diese Färbung bringst du in dieses Lebensthema ein.`, accent: MINT },
       ],
       relations: asp.map((a) => {
         const other = a.A.key === p.key ? a.B : a.A;
