@@ -30,6 +30,10 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
   const general = content.sections.filter((s) => !s.accent && /^was/i.test(s.label));
   const placements = content.sections.filter((s) => !s.accent && !/^was/i.test(s.label));
   const personal = content.sections.filter((s) => s.accent);
+  // For a planet/ascendant we have a full reading (sign + house). Show it INSIDE
+  // the "Vela deutet" box as the substantial interpretation, instead of repeating
+  // it as thin rows above. Aspects/signs/houses keep their own layout.
+  const foldPersonal = (descriptor?.kind === "planet") && placements.length > 0;
 
   return (
     <>
@@ -48,7 +52,7 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
         ))}
 
         {/* PLACEMENTS — your data point: structured rows, label carries the position */}
-        {placements.length > 0 && (
+        {placements.length > 0 && !foldPersonal && (
           <div className="space-y-4 border-t border-line pt-5">
             {placements.map((sec) => (
               <div key={sec.label} className="grid grid-cols-[auto_1fr] gap-x-3.5">
@@ -69,7 +73,16 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
             <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-mint">
               <Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich
             </div>
-            {personalText ? (
+            {foldPersonal ? (
+              <div className="space-y-3">
+                {placements.map((sec) => (
+                  <div key={sec.label}>
+                    <div className="mb-1 font-display text-[12px] font-bold tracking-tight text-mint/90">{sec.label}</div>
+                    <p className="font-body text-[15.5px] font-medium leading-[1.55] text-white">{sec.body}</p>
+                  </div>
+                ))}
+              </div>
+            ) : personalText ? (
               <p className="font-body text-[16px] font-medium leading-[1.55] text-white">{personalText}</p>
             ) : genLoading ? (
               <div className="flex items-center gap-2 text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="font-body text-[13px]">Vela liest dein Bild …</span></div>
