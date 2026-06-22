@@ -79,7 +79,7 @@ function LoginCard() {
           <input value={pw} onChange={(e) => setPw(e.target.value)} type="password" placeholder="Passwort"
             className="w-full rounded-2xl border border-line bg-surface px-4 py-3 font-body text-sm text-txt outline-none focus:border-lilac" />
           <button disabled={busy || !email || !pw} onClick={submit}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-space-2 disabled:opacity-50">
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-white disabled:opacity-50">
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             {mode === "signin" ? "Anmelden" : "Konto anlegen"}
           </button>
@@ -208,7 +208,7 @@ function Cockpit({ email }: { email: string }) {
         {/* primary action */}
         {!creating && (
           <button onClick={() => { setCreating(true); setCreated(null); setErr(null); }}
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-sm font-semibold text-space-2 shadow-glow transition active:scale-[0.99]">
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-sm font-semibold text-white shadow-glow transition active:scale-[0.99]">
             <Sparkles className="h-4 w-4" /> Neue Kundin-Website erstellen
           </button>
         )}
@@ -255,7 +255,7 @@ function Cockpit({ email }: { email: string }) {
             </label>
             {place && <div className="font-mono text-[10px] text-txt-3">✓ {place.lat.toFixed(2)}°, {place.lon.toFixed(2)}°</div>}
             <button disabled={!canSubmit} onClick={createClient}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-space-2 disabled:opacity-40">
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-white disabled:opacity-40">
               {step ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
               {step || "Persönliche Website erstellen"}
             </button>

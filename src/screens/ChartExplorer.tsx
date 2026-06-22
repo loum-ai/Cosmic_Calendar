@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Download, Sparkles, Loader2 } from "lucide-react";
-import { subjectTask, useReading, useReadings } from "@/lib/genReadings";
+import { subjectTask, useReading, useReadings, storedReading } from "@/lib/genReadings";
 import { chartContext } from "@/lib/factsContext";
 import { ChartWheel } from "@/components/ChartWheel";
 import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
@@ -84,14 +84,21 @@ export function ChartExplorer() {
   const domElem = ELEM[domIdx];
   const heroTxt = tightest ? aiAspect(tightest.A.key, tightest.B.key) || (IS_DEMO && ASPECT_TEXT[tightest.key]) || tightest.def.plain : "";
   const patterns = chartPatterns();
-  // hybrid "core": generate a holistic overview for this chart (cached)
-  const overview = useReading("natal:overview", "Schreibe ein einfühlsames, konkretes Gesamtbild dieser Person aus ihrem Geburtsbild — Kernpersönlichkeit, größte Stärken, zentrale Herausforderung und der rote Faden ihrer Entwicklung. 5–7 Sätze, Du-Form, Klartext, ohne Aufzählung.");
+  // hybrid "core": generate a holistic overview — only when we don't already
+  // have a stored summary (client) and not on the bespoke demo, to spare quota.
+  const overview = useReading(
+    "natal:overview",
+    "Schreibe ein einfühlsames, konkretes Gesamtbild dieser Person aus ihrem Geburtsbild — Kernpersönlichkeit, größte Stärken, zentrale Herausforderung und der rote Faden ihrer Entwicklung. 5–7 Sätze, Du-Form, Klartext, ohne Aufzählung.",
+    !IS_DEMO && !aiSummary(),
+  );
 
-  // pre-warm the core readings (Sonne/Mond/Aszendent) so the first tap is instant
+  // pre-warm Sonne/Mond/Aszendent only when needed (not demo, not already stored)
   useEffect(() => {
+    if (IS_DEMO) return;
     const req = useReadings.getState().request;
     const ctx = chartContext();
     for (const k of ["sun", "moon", "asc"]) {
+      if (storedReading({ kind: "planet", key: k })) continue;
       const st = subjectTask({ kind: "planet", key: k });
       if (st) req(st.viewKey, ctx, st.task);
     }
@@ -122,7 +129,7 @@ export function ChartExplorer() {
           <button
             onClick={() => setPrintOpen(true)}
             className={`flex items-center gap-2 rounded-pill px-4 py-2.5 font-display text-[13px] font-semibold transition ${
-              viewer ? "bg-cta-gradient text-space-2 shadow-glow" : "border border-line-accent bg-surface text-txt hover:bg-surface-2"
+              viewer ? "bg-cta-gradient text-white shadow-glow" : "border border-line-accent bg-surface text-txt hover:bg-surface-2"
             }`}
           >
             <Download className={`h-4 w-4 ${viewer ? "" : "text-lilac"}`} /> {viewer ? "Mein Horoskop als PDF" : "Horoskop herunterladen"}
@@ -292,7 +299,9 @@ export function ChartExplorer() {
 
 function GeneratedReading({ sel, fallback }: { sel: SheetDescriptor; fallback?: string }) {
   const st = subjectTask(sel);
-  const { text, loading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st);
+  const stored = storedReading(sel);
+  const { text, loading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !stored && !IS_DEMO);
+  const shown = stored || text;
   if (!st) {
     return fallback ? (
       <div className="rounded-2xl border border-mint/25 bg-mint/[0.06] p-3.5">
@@ -304,8 +313,8 @@ function GeneratedReading({ sel, fallback }: { sel: SheetDescriptor; fallback?: 
   return (
     <div className="rounded-2xl border border-mint/30 bg-mint/[0.07] p-3.5">
       <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[9.5px] font-bold uppercase tracking-[0.18em] text-mint"><Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich</div>
-      {text ? (
-        <p className="font-body text-[15px] font-medium leading-[1.55] text-white">{text}</p>
+      {shown ? (
+        <p className="font-body text-[15px] font-medium leading-[1.55] text-white">{shown}</p>
       ) : loading ? (
         <div className="flex items-center gap-2 text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="font-body text-[13px]">Vela liest dein Bild …</span></div>
       ) : (

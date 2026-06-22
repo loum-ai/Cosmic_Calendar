@@ -126,11 +126,16 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       { label: `Wie — in ${signName(n.lon)}`, body: aiSign(n.key) || (IS_DEMO && r?.sign) || SIGNWHAT[idx] },
     ];
     if (IS_DEMO && r?.house) sections.push({ label: "Die Achse", body: r.house });
-    sections.push({
-      label: "Bei dir",
-      body: `${n.name} steht in ${signName(n.lon)}, Haus ${n.house ?? houseOf(n.lon)}.`,
-      accent: MINT,
-    });
+    {
+      const h = n.house ?? houseOf(n.lon);
+      const area = HOUSE[h - 1];
+      const trait = SIGNWHAT[idx] ?? "";
+      const body =
+        n.key === "node_n"
+          ? `Dein Wachstumsweg führt nach ${signName(n.lon)} im ${h}. Haus — dem Bereich „${area}". ${trait} Genau diese Qualitäten dort zu entwickeln, fühlt sich anfangs ungewohnt an, ist aber deine Richtung.`
+          : `Vertraut und mühelos: ${signName(n.lon)} im ${h}. Haus — „${area}". ${trait} Das ist dein bekanntes Terrain; du darfst es nach und nach loslassen, statt dich darin zu verstecken.`;
+      sections.push({ label: "Bei dir", body, accent: MINT });
+    }
     return { title: n.name, glyph: n.glyph, color: "#9bc0ff", sections };
   }
 

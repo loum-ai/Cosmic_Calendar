@@ -9,7 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         // primary CTA — the iridescent gradient, dark text
-        cta: "bg-cta-gradient text-space-2 font-semibold shadow-glow",
+        cta: "bg-cta-gradient text-white font-semibold shadow-glow",
         glass:
           "bg-white/[0.06] border border-lilac/30 text-ink-soft backdrop-blur-md hover:border-lilac/60",
         ghost: "text-ink-soft/80 hover:text-ink hover:bg-white/[0.06]",

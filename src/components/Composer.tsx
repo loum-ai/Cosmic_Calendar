@@ -86,7 +86,7 @@ export function Composer() {
               <button
                 onClick={() => ask()}
                 disabled={loading}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cta-gradient text-space-2 active:scale-90 disabled:opacity-60"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cta-gradient text-white active:scale-90 disabled:opacity-60"
               >
                 {loading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
