@@ -56,6 +56,7 @@ export interface SheetContent {
 }
 
 const MINT = "#2fde8c";
+const lc = (s: string) => (s ? s.charAt(0).toLowerCase() + s.slice(1) : s);
 
 function relText(a: {
   A: { key: string; name: string; lon: number; house?: number };
@@ -83,7 +84,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         sections: [
           { label: "Was — die Maske nach außen", body: PINFO.asc.what },
           { label: `Wie — Aszendent in ${signName(ASC)}`, body: aiSign("asc") || (IS_DEMO && READINGS.asc?.sign) || SIGNWHAT[si] },
-          { label: "Bei dir", body: `Dein Aszendent steht in ${signName(ASC)} — so trittst du auf, bevor du ein Wort sagst.`, accent: MINT },
+          { label: "Bei dir", body: `Dein Aszendent steht in ${signName(ASC)} — so trittst du auf, bevor du ein Wort sagst. ${SIGNWHAT[si]} Das ist der erste Eindruck, den andere von dir bekommen, noch bevor sie dich wirklich kennen.`, accent: MINT },
         ],
       };
     }
@@ -151,8 +152,8 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         {
           label: "Bei dir",
           body: ps.length
-            ? `${ps.map((p) => p.name).join(", ")} ${ps.length > 1 ? "stehen" : "steht"} in diesem Lebensbereich.`
-            : "Hier steht bei dir kein Planet — der Bereich läuft eher leise mit.",
+            ? `Dieser Lebensbereich ist bei dir aktiv besetzt: ${ps.map((p) => `${p.name} in ${signName(p.lon)}`).join(", ")}. Das Thema „${HOUSE[h - 1]}" spielt also eine spürbare Rolle in deinem Leben — ${lc(THEME[ps[0].key] ?? ps[0].name)} ${ps.length > 1 ? "und die weiteren Stellungen prägen" : "prägt"}, wie du es angehst.`
+            : `Hier steht bei dir kein Planet — der Bereich „${HOUSE[h - 1]}" läuft eher leise im Hintergrund mit. Du gehst ihn intuitiv an, statt dass er ein Dauerthema wäre. Das ist völlig normal: Niemand hat in allen zwölf Häusern Planeten.`,
           accent: MINT,
         },
       ],
@@ -173,8 +174,8 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         {
           label: "Bei dir",
           body: ps.length
-            ? `Deine ${ps.map((p) => p.name).join(", ")} ${ps.length > 1 ? "tragen" : "trägt"} diese Färbung.`
-            : "Kein Planet von dir steht in diesem Zeichen.",
+            ? `${ps.map((p) => p.name).join(", ")} ${ps.length > 1 ? "stehen" : "steht"} bei dir in ${s}. Diese Färbung — ${lc(SIGNWHAT[i])} — bringst du vor allem über ${ps.map((p) => lc(THEME[p.key] ?? p.name)).join(" und ")} in dein Leben ein.`
+            : `Kein Planet von dir steht in ${s}. Die Qualität dieses Zeichens — ${lc(SIGNWHAT[i])} — lebst du eher über Menschen und Situationen, die sie dir spiegeln, als unmittelbar aus dir selbst heraus.`,
           accent: MINT,
         },
       ],
@@ -222,7 +223,9 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         { label: "Was ist das?", body: d2.plain },
         {
           label: "Bei dir",
-          body: mine.length ? mine.map((a) => `${a.A.name}–${a.B.name}`).join(", ") : "Diese Verbindung kommt in deinem Chart nicht vor.",
+          body: mine.length
+            ? `Diese Verbindung kommt bei dir ${mine.length}× vor: ${mine.map((a) => `${a.A.name}–${a.B.name}`).join(", ")}. ${d2.plain}`
+            : `Die ${d2.type} kommt in deinem Chart nicht vor — dieses Muster ist bei dir also kein zentrales Thema. Das ist weder gut noch schlecht, nur eine Eigenheit deines Bildes.`,
           accent: MINT,
         },
       ],
