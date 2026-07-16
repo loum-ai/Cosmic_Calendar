@@ -12,9 +12,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        // base — neutral near-black anthracite (no blue cast)
-        space: "#0d0d0d",
-        "space-2": "#171717",
+        // base — deep atmospheric cosmos (indigo/violet night sky)
+        space: "#0a0813",
+        "space-2": "#13111f",
         ink: "#f6f3ff",
         "ink-soft": "#f3effe",
         // primary accent — violet/lilac glow system
@@ -60,9 +60,9 @@ export default {
       },
       fontFamily: {
         // wide, engraved all-caps display serif (à la LOUM "THE ANSWER")
-        cinzel: ['"Cormorant Garamond"', "serif"],
+        cinzel: ['"Montserrat"', "sans-serif"],
         // elegant high-contrast serif for the cinematic hero headlines
-        serif: ['"Cormorant Garamond"', "serif"],
+        serif: ['"Montserrat"', "sans-serif"],
         display: ['"Manrope"', "sans-serif"],
         body: ['"Manrope"', "sans-serif"],
         mono: ['"Manrope"', "sans-serif"],
@@ -87,13 +87,12 @@ export default {
           "linear-gradient(135deg,#8B5CF6,#6D28D9)",
         "iris-text":
           "linear-gradient(110deg,#c4b5ff 0%,#8B5CF6 48%,#2DD4BF 100%)",
-        // neutral near-black chart-stage so bright wheel lines + text pop;
-        // a barely-there neutral lift for depth, no color cast
+        // glassy atmospheric chart-stage — violet/blue nebula bloom over translucent glass
         "stage":
-          "radial-gradient(90% 70% at 78% 8%, rgba(255,255,255,0.05) 0%, transparent 52%), linear-gradient(165deg, #161616 0%, #101010 55%, #0b0b0b 100%)",
-        // panel surface — quiet, slightly cool, high enough contrast for body text
+          "radial-gradient(120% 90% at 80% 0%, rgba(150,110,255,0.20) 0%, transparent 55%), radial-gradient(80% 60% at 8% 105%, rgba(70,130,255,0.14) 0%, transparent 60%), linear-gradient(165deg, rgba(26,21,46,0.72) 0%, rgba(16,13,30,0.72) 60%, rgba(11,9,22,0.82) 100%)",
+        // floating glass panel — translucent, faint violet tint (blur + rim-light via .vela-glass)
         "glasswash":
-          "linear-gradient(155deg, rgba(120,95,210,0.10) 0%, rgba(20,18,34,0.55) 45%, rgba(10,9,18,0.7) 100%)",
+          "linear-gradient(155deg, rgba(150,120,255,0.15) 0%, rgba(32,27,56,0.48) 45%, rgba(17,14,32,0.6) 100%)",
       },
       keyframes: {
         velaSpin: { to: { transform: "rotate(360deg)" } },
