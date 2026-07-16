@@ -32,7 +32,7 @@ function PatternCard({ p }: { p: Pattern }) {
           <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.16em]" style={{ color: KIND_COL[p.kind] }}>{KIND_LABEL[p.kind]}</span>
         </div>
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-cinzel text-[19px] font-semibold leading-tight text-white">{p.title}</h3>
+          <h3 className="font-cinzel text-[20px] font-normal leading-tight text-white">{p.title}</h3>
           <ChevronDown className={`mt-1 h-4 w-4 shrink-0 text-txt-3 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
         </div>
         <p className="mt-1.5 font-body text-[13px] leading-relaxed text-txt-2">{p.text}</p>
@@ -162,7 +162,7 @@ export function ChartExplorer() {
               {viewer ? "Deine persönliche Astro-Website" : "Geburtsbild"}
               {!viewer && IS_DEMO && <span className="rounded-pill border border-line px-2 py-0.5 font-mono text-[10px] tracking-wide text-txt-3">BEISPIEL</span>}
             </div>
-            <h1 className="font-cinzel text-[40px] font-semibold leading-[1.05] tracking-wide text-white [text-shadow:0_0_26px_rgba(139,92,246,0.4)] lg:text-[60px]">
+            <h1 className="font-cinzel text-[40px] font-light leading-[1.05] tracking-[0.01em] text-white [text-shadow:0_0_30px_rgba(139,92,246,0.35)] lg:text-[62px]">
               {viewer ? `Willkommen, ${String(PROFILE.name).split(" ")[0]}` : PROFILE.name}
             </h1>
             <p className="mt-4 font-body text-[15px] leading-relaxed text-txt-2">
@@ -226,7 +226,7 @@ export function ChartExplorer() {
               <span className="pointer-events-none absolute -right-6 -top-10 font-glyph text-[150px] leading-none opacity-[0.07]" style={{ color: tightest.def.c }}>{tightest.def.g}</span>
               <div className="relative">
                 <div className="vela-label">Deine Signatur · {domElem}-betont</div>
-                <h2 className="mt-3 font-cinzel text-[30px] font-semibold leading-[1.12] text-white lg:text-[40px]">
+                <h2 className="mt-3 font-cinzel text-[30px] font-light leading-[1.15] text-white lg:text-[40px]">
                   <span style={{ color: col(tightest.A.key) }}>{tightest.A.name}</span>{" "}
                   <span className="text-txt-2">{tightest.def.type}</span>{" "}
                   <span style={{ color: col(tightest.B.key) }}>{tightest.B.name}</span>
@@ -262,7 +262,7 @@ export function ChartExplorer() {
                 <span className="pointer-events-none absolute -right-3 -top-7 font-glyph text-[92px] leading-none opacity-[0.08]" style={{ color: b.color }}>{b.glyph}</span>
                 <span className="relative font-glyph text-[26px]" style={{ color: b.color }}>{b.glyph}</span>
                 <div className="relative mt-3 vela-label">{b.role}</div>
-                <div className="relative mt-1 font-cinzel text-[30px] font-semibold leading-[1.05] text-white">{b.sign}</div>
+                <div className="relative mt-1 font-cinzel text-[30px] font-light leading-[1.05] text-white">{b.sign}</div>
                 <div className="relative mt-2 font-body text-[14px] leading-relaxed text-txt-3">{b.sub}</div>
               </button>
             ))}
@@ -454,7 +454,7 @@ function Section({ title, hint, sub, children }: { title: string; hint?: string;
     <Reveal className="mt-16">
       <section>
         <div className="mb-4 flex items-baseline gap-3">
-          <h2 className="font-cinzel text-[27px] font-semibold tracking-wide text-white lg:text-[34px]">{title}</h2>
+          <h2 className="font-cinzel text-[27px] font-light tracking-[0.01em] text-white lg:text-[34px]">{title}</h2>
           {hint && <span className="rounded-pill border border-line bg-surface px-2.5 py-0.5 font-mono text-[11px] text-txt-3">{hint}</span>}
         </div>
         {sub && <p className="mb-6 max-w-[62ch] font-body text-[15px] leading-relaxed text-txt-3">{sub}</p>}

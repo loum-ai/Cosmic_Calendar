@@ -35,7 +35,7 @@ function makeStars(seed: number, count: number, min: number, max: number): Star[
     size: +(rnd() * (max - min) + min).toFixed(2),
     dur: +(rnd() * 4 + 4).toFixed(1),
     delay: +(rnd() * 5).toFixed(1),
-    glow: rnd() > 0.7,
+    glow: rnd() > 0.5,
   }));
 }
 
@@ -90,13 +90,13 @@ export function Starfield() {
   const farY = useTransform(scrollY, [0, 1200], [0, -28]);
   const nearY = useTransform(scrollY, [0, 1200], [0, -64]);
   // far, faint layer + nearer, brighter layer — drift in opposite directions
-  const far = useMemo(() => makeStars(7, 64, 0.5, 1.3), []);
-  const near = useMemo(() => makeStars(42, 28, 1.2, 2.3), []);
+  const far = useMemo(() => makeStars(7, 90, 0.5, 1.3), []);
+  const near = useMemo(() => makeStars(42, 36, 1.2, 2.4), []);
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      <Layer stars={far} drift={[12, -9]} duration={130} opacity={0.42} parallax={farY} reduce={reduce} />
-      <Layer stars={near} drift={[-16, 11]} duration={95} opacity={0.72} parallax={nearY} reduce={reduce} />
+      <Layer stars={far} drift={[12, -9]} duration={130} opacity={0.55} parallax={farY} reduce={reduce} />
+      <Layer stars={near} drift={[-16, 11]} duration={95} opacity={0.85} parallax={nearY} reduce={reduce} />
     </div>
   );
 }
