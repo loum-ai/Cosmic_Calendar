@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Download, Sparkles, Loader2, ChevronDown } from "lucide-react";
+import { Download, Sparkles, Loader2, ChevronDown, ArrowLeft } from "lucide-react";
 import { subjectTask, useReading, useReadings, storedReading } from "@/lib/genReadings";
 import { chartContext } from "@/lib/factsContext";
 import { ChartWheel } from "@/components/ChartWheel";
@@ -101,6 +101,7 @@ export function ChartExplorer() {
   const openInfo = useApp((s) => s.openInfo);
   const setPrintOpen = useApp((s) => s.setPrintOpen);
   const viewer = useApp((s) => s.viewerMode);
+  const setHomeView = useApp((s) => s.setHomeView);
   const [sel, setSel] = useState<SheetDescriptor | null>(null);
   const [morePat, setMorePat] = useState(false);
 
@@ -157,6 +158,9 @@ export function ChartExplorer() {
   return (
     <div className="animate-slideUp px-6 pb-28 pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] lg:px-10 lg:pt-10">
       <div className="mx-auto w-full max-w-[1180px]">
+        <button onClick={() => setHomeView("hub")} className="mb-7 flex items-center gap-2 font-body text-[14px] text-txt-2 transition hover:text-txt">
+          <ArrowLeft className="h-4 w-4" /> Themen
+        </button>
         {/* header — viewer = the client's own website; else demo / own chart */}
         <header className="mb-12 flex flex-wrap items-start justify-between gap-4">
           <div>

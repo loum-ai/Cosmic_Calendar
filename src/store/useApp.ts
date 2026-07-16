@@ -145,6 +145,14 @@ export interface AppState {
   // printable horoscope overlay
   printOpen: boolean;
   setPrintOpen: (v: boolean) => void;
+
+  // theme-hub home: the calm entry is a hub of life-themes; the full chart is
+  // one tap away. activeTheme opens a focused, theme-lensed reading.
+  homeView: "hub" | "chart";
+  setHomeView: (v: "hub" | "chart") => void;
+  activeTheme: string | null;
+  openTheme: (k: string) => void;
+  closeTheme: () => void;
 }
 
 export const useApp = create<AppState>((set, get) => ({
@@ -277,4 +285,10 @@ export const useApp = create<AppState>((set, get) => ({
 
   printOpen: false,
   setPrintOpen: (v) => set({ printOpen: v }),
+
+  homeView: "hub",
+  setHomeView: (v) => set({ homeView: v }),
+  activeTheme: null,
+  openTheme: (k) => set({ activeTheme: k }),
+  closeTheme: () => set({ activeTheme: null }),
 }));

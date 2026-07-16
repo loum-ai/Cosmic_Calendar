@@ -10,13 +10,20 @@ import { Onboarding } from "@/components/Onboarding";
 import { PrintFlow } from "@/components/PrintFlow";
 import { useApp } from "@/store/useApp";
 import { ChartExplorer } from "@/screens/ChartExplorer";
+import { ThemenHub } from "@/screens/ThemenHub";
 import { TransiteScreen } from "@/screens/TransiteScreen";
 import { SynastrieScreen } from "@/screens/SynastrieScreen";
 import { LernenScreen } from "@/screens/LernenScreen";
 import { ProfilScreen } from "@/screens/ProfilScreen";
 
+/** Heute tab: the calm Themen-Hub is the home; the full chart is one tap away. */
+function HeuteHome() {
+  const homeView = useApp((s) => s.homeView);
+  return homeView === "hub" ? <ThemenHub /> : <ChartExplorer />;
+}
+
 const SCREENS = {
-  heute: ChartExplorer,
+  heute: HeuteHome,
   transite: TransiteScreen,
   synastrie: SynastrieScreen,
   lernen: LernenScreen,
