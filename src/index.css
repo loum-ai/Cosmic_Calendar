@@ -28,7 +28,8 @@
     --radius: 0.75rem;
 
     /* ── Deep-Space Glassmorphism design tokens (verbindlich) ───────── */
-    --bg-base: #06060f;
+    /* neutral anthracite — no blue cast (avoid pure #000 so stars read as depth) */
+    --bg-base: #0d0d0d;
     --bg-surface: rgba(255, 255, 255, 0.04);
     --bg-surface-hover: rgba(255, 255, 255, 0.07);
     --bg-card: rgba(120, 80, 255, 0.06);
@@ -61,7 +62,7 @@
   body {
     margin: 0;
     min-height: 100vh;
-    background: #050509;
+    background: #0d0d0d;
     color: var(--text-primary);
     /* native controls (date/time pickers, dropdowns) render dark-themed —
        otherwise their text is dark-on-dark and the fields look empty */

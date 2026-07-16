@@ -24,7 +24,7 @@ export function DetailView() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 40 }}
           transition={{ duration: 0.32, ease: EASE.smooth }}
-          className="fixed inset-0 z-[88] overflow-y-auto bg-[#050509]"
+          className="fixed inset-0 z-[88] overflow-y-auto bg-[#0d0d0d]"
         >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_46%_24%_at_50%_-6%,rgba(116,96,200,0.09),transparent_55%)]" />
 

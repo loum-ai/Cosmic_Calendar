@@ -1,8 +1,12 @@
 import { useMemo } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 
 /**
- * Data-driven twinkling starfield (instead of 30 hand-written divs).
- * Deterministic via a seeded RNG so it doesn't reshuffle on every render.
+ * Neutral, understated starfield — plain white stars on anthracite, no colored
+ * glow. Two layers drift very slowly in opposite directions (subtle parallax)
+ * via Framer Motion, giving the sky quiet life without spectacle. Motion is
+ * fully disabled under prefers-reduced-motion. Deterministic via a seeded RNG
+ * so the field never reshuffles on re-render.
  */
 function mulberry32(seed: number) {
   return () => {
@@ -20,58 +24,70 @@ interface Star {
   size: number;
   dur: number;
   delay: number;
-  glow: string;
+  glow: boolean;
 }
 
-const GLOWS = [
-  "0 0 4px #fff",
-  "0 0 7px rgba(196,166,255,0.9)",
-  "0 0 5px rgba(120,220,200,0.8)",
-  "0 0 6px rgba(80,210,180,0.7)",
-  "",
-];
+function makeStars(seed: number, count: number, min: number, max: number): Star[] {
+  const rnd = mulberry32(seed);
+  return Array.from({ length: count }, () => ({
+    left: `${(rnd() * 100).toFixed(2)}%`,
+    top: `${(rnd() * 100).toFixed(2)}%`,
+    size: +(rnd() * (max - min) + min).toFixed(2),
+    dur: +(rnd() * 4 + 4).toFixed(1),
+    delay: +(rnd() * 5).toFixed(1),
+    glow: rnd() > 0.7,
+  }));
+}
 
-export function Starfield() {
-  const stars = useMemo<Star[]>(() => {
-    const rnd = mulberry32(42);
-    return Array.from({ length: 24 }, () => ({
-      left: `${(rnd() * 96 + 2).toFixed(1)}%`,
-      top: `${(rnd() * 92 + 2).toFixed(1)}%`,
-      size: +(rnd() * 2.5 + 1).toFixed(1),
-      dur: +(rnd() * 3.5 + 3.5).toFixed(1),
-      delay: +(rnd() * 3).toFixed(1),
-      glow: GLOWS[Math.floor(rnd() * GLOWS.length)],
-    }));
-  }, []);
-
+function Layer({
+  stars,
+  drift,
+  duration,
+  opacity,
+  reduce,
+}: {
+  stars: Star[];
+  drift: [number, number];
+  duration: number;
+  opacity: number;
+  reduce: boolean | null;
+}) {
   return (
-    <div className="absolute inset-0 overflow-hidden opacity-60">
+    <motion.div
+      className="absolute inset-[-8%]"
+      style={{ opacity }}
+      animate={reduce ? undefined : { x: [0, drift[0], 0], y: [0, drift[1], 0] }}
+      transition={reduce ? undefined : { duration, ease: "easeInOut", repeat: Infinity }}
+    >
       {stars.map((s, i) => (
         <span
           key={i}
-          className="absolute rounded-full bg-white animate-twinkle"
+          className={reduce ? "absolute rounded-full bg-white" : "absolute rounded-full bg-white animate-twinkle"}
           style={{
             left: s.left,
             top: s.top,
             width: s.size,
             height: s.size,
-            boxShadow: s.glow || undefined,
+            boxShadow: s.glow ? "0 0 4px rgba(255,255,255,0.55)" : undefined,
             animationDuration: `${s.dur}s`,
             animationDelay: `${s.delay}s`,
           }}
         />
       ))}
-      {/* a single comet streak */}
-      <span
-        className="absolute h-[1.5px] w-20 origin-left rounded-sm"
-        style={{
-          left: "6%",
-          top: "16%",
-          transform: "rotate(42deg)",
-          background: "linear-gradient(90deg,transparent,rgba(196,166,255,0.6))",
-          animation: "velaComet 14s ease-in-out infinite 5s",
-        }}
-      />
+    </motion.div>
+  );
+}
+
+export function Starfield() {
+  const reduce = useReducedMotion();
+  // far, faint layer + nearer, brighter layer — drift in opposite directions
+  const far = useMemo(() => makeStars(7, 64, 0.5, 1.3), []);
+  const near = useMemo(() => makeStars(42, 28, 1.2, 2.3), []);
+
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      <Layer stars={far} drift={[12, -9]} duration={130} opacity={0.42} reduce={reduce} />
+      <Layer stars={near} drift={[-16, 11]} duration={95} opacity={0.72} reduce={reduce} />
     </div>
   );
 }

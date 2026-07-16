@@ -1,18 +1,18 @@
 import { Starfield } from "./Starfield";
 
 /**
- * Deep-space backdrop — true near-black with depth from a strong vignette
- * and crisp stars, NOT a blurry violet haze. One tight, very low cool glow
- * up top, nothing mushy.
+ * Backdrop — neutral anthracite (no blue/violet cast) with quiet depth from a
+ * single very soft neutral lift up top and a gentle vignette. The mood lives in
+ * the drifting starfield, not in a colored haze. Restraint over spectacle.
  */
 export function AuroraBackground() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#050509]">
-      <div className="absolute inset-0 bg-[#050509]" />
-      {/* one tight, restrained cool glow up top — controlled, not a wash */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_46%_26%_at_50%_-6%,rgba(116,96,200,0.10),transparent_55%)]" />
-      {/* strong vignette = depth */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_110%_85%_at_50%_28%,transparent_42%,rgba(0,0,0,0.9)_100%)]" />
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#0d0d0d]">
+      <div className="absolute inset-0 bg-[#0d0d0d]" />
+      {/* one barely-there neutral lift up top — depth, not color */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_28%_at_50%_-8%,rgba(255,255,255,0.04),transparent_60%)]" />
+      {/* soft vignette = depth toward the edges */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_115%_90%_at_50%_30%,transparent_46%,rgba(0,0,0,0.85)_100%)]" />
       <Starfield />
     </div>
   );

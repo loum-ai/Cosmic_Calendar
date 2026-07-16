@@ -8,7 +8,7 @@ import { MainApp } from "@/MainApp";
 
 const MONTHS = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 
-type Status = "loading" | "ready" | "notfound" | "error";
+type Status = "loading" | "ready" | "notfound" | "offline" | "error";
 
 /** Public per-customer reading, reached via #/k/<access_token>. No login. */
 export function ClientView({ token }: { token: string }) {
@@ -27,6 +27,9 @@ export function ClientView({ token }: { token: string }) {
           setStatus(data?.error === "not_found" ? "notfound" : "error");
           return;
         }
+        // Only a published reading makes the site public. A draft or deactivated
+        // client resolves but has no reading → show a friendly "not available" page.
+        if (!data.has_reading) { setStatus("offline"); return; }
         const ch = data.chart;
         const [y, mo, d] = String(data.client.birth_date).split("-").map(Number);
         const time = (data.client.birth_time || "").slice(0, 5);
@@ -58,7 +61,7 @@ export function ClientView({ token }: { token: string }) {
   if (status === "ready") return <MainApp />;
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-[#050509] px-8 text-center text-ink">
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-[#0d0d0d] px-8 text-center text-ink">
       {status === "loading" && (
         <>
           <Loader2 className="h-7 w-7 animate-spin text-lilac" />
@@ -70,6 +73,13 @@ export function ClientView({ token }: { token: string }) {
           <Moon className="h-7 w-7 text-lilac" />
           <h1 className="font-display text-xl font-bold text-txt">Link nicht gefunden</h1>
           <p className="max-w-[42ch] font-body text-sm text-txt-2">Dieser Horoskop-Link ist ungültig oder wurde zurückgezogen. Bitte wende dich an deine Astrologin.</p>
+        </>
+      )}
+      {status === "offline" && (
+        <>
+          <Moon className="h-7 w-7 text-lilac" />
+          <h1 className="font-display text-xl font-bold text-txt">Gerade nicht verfügbar</h1>
+          <p className="max-w-[42ch] font-body text-sm text-txt-2">Diese persönliche Horoskop-Seite ist momentan nicht öffentlich — sie wird gerade vorbereitet oder wurde pausiert. Bitte wende dich an deine Astrologin.</p>
         </>
       )}
       {status === "error" && (
