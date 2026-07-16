@@ -60,12 +60,12 @@ export default {
       },
       fontFamily: {
         // wide, engraved all-caps display serif (à la LOUM "THE ANSWER")
-        cinzel: ['"Cinzel"', '"Cormorant Garamond"', "serif"],
+        cinzel: ['"Cormorant Garamond"', "serif"],
         // elegant high-contrast serif for the cinematic hero headlines
         serif: ['"Cormorant Garamond"', "serif"],
-        display: ['"Plus Jakarta Sans"', "sans-serif"],
+        display: ['"Manrope"', "sans-serif"],
         body: ['"Manrope"', "sans-serif"],
-        mono: ['"Space Mono"', "ui-monospace", "SFMono-Regular", "monospace"],
+        mono: ['"Manrope"', "sans-serif"],
         glyph: ['"Noto Sans Symbols"', '"Segoe UI Symbol"', "system-ui", "sans-serif"],
       },
       borderRadius: {

@@ -4,6 +4,7 @@ import { Download, Sparkles, Loader2, ChevronDown } from "lucide-react";
 import { subjectTask, useReading, useReadings, storedReading } from "@/lib/genReadings";
 import { chartContext } from "@/lib/factsContext";
 import { ChartWheel } from "@/components/ChartWheel";
+import { Reveal } from "@/components/Reveal";
 import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
 import { CHART, ASC, PROFILE, SN, PINFO, signName, computeAspects, IS_DEMO } from "@/lib/data";
 import { ASPECT_TEXT } from "@/lib/readings";
@@ -155,16 +156,16 @@ export function ChartExplorer() {
     <div className="animate-slideUp px-6 pb-28 pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] lg:px-10 lg:pt-10">
       <div className="mx-auto w-full max-w-[1180px]">
         {/* header — viewer = the client's own website; else demo / own chart */}
-        <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
+        <header className="mb-12 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <div className="vela-label mb-1.5 flex items-center gap-2">
+            <div className="vela-label mb-3 flex items-center gap-2">
               {viewer ? "Deine persönliche Astro-Website" : "Geburtsbild"}
-              {!viewer && IS_DEMO && <span className="rounded-pill border border-line px-2 py-0.5 font-mono text-[9px] tracking-wide text-txt-3">BEISPIEL</span>}
+              {!viewer && IS_DEMO && <span className="rounded-pill border border-line px-2 py-0.5 font-mono text-[10px] tracking-wide text-txt-3">BEISPIEL</span>}
             </div>
-            <h1 className="font-cinzel text-[34px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_26px_rgba(139,92,246,0.4)] lg:text-[52px]">
+            <h1 className="font-cinzel text-[40px] font-semibold leading-[1.05] tracking-wide text-white [text-shadow:0_0_26px_rgba(139,92,246,0.4)] lg:text-[60px]">
               {viewer ? `Willkommen, ${String(PROFILE.name).split(" ")[0]}` : PROFILE.name}
             </h1>
-            <p className="mt-2.5 font-body text-[13px] text-txt-2">
+            <p className="mt-4 font-body text-[15px] leading-relaxed text-txt-2">
               {viewer
                 ? "Dein Geburtshoroskop — von deiner Astrologin für dich erstellt."
                 : IS_DEMO
@@ -183,13 +184,14 @@ export function ChartExplorer() {
         </header>
 
         {/* chart stage + live reading (desktop) */}
-        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(330px,380px)] lg:gap-5">
-          <section className="relative overflow-hidden rounded-card border border-[rgba(150,120,255,0.22)] bg-stage p-5 shadow-glass lg:p-8">
+        <Reveal>
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(330px,380px)] lg:gap-8">
+          <section className="relative overflow-hidden rounded-card border border-[rgba(150,120,255,0.22)] bg-stage p-6 shadow-glass lg:p-9">
             <div className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full bg-violet/20 blur-3xl" />
             <div className="relative mx-auto w-full max-w-[480px]">
               <ChartWheel onPick={select} highlight={highlight} />
             </div>
-            <p className="relative mt-3 text-center font-body text-[12px] text-txt-3">
+            <p className="relative mt-5 text-center font-body text-[14px] leading-relaxed text-txt-3">
               Tippe einen Planeten oder eine Aspektlinie — oder nutze die Listen unten.
             </p>
           </section>
@@ -211,27 +213,30 @@ export function ChartExplorer() {
             </div>
           </aside>
         </div>
+        </Reveal>
 
         {/* ── HERO: the chart's single most defining note (computed) ── */}
         {tightest && (
-          <section className="mt-7">
+          <Reveal className="mt-16">
+          <section>
             <button
               onClick={() => select({ kind: "aspect", key: tightest.key })}
-              className="relative w-full overflow-hidden rounded-card border border-[rgba(150,120,255,0.35)] bg-stage p-6 text-left shadow-glass transition hover:border-lilac/60 lg:p-8"
+              className="relative w-full overflow-hidden rounded-card border border-[rgba(150,120,255,0.35)] bg-stage p-7 text-left shadow-glass transition hover:border-lilac/60 lg:p-10"
             >
               <span className="pointer-events-none absolute -right-6 -top-10 font-glyph text-[150px] leading-none opacity-[0.07]" style={{ color: tightest.def.c }}>{tightest.def.g}</span>
               <div className="relative">
                 <div className="vela-label">Deine Signatur · {domElem}-betont</div>
-                <h2 className="mt-2 font-cinzel text-[26px] font-semibold leading-tight text-white lg:text-[34px]">
+                <h2 className="mt-3 font-cinzel text-[30px] font-semibold leading-[1.12] text-white lg:text-[40px]">
                   <span style={{ color: col(tightest.A.key) }}>{tightest.A.name}</span>{" "}
                   <span className="text-txt-2">{tightest.def.type}</span>{" "}
                   <span style={{ color: col(tightest.B.key) }}>{tightest.B.name}</span>
                 </h2>
-                <div className="mt-1 font-mono text-[11px] text-txt-3">exaktester Aspekt · {tightest.orb.toFixed(1)}° Orbis</div>
-                {heroTxt && <p className="mt-3 max-w-[60ch] font-body text-[14px] leading-relaxed text-txt-2">{heroTxt}</p>}
+                <div className="mt-2 font-mono text-[12px] text-txt-3">exaktester Aspekt · {tightest.orb.toFixed(1)}° Orbis</div>
+                {heroTxt && <p className="mt-5 max-w-[60ch] font-body text-[16px] leading-relaxed text-txt-2">{heroTxt}</p>}
               </div>
             </button>
           </section>
+          </Reveal>
         )}
 
         {/* ── BESONDERE MUSTER (whole-chart synthesis) ── */}
@@ -255,10 +260,10 @@ export function ChartExplorer() {
                 className="group relative overflow-hidden rounded-card border border-[rgba(150,120,255,0.2)] bg-glasswash p-5 text-left transition hover:border-line-accent"
               >
                 <span className="pointer-events-none absolute -right-3 -top-7 font-glyph text-[92px] leading-none opacity-[0.08]" style={{ color: b.color }}>{b.glyph}</span>
-                <span className="relative font-glyph text-[24px]" style={{ color: b.color }}>{b.glyph}</span>
-                <div className="relative mt-2 vela-label">{b.role}</div>
-                <div className="relative mt-0.5 font-cinzel text-[24px] font-semibold leading-none text-white">{b.sign}</div>
-                <div className="relative mt-1.5 font-body text-[12px] text-txt-3">{b.sub}</div>
+                <span className="relative font-glyph text-[26px]" style={{ color: b.color }}>{b.glyph}</span>
+                <div className="relative mt-3 vela-label">{b.role}</div>
+                <div className="relative mt-1 font-cinzel text-[30px] font-semibold leading-[1.05] text-white">{b.sign}</div>
+                <div className="relative mt-2 font-body text-[14px] leading-relaxed text-txt-3">{b.sub}</div>
               </button>
             ))}
           </div>
@@ -446,14 +451,16 @@ function Bars({ title, labels, values, total, colors }: { title: string; labels:
 
 function Section({ title, hint, sub, children }: { title: string; hint?: string; sub?: string; children: ReactNode }) {
   return (
-    <section className="mt-10">
-      <div className="mb-3 flex items-baseline gap-2.5">
-        <h2 className="font-cinzel text-[20px] font-semibold tracking-wide text-white lg:text-[24px]">{title}</h2>
-        {hint && <span className="rounded-pill border border-line bg-surface px-2 py-0.5 font-mono text-[10px] text-txt-3">{hint}</span>}
-      </div>
-      {sub && <p className="mb-4 font-body text-[12.5px] text-txt-3">{sub}</p>}
-      {children}
-    </section>
+    <Reveal className="mt-16">
+      <section>
+        <div className="mb-4 flex items-baseline gap-3">
+          <h2 className="font-cinzel text-[27px] font-semibold tracking-wide text-white lg:text-[34px]">{title}</h2>
+          {hint && <span className="rounded-pill border border-line bg-surface px-2.5 py-0.5 font-mono text-[11px] text-txt-3">{hint}</span>}
+        </div>
+        {sub && <p className="mb-6 max-w-[62ch] font-body text-[15px] leading-relaxed text-txt-3">{sub}</p>}
+        {children}
+      </section>
+    </Reveal>
   );
 }
 
