@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, ArrowUp, Loader2 } from "lucide-react";
+import { ArrowUp, Loader2, Sparkles, X } from "lucide-react";
 import { useApp, type TabKey } from "@/store/useApp";
 import { EASE } from "@/lib/tokens";
 
@@ -13,9 +13,9 @@ const EXAMPLES: Record<TabKey, string[]> = {
 };
 
 /**
- * "Frag dein Horoskop" — the product hook, available on every tab.
- * Closed: a pulsing FAB. Open: example pills + a glassy glowing input bar
- * (mirrors the loum.ai Oracle look) + the answer.
+ * "Frag dein Horoskop" — the product hook, ALWAYS visible on every tab as a
+ * floating prompt input above the tab bar. Focusing it (or an answer arriving)
+ * reveals the example chips + the answer above the bar. No FAB.
  */
 export function Composer() {
   const tab = useApp((s) => s.tab);
@@ -29,29 +29,38 @@ export function Composer() {
   const loading = useApp((s) => s.loading);
   const clearAnswer = useApp((s) => s.clearAnswer);
 
+  const expanded = open || !!answer;
+
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-[96px] z-[41] mx-auto max-w-[480px] lg:bottom-6 lg:left-[120px] lg:right-0 lg:mx-0 lg:max-w-none lg:px-6">
-      <AnimatePresence mode="wait">
-        {open ? (
+    <div className="pointer-events-none fixed inset-x-0 bottom-[92px] z-[41] mx-auto max-w-[520px] px-3.5 lg:bottom-6 lg:left-[120px] lg:right-0 lg:mx-0 lg:max-w-[760px] lg:px-6">
+      <AnimatePresence>
+        {expanded && (
           <motion.div
-            key="open"
-            initial={{ opacity: 0, y: 20 }}
+            key="panel"
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.28, ease: EASE.smooth }}
-            className="pointer-events-auto bg-[linear-gradient(180deg,transparent,rgba(5,5,10,0.86)_60%)] px-3.5 pb-2 pt-3 backdrop-blur-md"
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.26, ease: EASE.smooth }}
+            className="pointer-events-auto mb-2.5"
           >
             {answer && (
-              <div className="mb-2 max-h-44 overflow-y-auto rounded-card border border-lilac/25 bg-[rgba(20,16,32,0.92)] p-3.5">
-                {demo && (
-                  <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-pill border border-[rgba(79,214,239,0.35)] bg-[rgba(79,214,239,0.12)] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[rgba(79,214,239,0.95)]">
-                    Demo · aus deinem Chart
-                  </div>
-                )}
-                <p className="font-body text-[13px] font-light leading-relaxed text-ink/85">{answer}</p>
+              <div className="mb-2.5 max-h-56 overflow-y-auto rounded-[24px] border border-white/10 bg-[rgba(13,25,33,0.94)] p-4 shadow-glass backdrop-blur-xl">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  {demo ? (
+                    <span className="inline-flex items-center gap-1.5 rounded-pill border border-[rgba(79,214,239,0.35)] bg-[rgba(79,214,239,0.12)] px-2.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-[rgba(79,214,239,0.95)]">
+                      Vela · aus deinem Chart
+                    </span>
+                  ) : (
+                    <span />
+                  )}
+                  <button onClick={clearAnswer} title="Schließen" className="flex h-6 w-6 items-center justify-center rounded-full text-txt-3 transition hover:text-txt">
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+                <p className="font-body text-[15px] font-light leading-relaxed text-ink/90">{answer}</p>
               </div>
             )}
-            <div className="mb-2 flex gap-1.5 overflow-x-auto pb-1">
+            <div className="flex gap-1.5 overflow-x-auto pb-1">
               {EXAMPLES[tab].map((ex) => (
                 <button
                   key={ex}
@@ -59,61 +68,49 @@ export function Composer() {
                     setQ(ex);
                     void ask(ex);
                   }}
-                  className="shrink-0 whitespace-nowrap rounded-pill border border-lilac/30 bg-white/[0.06] px-3 py-2 font-body text-[11px] text-ink-soft/85 transition active:scale-95"
+                  className="shrink-0 whitespace-nowrap rounded-pill border border-white/[0.12] bg-white/[0.06] px-3.5 py-2 font-body text-[12.5px] text-ink-soft/85 backdrop-blur-md transition hover:border-[rgba(79,214,239,0.4)] active:scale-95"
                 >
                   {ex}
                 </button>
               ))}
             </div>
-            <div className="flex items-center gap-1.5 rounded-pill border border-lilac/30 bg-[rgba(28,24,42,0.92)] py-1.5 pl-2 pr-1.5 shadow-[0_10px_32px_-10px_rgba(47,180,210,0.55)] backdrop-blur-md">
-              <button
-                onClick={() => {
-                  setOpen(false);
-                  clearAnswer();
-                }}
-                title="Minimieren"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-lilac/70 active:scale-90"
-              >
-                <ChevronDown className="h-4 w-4" />
-              </button>
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && ask()}
-                placeholder="Frag dein Horoskop…"
-                className="min-w-0 flex-1 bg-transparent font-body text-[13px] text-ink-soft outline-none placeholder:text-ink-soft/40"
-              />
-              <button
-                onClick={() => ask()}
-                disabled={loading}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cta-gradient text-white active:scale-90 disabled:opacity-60"
-              >
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
-                )}
-              </button>
-            </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="closed"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className="flex justify-end px-4"
-          >
-            <button
-              onClick={() => setOpen(true)}
-              title="Frag dein Horoskop"
-              className="pointer-events-auto relative flex h-14 w-14 items-center justify-center rounded-full bg-cta-gradient text-white shadow-glow transition active:scale-90"
-            >
-              <ArrowUp className="h-5 w-5" strokeWidth={2.4} />
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* the always-visible prompt input, floating above the nav */}
+      <div className="pointer-events-auto flex items-center gap-2 rounded-pill border border-white/[0.14] bg-[rgba(15,27,35,0.9)] py-2 pl-4 pr-2 shadow-[0_14px_44px_-12px_rgba(0,0,0,0.7),0_0_26px_-12px_rgba(79,214,239,0.55)] backdrop-blur-xl">
+        <Sparkles className="h-4 w-4 shrink-0 text-[#4fd6ef]" />
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          onFocus={() => setOpen(true)}
+          onKeyDown={(e) => e.key === "Enter" && ask()}
+          placeholder="Frag dein Horoskop …"
+          className="min-w-0 flex-1 bg-transparent font-body text-[14px] text-ink-soft outline-none placeholder:text-ink-soft/45"
+        />
+        {(open || q) && (
+          <button
+            onClick={() => {
+              setOpen(false);
+              setQ("");
+              clearAnswer();
+            }}
+            title="Zurücksetzen"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-txt-3 transition hover:text-txt"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+        <button
+          onClick={() => ask()}
+          disabled={loading || !q.trim()}
+          title="Fragen"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cta-gradient text-[#052029] shadow-glow transition active:scale-90 disabled:opacity-45"
+        >
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" strokeWidth={2.6} />}
+        </button>
+      </div>
     </div>
   );
 }
