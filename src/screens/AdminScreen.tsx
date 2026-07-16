@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Loader2, Copy, ExternalLink, Sparkles, LogOut, Check, ShieldCheck, X, ChevronRight } from "lucide-react";
+import { Loader2, Copy, ExternalLink, Sparkles, LogOut, Check, ShieldCheck, X, ChevronRight, Pencil, Power, Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { searchPlace, type Place } from "@/lib/geocode";
 
-interface ClientRow { id: string; name: string; birth_date: string; access_token: string; created_at: string; status?: string }
+interface ClientRow { id: string; name: string; birth_date: string; birth_time?: string; birth_place?: string; lat?: number; lon?: number; access_token: string; created_at: string; status?: string; published_at?: string }
 
 function linkFor(token: string) {
   return `${location.origin}${location.pathname}#/k/${token}`;
@@ -112,19 +112,30 @@ function Cockpit({ email }: { email: string }) {
   const [publishing, setPublishing] = useState(false);
   const [savedMsg, setSavedMsg] = useState(false);
   const [creating, setCreating] = useState(false);
+  // edit / deactivate / delete
+  const [editing, setEditing] = useState(false);
+  const [eName, setEName] = useState("");
+  const [eDate, setEDate] = useState("");
+  const [eTime, setETime] = useState("");
+  const [ePlaceQ, setEPlaceQ] = useState("");
+  const [ePlaces, setEPlaces] = useState<Place[]>([]);
+  const [ePlace, setEPlace] = useState<Place | null>(null);
+  const [working, setWorking] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   async function loadClients() {
-    const { data } = await supabase.from("clients").select("id, name, birth_date, access_token, created_at").order("created_at", { ascending: false });
+    const { data } = await supabase.from("clients").select("id, name, birth_date, birth_time, birth_place, lat, lon, access_token, created_at").order("created_at", { ascending: false });
     const list = (data as ClientRow[]) ?? [];
-    const { data: interps } = await supabase.from("interpretations").select("client_id, status");
-    const sm: Record<string, string> = {};
-    (interps ?? []).forEach((r: any) => (sm[r.client_id] = r.status));
-    setClients(list.map((c) => ({ ...c, status: sm[c.id] })));
+    const { data: interps } = await supabase.from("interpretations").select("client_id, status, published_at");
+    const sm: Record<string, { status: string; published_at?: string }> = {};
+    (interps ?? []).forEach((r: any) => (sm[r.client_id] = { status: r.status, published_at: r.published_at }));
+    setClients(list.map((c) => ({ ...c, status: sm[c.id]?.status, published_at: sm[c.id]?.published_at })));
   }
 
   async function openReview(c: ClientRow) {
     setReview({ id: c.id, name: c.name });
     setReviewData(null); setEditDraft(null); setSavedMsg(false);
+    setEditing(false); setConfirmDelete(false); setWorking(null); setErr(null);
     const { data } = await supabase.from("interpretations").select("draft, edited, status").eq("client_id", c.id).eq("kind", "natal").maybeSingle();
     const d = data as any;
     setReviewData(d ? { draft: d.draft, status: d.status } : null);
@@ -156,6 +167,78 @@ function Cockpit({ email }: { email: string }) {
     const t = setTimeout(async () => setPlaces(await searchPlace(placeQ)), 300);
     return () => clearTimeout(t);
   }, [placeQ, place]);
+
+  useEffect(() => {
+    if (!ePlaceQ.trim() || ePlace?.label === ePlaceQ) { setEPlaces([]); return; }
+    const t = setTimeout(async () => setEPlaces(await searchPlace(ePlaceQ)), 300);
+    return () => clearTimeout(t);
+  }, [ePlaceQ, ePlace]);
+
+  function openEdit() {
+    const rc = clients.find((c) => c.id === review?.id);
+    if (!rc) return;
+    setEName(rc.name ?? "");
+    setEDate(rc.birth_date ?? "");
+    setETime((rc.birth_time ?? "").slice(0, 5));
+    setEPlaceQ(rc.birth_place ?? "");
+    setEPlace(rc.birth_place && rc.lat != null && rc.lon != null ? ({ label: rc.birth_place, lat: rc.lat, lon: rc.lon } as Place) : null);
+    setEPlaces([]); setErr(null); setEditing(true);
+  }
+
+  async function saveClientData() {
+    const rc = clients.find((c) => c.id === review?.id);
+    if (!rc || !review) return;
+    setErr(null);
+    const birthChanged =
+      eDate !== rc.birth_date ||
+      eTime !== (rc.birth_time ?? "").slice(0, 5) ||
+      (!!ePlace && ePlace.label !== rc.birth_place);
+    try {
+      setWorking("Speichern …");
+      const patch: any = { name: eName };
+      if (birthChanged) {
+        patch.birth_date = eDate; patch.birth_time = eTime;
+        if (ePlace) { patch.birth_place = ePlace.label; patch.lat = ePlace.lat; patch.lon = ePlace.lon; }
+      }
+      const { error } = await supabase.from("clients").update(patch).eq("id", rc.id);
+      if (error) throw error;
+      if (birthChanged) {
+        setWorking("Geburtsbild neu berechnen & prüfen …");
+        const comp = await supabase.functions.invoke("compute-chart", { body: { client_id: rc.id } });
+        if (comp.error || !comp.data?.ok) throw new Error(comp.error?.message || "Berechnung fehlgeschlagen");
+        setWorking("Deutung neu erstellen (Gemini) …");
+        const intp = await supabase.functions.invoke("interpret", { body: { client_id: rc.id, publish: false } });
+        if (intp.error || !intp.data?.ok) throw new Error(intp.error?.message || "Deutung fehlgeschlagen");
+      }
+      setEditing(false);
+      await loadClients();
+      await openReview({ ...rc, name: eName } as ClientRow);
+    } catch (e: any) {
+      setErr(e?.message || "Speichern fehlgeschlagen.");
+    } finally { setWorking(null); }
+  }
+
+  async function setActive(activate: boolean) {
+    if (!review) return;
+    setPublishing(true);
+    const patch = activate
+      ? { status: "published", published_at: new Date().toISOString() }
+      : { status: "draft" };
+    await supabase.from("interpretations").update(patch).eq("client_id", review.id).eq("kind", "natal");
+    setPublishing(false);
+    setReviewData((d) => (d ? { ...d, status: activate ? "published" : "draft" } : d));
+    await loadClients();
+  }
+
+  async function deleteClient() {
+    if (!review) return;
+    setWorking("Löschen …");
+    const { error } = await supabase.from("clients").delete().eq("id", review.id);
+    setWorking(null);
+    if (error) { setErr(error.message); return; }
+    setConfirmDelete(false); setReview(null);
+    await loadClients();
+  }
 
   const canSubmit = useMemo(() => name && date && time && place && !step, [name, date, time, place, step]);
 
@@ -294,11 +377,13 @@ function Cockpit({ email }: { email: string }) {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="truncate font-display text-[14px] font-semibold text-txt">{c.name}</span>
-                      {c.status && (
-                        <span className={`shrink-0 rounded-pill px-2 py-0.5 font-mono text-[9px] uppercase tracking-wide ${c.status === "published" ? "bg-mint/15 text-mint" : "bg-amber-400/15 text-amber-300"}`}>
-                          {c.status === "published" ? "Live" : "Entwurf"}
-                        </span>
-                      )}
+                      {c.status && (() => {
+                        const live = c.status === "published";
+                        const offline = !live && !!c.published_at;
+                        const label = live ? "Live" : offline ? "Offline" : "Entwurf";
+                        const cls = live ? "bg-mint/15 text-mint" : offline ? "bg-white/10 text-txt-3" : "bg-amber-400/15 text-amber-300";
+                        return <span className={`shrink-0 rounded-pill px-2 py-0.5 font-mono text-[9px] uppercase tracking-wide ${cls}`}>{label}</span>;
+                      })()}
                     </div>
                     <div className="mt-0.5 font-mono text-[10px] text-txt-3">{c.birth_date}</div>
                   </div>
@@ -337,6 +422,54 @@ function Cockpit({ email }: { email: string }) {
                 ) : null;
               })()}
 
+              {/* Stammdaten bearbeiten */}
+              <div className="mt-4 border-t border-line pt-4">
+                <button onClick={() => (editing ? setEditing(false) : openEdit())}
+                  className="flex items-center gap-1.5 font-body text-[12px] text-txt-2 hover:text-txt">
+                  <Pencil className="h-3.5 w-3.5" /> {editing ? "Bearbeiten abbrechen" : "Stammdaten bearbeiten"}
+                </button>
+                {editing && (
+                  <div className="mt-3 space-y-3">
+                    <label className="block">
+                      <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Name</span>
+                      <input value={eName} onChange={(e) => setEName(e.target.value)}
+                        className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
+                    </label>
+                    <div className="flex gap-2.5">
+                      <label className="block flex-1">
+                        <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Geburtsdatum</span>
+                        <input value={eDate} onChange={(e) => setEDate(e.target.value)} type="date"
+                          className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
+                      </label>
+                      <label className="block w-[130px]">
+                        <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Uhrzeit</span>
+                        <input value={eTime} onChange={(e) => setETime(e.target.value)} type="time"
+                          className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
+                      </label>
+                    </div>
+                    <label className="relative block">
+                      <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Geburtsort</span>
+                      <input value={ePlaceQ} onChange={(e) => { setEPlaceQ(e.target.value); setEPlace(null); }}
+                        className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
+                      {ePlaces.length > 0 && (
+                        <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-xl border border-line bg-[#12121c] shadow-xl">
+                          {ePlaces.map((p, i) => (
+                            <button key={i} onClick={() => { setEPlace(p); setEPlaceQ(p.label); setEPlaces([]); }}
+                              className="block w-full px-3.5 py-2.5 text-left font-body text-[13px] text-txt-2 hover:bg-white/5">{p.label}</button>
+                          ))}
+                        </div>
+                      )}
+                    </label>
+                    <p className="font-body text-[11px] leading-relaxed text-txt-3">Änderst du Datum, Zeit oder Ort, wird das Geburtsbild neu berechnet und die Deutung neu als Entwurf erstellt — du gibst sie danach erneut frei.</p>
+                    <button onClick={saveClientData} disabled={!!working || !eName || !eDate || !eTime}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-cta-gradient px-5 py-2.5 font-display text-[13px] font-semibold text-white disabled:opacity-40">
+                      {working ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}{working || "Stammdaten speichern"}
+                    </button>
+                    {err && <p className="font-body text-[12px] text-rose-300">{err}</p>}
+                  </div>
+                )}
+              </div>
+
               {!reviewData || !editDraft ? (
                 <div className="mt-6 flex items-center gap-2 font-body text-[13px] text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /> Entwurf laden …</div>
               ) : (
@@ -369,6 +502,32 @@ function Cockpit({ email }: { email: string }) {
                       {publishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
                       {reviewData.status === "published" ? "Aktualisieren" : "Freigeben — Link aktivieren"}
                     </button>
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-between gap-3 border-t border-line pt-3">
+                    {reviewData.status === "published" ? (
+                      <button onClick={() => setActive(false)} disabled={publishing}
+                        className="flex items-center gap-1.5 font-body text-[12px] text-amber-300/90 hover:text-amber-200 disabled:opacity-40">
+                        <Power className="h-3.5 w-3.5" /> Deaktivieren (Link offline)
+                      </button>
+                    ) : (
+                      <span className="font-body text-[11px] text-txt-3">Noch nicht öffentlich sichtbar</span>
+                    )}
+                    {!confirmDelete ? (
+                      <button onClick={() => setConfirmDelete(true)}
+                        className="flex items-center gap-1.5 font-body text-[12px] text-rose-300/80 hover:text-rose-200">
+                        <Trash2 className="h-3.5 w-3.5" /> Löschen
+                      </button>
+                    ) : (
+                      <span className="flex items-center gap-2">
+                        <span className="font-body text-[11px] text-rose-200">Endgültig löschen?</span>
+                        <button onClick={deleteClient} disabled={!!working}
+                          className="rounded-pill bg-rose-500/80 px-3 py-1 font-body text-[11px] font-semibold text-white disabled:opacity-40">
+                          {working ? "…" : "Ja, löschen"}
+                        </button>
+                        <button onClick={() => setConfirmDelete(false)} className="font-body text-[11px] text-txt-3">Abbrechen</button>
+                      </span>
+                    )}
                   </div>
                 </>
               )}
