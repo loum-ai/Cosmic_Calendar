@@ -9,7 +9,7 @@ import { chartContext, chartHash, shortHash } from "@/lib/factsContext";
 
 // Birth data behind the bundled demo chart (Laura). Used to fetch the real AI
 // interpretation when no custom chart has been onboarded yet.
-const DEMO_BIRTH: BirthInput = { date: "1987-09-07", time: "18:50", lat: 48.0, lon: 11.35 };
+export const DEMO_BIRTH: BirthInput = { date: "1987-09-07", time: "18:50", lat: 48.0, lon: 11.35 };
 
 // Persisted birth input for the active (non-demo) chart. We store the raw
 // input and recompute on load — cheap and avoids serialising chart shapes.

@@ -1,10 +1,13 @@
+import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, ChevronRight, CircleDot } from "lucide-react";
+import { ArrowLeft, ChevronRight, CircleDot, Hexagon } from "lucide-react";
 import { THEMES, themeByKey } from "@/lib/themes";
-import { CHART, PROFILE, signName, houseOf, HOUSE } from "@/lib/data";
+import { CHART, PROFILE, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
 import { resolveSheet } from "@/lib/sheets";
+import { computeHumanDesign } from "@/lib/humandesign";
+import type { BirthInput } from "@/lib/compute";
 import { Reveal } from "@/components/Reveal";
-import { useApp } from "@/store/useApp";
+import { useApp, DEMO_BIRTH } from "@/store/useApp";
 
 /**
  * Themen-Hub — the calm home (per the product briefing). Instead of dumping the
@@ -17,7 +20,10 @@ export function ThemenHub() {
   const setHomeView = useApp((s) => s.setHomeView);
   const activeTheme = useApp((s) => s.activeTheme);
   const viewer = useApp((s) => s.viewerMode);
+  const savedBirth = useApp((s) => s.savedBirth);
+  const birth: BirthInput | null = savedBirth ?? (IS_DEMO ? DEMO_BIRTH : null);
 
+  if (activeTheme === "__hd__" && birth) return <HDView birth={birth} />;
   if (activeTheme) return <ThemeReading themeKey={activeTheme} />;
 
   const first = String(PROFILE.name).split(" ")[0];
@@ -59,8 +65,27 @@ export function ThemenHub() {
           ))}
         </div>
 
+        {/* Human Design — a second lens on the same birth data */}
+        {birth && (
+          <Reveal i={THEMES.length}>
+            <button
+              onClick={() => openTheme("__hd__")}
+              className="mt-4 flex w-full items-center justify-between gap-4 rounded-[22px] border border-[rgba(79,214,239,0.3)] bg-[rgba(15,27,35,0.5)] p-5 text-left backdrop-blur-xl transition hover:border-[rgba(79,214,239,0.6)]"
+            >
+              <div className="flex items-center gap-3.5">
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(79,214,239,0.4)] bg-[rgba(79,214,239,0.12)] text-[#8fe4f5]" style={{ boxShadow: "0 0 20px -6px rgba(79,214,239,0.7)" }}><Hexagon className="h-5 w-5" strokeWidth={1.7} /></span>
+                <div>
+                  <div className="font-cinzel text-[20px] font-light text-white">Human Design</div>
+                  <div className="mt-0.5 font-body text-[13px] text-txt-3">Typ, Strategie, Autorität, Profil & Zentren.</div>
+                </div>
+              </div>
+              <ChevronRight className="h-5 w-5 shrink-0 text-txt-3" />
+            </button>
+          </Reveal>
+        )}
+
         {/* the full chart, one tap away */}
-        <Reveal i={THEMES.length}>
+        <Reveal i={THEMES.length + 1}>
           <button
             onClick={() => setHomeView("chart")}
             className="mt-4 flex w-full items-center justify-between gap-4 rounded-[22px] border border-white/10 bg-[rgba(15,27,35,0.5)] p-5 text-left backdrop-blur-xl transition hover:border-[rgba(79,214,239,0.4)]"
@@ -150,4 +175,81 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
 
 function MotionSpacer() {
   return <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-2" />;
+}
+
+const ALL_CENTERS = ["Kopf", "Ajna", "Kehle", "G", "Ego", "Sakral", "Solarplexus", "Milz", "Wurzel"];
+
+/** Human Design bodygraph summary — computed offline from the birth data. */
+function HDView({ birth }: { birth: BirthInput }) {
+  const closeTheme = useApp((s) => s.closeTheme);
+  const hd = useMemo(() => computeHumanDesign(birth), [birth]);
+  const first = String(PROFILE.name).split(" ")[0];
+  const facts = [
+    { k: "Typ", v: hd.type },
+    { k: "Autorität", v: hd.authority },
+    { k: "Profil", v: `${hd.profile} · ${hd.profileAngle}` },
+    { k: "Strategie", v: hd.strategy },
+    { k: "Signatur", v: hd.signature },
+    { k: "Nicht-Selbst-Thema", v: hd.notSelf },
+    { k: "Definition", v: hd.definition },
+    { k: "Inkarnationskreuz", v: `${hd.profileAngle} (${hd.crossGates})` },
+  ];
+
+  return (
+    <div className="animate-slideUp px-6 pb-40 pt-[calc(env(safe-area-inset-top,0px)+2rem)] lg:px-10 lg:pt-10">
+      <div className="mx-auto w-full max-w-[720px]">
+        <button onClick={closeTheme} className="mb-7 flex items-center gap-2 font-body text-[14px] text-txt-2 transition hover:text-txt">
+          <ArrowLeft className="h-4 w-4" /> Themen
+        </button>
+
+        <header className="mb-9 flex items-center gap-4">
+          <span className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[rgba(79,214,239,0.4)] bg-[rgba(79,214,239,0.12)] text-[#8fe4f5]" style={{ boxShadow: "0 0 30px -6px rgba(79,214,239,0.8)" }}>
+            <Hexagon className="h-7 w-7" strokeWidth={1.6} />
+          </span>
+          <div>
+            <h1 className="font-cinzel text-[34px] font-light leading-[1.05] text-white lg:text-[44px]">Human Design</h1>
+            <p className="mt-1.5 font-body text-[15px] text-txt-3">{first} · {hd.type}</p>
+          </div>
+        </header>
+
+        <div className="grid gap-3.5 sm:grid-cols-2">
+          {facts.map((f, i) => (
+            <Reveal key={f.k} i={i}>
+              <div className="vela-tile p-5 backdrop-blur-xl">
+                <div className="vela-label">{f.k}</div>
+                <div className="mt-2 font-cinzel text-[20px] font-light leading-tight text-white">{f.v}</div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        <div className="mt-8">
+          <div className="vela-label mb-3">Zentren · {hd.definedCenters.length}/9 definiert</div>
+          <div className="flex flex-wrap gap-2">
+            {ALL_CENTERS.map((c) => {
+              const on = hd.definedCenters.includes(c);
+              return (
+                <span key={c} className={`rounded-pill px-3.5 py-1.5 font-body text-[13px] ${on ? "border border-[rgba(79,214,239,0.5)] bg-[rgba(79,214,239,0.14)] text-[#bdeefb]" : "border border-white/10 text-txt-3"}`}>
+                  {c}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <div className="vela-label mb-3">Kanäle</div>
+          <div className="flex flex-wrap gap-2">
+            {hd.channels.length ? hd.channels.map((c) => (
+              <span key={c} className="rounded-pill border border-white/12 bg-white/[0.05] px-3.5 py-1.5 font-mono text-[13px] text-txt-2">{c}</span>
+            )) : <span className="font-body text-[13px] text-txt-3">—</span>}
+          </div>
+        </div>
+
+        <p className="mt-8 rounded-[20px] border border-white/8 bg-white/[0.03] p-5 font-body text-[13.5px] leading-relaxed text-txt-3">
+          Berechnet aus dem Geburtsbild — Personality (Geburt) + Design (88° Sonnenbogen vorher), gemappt aufs 64-Tore-Rad. Verifiziert gegen das offizielle Chart. Frag Vela unten alles zu deinem Design.
+        </p>
+      </div>
+    </div>
+  );
 }
