@@ -12,18 +12,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        // base — deep atmospheric cosmos (indigo/violet night sky)
-        space: "#0a0813",
-        "space-2": "#13111f",
+        // base — deep steel-teal night sky (byheart-matched)
+        space: "#0b1a22",
+        "space-2": "#14283a",
         ink: "#f6f3ff",
         "ink-soft": "#f3effe",
         // primary accent — violet/lilac glow system
-        violet: "#8B5CF6",
+        violet: "#3ec7e8",
         // secondary punctual accent — teal
         cyan: "#2DD4BF",
         mint: "#2DD4BF",
         // accent / lilac used for borders & rim-lights
-        lilac: "#b9a8ff",
+        lilac: "#86dcef",
         "mint-soft": "#7defd6",
         // ── semantic surface / line / text tokens (single source of truth;
         //    use these instead of inline rgba literals) ──
@@ -78,21 +78,21 @@ export default {
         glass:
           "0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.07)",
         // violet glow halo for FABs / primary CTAs
-        glow: "0 4px 24px rgba(139,92,246,0.5), 0 0 0 1px rgba(255,255,255,0.1)",
+        glow: "0 4px 24px rgba(79,214,239,0.5), 0 0 0 1px rgba(255,255,255,0.1)",
         // hover lift — deep drop + soft violet bloom
         lift: "0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(139,92,246,0.2)",
       },
       backgroundImage: {
         "cta-gradient":
-          "linear-gradient(135deg,#8B5CF6,#6D28D9)",
+          "linear-gradient(135deg,#5fe0f2,#22a7cc)",
         "iris-text":
-          "linear-gradient(110deg,#c4b5ff 0%,#8B5CF6 48%,#2DD4BF 100%)",
-        // glassy atmospheric chart-stage — violet/blue nebula bloom over translucent glass
+          "linear-gradient(110deg,#c9f2fb 0%,#4fd6ef 48%,#2fde8c 100%)",
+        // glassy chart-stage — cyan/teal nebula bloom + faint warm accent over glass
         "stage":
-          "radial-gradient(120% 90% at 80% 0%, rgba(150,110,255,0.20) 0%, transparent 55%), radial-gradient(80% 60% at 8% 105%, rgba(70,130,255,0.14) 0%, transparent 60%), linear-gradient(165deg, rgba(26,21,46,0.72) 0%, rgba(16,13,30,0.72) 60%, rgba(11,9,22,0.82) 100%)",
-        // floating glass panel — translucent, faint violet tint (blur + rim-light via .vela-glass)
+          "radial-gradient(120% 90% at 80% 0%, rgba(79,214,239,0.20) 0%, transparent 55%), radial-gradient(80% 60% at 8% 105%, rgba(47,222,140,0.12) 0%, transparent 60%), radial-gradient(60% 50% at 55% 60%, rgba(255,130,110,0.06) 0%, transparent 60%), linear-gradient(165deg, rgba(20,40,54,0.72) 0%, rgba(13,28,38,0.74) 60%, rgba(10,22,30,0.84) 100%)",
+        // floating glass panel — translucent, faint teal tint (blur + rim-light via .vela-glass)
         "glasswash":
-          "linear-gradient(155deg, rgba(150,120,255,0.15) 0%, rgba(32,27,56,0.48) 45%, rgba(17,14,32,0.6) 100%)",
+          "linear-gradient(155deg, rgba(79,214,239,0.13) 0%, rgba(22,42,56,0.46) 45%, rgba(12,26,34,0.6) 100%)",
       },
       keyframes: {
         velaSpin: { to: { transform: "rotate(360deg)" } },

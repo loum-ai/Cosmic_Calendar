@@ -28,21 +28,21 @@
     --radius: 0.75rem;
 
     /* ── Deep-Space Glassmorphism design tokens (verbindlich) ───────── */
-    /* deep atmospheric cosmos — indigo/violet night sky */
-    --bg-base: #0a0813;
-    --bg-surface: rgba(255, 255, 255, 0.04);
-    --bg-surface-hover: rgba(255, 255, 255, 0.07);
-    --bg-card: rgba(120, 80, 255, 0.06);
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --border-accent: rgba(150, 100, 255, 0.25);
-    --accent-primary: #8b5cf6;
-    --accent-glow: rgba(139, 92, 246, 0.35);
-    --accent-teal: #2dd4bf;
+    /* deep atmospheric night sky — cool steel-teal (byheart-matched) */
+    --bg-base: #0b1a22;
+    --bg-surface: rgba(255, 255, 255, 0.045);
+    --bg-surface-hover: rgba(255, 255, 255, 0.08);
+    --bg-card: rgba(60, 150, 190, 0.06);
+    --border-subtle: rgba(255, 255, 255, 0.09);
+    --border-accent: rgba(79, 214, 239, 0.28);
+    --accent-primary: #4fd6ef;
+    --accent-glow: rgba(79, 214, 239, 0.32);
+    --accent-teal: #2fde8c;
     --text-primary: rgba(255, 255, 255, 0.96);
     --text-secondary: rgba(255, 255, 255, 0.74);
     --text-muted: rgba(255, 255, 255, 0.52);
     --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.07);
-    --shadow-accent: 0 0 20px rgba(139, 92, 246, 0.3);
+    --shadow-accent: 0 0 20px rgba(79,214,239, 0.3);
 
     /* reusable fine-grain texture (premium "film" finish) */
     --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -62,7 +62,7 @@
   body {
     margin: 0;
     min-height: 100vh;
-    background: #0a0813;
+    background: #0b1a22;
     color: var(--text-primary);
     /* native controls (date/time pickers, dropdowns) render dark-themed —
        otherwise their text is dark-on-dark and the fields look empty */
@@ -142,7 +142,7 @@
     font-weight: 600;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: #c9bcff;
+    color: #a6e7f4;
     opacity: 1;
   }
   .vela-sub {
@@ -188,7 +188,7 @@
   }
   /* iridescent gradient text (resonance %, accents) */
   .vela-iris-text {
-    background: linear-gradient(110deg, #c4b5ff 0%, #8b5cf6 48%, #2dd4bf 100%);
+    background: linear-gradient(110deg, #c9f2fb 0%, #4fd6ef 48%, #2fde8c 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -219,7 +219,7 @@
     border-color: var(--border-accent);
     box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.4),
-      0 0 20px rgba(139, 92, 246, 0.15);
+      0 0 20px rgba(79, 214, 239, 0.16);
   }
   /* crisp specular edge — bright top-left, fades to a faint violet corner */
   .vela-glass::before {
@@ -231,10 +231,10 @@
     background: linear-gradient(
       135deg,
       rgba(255, 255, 255, 0.5) 0%,
-      rgba(150, 100, 255, 0.18) 18%,
+      rgba(79, 214, 239, 0.20) 18%,
       transparent 42%,
       transparent 80%,
-      rgba(139, 92, 246, 0.18) 100%
+      rgba(47, 222, 140, 0.16) 100%
     );
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
@@ -244,20 +244,20 @@
   /* ── PREMIUM TILE — crisp depth, no frosted haze (the real card) ───── */
   .vela-tile {
     position: relative;
-    border-radius: 18px;
-    background: linear-gradient(158deg, rgba(255, 255, 255, 0.055) 0%, rgba(255, 255, 255, 0.018) 60%, rgba(120, 90, 220, 0.05) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    background: linear-gradient(158deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 58%, rgba(60, 150, 190, 0.06) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.09);
     box-shadow:
-      0 12px 32px -14px rgba(0, 0, 0, 0.7),
-      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+      0 14px 36px -16px rgba(0, 0, 0, 0.72),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   }
   .vela-tile-hover:hover {
-    border-color: rgba(150, 120, 255, 0.3);
+    border-color: rgba(79, 214, 239, 0.32);
     box-shadow:
-      0 16px 40px -14px rgba(0, 0, 0, 0.7),
-      0 0 28px -8px rgba(139, 92, 246, 0.32),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      0 18px 44px -14px rgba(0, 0, 0, 0.72),
+      0 0 30px -8px rgba(79, 214, 239, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
     transform: translateY(-2px);
   }
 
@@ -277,9 +277,9 @@
   /* ── DAILY-MESSAGE GLOW SURFACE (section 9) ───────────────────────── */
   .vela-daily {
     background:
-      radial-gradient(ellipse at center top, rgba(139, 92, 246, 0.08) 0%, transparent 70%),
+      radial-gradient(ellipse at center top, rgba(79,214,239, 0.08) 0%, transparent 70%),
       rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(139, 92, 246, 0.12);
+    border: 1px solid rgba(79,214,239, 0.12);
     border-radius: 24px;
   }
 
@@ -307,8 +307,8 @@
     line-height: 1.06;
     color: #ffffff;
     text-shadow:
-      0 0 22px rgba(139, 92, 246, 0.55),
-      0 0 46px rgba(139, 92, 246, 0.32);
+      0 0 22px rgba(79,214,239, 0.55),
+      0 0 46px rgba(79,214,239, 0.32);
   }
   /* ── STUDIO CARDS (halolab reference, built in the Vela palette) ───── */
   /* the bold violet-gradient feature card — the standout surface */
@@ -317,7 +317,7 @@
     overflow: hidden;
     border-radius: 24px;
     background: linear-gradient(155deg, #3a2e63 0%, #241f45 52%, #15132b 100%);
-    border: 1px solid rgba(150, 120, 255, 0.32);
+    border: 1px solid rgba(79,214,239, 0.32);
     box-shadow:
       0 24px 64px -26px rgba(70, 45, 160, 0.65),
       inset 0 1px 0 rgba(255, 255, 255, 0.12);
@@ -339,14 +339,14 @@
     position: relative;
     overflow: hidden;
     border-radius: 20px;
-    background: linear-gradient(150deg, rgba(139, 92, 246, 0.18), rgba(45, 212, 191, 0.07));
-    border: 1px solid rgba(150, 100, 255, 0.22);
+    background: linear-gradient(150deg, rgba(79,214,239, 0.18), rgba(45, 212, 191, 0.07));
+    border: 1px solid rgba(79,214,239, 0.22);
     box-shadow: 0 12px 38px -18px rgba(0, 0, 0, 0.55);
     transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   }
   .vela-card-soft:hover {
-    border-color: rgba(150, 100, 255, 0.4);
-    box-shadow: 0 12px 40px -16px rgba(139, 92, 246, 0.4);
+    border-color: rgba(79,214,239, 0.4);
+    box-shadow: 0 12px 40px -16px rgba(79,214,239, 0.4);
   }
   /* stat / accent chip used inside studio cards */
   .vela-stat {
@@ -382,7 +382,7 @@
     backdrop-filter: blur(20px) saturate(120%);
     -webkit-backdrop-filter: blur(20px) saturate(120%);
     box-shadow:
-      0 12px 44px -14px rgba(139, 92, 246, 0.6),
+      0 12px 44px -14px rgba(79,214,239, 0.6),
       inset 0 1px 0 rgba(255, 255, 255, 0.08);
     padding: 8px 8px 8px 20px;
     text-align: left;
@@ -391,9 +391,9 @@
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
   .vela-askbar:hover {
-    border-color: rgba(150, 100, 255, 0.4);
+    border-color: rgba(79,214,239, 0.4);
     box-shadow:
-      0 12px 48px -12px rgba(139, 92, 246, 0.75),
+      0 12px 48px -12px rgba(79,214,239, 0.75),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
@@ -459,7 +459,7 @@
   pointer-events: none;
   mix-blend-mode: screen;
   opacity: 0.55;
-  background: radial-gradient(ellipse 52% 28% at 50% 1%, rgba(139, 92, 246, 0.4), transparent 64%);
+  background: radial-gradient(ellipse 52% 28% at 50% 1%, rgba(79,214,239, 0.4), transparent 64%);
   filter: blur(32px);
 }
 .vela-grain {
@@ -570,15 +570,15 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 4px;
-  background: linear-gradient(90deg, #b9a8ff, #8b5cf6 50%, #2dd4bf);
+  background: linear-gradient(90deg, #86dcef, #4fd6ef 50%, #2dd4bf);
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: radial-gradient(circle at 36% 32%, #fff, #e7dcff 55%, #b9a8ff);
-  box-shadow: 0 0 12px #8b5cf6, 0 0 26px rgba(45, 212, 191, 0.53);
+  background: radial-gradient(circle at 36% 32%, #fff, #e7dcff 55%, #86dcef);
+  box-shadow: 0 0 12px #4fd6ef, 0 0 26px rgba(45, 212, 191, 0.53);
   cursor: pointer;
   margin-top: -8px;
 }

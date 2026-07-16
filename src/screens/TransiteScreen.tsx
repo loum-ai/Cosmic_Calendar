@@ -94,7 +94,7 @@ function TransitFull({ hits }: { hits: TransitHit[] }) {
         </button>
         <div className="flex max-w-[55vw] flex-wrap justify-center gap-1.5">
           {hits.slice(0, 12).map((_, di) => (
-            <button key={di} onClick={() => setFull(di)} className="h-1.5 rounded-full transition-all" style={{ width: di === i ? 22 : 6, background: di === i ? "#8b5cf6" : "rgba(255,255,255,0.25)" }} />
+            <button key={di} onClick={() => setFull(di)} className="h-1.5 rounded-full transition-all" style={{ width: di === i ? 22 : 6, background: di === i ? "#4fd6ef" : "rgba(255,255,255,0.25)" }} />
           ))}
         </div>
         <button onClick={() => go(1)} className="flex h-11 w-11 items-center justify-center rounded-full bg-cta-gradient text-white active:scale-90">

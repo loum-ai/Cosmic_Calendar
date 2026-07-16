@@ -72,7 +72,7 @@ export function PrintFlow() {
 
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[rgba(4,4,10,0.74)] p-4 backdrop-blur-md lg:pl-[120px]">
-      <div className="max-h-[88vh] w-full max-w-[440px] overflow-y-auto rounded-card border border-[rgba(150,120,255,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
+      <div className="max-h-[88vh] w-full max-w-[440px] overflow-y-auto rounded-card border border-[rgba(79,214,239,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
         <div className="flex items-start justify-between">
           <div>
             <div className="vela-label">Horoskop · PDF</div>

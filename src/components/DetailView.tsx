@@ -38,7 +38,7 @@ export function DetailView() {
 
             {/* title */}
             <div className="flex items-center gap-4">
-              <span className="vela-glyph text-5xl" style={{ color: content.color, textShadow: "0 0 24px rgba(139,92,246,0.4)" }}>
+              <span className="vela-glyph text-5xl" style={{ color: content.color, textShadow: "0 0 24px rgba(79,214,239,0.4)" }}>
                 {content.glyph}
               </span>
               <h1 className="font-display text-[clamp(28px,7vw,40px)] font-extrabold leading-[1.05] tracking-[-0.02em] text-txt">
