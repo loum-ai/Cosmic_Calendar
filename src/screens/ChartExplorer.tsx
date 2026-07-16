@@ -23,7 +23,7 @@ function PatternCard({ p }: { p: Pattern }) {
       type="button"
       onClick={() => setOpen((o) => !o)}
       aria-expanded={open}
-      className="relative w-full overflow-hidden rounded-card border border-[rgba(150,120,255,0.18)] bg-glasswash p-5 text-left transition hover:border-line-accent"
+      className="vela-tile vela-tile-hover relative w-full overflow-hidden p-6 text-left backdrop-blur-xl"
     >
       <span className="pointer-events-none absolute -right-2 -top-4 font-glyph text-[64px] leading-none opacity-[0.06]" style={{ color: KIND_COL[p.kind] }}>{p.glyphs[0] ?? "✦"}</span>
       <div className="relative">
@@ -162,7 +162,7 @@ export function ChartExplorer() {
               {viewer ? "Deine persönliche Astro-Website" : "Geburtsbild"}
               {!viewer && IS_DEMO && <span className="rounded-pill border border-line px-2 py-0.5 font-mono text-[10px] tracking-wide text-txt-3">BEISPIEL</span>}
             </div>
-            <h1 className="font-cinzel text-[40px] font-light leading-[1.05] tracking-[0.01em] text-white [text-shadow:0_0_30px_rgba(139,92,246,0.35)] lg:text-[62px]">
+            <h1 className="font-cinzel text-[40px] font-light leading-[1.05] tracking-[0.01em] text-white [text-shadow:0_0_30px_rgba(79,214,239,0.35)] lg:text-[62px]">
               {viewer ? `Willkommen, ${String(PROFILE.name).split(" ")[0]}` : PROFILE.name}
             </h1>
             <p className="mt-4 font-body text-[15px] leading-relaxed text-txt-2">
@@ -186,19 +186,22 @@ export function ChartExplorer() {
         {/* chart stage + live reading (desktop) */}
         <Reveal>
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(330px,380px)] lg:gap-8">
-          <section className="relative overflow-hidden rounded-card border border-[rgba(150,120,255,0.22)] bg-stage p-6 shadow-glass lg:p-9">
-            <div className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full bg-violet/20 blur-3xl" />
-            <div className="relative mx-auto w-full max-w-[480px]">
+          <section className="relative overflow-hidden rounded-[30px] border border-white/10 bg-stage p-6 shadow-glass backdrop-blur-2xl lg:p-10">
+            {/* glowing aura behind the wheel — the glass centrepiece breathes */}
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(79,214,239,0.28),rgba(79,214,239,0.06)_45%,transparent_66%)] blur-2xl animate-breath" />
+            <div className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[rgba(79,214,239,0.12)] blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-[rgba(47,222,140,0.10)] blur-3xl" />
+            <div className="relative mx-auto w-full max-w-[480px] drop-shadow-[0_0_40px_rgba(79,214,239,0.22)]">
               <ChartWheel onPick={select} highlight={highlight} />
             </div>
-            <p className="relative mt-5 text-center font-body text-[14px] leading-relaxed text-txt-3">
+            <p className="relative mt-6 text-center font-body text-[14px] leading-relaxed text-txt-3">
               Tippe einen Planeten oder eine Aspektlinie — oder nutze die Listen unten.
             </p>
           </section>
 
           {/* desktop reading panel */}
           <aside className="hidden lg:block">
-            <div className="sticky top-6 rounded-card border border-[rgba(150,120,255,0.18)] bg-glasswash p-6 shadow-glass backdrop-blur-xl">
+            <div className="sticky top-6 rounded-card border border-[rgba(79,214,239,0.18)] bg-glasswash p-6 shadow-glass backdrop-blur-xl">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={selKey(sel)}
@@ -221,7 +224,7 @@ export function ChartExplorer() {
           <section>
             <button
               onClick={() => select({ kind: "aspect", key: tightest.key })}
-              className="relative w-full overflow-hidden rounded-card border border-[rgba(150,120,255,0.35)] bg-stage p-7 text-left shadow-glass transition hover:border-lilac/60 lg:p-10"
+              className="relative w-full overflow-hidden rounded-[26px] border border-white/10 bg-stage p-7 text-left shadow-glass backdrop-blur-xl transition hover:border-lilac/50 lg:p-10"
             >
               <span className="pointer-events-none absolute -right-6 -top-10 font-glyph text-[150px] leading-none opacity-[0.07]" style={{ color: tightest.def.c }}>{tightest.def.g}</span>
               <div className="relative">
@@ -252,18 +255,18 @@ export function ChartExplorer() {
 
         {/* ── DIE GROSSEN DREI ── */}
         <Section title="Die großen Drei" sub="Kern, Gefühl, Auftreten — deine Identitäts-Achse.">
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3">
             {big3.map((b) => (
               <button
                 key={b.key}
                 onClick={() => select({ kind: "planet", key: b.key })}
-                className="group relative overflow-hidden rounded-card border border-[rgba(150,120,255,0.2)] bg-glasswash p-5 text-left transition hover:border-line-accent"
+                className="vela-tile vela-tile-hover group relative overflow-hidden p-6 text-left backdrop-blur-xl"
               >
-                <span className="pointer-events-none absolute -right-3 -top-7 font-glyph text-[92px] leading-none opacity-[0.08]" style={{ color: b.color }}>{b.glyph}</span>
-                <span className="relative font-glyph text-[26px]" style={{ color: b.color }}>{b.glyph}</span>
-                <div className="relative mt-3 vela-label">{b.role}</div>
-                <div className="relative mt-1 font-cinzel text-[30px] font-light leading-[1.05] text-white">{b.sign}</div>
-                <div className="relative mt-2 font-body text-[14px] leading-relaxed text-txt-3">{b.sub}</div>
+                <span className="pointer-events-none absolute -right-4 -top-8 font-glyph text-[104px] leading-none opacity-[0.10]" style={{ color: b.color }}>{b.glyph}</span>
+                <span className="relative inline-flex h-11 w-11 items-center justify-center rounded-full font-glyph text-[24px]" style={{ color: b.color, background: `radial-gradient(circle, ${b.color}26, transparent 72%)`, boxShadow: `0 0 22px -6px ${b.color}55` }}>{b.glyph}</span>
+                <div className="relative mt-4 vela-label">{b.role}</div>
+                <div className="relative mt-1.5 font-cinzel text-[32px] font-light leading-[1.05] text-white">{b.sign}</div>
+                <div className="relative mt-2.5 font-body text-[14px] leading-relaxed text-txt-3">{b.sub}</div>
               </button>
             ))}
           </div>
@@ -308,7 +311,7 @@ export function ChartExplorer() {
 
         {/* ── DEUTUNG (editorial) ── */}
         <Section title="Deine Deutung" sub="Dein Bild in Worten.">
-          <div className="rounded-card border border-[rgba(150,120,255,0.16)] bg-glasswash p-5 lg:p-7">
+          <div className="rounded-card border border-[rgba(79,214,239,0.16)] bg-glasswash p-5 lg:p-7">
             {aiSummary() ? (
               <p className="font-serif text-[18px] italic leading-[1.6] text-txt">{aiSummary()}</p>
             ) : overview.text ? (

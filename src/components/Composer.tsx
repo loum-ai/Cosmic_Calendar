@@ -44,7 +44,7 @@ export function Composer() {
             {answer && (
               <div className="mb-2 max-h-44 overflow-y-auto rounded-card border border-lilac/25 bg-[rgba(20,16,32,0.92)] p-3.5">
                 {demo && (
-                  <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-pill border border-[rgba(139,92,246,0.35)] bg-[rgba(139,92,246,0.12)] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[rgba(139,92,246,0.95)]">
+                  <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-pill border border-[rgba(79,214,239,0.35)] bg-[rgba(79,214,239,0.12)] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[rgba(79,214,239,0.95)]">
                     Demo · aus deinem Chart
                   </div>
                 )}
@@ -65,7 +65,7 @@ export function Composer() {
                 </button>
               ))}
             </div>
-            <div className="flex items-center gap-1.5 rounded-pill border border-lilac/30 bg-[rgba(28,24,42,0.92)] py-1.5 pl-2 pr-1.5 shadow-[0_10px_32px_-10px_rgba(120,90,200,0.55)] backdrop-blur-md">
+            <div className="flex items-center gap-1.5 rounded-pill border border-lilac/30 bg-[rgba(28,24,42,0.92)] py-1.5 pl-2 pr-1.5 shadow-[0_10px_32px_-10px_rgba(47,180,210,0.55)] backdrop-blur-md">
               <button
                 onClick={() => {
                   setOpen(false);

@@ -1,22 +1,22 @@
 import { Starfield } from "./Starfield";
 
 /**
- * Atmospheric cosmos backdrop — deep indigo/violet night sky with soft nebula
- * blooms (violet + cool blue), a vignette for depth, and the drifting starfield
- * on top. Cinematic depth, not flat. The mood is a night sky you could fall into.
+ * Atmospheric backdrop — deep steel-teal night sky (byheart-matched) with soft
+ * cyan/teal nebula blooms, a faint warm accent (like the glow inside the hero),
+ * a vignette for cinematic depth, and the drifting starfield on top.
  */
 export function AuroraBackground() {
   return (
-    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#0a0813]">
-      <div className="absolute inset-0 bg-[#0a0813]" />
-      {/* violet nebula bloom, upper right */}
-      <div className="absolute inset-0 bg-[radial-gradient(60%_45%_at_82%_6%,rgba(139,92,246,0.22),transparent_60%)]" />
-      {/* cool-blue counter bloom, lower left */}
-      <div className="absolute inset-0 bg-[radial-gradient(55%_45%_at_8%_100%,rgba(70,120,255,0.16),transparent_62%)]" />
-      {/* faint magenta depth, center */}
-      <div className="absolute inset-0 bg-[radial-gradient(70%_50%_at_50%_38%,rgba(190,90,220,0.07),transparent_66%)]" />
+    <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-[#0b1a22]">
+      <div className="absolute inset-0 bg-[#0b1a22]" />
+      {/* cool cyan bloom, upper right */}
+      <div className="absolute inset-0 bg-[radial-gradient(58%_45%_at_84%_4%,rgba(79,214,239,0.20),transparent_62%)]" />
+      {/* steel-teal depth, lower left */}
+      <div className="absolute inset-0 bg-[radial-gradient(58%_48%_at_6%_100%,rgba(46,150,190,0.18),transparent_64%)]" />
+      {/* faint warm accent, center — the hero's inner glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(46%_36%_at_54%_46%,rgba(255,140,120,0.06),transparent_66%)]" />
       {/* vignette = depth toward the edges */}
-      <div className="absolute inset-0 bg-[radial-gradient(120%_95%_at_50%_28%,transparent_40%,rgba(3,2,10,0.85)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(120%_95%_at_50%_28%,transparent_40%,rgba(3,10,14,0.86)_100%)]" />
       <Starfield />
     </div>
   );

@@ -61,7 +61,7 @@ export function ProfilScreen() {
         <OrbImage size={72} float={false} />
         <div className="min-w-0">
           <div className="vela-label mb-1.5">Dein Profil</div>
-          <h1 className="font-cinzel text-[28px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_20px_rgba(139,92,246,0.35)] lg:text-[36px]">{PROFILE.name}</h1>
+          <h1 className="font-cinzel text-[28px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_20px_rgba(79,214,239,0.35)] lg:text-[36px]">{PROFILE.name}</h1>
           <div className="mt-1.5 flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2dd4bf]" />
             <span className="font-mono text-[11px] text-txt-2">{PROFILE.memberSince}</span>
@@ -76,7 +76,7 @@ export function ProfilScreen() {
         return (
           <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
             {ps.map((p) => (
-              <div key={p.id} className="rounded-card border border-[rgba(150,120,255,0.18)] bg-glasswash p-4">
+              <div key={p.id} className="rounded-card border border-[rgba(79,214,239,0.18)] bg-glasswash p-4">
                 <div className="mb-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-lilac">{p.glyphs.join(" ")} Signatur</div>
                 <h3 className="font-cinzel text-[17px] font-semibold leading-tight text-white">{p.title}</h3>
                 <p className="mt-1 line-clamp-3 font-body text-[12.5px] leading-relaxed text-txt-2">{p.text}</p>

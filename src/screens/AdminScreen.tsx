@@ -397,7 +397,7 @@ function Cockpit({ email }: { email: string }) {
         {/* review & publish modal */}
         {review && (
           <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[rgba(4,4,10,0.74)] p-4 backdrop-blur-md" onClick={() => setReview(null)}>
-            <div onClick={(e) => e.stopPropagation()} className="max-h-[88vh] w-full max-w-[560px] overflow-y-auto rounded-card border border-[rgba(150,120,255,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
+            <div onClick={(e) => e.stopPropagation()} className="max-h-[88vh] w-full max-w-[560px] overflow-y-auto rounded-card border border-[rgba(79,214,239,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="vela-label">Deutung prüfen</div>

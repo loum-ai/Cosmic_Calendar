@@ -21,7 +21,7 @@ export function TabBar() {
   return (
     <nav
       className={cn(
-        "fixed z-40 border border-[rgba(185,168,255,0.14)] bg-[rgba(14,12,28,0.72)] shadow-[0_12px_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl",
+        "fixed z-40 border border-[rgba(134,220,239,0.14)] bg-[rgba(14,12,28,0.72)] shadow-[0_12px_40px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl",
         // mobile: floating pill above the bottom edge
         "inset-x-0 bottom-[max(env(safe-area-inset-bottom,0px),16px)] mx-auto flex h-[64px] w-[min(420px,calc(100%-28px))] items-center justify-around rounded-pill px-4",
         // desktop: detached vertical glass rail, left
@@ -50,7 +50,7 @@ export function TabBar() {
             <span
               className={cn(
                 "flex h-9 w-9 items-center justify-center rounded-2xl transition-all duration-300",
-                active ? "bg-surface-2 shadow-[inset_0_0_0_1px_rgba(185,168,255,0.3)] [filter:drop-shadow(0_0_6px_rgba(139,92,246,0.5))]" : "group-hover:bg-surface",
+                active ? "bg-surface-2 shadow-[inset_0_0_0_1px_rgba(134,220,239,0.3)] [filter:drop-shadow(0_0_6px_rgba(79,214,239,0.5))]" : "group-hover:bg-surface",
               )}
             >
               <Icon className="h-[20px] w-[20px]" strokeWidth={1.7} />

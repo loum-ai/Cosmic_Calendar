@@ -116,7 +116,7 @@ export function TutorialOverlay() {
               <span
                 key={di}
                 className="h-1.5 rounded-full transition-all duration-300"
-                style={{ width: di === i ? 22 : 6, background: di === i ? "#8B5CF6" : "rgba(255,255,255,0.22)" }}
+                style={{ width: di === i ? 22 : 6, background: di === i ? "#4fd6ef" : "rgba(255,255,255,0.22)" }}
               />
             ))}
           </div>
