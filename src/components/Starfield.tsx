@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 
 /**
  * Neutral, understated starfield — plain white stars on anthracite, no colored
@@ -44,21 +44,25 @@ function Layer({
   drift,
   duration,
   opacity,
+  parallax,
   reduce,
 }: {
   stars: Star[];
   drift: [number, number];
   duration: number;
   opacity: number;
+  parallax: import("framer-motion").MotionValue<number>;
   reduce: boolean | null;
 }) {
   return (
-    <motion.div
-      className="absolute inset-[-8%]"
-      style={{ opacity }}
-      animate={reduce ? undefined : { x: [0, drift[0], 0], y: [0, drift[1], 0] }}
-      transition={reduce ? undefined : { duration, ease: "easeInOut", repeat: Infinity }}
-    >
+    // outer: subtle scroll parallax (background trails the content)
+    <motion.div className="absolute inset-[-8%]" style={{ opacity, y: reduce ? 0 : parallax }}>
+      {/* inner: very slow ambient drift */}
+      <motion.div
+        className="absolute inset-0"
+        animate={reduce ? undefined : { x: [0, drift[0], 0], y: [0, drift[1], 0] }}
+        transition={reduce ? undefined : { duration, ease: "easeInOut", repeat: Infinity }}
+      >
       {stars.map((s, i) => (
         <span
           key={i}
@@ -74,20 +78,25 @@ function Layer({
           }}
         />
       ))}
+      </motion.div>
     </motion.div>
   );
 }
 
 export function Starfield() {
   const reduce = useReducedMotion();
+  const { scrollY } = useScroll();
+  // background trails the content on scroll — subtle, layered parallax
+  const farY = useTransform(scrollY, [0, 1200], [0, -28]);
+  const nearY = useTransform(scrollY, [0, 1200], [0, -64]);
   // far, faint layer + nearer, brighter layer — drift in opposite directions
   const far = useMemo(() => makeStars(7, 64, 0.5, 1.3), []);
   const near = useMemo(() => makeStars(42, 28, 1.2, 2.3), []);
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      <Layer stars={far} drift={[12, -9]} duration={130} opacity={0.42} reduce={reduce} />
-      <Layer stars={near} drift={[-16, 11]} duration={95} opacity={0.72} reduce={reduce} />
+      <Layer stars={far} drift={[12, -9]} duration={130} opacity={0.42} parallax={farY} reduce={reduce} />
+      <Layer stars={near} drift={[-16, 11]} duration={95} opacity={0.72} parallax={nearY} reduce={reduce} />
     </div>
   );
 }
