@@ -25,17 +25,18 @@ function PatternCard({ p }: { p: Pattern }) {
       aria-expanded={open}
       className="vela-tile vela-tile-hover relative w-full overflow-hidden p-6 text-left backdrop-blur-xl"
     >
-      <span className="pointer-events-none absolute -right-2 -top-4 font-glyph text-[64px] leading-none opacity-[0.06]" style={{ color: KIND_COL[p.kind] }}>{p.glyphs[0] ?? "✦"}</span>
+      <span className="pointer-events-none absolute -right-2 -top-4 font-glyph text-[68px] leading-none opacity-[0.06]" style={{ color: KIND_COL[p.kind] }}>{p.glyphs[0] ?? "✦"}</span>
       <div className="relative">
-        <div className="mb-1.5 flex items-center gap-2">
-          {p.glyphs.length > 0 && <span className="font-glyph text-[17px]" style={{ color: KIND_COL[p.kind] }}>{p.glyphs.join(" ")}</span>}
-          <span className="font-mono text-[9.5px] font-bold uppercase tracking-[0.16em]" style={{ color: KIND_COL[p.kind] }}>{KIND_LABEL[p.kind]}</span>
+        <div className="mb-2.5 flex items-center gap-2.5">
+          {p.glyphs.length > 0 && <span className="font-glyph text-[18px]" style={{ color: KIND_COL[p.kind] }}>{p.glyphs.join(" ")}</span>}
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: KIND_COL[p.kind] }}>{KIND_LABEL[p.kind]}</span>
         </div>
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-cinzel text-[20px] font-normal leading-tight text-white">{p.title}</h3>
-          <ChevronDown className={`mt-1 h-4 w-4 shrink-0 text-txt-3 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
+          <h3 className="font-cinzel text-[22px] font-normal leading-tight text-white">{p.title}</h3>
+          <ChevronDown className={`mt-1.5 h-5 w-5 shrink-0 text-txt-3 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
         </div>
-        <p className="mt-1.5 font-body text-[13px] leading-relaxed text-txt-2">{p.text}</p>
+        {/* collapsed: a single calm teaser line — no wall of text */}
+        {!open && <p className="mt-2.5 line-clamp-1 font-body text-[15px] leading-relaxed text-txt-3">{p.text}</p>}
         <AnimatePresence initial={false}>
           {open && (
             <motion.div
@@ -43,19 +44,19 @@ function PatternCard({ p }: { p: Pattern }) {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="overflow-hidden"
             >
-              <div className="mt-3 border-t border-line-soft pt-3">
-                <div className="mb-1 flex items-center gap-1.5 font-mono text-[9.5px] font-bold uppercase tracking-[0.16em]" style={{ color: KIND_COL[p.kind] }}>
-                  <Sparkles className="h-3 w-3" /> Für dich konkret
+              <p className="mt-3 font-body text-[16px] leading-relaxed text-txt-2">{p.text}</p>
+              <div className="mt-4 border-t border-line-soft pt-4">
+                <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: KIND_COL[p.kind] }}>
+                  <Sparkles className="h-3.5 w-3.5" /> Für dich konkret
                 </div>
-                <p className="font-body text-[13.5px] font-medium leading-relaxed text-white">{p.detail}</p>
+                <p className="font-body text-[16px] font-medium leading-relaxed text-white">{p.detail}</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-        {!open && <span className="mt-2 inline-block font-body text-[11.5px] text-lilac/80">Tippen zum Aufklappen →</span>}
       </div>
     </button>
   );
@@ -101,6 +102,7 @@ export function ChartExplorer() {
   const setPrintOpen = useApp((s) => s.setPrintOpen);
   const viewer = useApp((s) => s.viewerMode);
   const [sel, setSel] = useState<SheetDescriptor | null>(null);
+  const [morePat, setMorePat] = useState(false);
 
   // selecting drives the desktop side-panel; on mobile it opens the native sheet
   const select = (d: SheetDescriptor) => {
@@ -245,11 +247,20 @@ export function ChartExplorer() {
         {/* ── BESONDERE MUSTER (whole-chart synthesis) ── */}
         {patterns.length > 0 && (
           <Section title="Besondere Muster" hint={`${patterns.length}`} sub="Was dein Bild als Ganzes auszeichnet — über die einzelnen Stellungen hinaus.">
-            <div className="grid items-start gap-3 sm:grid-cols-2">
-              {patterns.map((p) => (
+            <div className="grid items-start gap-4 sm:grid-cols-2">
+              {(morePat ? patterns : patterns.slice(0, 4)).map((p) => (
                 <PatternCard key={p.id} p={p} />
               ))}
             </div>
+            {patterns.length > 4 && (
+              <button
+                onClick={() => setMorePat((v) => !v)}
+                className="mt-4 inline-flex items-center gap-1.5 rounded-pill border border-line px-4 py-2 font-body text-[13px] text-txt-2 transition hover:text-txt"
+              >
+                {morePat ? "Weniger anzeigen" : `${patterns.length - 4} weitere Muster`}
+                <ChevronDown className={`h-4 w-4 transition-transform ${morePat ? "rotate-180" : ""}`} />
+              </button>
+            )}
           </Section>
         )}
 
@@ -260,13 +271,23 @@ export function ChartExplorer() {
               <button
                 key={b.key}
                 onClick={() => select({ kind: "planet", key: b.key })}
-                className="vela-tile vela-tile-hover group relative overflow-hidden p-6 text-left backdrop-blur-xl"
+                className="vela-tile vela-tile-hover group relative overflow-hidden p-5 text-left backdrop-blur-xl"
               >
-                <span className="pointer-events-none absolute -right-4 -top-8 font-glyph text-[104px] leading-none opacity-[0.10]" style={{ color: b.color }}>{b.glyph}</span>
-                <span className="relative inline-flex h-11 w-11 items-center justify-center rounded-full font-glyph text-[24px]" style={{ color: b.color, background: `radial-gradient(circle, ${b.color}26, transparent 72%)`, boxShadow: `0 0 22px -6px ${b.color}55` }}>{b.glyph}</span>
-                <div className="relative mt-4 vela-label">{b.role}</div>
-                <div className="relative mt-1.5 font-cinzel text-[32px] font-light leading-[1.05] text-white">{b.sign}</div>
-                <div className="relative mt-2.5 font-body text-[14px] leading-relaxed text-txt-3">{b.sub}</div>
+                <span className="pointer-events-none absolute -right-5 -top-9 font-glyph text-[110px] leading-none opacity-[0.08]" style={{ color: b.color }}>{b.glyph}</span>
+                {/* top row: label + glowing glyph chip (byheart stat-card language) */}
+                <div className="relative flex items-start justify-between gap-2">
+                  <div className="vela-label pt-1">{b.role}</div>
+                  <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-glyph text-[19px]" style={{ color: b.color, background: `radial-gradient(circle, ${b.color}2b, transparent 72%)`, boxShadow: `0 0 20px -6px ${b.color}66`, border: `1px solid ${b.color}33` }}>{b.glyph}</span>
+                </div>
+                {/* big value = the sign */}
+                <div className="relative mt-3.5 font-cinzel text-[32px] font-light leading-[1.02] text-white">{b.sign}</div>
+                {/* decorative sparkline in the card's accent */}
+                <svg className="relative mt-3 h-7 w-full" viewBox="0 0 120 28" preserveAspectRatio="none" fill="none" aria-hidden>
+                  <path d="M1 22 C 18 22, 24 11, 40 13 S 70 21, 90 10 S 110 5, 118 4" stroke={b.color} strokeWidth="1.5" strokeLinecap="round" opacity="0.55" />
+                  <circle cx="118" cy="4" r="2.6" fill={b.color} />
+                  <circle cx="118" cy="4" r="5.5" fill={b.color} opacity="0.22" />
+                </svg>
+                <div className="relative mt-1.5 font-body text-[13px] leading-relaxed text-txt-3">{b.sub}</div>
               </button>
             ))}
           </div>
@@ -378,26 +399,28 @@ function GeneratedReading({ sel, fallback, folded }: { sel: SheetDescriptor; fal
 }
 
 function AspectGroup({ title, tone, accent, items, sel, onPick }: { title: string; tone: string; accent: string; items: ReturnType<typeof computeAspects>; sel: string | null; onPick: (d: SheetDescriptor) => void }) {
+  const [more, setMore] = useState(false);
+  const list = more ? items : items.slice(0, 5);
   return (
-    <div className="rounded-card border border-[rgba(255,255,255,0.08)] bg-surface p-4">
-      <div className="mb-3 flex items-baseline justify-between">
-        <span className="font-display text-[14px] font-bold text-txt">{title}</span>
-        <span className="font-body text-[11px] text-txt-3">{tone}</span>
+    <div className="rounded-card border border-[rgba(255,255,255,0.08)] bg-surface p-5">
+      <div className="mb-3.5 flex items-baseline justify-between">
+        <span className="font-display text-[15px] font-bold text-txt">{title}</span>
+        <span className="font-body text-[12px] text-txt-3">{tone}</span>
       </div>
       <div className="space-y-1">
         {items.length ? (
-          items.map((a) => {
+          list.map((a) => {
             const on = sel === a.key;
             const strength = Math.max(0.14, 1 - a.orb / 8);
             return (
-              <button key={a.key} onClick={() => onPick({ kind: "aspect", key: a.key })} className={`flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-left transition ${on ? "bg-surface-2" : "hover:bg-surface-2"}`}>
-                <span className="shrink-0 font-glyph text-[15px]">
+              <button key={a.key} onClick={() => onPick({ kind: "aspect", key: a.key })} className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition ${on ? "bg-surface-2" : "hover:bg-surface-2"}`}>
+                <span className="shrink-0 font-glyph text-[16px]">
                   <span style={{ color: col(a.A.key) }}>{a.A.glyph}</span>
                   <span className="mx-0.5" style={{ color: accent }}>{a.def.g}</span>
                   <span style={{ color: col(a.B.key) }}>{a.B.glyph}</span>
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate font-body text-[12.5px] text-txt-2">{a.A.name} {a.def.type} {a.B.name}</span>
+                  <span className="block truncate font-body text-[14px] text-txt-2">{a.A.name} {a.def.type} {a.B.name}</span>
                   <span className="mt-1 block h-1 w-full overflow-hidden rounded-full bg-white/10">
                     <span className="block h-full rounded-full" style={{ width: `${strength * 100}%`, background: accent }} />
                   </span>
@@ -407,9 +430,15 @@ function AspectGroup({ title, tone, accent, items, sel, onPick }: { title: strin
             );
           })
         ) : (
-          <p className="py-1 font-body text-[12px] text-txt-3">Keine in dieser Gruppe.</p>
+          <p className="py-1 font-body text-[13px] text-txt-3">Keine in dieser Gruppe.</p>
         )}
       </div>
+      {items.length > 5 && (
+        <button onClick={() => setMore((v) => !v)} className="mt-3 inline-flex items-center gap-1.5 font-body text-[13px] text-txt-2 transition hover:text-txt">
+          {more ? "Weniger" : `${items.length - 5} weitere`}
+          <ChevronDown className={`h-4 w-4 transition-transform ${more ? "rotate-180" : ""}`} />
+        </button>
+      )}
     </div>
   );
 }
