@@ -20,7 +20,7 @@ export function CoachHint() {
           exit={{ opacity: 0, y: 8 }}
           transition={{ delay: 1.2, duration: 0.5 }}
           onClick={dismiss}
-          className="vela-glass fixed bottom-[150px] left-1/2 z-30 -translate-x-1/2 rounded-pill px-4 py-2 font-body text-[11px] tracking-wide text-lilac/85"
+          className="vela-glass fixed bottom-[178px] left-1/2 z-30 -translate-x-1/2 rounded-pill px-4 py-2 font-body text-[11px] tracking-wide text-lilac/85"
         >
           Tippe alles, was leuchtet ✦
         </motion.button>
