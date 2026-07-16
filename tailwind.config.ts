@@ -12,9 +12,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        // base — deep-space near-black anthracite
-        space: "#06060F",
-        "space-2": "#0a0a18",
+        // base — neutral near-black anthracite (no blue cast)
+        space: "#0d0d0d",
+        "space-2": "#171717",
         ink: "#f6f3ff",
         "ink-soft": "#f3effe",
         // primary accent — violet/lilac glow system
@@ -87,10 +87,10 @@ export default {
           "linear-gradient(135deg,#8B5CF6,#6D28D9)",
         "iris-text":
           "linear-gradient(110deg,#c4b5ff 0%,#8B5CF6 48%,#2DD4BF 100%)",
-        // deep, near-black chart-stage so bright wheel lines + text pop;
-        // a single tight violet bloom for identity, not a desaturating wash
+        // neutral near-black chart-stage so bright wheel lines + text pop;
+        // a barely-there neutral lift for depth, no color cast
         "stage":
-          "radial-gradient(90% 70% at 78% 8%, rgba(139,92,246,0.20) 0%, transparent 52%), linear-gradient(165deg, #0c0a16 0%, #08070f 55%, #050409 100%)",
+          "radial-gradient(90% 70% at 78% 8%, rgba(255,255,255,0.05) 0%, transparent 52%), linear-gradient(165deg, #161616 0%, #101010 55%, #0b0b0b 100%)",
         // panel surface — quiet, slightly cool, high enough contrast for body text
         "glasswash":
           "linear-gradient(155deg, rgba(120,95,210,0.10) 0%, rgba(20,18,34,0.55) 45%, rgba(10,9,18,0.7) 100%)",
