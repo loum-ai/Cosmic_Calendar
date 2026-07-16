@@ -1,6 +1,6 @@
-import { useMemo } from "react";
-import { motion } from "framer-motion";
-import { ArrowLeft, ChevronRight, CircleDot, Hexagon } from "lucide-react";
+import { useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, ChevronRight, CircleDot, Hexagon, Info } from "lucide-react";
 import { THEMES, themeByKey } from "@/lib/themes";
 import { CHART, PROFILE, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
 import { resolveSheet } from "@/lib/sheets";
@@ -184,15 +184,33 @@ function HDView({ birth }: { birth: BirthInput }) {
   const closeTheme = useApp((s) => s.closeTheme);
   const hd = useMemo(() => computeHumanDesign(birth), [birth]);
   const first = String(PROFILE.name).split(" ")[0];
+  const [open, setOpen] = useState<number | null>(null);
+
+  const TYPE_DESC: Record<string, string> = {
+    "Projektor": "hier, um zu führen und andere zu lenken — wirksam, sobald du erkannt und eingeladen wirst. Nicht fürs Dauer-Anpacken gebaut.",
+    "Generator": "die schöpferische Lebenskraft. Du kommst in Fahrt, indem du auf das reagierst, was dir begegnet — nicht durchs Initiieren.",
+    "Manifestierender Generator": "reagieren und schnell umsetzen, oft mehrgleisig. Informiere andere, bevor du losziehst.",
+    "Manifestor": "hier, um zu initiieren und anzustoßen. Informiere andere vor dem Handeln, dann bist du frei.",
+    "Reflektor": "ein Spiegel deiner Umgebung. Triff große Entscheidungen erst nach einem vollen Mondzyklus.",
+  };
+  const authDesc = (a: string) => {
+    if (a.includes("Emotional")) return "keine Entscheidung im Affekt — warte deine emotionale Welle ab, Klarheit kommt mit der Zeit.";
+    if (a.includes("Sakral")) return "das Bauch-Ja/Nein im Moment — ein spontanes Ja oder Nein aus der Körpermitte. Reagiere darauf.";
+    if (a.includes("Milz")) return "leises, spontanes Bauchgefühl im Jetzt — es spricht nur einmal. Vertraue dem ersten Impuls.";
+    if (a.includes("Ego")) return "entscheide aus Willenskraft — was willst du wirklich, wofür brennst du?";
+    if (a.includes("Selbst")) return "hör dich selbst reden — deine Wahrheit zeigt sich, wenn du sie aussprichst.";
+    if (a.includes("Lunar")) return "warte einen vollen Mondzyklus (~28 Tage), bevor du Großes entscheidest.";
+    return "du brauchst die richtige Umgebung und das Aussprechen mit Vertrauten, um klar zu werden.";
+  };
   const facts = [
-    { k: "Typ", v: hd.type },
-    { k: "Autorität", v: hd.authority },
-    { k: "Profil", v: `${hd.profile} · ${hd.profileAngle}` },
-    { k: "Strategie", v: hd.strategy },
-    { k: "Signatur", v: hd.signature },
-    { k: "Nicht-Selbst-Thema", v: hd.notSelf },
-    { k: "Definition", v: hd.definition },
-    { k: "Inkarnationskreuz", v: `${hd.profileAngle} (${hd.crossGates})` },
+    { k: "Typ", v: hd.type, info: `Dein Grundtyp — er bestimmt deine Strategie, wie du ohne Widerstand in Bewegung kommst. ${TYPE_DESC[hd.type] ?? ""}` },
+    { k: "Autorität", v: hd.authority, info: `Deine innere Instanz für richtige Ja/Nein-Entscheidungen — nicht der Kopf, sondern dein verlässlichstes Signal: ${authDesc(hd.authority)}` },
+    { k: "Profil", v: `${hd.profile} · ${hd.profileAngle}`, info: "Zwei Ziffern (1–6) = deine Lebensrolle. Erste Zahl = bewusst (wie du dich erlebst), zweite = unbewusst (wie andere dich erleben). Sie beschreiben, wie du lernst und wirkst." },
+    { k: "Strategie", v: hd.strategy, info: "So triffst du richtige Entscheidungen und vermeidest Widerstand — der praktische Kern deines Designs im Alltag." },
+    { k: "Signatur", v: hd.signature, info: "Das Gefühl, wenn du deiner Natur folgst — dein Kompass, dass es gerade richtig läuft." },
+    { k: "Nicht-Selbst-Thema", v: hd.notSelf, info: "Das Warnsignal, wenn du gegen deine Natur lebst. Taucht es auf, korrigiere über Strategie und Autorität." },
+    { k: "Definition", v: hd.definition, info: "Wie deine definierten Zentren verbunden sind. Einfach = ein durchgehender Fluss; Split = zwei Bereiche, die sich (oft über andere Menschen) verbinden wollen." },
+    { k: "Inkarnationskreuz", v: `${hd.profileAngle} (${hd.crossGates})`, info: "Dein übergeordnetes Lebensthema, aus den vier Sonne/Erde-Toren von Personality & Design. Rechtswinkel = persönlicher Weg; Linkswinkel = eher über Beziehungen/Kollektiv." },
   ];
 
   return (
@@ -212,13 +230,34 @@ function HDView({ birth }: { birth: BirthInput }) {
           </div>
         </header>
 
-        <div className="grid gap-3.5 sm:grid-cols-2">
+        <div className="grid items-start gap-3.5 sm:grid-cols-2">
           {facts.map((f, i) => (
             <Reveal key={f.k} i={i}>
-              <div className="vela-tile p-5 backdrop-blur-xl">
-                <div className="vela-label">{f.k}</div>
+              <button
+                onClick={() => setOpen(open === i ? null : i)}
+                aria-expanded={open === i}
+                className="vela-tile vela-tile-hover relative w-full overflow-hidden p-5 text-left backdrop-blur-xl"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="vela-label">{f.k}</div>
+                  <Info className={`h-4 w-4 shrink-0 transition-colors ${open === i ? "text-[#8fe4f5]" : "text-txt-3"}`} />
+                </div>
                 <div className="mt-2 font-cinzel text-[20px] font-light leading-tight text-white">{f.v}</div>
-              </div>
+                <AnimatePresence initial={false}>
+                  {open === i && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
+                      className="overflow-hidden"
+                    >
+                      <p className="mt-3 border-t border-line-soft pt-3 font-body text-[13.5px] leading-relaxed text-txt-2">{f.info}</p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                {open !== i && <span className="mt-2 inline-block font-body text-[11.5px] text-[#8fe4f5]/70">Was heißt das? →</span>}
+              </button>
             </Reveal>
           ))}
         </div>
