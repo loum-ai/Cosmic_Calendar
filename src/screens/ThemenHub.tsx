@@ -50,12 +50,16 @@ export function ThemenHub() {
     <div className="animate-slideUp px-6 pb-40 pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] lg:px-10 lg:pt-12">
       <div className="mx-auto w-full max-w-[860px]">
         <header className="mb-10">
-          <div className="vela-label mb-3">{viewer ? "Deine persönliche Astro-Website" : "Dein persönlicher Spiegel"}</div>
+          <div className="vela-wordmark mb-3 text-[12px]">Vela</div>
           <h1 className="font-cinzel text-[40px] font-light leading-[1.05] tracking-[0.01em] text-white [text-shadow:0_0_30px_rgba(79,214,239,0.3)] lg:text-[58px]">
             {viewer ? `Willkommen, ${first}` : first}
           </h1>
-          <p className="mt-4 max-w-[44ch] font-body text-[16px] leading-relaxed text-txt-2">
-            Wähle ein Lebensthema — dein Geburtsbild, gelesen durch diese Linse. Kein Fachchinesisch, nur was es für dich bedeutet.
+          <p className="mt-4 max-w-[46ch] font-body text-[16px] leading-relaxed text-txt-2">
+            {viewer ? (
+              <>Dein persönlicher astrologischer Blueprint. <span className="text-txt-3">Wähle ein Lebensthema, das dich gerade bewegt.</span></>
+            ) : (
+              "Wähle ein Lebensthema — dein Geburtsbild, gelesen durch diese Linse. Kein Fachchinesisch, nur was es für dich bedeutet."
+            )}
           </p>
         </header>
 
