@@ -104,6 +104,8 @@ export function ChartExplorer() {
   const setHomeView = useApp((s) => s.setHomeView);
   const [sel, setSel] = useState<SheetDescriptor | null>(null);
   const [morePat, setMorePat] = useState(false);
+  // land at the top (the chart wheel) when entering the full-chart view
+  useEffect(() => { window.scrollTo({ top: 0 }); }, []);
 
   // selecting drives the desktop side-panel; on mobile it opens the native sheet
   const select = (d: SheetDescriptor) => {
@@ -161,35 +163,27 @@ export function ChartExplorer() {
         <button onClick={() => setHomeView("hub")} className="mb-7 flex items-center gap-2 font-body text-[14px] text-txt-2 transition hover:text-txt">
           <ArrowLeft className="h-4 w-4" /> Themen
         </button>
-        {/* header — viewer = the client's own website; else demo / own chart */}
-        <header className="mb-12 flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <div className="vela-label mb-3 flex items-center gap-2">
-              {viewer ? "Deine persönliche Astro-Website" : "Geburtsbild"}
-              {!viewer && IS_DEMO && <span className="rounded-pill border border-line px-2 py-0.5 font-mono text-[10px] tracking-wide text-txt-3">BEISPIEL</span>}
+        {/* compact header — the chart itself is the hero, right at the top */}
+        <header className="mb-5 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <div className="vela-label flex items-center gap-2">
+              {viewer ? "Dein Geburtsbild" : "Geburtsbild"}
+              {!viewer && IS_DEMO && <span className="rounded-pill border border-line px-2 py-0.5 font-mono text-[9px] tracking-wide text-txt-3">BEISPIEL</span>}
             </div>
-            <h1 className="font-cinzel text-[40px] font-light leading-[1.05] tracking-[0.01em] text-white [text-shadow:0_0_30px_rgba(79,214,239,0.35)] lg:text-[62px]">
+            <h1 className="mt-1 truncate font-cinzel text-[26px] font-light leading-tight text-white lg:text-[32px]">
               {viewer ? `Willkommen, ${String(PROFILE.name).split(" ")[0]}` : PROFILE.name}
             </h1>
-            <p className="mt-4 font-body text-[15px] leading-relaxed text-txt-2">
-              {viewer
-                ? "Dein Geburtshoroskop — von deiner Astrologin für dich erstellt."
-                : IS_DEMO
-                ? "Beispiel-Horoskop — so erlebt deine Kundin ihre eigene Astro-Website."
-                : PROFILE.birth}
-            </p>
           </div>
           <button
             onClick={() => setPrintOpen(true)}
-            className={`flex items-center gap-2 rounded-pill px-4 py-2.5 font-display text-[13px] font-semibold transition ${
-              viewer ? "bg-cta-gradient text-white shadow-glow" : "border border-line-accent bg-surface text-txt hover:bg-surface-2"
-            }`}
+            title={viewer ? "Mein Horoskop als PDF" : "Horoskop als PDF"}
+            className="flex shrink-0 items-center gap-2 rounded-pill border border-line-accent bg-surface px-4 py-2.5 font-display text-[13px] font-semibold text-txt transition hover:bg-surface-2"
           >
-            <Download className={`h-4 w-4 ${viewer ? "" : "text-lilac"}`} /> {viewer ? "Mein Horoskop als PDF" : "Horoskop herunterladen"}
+            <Download className="h-4 w-4 text-lilac" /> <span className="hidden sm:inline">PDF</span>
           </button>
         </header>
 
-        {/* chart stage + live reading (desktop) */}
+        {/* chart stage + live reading (desktop) — the tappable chart, up top */}
         <Reveal>
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(330px,380px)] lg:gap-8">
           <section className="relative overflow-hidden rounded-[30px] border border-white/10 bg-stage p-6 shadow-glass backdrop-blur-2xl lg:p-10">

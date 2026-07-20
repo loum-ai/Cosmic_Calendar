@@ -22,6 +22,17 @@ function useIsDesktop() {
 /** The shared content (title + was/wie/wo + relations) for both surfaces. */
 function Body({ content, descriptor }: { content: SheetContent; descriptor: SheetDescriptor | null }) {
   const openSheet = useApp((s) => s.openSheet);
+  const closeSheet = useApp((s) => s.closeSheet);
+  const setComposerOpen = useApp((s) => s.setComposerOpen);
+  const setQ = useApp((s) => s.setQ);
+  const ask = useApp((s) => s.ask);
+  const talkToVela = () => {
+    const q = `Erzähl mir mehr über „${content.title}" in meinem Chart — was bedeutet das konkret für mich?`;
+    setQ(q);
+    closeSheet();
+    setComposerOpen(true);
+    void ask(q);
+  };
   const st = subjectTask(descriptor);
   const stored = storedReading(descriptor);
   const { text: genText, loading: genLoading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !stored && !IS_DEMO);
@@ -101,6 +112,13 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
             </div>
           ))
         )}
+
+        <button
+          onClick={talkToVela}
+          className="flex w-full items-center justify-center gap-2 rounded-pill border border-[rgba(79,214,239,0.4)] bg-[rgba(79,214,239,0.1)] px-4 py-3 font-display text-[13.5px] font-semibold text-[#bdeefb] transition hover:bg-[rgba(79,214,239,0.16)] active:scale-[0.99]"
+        >
+          <Sparkles className="h-4 w-4" /> Mit Vela darüber sprechen
+        </button>
 
         {content.relations && content.relations.length > 0 && (
           <div className="border-t border-line pt-5">

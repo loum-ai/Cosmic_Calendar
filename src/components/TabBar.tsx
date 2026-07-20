@@ -25,7 +25,7 @@ export function TabBar() {
       className={cn(
         "fixed z-40 border border-white/[0.08] bg-[rgba(13,26,34,0.45)] shadow-[0_18px_50px_-14px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] [backdrop-filter:blur(28px)_saturate(130%)]",
         // mobile: floating pill above the bottom edge
-        "inset-x-0 bottom-[max(env(safe-area-inset-bottom,0px),18px)] mx-auto flex h-[60px] w-[min(400px,calc(100%-32px))] items-center justify-between rounded-full px-2.5",
+        "inset-x-0 bottom-[max(env(safe-area-inset-bottom,0px),18px)] mx-auto flex h-[60px] w-[min(440px,calc(100%-24px))] items-center justify-between rounded-full px-3",
         // desktop: detached vertical glass rail, left
         "lg:inset-y-0 lg:left-5 lg:right-auto lg:bottom-auto lg:top-1/2 lg:mx-0 lg:h-auto lg:w-[80px] lg:-translate-y-1/2 lg:flex-col lg:justify-center lg:gap-2 lg:rounded-[32px] lg:px-3 lg:py-6",
       )}

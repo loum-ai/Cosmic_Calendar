@@ -38,6 +38,9 @@ export function ThemenHub() {
   const hdBirth = useApp((s) => s.hdBirth);
   const birth: BirthInput | null = savedBirth ?? hdBirth ?? (IS_DEMO ? DEMO_BIRTH : null);
 
+  // land at the top when opening a theme / HD, or returning to the hub
+  useEffect(() => { window.scrollTo({ top: 0 }); }, [activeTheme]);
+
   if (activeTheme === "__hd__" && birth) return <HDView birth={birth} />;
   if (activeTheme) return <ThemeReading themeKey={activeTheme} />;
 
