@@ -7,6 +7,7 @@ import { CHART, PROFILE, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
 import { resolveSheet } from "@/lib/sheets";
 import { computeHumanDesign } from "@/lib/humandesign";
 import { chartContext, chartHash, shortHash } from "@/lib/factsContext";
+import { aiPortrait } from "@/lib/interpret";
 import { supabase } from "@/lib/supabase";
 import type { BirthInput } from "@/lib/compute";
 import { Reveal } from "@/components/Reveal";
@@ -38,7 +39,12 @@ export function ThemenHub() {
   const viewer = useApp((s) => s.viewerMode);
   const savedBirth = useApp((s) => s.savedBirth);
   const hdBirth = useApp((s) => s.hdBirth);
+  const aiLoading = useApp((s) => s.aiLoading);
+  const aiVersion = useApp((s) => s.aiVersion);
+  void aiVersion; // re-render when the reading lands
   const birth: BirthInput | null = savedBirth ?? hdBirth ?? (IS_DEMO ? DEMO_BIRTH : null);
+  const portrait = aiPortrait();
+  const portraitParas = portrait ? portrait.split(/\n\n+/).map((s) => s.trim()).filter(Boolean) : [];
 
   // land at the top when opening a theme / HD, or returning to the hub
   useEffect(() => { window.scrollTo({ top: 0 }); }, [activeTheme]);
@@ -65,6 +71,38 @@ export function ThemenHub() {
           </p>
         </header>
 
+        {/* Dein Portrait — the deep, synthesized whole-chart reading, the head
+            of the page. Leads with meaning; the themes below go deeper per lens. */}
+        {portraitParas.length > 0 ? (
+          <section className="mb-10">
+            <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Dein Portrait</div>
+            <div className="rounded-[24px] border border-white/8 bg-[rgba(13,25,33,0.5)] p-6 backdrop-blur-xl lg:p-8">
+              {portraitParas.map((p, i) => (
+                <Reveal key={i} i={i}>
+                  <p className={`font-body leading-[1.75] text-txt-2 ${i === 0 ? "text-[18.5px] font-medium text-white" : "mt-5 text-[16.5px]"}`}>{p}</p>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+        ) : aiLoading ? (
+          <section className="mb-10">
+            <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Dein Portrait</div>
+            <div className="rounded-[24px] border border-white/8 bg-[rgba(13,25,33,0.5)] p-6 backdrop-blur-xl lg:p-8">
+              <GenerativeLoader
+                messages={[
+                  "Die Sterne ordnen sich zu deinem Bild …",
+                  "Vela liest dein ganzes Geburtsbild …",
+                  "Deine Kräfte finden Worte …",
+                ]}
+                widths={[100, 92, 96, 84, 70]}
+              />
+            </div>
+          </section>
+        ) : null}
+
+        {portraitParas.length > 0 && (
+          <div className="vela-label mb-4 flex items-center gap-1.5"><CircleDot className="h-3.5 w-3.5" /> Lebensthemen</div>
+        )}
         <div className="grid gap-4 sm:grid-cols-2">
           {THEMES.map((t, i) => (
             <Reveal key={t.key} i={i}>

@@ -12,6 +12,10 @@ import type { BirthInput } from "./compute";
 
 export interface AIPlacement { sign_text: string; house_text: string }
 export interface AIInterp {
+  /** The deep, synthesized whole-chart portrait — the head of the reading.
+   *  Multi-paragraph flowing narrative (blank-line separated). May be empty
+   *  for older readings generated before the portrait existed. */
+  portrait: string;
   summary: string;
   placements: Record<string, AIPlacement>;
   aspects: Record<string, string>;
@@ -32,6 +36,7 @@ export const getVerification = () => VERIFY;
 export const aiSign = (key: string) => AI?.placements[key]?.sign_text || null;
 export const aiHouse = (key: string) => AI?.placements[key]?.house_text || null;
 export const aiSummary = () => AI?.summary || null;
+export const aiPortrait = () => AI?.portrait || null;
 const pairKey = (a: string, b: string) => [a, b].sort().join("_");
 export const aiAspect = (a: string, b: string) => AI?.aspects[pairKey(a, b)] || null;
 
@@ -57,7 +62,7 @@ function normalize(interp: any): AIInterp {
   for (const a of interp?.aspects ?? []) {
     if (a?.a && a?.b && a?.text) aspects[pairKey(a.a, a.b)] = a.text;
   }
-  return { summary: interp?.summary || "", placements, aspects };
+  return { portrait: interp?.portrait || "", summary: interp?.summary || "", placements, aspects };
 }
 
 export interface InterpResult { ok: boolean; cached: boolean; error?: string }
