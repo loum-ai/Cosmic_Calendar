@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
 
     const { data: client } = await svc
       .from("clients")
-      .select("id, name, birth_date, birth_time, birth_place")
+      .select("id, name, birth_date, birth_time, birth_place, lat, lon")
       .eq("access_token", token)
       .maybeSingle();
     if (!client) return json({ error: "not_found" }, 404);
@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
 
     return json({
       ok: true,
-      client: { name: client.name, birth_date: client.birth_date, birth_time: client.birth_time, birth_place: client.birth_place },
+      client: { name: client.name, birth_date: client.birth_date, birth_time: client.birth_time, birth_place: client.birth_place, lat: client.lat, lon: client.lon },
       chart: chart?.data ?? null,
       verification: chart?.verification ?? null,
       interpretation: interp ? (interp.edited ?? interp.draft) : null,
