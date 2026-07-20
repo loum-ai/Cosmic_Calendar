@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, Loader2, Sparkles, X } from "lucide-react";
 import { useApp, type TabKey } from "@/store/useApp";
 import { EASE } from "@/lib/tokens";
+import { GenerativeLoader } from "@/components/GenerativeLoader";
 
 /** Context-aware suggested questions per screen. */
 const EXAMPLES: Record<TabKey, string[]> = {
@@ -29,7 +30,7 @@ export function Composer() {
   const loading = useApp((s) => s.loading);
   const clearAnswer = useApp((s) => s.clearAnswer);
 
-  const expanded = open || !!answer;
+  const expanded = open || !!answer || loading;
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-[92px] z-[41] mx-auto w-[min(440px,calc(100%-24px))] lg:bottom-6 lg:left-[120px] lg:right-0 lg:mx-auto lg:w-auto lg:max-w-[640px] lg:px-6">
@@ -43,6 +44,18 @@ export function Composer() {
             transition={{ duration: 0.26, ease: EASE.smooth }}
             className="pointer-events-auto mb-2.5"
           >
+            {loading && !answer && (
+              <div className="mb-2.5 rounded-[24px] border border-white/10 bg-[rgba(13,25,33,0.94)] p-4 shadow-glass backdrop-blur-xl">
+                <GenerativeLoader
+                  messages={[
+                    "Vela liest dein Bild …",
+                    "Deine Frage trifft dein Chart …",
+                    "Einen Moment — ich schaue in die Sterne …",
+                  ]}
+                  widths={[100, 88, 94]}
+                />
+              </div>
+            )}
             {answer && (
               <div className="mb-2.5 max-h-56 overflow-y-auto rounded-[24px] border border-white/10 bg-[rgba(13,25,33,0.94)] p-4 shadow-glass backdrop-blur-xl">
                 <div className="mb-2 flex items-center justify-between gap-2">
@@ -60,6 +73,7 @@ export function Composer() {
                 <p className="font-body text-[15px] font-light leading-relaxed text-ink/90">{answer}</p>
               </div>
             )}
+            {!loading && (
             <div className="flex gap-1.5 overflow-x-auto pb-1">
               {EXAMPLES[tab].map((ex) => (
                 <button
@@ -74,6 +88,7 @@ export function Composer() {
                 </button>
               ))}
             </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

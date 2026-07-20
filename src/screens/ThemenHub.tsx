@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ChevronRight, CircleDot, Hexagon, Info, Loader2, Sparkles } from "lucide-react";
+import { GenerativeLoader } from "@/components/GenerativeLoader";
+import { ArrowLeft, ChevronRight, CircleDot, Hexagon, Info, Sparkles } from "lucide-react";
 import { THEMES, themeByKey, type LifeTheme } from "@/lib/themes";
 import { CHART, PROFILE, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
 import { resolveSheet } from "@/lib/sheets";
@@ -198,9 +199,15 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
 
         {/* the reading — 5-level dramaturgy, flowing */}
         {loading ? (
-          <div className="flex items-center gap-2.5 py-6 font-body text-[15px] text-txt-2">
-            <Loader2 className="h-4.5 w-4.5 animate-spin text-[#8fe4f5]" /> Vela liest dein Bild durch die Linse „{t.label}" …
-          </div>
+          <GenerativeLoader
+            glyph={t.glyph}
+            accent={t.accent}
+            messages={[
+              "Die Sterne ordnen sich zu deinem Bild …",
+              `Vela liest dich durch die Linse „${t.label}" …`,
+              "Deine Kräfte finden Worte …",
+            ]}
+          />
         ) : paras.length ? (
           <div className="mb-4">
             {paras.map((p, i) => (
