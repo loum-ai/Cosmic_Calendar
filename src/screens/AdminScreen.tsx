@@ -6,7 +6,13 @@ import { searchPlace, type Place } from "@/lib/geocode";
 interface ClientRow { id: string; name: string; birth_date: string; birth_time?: string; birth_place?: string; lat?: number; lon?: number; access_token: string; created_at: string; status?: string; published_at?: string }
 
 function linkFor(token: string) {
-  return `${location.origin}${location.pathname}#/k/${token}`;
+  // Pin to the build-time base path (import.meta.env.BASE_URL, e.g.
+  // "/Cosmic_Calendar/"), NOT location.pathname — the latter inherits whatever
+  // path the admin happens to be open at (stale bookmark, wrong case, a missing
+  // segment), which would bake a broken URL into the client's link and land
+  // them on a GitHub Pages 404. BASE_URL is always the canonical app root.
+  const base = import.meta.env.BASE_URL || "/";
+  return `${location.origin}${base}#/k/${token}`;
 }
 
 export function AdminScreen() {
