@@ -1,11 +1,30 @@
-import { CHART, NODES, ASC, MC, signName } from "./data";
+import { CHART, NODES, ASC, MC, HOUSE, signName, houseOf, computeAspects } from "./data";
 
-/** Compact, grounded facts string for the active chart — the context every
- *  generated reading is built on. Inputs → facts → generation. */
+/** Rich, grounded facts string for the active chart — the context every
+ *  generated reading is built on. Includes the ASPECTS (the tensions), so the
+ *  reading can name the exact configuration (e.g. the Sun–Saturn square) instead
+ *  of staying generic. Inputs → facts → generation. */
 export function chartContext(): string {
-  const lines = [`Aszendent in ${signName(ASC)}, MC in ${signName(MC)}.`];
-  for (const p of CHART) lines.push(`${p.name} in ${signName(p.lon)}, ${p.house ?? "?"}. Haus${p.retro ? " (rückläufig)" : ""}.`);
-  for (const n of NODES) lines.push(`${n.name} in ${signName(n.lon)}.`);
+  const lines: string[] = [];
+  lines.push(`Aszendent (Auftreten) in ${signName(ASC)}; MC / Himmelsmitte (öffentliche Rolle) in ${signName(MC)}.`);
+  lines.push("");
+  lines.push("PLANETEN (Kraft · Zeichen/Färbung · Haus/Lebensbereich):");
+  for (const p of CHART) {
+    const h = p.house ?? houseOf(p.lon);
+    lines.push(`- ${p.name} in ${signName(p.lon)}, ${h}. Haus (${HOUSE[h - 1]})${p.retro ? ", rückläufig" : ""}.`);
+  }
+  lines.push("");
+  lines.push("MONDKNOTEN (Lebensrichtung / Bestimmung — Nordknoten = Wachstumsrichtung, Südknoten = Vertrautes zum Loslassen):");
+  for (const n of NODES) {
+    const h = n.house ?? houseOf(n.lon);
+    lines.push(`- ${n.name} in ${signName(n.lon)}, ${h}. Haus (${HOUSE[h - 1]}).`);
+  }
+  const asp = computeAspects().slice().sort((a, b) => a.orb - b.orb).slice(0, 14);
+  if (asp.length) {
+    lines.push("");
+    lines.push("ASPEKTE (Zusammenspiel & Spannungen — engste zuerst, je kleiner der Orbis desto stärker):");
+    for (const a of asp) lines.push(`- ${a.A.name} ${a.def.type} ${a.B.name} (${a.orb.toFixed(1)}° Orbis)`);
+  }
   return lines.join("\n");
 }
 

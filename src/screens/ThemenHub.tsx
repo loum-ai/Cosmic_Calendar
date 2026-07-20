@@ -12,16 +12,17 @@ import type { BirthInput } from "@/lib/compute";
 import { Reveal } from "@/components/Reveal";
 import { useApp, DEMO_BIRTH } from "@/store/useApp";
 
-/** The 5-level dramaturgy prompt (per the product briefing) for a life-theme. */
+/** Task for a life-theme reading — the LENS + what to foreground. The full
+ *  5-level dramaturgy and the anti-generic rules live in the generate function's
+ *  SYSTEM_LONG (long: true). */
 function fiveLevelTask(t: LifeTheme): string {
-  return `Schreibe eine persönliche Deutung zum Lebensthema „${t.label}" (${t.teaser}) — als EIN zusammenhängender Fließtext in fünf Ebenen, KEINE Liste, KEINE Aufzählung von Positionen, KEINE Zwischenüberschriften und keine Nummern im Text:
-1) Der rote Faden zuerst: ein Einstieg, der sofort etwas Wahres über die Person sagt (über SIE, nicht über die Planeten).
-2) Die Kräfte, narrativ: nur die für dieses Thema relevanten Stellungen aus den Fakten, als Geschichte verwoben. Fachbegriffe nur mit sofortiger Übersetzung.
-3) Die Spannung: der zentrale innere Konflikt oder die Falle, präzise am Chart benannt (der exakte Aspekt, nicht „manchmal streng zu dir").
-4) Die Richtung: was daraus folgt, wohin die Entwicklung geht.
-5) Die persönliche Wahrheit: ein Schlusssatz, der bleibt und die Person meint, nicht ihr Sternzeichen.
-Linse für dieses Thema: ${t.lens}
-Sprich mit „du", warm, ehrlich, konkret. 5–8 Absätze, durch Leerzeilen getrennt.`;
+  return `Deute das Lebensthema „${t.label}" (${t.teaser}) für DIESEN Menschen — tief, persönlich, konkret, wie in einer echten Beratung.
+Lies das Chart durch genau diese Linse: ${t.lens}
+Nutze das ganze Bild aus den FAKTEN, im Dienst dieses Themas. Wichtig für dieses Thema:
+- Benenne die zentrale Spannung PRÄZISE am Chart (der exakte Aspekt, z. B. ein bestimmtes Quadrat), nicht vage.
+- Sag, wohin die Entwicklung geht und WANN im Leben sie greift — was reift früh, was erst spät.
+- Beziehe die Mondknoten ein: was sagen sie über Richtung und Bestimmung in diesem Bereich?
+Kein Satz darf in jedes Horoskop passen. Absätze durch Leerzeilen trennen.`;
 }
 
 /**
@@ -150,6 +151,7 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
             cacheKey: `theme:${t.key}:${shortHash(chartHash())}`,
             context: chartContext(),
             task: fiveLevelTask(t),
+            long: true,
           },
         });
         if (!cancelled) setText(data?.text || "");
