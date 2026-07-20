@@ -1,13 +1,27 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ChevronRight, CircleDot, Hexagon, Info } from "lucide-react";
-import { THEMES, themeByKey } from "@/lib/themes";
+import { ArrowLeft, ChevronRight, CircleDot, Hexagon, Info, Loader2, Sparkles } from "lucide-react";
+import { THEMES, themeByKey, type LifeTheme } from "@/lib/themes";
 import { CHART, PROFILE, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
 import { resolveSheet } from "@/lib/sheets";
 import { computeHumanDesign } from "@/lib/humandesign";
+import { chartContext, chartHash, shortHash } from "@/lib/factsContext";
+import { supabase } from "@/lib/supabase";
 import type { BirthInput } from "@/lib/compute";
 import { Reveal } from "@/components/Reveal";
 import { useApp, DEMO_BIRTH } from "@/store/useApp";
+
+/** The 5-level dramaturgy prompt (per the product briefing) for a life-theme. */
+function fiveLevelTask(t: LifeTheme): string {
+  return `Schreibe eine persönliche Deutung zum Lebensthema „${t.label}" (${t.teaser}) — als EIN zusammenhängender Fließtext in fünf Ebenen, KEINE Liste, KEINE Aufzählung von Positionen, KEINE Zwischenüberschriften und keine Nummern im Text:
+1) Der rote Faden zuerst: ein Einstieg, der sofort etwas Wahres über die Person sagt (über SIE, nicht über die Planeten).
+2) Die Kräfte, narrativ: nur die für dieses Thema relevanten Stellungen aus den Fakten, als Geschichte verwoben. Fachbegriffe nur mit sofortiger Übersetzung.
+3) Die Spannung: der zentrale innere Konflikt oder die Falle, präzise am Chart benannt (der exakte Aspekt, nicht „manchmal streng zu dir").
+4) Die Richtung: was daraus folgt, wohin die Entwicklung geht.
+5) Die persönliche Wahrheit: ein Schlusssatz, der bleibt und die Person meint, nicht ihr Sternzeichen.
+Linse für dieses Thema: ${t.lens}
+Sprich mit „du", warm, ehrlich, konkret. 5–8 Absätze, durch Leerzeilen getrennt.`;
+}
 
 /**
  * Themen-Hub — the calm home (per the product briefing). Instead of dumping the
@@ -106,11 +120,40 @@ export function ThemenHub() {
   );
 }
 
-/** Focused, theme-lensed reading — the theme's foregrounded placements only. */
+/** Focused, theme-lensed reading — the 5-level dramaturgy (Gemini, cached) plus
+ *  the foregrounded placements as "the forces in detail". */
 function ThemeReading({ themeKey }: { themeKey: string }) {
   const closeTheme = useApp((s) => s.closeTheme);
   const openInfo = useApp((s) => s.openInfo);
+  const chartVersion = useApp((s) => s.chartVersion);
   const t = themeByKey(themeKey);
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!t) return;
+    let cancelled = false;
+    setText(""); setLoading(true);
+    (async () => {
+      try {
+        const { data } = await supabase.functions.invoke("generate", {
+          body: {
+            chart_hash: chartHash(),
+            cacheKey: `theme:${t.key}:${shortHash(chartHash())}`,
+            context: chartContext(),
+            task: fiveLevelTask(t),
+          },
+        });
+        if (!cancelled) setText(data?.text || "");
+      } catch {
+        /* leave the detail cards as the reading */
+      }
+      if (!cancelled) setLoading(false);
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [themeKey, chartVersion]);
+
   if (!t) return null;
 
   const items = t.planets
@@ -124,6 +167,8 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
     })
     .filter(Boolean) as { key: string; name: string; glyph: string; pos: string; body: string }[];
 
+  const paras = text.split(/\n\n+/).map((s) => s.trim()).filter(Boolean);
+
   return (
     <div className="animate-slideUp px-6 pb-40 pt-[calc(env(safe-area-inset-top,0px)+2rem)] lg:px-10 lg:pt-10">
       <div className="mx-auto w-full max-w-[720px]">
@@ -131,7 +176,7 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
           <ArrowLeft className="h-4 w-4" /> Themen
         </button>
 
-        <header className="mb-9 flex items-center gap-4">
+        <header className="mb-8 flex items-center gap-4">
           <span
             className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full font-glyph text-[32px]"
             style={{ color: t.accent, background: `radial-gradient(circle, ${t.accent}2e, transparent 72%)`, boxShadow: `0 0 30px -6px ${t.accent}88`, border: `1px solid ${t.accent}3a` }}
@@ -144,26 +189,47 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
           </div>
         </header>
 
-        <div className="space-y-4">
-          {items.map((it, i) => (
-            <Reveal key={it.key} i={i}>
-              <button
-                onClick={() => openInfo({ kind: "planet", key: it.key })}
-                className="vela-tile vela-tile-hover relative w-full overflow-hidden p-6 text-left backdrop-blur-xl"
-              >
-                <div className="relative flex items-center gap-3">
-                  <span className="font-glyph text-[22px]" style={{ color: t.accent }}>{it.glyph}</span>
-                  <div className="min-w-0">
-                    <div className="font-cinzel text-[21px] font-light leading-tight text-white">{it.name}</div>
-                    <div className="mt-0.5 font-body text-[12.5px] text-txt-3">{it.pos}</div>
-                  </div>
-                </div>
-                {it.body && <p className="relative mt-3.5 font-body text-[16px] leading-relaxed text-txt-2">{it.body}</p>}
-                <span className="relative mt-3 inline-block font-body text-[13px] text-[#8fe4f5]">Mehr dazu →</span>
-              </button>
-            </Reveal>
-          ))}
-        </div>
+        {/* the reading — 5-level dramaturgy, flowing */}
+        {loading ? (
+          <div className="flex items-center gap-2.5 py-6 font-body text-[15px] text-txt-2">
+            <Loader2 className="h-4.5 w-4.5 animate-spin text-[#8fe4f5]" /> Vela liest dein Bild durch die Linse „{t.label}" …
+          </div>
+        ) : paras.length ? (
+          <div className="mb-4">
+            {paras.map((p, i) => (
+              <Reveal key={i} i={i}>
+                <p className={`font-body text-[17.5px] leading-[1.75] text-txt-2 ${i === 0 ? "text-[19px] font-medium text-white" : "mt-5"}`}>{p}</p>
+              </Reveal>
+            ))}
+          </div>
+        ) : null}
+
+        {/* the forces in detail */}
+        {items.length > 0 && (
+          <div className="mt-10">
+            <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Die Kräfte in deinem Bild</div>
+            <div className="space-y-4">
+              {items.map((it, i) => (
+                <Reveal key={it.key} i={i}>
+                  <button
+                    onClick={() => openInfo({ kind: "planet", key: it.key })}
+                    className="vela-tile vela-tile-hover relative w-full overflow-hidden p-6 text-left backdrop-blur-xl"
+                  >
+                    <div className="relative flex items-center gap-3">
+                      <span className="font-glyph text-[22px]" style={{ color: t.accent }}>{it.glyph}</span>
+                      <div className="min-w-0">
+                        <div className="font-cinzel text-[21px] font-light leading-tight text-white">{it.name}</div>
+                        <div className="mt-0.5 font-body text-[12.5px] text-txt-3">{it.pos}</div>
+                      </div>
+                    </div>
+                    {it.body && <p className="relative mt-3.5 font-body text-[16px] leading-relaxed text-txt-2">{it.body}</p>}
+                    <span className="relative mt-3 inline-block font-body text-[13px] text-[#8fe4f5]">Mehr dazu →</span>
+                  </button>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        )}
 
         <p className="mt-8 rounded-[20px] border border-white/8 bg-white/[0.03] p-5 font-body text-[14px] leading-relaxed text-txt-3">
           Frag Vela unten alles zu diesem Thema — sie liest es aus deinem Chart.
