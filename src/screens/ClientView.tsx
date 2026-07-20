@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Loader2, Moon } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { applyChart, signName } from "@/lib/data";
+import { searchPlace } from "@/lib/geocode";
 import { applyResolvedInterpretation } from "@/lib/interpret";
 import { useApp } from "@/store/useApp";
 import { MainApp } from "@/MainApp";
@@ -15,6 +16,7 @@ export function ClientView({ token }: { token: string }) {
   const [status, setStatus] = useState<Status>("loading");
   const setViewerMode = useApp((s) => s.setViewerMode);
   const bumpChart = useApp((s) => s.bumpChart);
+  const setHdBirth = useApp((s) => s.setHdBirth);
 
   useEffect(() => {
     let cancelled = false;
@@ -48,6 +50,18 @@ export function ClientView({ token }: { token: string }) {
         applyResolvedInterpretation(data.interpretation, data.verification ?? null);
         bumpChart();
         setStatus("ready");
+        // enable the offline Human Design computation for this client — prefer
+        // exact coords from the link, else geocode the birth place (HD only
+        // needs the location for the timezone, so this is accurate enough).
+        const bd = String(data.client.birth_date);
+        if (data.client.lat != null && data.client.lon != null) {
+          setHdBirth({ date: bd, time, lat: Number(data.client.lat), lon: Number(data.client.lon) });
+        } else if (data.client.birth_place) {
+          try {
+            const places = await searchPlace(String(data.client.birth_place));
+            if (!cancelled && places[0]) setHdBirth({ date: bd, time, lat: places[0].lat, lon: places[0].lon });
+          } catch { /* HD stays hidden */ }
+        }
       } catch {
         if (!cancelled) setStatus("error");
       }
@@ -55,8 +69,9 @@ export function ClientView({ token }: { token: string }) {
     return () => {
       cancelled = true;
       setViewerMode(false);
+      setHdBirth(null);
     };
-  }, [token, setViewerMode, bumpChart]);
+  }, [token, setViewerMode, bumpChart, setHdBirth]);
 
   if (status === "ready") return <MainApp />;
 

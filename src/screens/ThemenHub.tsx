@@ -21,7 +21,8 @@ export function ThemenHub() {
   const activeTheme = useApp((s) => s.activeTheme);
   const viewer = useApp((s) => s.viewerMode);
   const savedBirth = useApp((s) => s.savedBirth);
-  const birth: BirthInput | null = savedBirth ?? (IS_DEMO ? DEMO_BIRTH : null);
+  const hdBirth = useApp((s) => s.hdBirth);
+  const birth: BirthInput | null = savedBirth ?? hdBirth ?? (IS_DEMO ? DEMO_BIRTH : null);
 
   if (activeTheme === "__hd__" && birth) return <HDView birth={birth} />;
   if (activeTheme) return <ThemeReading themeKey={activeTheme} />;

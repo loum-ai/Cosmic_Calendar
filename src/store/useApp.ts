@@ -121,6 +121,10 @@ export interface AppState {
   chartVersion: number;
   savedBirth: SavedBirth | null;
   applyComputed: (b: SavedBirth) => void;
+  // birth used for the (offline) Human Design computation — set in viewer mode
+  // from the resolved client link, so a client's HD is computed too.
+  hdBirth: BirthInput | null;
+  setHdBirth: (b: BirthInput | null) => void;
 
   // real AI interpretation (Gemini, via edge functions) for the active chart
   aiLoading: boolean;
@@ -254,6 +258,9 @@ export const useApp = create<AppState>((set, get) => ({
     clearInterpretation();
     set((s) => ({ savedBirth: b, chartVersion: s.chartVersion + 1, onboardingOpen: false, aiReady: false, aiError: null }));
   },
+
+  hdBirth: null,
+  setHdBirth: (b) => set({ hdBirth: b }),
 
   // viewer (client-link) mode: hides admin/onboarding affordances
   viewerMode: false,
