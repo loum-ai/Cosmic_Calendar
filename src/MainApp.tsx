@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
+import { IS_DEMO } from "@/lib/data";
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { TabBar } from "@/components/TabBar";
 import { Composer } from "@/components/Composer";
@@ -36,7 +38,20 @@ export function MainApp() {
   const chartVersion = useApp((s) => s.chartVersion);
   const viewer = useApp((s) => s.viewerMode);
   const printOpen = useApp((s) => s.printOpen);
+  const refreshInterpretation = useApp((s) => s.refreshInterpretation);
+  const aiReady = useApp((s) => s.aiReady);
+  const aiLoading = useApp((s) => s.aiLoading);
+  const bumpChart = useApp((s) => s.bumpChart);
   const Screen = SCREENS[tab];
+
+  // Demo: load the REAL Gemini interpretation so the sample shows specific,
+  // generated readings (not the bundled placeholders). Client links already
+  // carry their published interpretation.
+  useEffect(() => {
+    if (IS_DEMO && !viewer && !aiReady && !aiLoading) {
+      refreshInterpretation().then(() => bumpChart());
+    }
+  }, [viewer, aiReady, aiLoading, refreshInterpretation, bumpChart]);
 
   return (
     <div className="relative min-h-dvh w-full overflow-x-hidden text-ink">
