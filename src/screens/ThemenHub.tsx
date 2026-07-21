@@ -17,13 +17,14 @@ import { useApp, DEMO_BIRTH } from "@/store/useApp";
  *  5-level dramaturgy and the anti-generic rules live in the generate function's
  *  SYSTEM_LONG (long: true). */
 function fiveLevelTask(t: LifeTheme): string {
-  return `Deute das Lebensthema „${t.label}" (${t.teaser}) für DIESEN Menschen — tief, persönlich, konkret, wie in einer echten Beratung.
+  return `Deute das Lebensthema „${t.label}" (${t.teaser}) für DIESEN Menschen — tief, persönlich, konkret und vor allem NACHVOLLZIEHBAR, wie in einer echten Beratung.
 Lies das Chart durch genau diese Linse: ${t.lens}
-Nutze das ganze Bild aus den FAKTEN, im Dienst dieses Themas. Wichtig für dieses Thema:
-- Benenne die zentrale Spannung PRÄZISE am Chart (der exakte Aspekt, z. B. ein bestimmtes Quadrat), nicht vage.
-- Sag, wohin die Entwicklung geht und WANN im Leben sie greift — was reift früh, was erst spät.
-- Beziehe die Mondknoten ein: was sagen sie über Richtung und Bestimmung in diesem Bereich?
-Kein Satz darf in jedes Horoskop passen. Absätze durch Leerzeilen trennen.`;
+Nutze das ganze Bild aus den FAKTEN, im Dienst dieses Themas. Beantworte dabei ausdrücklich die Fragen, die dieser Mensch WIRKLICH hat — in verwobener Sprache, ohne Zwischenüberschriften, ohne Aufzählung:
+- WARUM / ZUSAMMENHANG: Mach nachvollziehbar, warum genau diese Stellungen für dieses Thema stehen — z. B. warum ein bestimmtes Haus oder ein Planet hier zählt. Setze nichts voraus, erkläre die Verbindung in einem Satz, statt sie nur zu behaupten (der Mensch soll verstehen, WIESO).
+- SPANNUNG: Benenne die zentrale Spannung PRÄZISE am Chart (der exakte Aspekt, z. B. ein bestimmtes Quadrat), nicht vage.
+- ENTWICKLUNG: Sag klar, WIE sich dieser Mensch in diesem Bereich entwickelt — was reift früh, was erst spät, was ist der nächste Schritt. Die Mondknoten als Richtung.
+- KONKRET & GREIFBAR: Werde anschaulich — wie zeigt sich das im echten Leben? Beim Thema Berufung z. B. welche ART von Tätigkeit, Rolle und Umfeld zu genau diesem Menschen passt (echte, konkrete Beispiele nennen), bei anderen Themen entsprechend konkret. Keine Abstraktion ohne Beispiel.
+Kein Satz darf in jedes Horoskop passen. Warm, klar, ehrlich. Absätze durch Leerzeilen trennen.`;
 }
 
 /**
@@ -186,7 +187,7 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
         const { data } = await supabase.functions.invoke("generate", {
           body: {
             chart_hash: chartHash(),
-            cacheKey: `theme:${t.key}:${shortHash(chartHash())}`,
+            cacheKey: `theme:${t.key}:v2:${shortHash(chartHash())}`,
             context: chartContext(),
             task: fiveLevelTask(t),
             long: true,
