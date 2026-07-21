@@ -2,6 +2,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { useApp } from "@/store/useApp";
 import { resolveSheet } from "@/lib/sheets";
+import { subjectTask, useReading, storedReading } from "@/lib/genReadings";
+import { IS_DEMO } from "@/lib/data";
 import { EASE } from "@/lib/tokens";
 
 /**
@@ -14,6 +16,12 @@ export function DetailView() {
   const close = useApp((s) => s.closeDetail);
   const openInfo = useApp((s) => s.openInfo);
   const content = detail ? resolveSheet(detail) : null;
+  // "Bei dir" is a REAL reading: the stored cockpit interpretation if present,
+  // else generated live with the interpretive craft — template only as fallback.
+  const st = subjectTask(detail);
+  const stored = detail ? storedReading(detail) : null;
+  const { text: genText, loading: genLoading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !stored && !IS_DEMO);
+  const personal = stored || genText;
 
   return (
     <AnimatePresence>
@@ -51,7 +59,17 @@ export function DetailView() {
               {content.sections.map((sec) => (
                 <div key={sec.label} className={sec.accent ? "border-l-2 border-violet/45 pl-5" : ""}>
                   <div className="mb-2.5 font-mono text-[11px] uppercase tracking-[0.16em] text-violet/65">{sec.label}</div>
-                  <p className="max-w-[60ch] font-body text-[16.5px] leading-[1.72] text-[rgba(255,255,255,0.86)]">{sec.body}</p>
+                  {sec.accent && !personal && genLoading ? (
+                    <div className="max-w-[60ch] space-y-2.5 py-1">
+                      {[100, 92, 78].map((w, i) => (
+                        <div key={i} className="h-3 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="max-w-[60ch] font-body text-[16.5px] leading-[1.72] text-[rgba(255,255,255,0.86)]">
+                      {sec.accent ? personal || sec.body : sec.body}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>

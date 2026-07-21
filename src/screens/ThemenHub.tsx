@@ -8,6 +8,7 @@ import { CHART, PROFILE, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
 import { resolveSheet } from "@/lib/sheets";
 import { computeHumanDesign } from "@/lib/humandesign";
 import { chartContext, chartHash, shortHash } from "@/lib/factsContext";
+import { subjectTask, useReading, storedReading } from "@/lib/genReadings";
 import { aiPortrait } from "@/lib/interpret";
 import { retry } from "@/lib/retry";
 import { supabase, AI_MODEL } from "@/lib/supabase";
@@ -342,20 +343,7 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
             <div className="space-y-4">
               {items.map((it, i) => (
                 <Reveal key={it.key} i={i}>
-                  <button
-                    onClick={() => openInfo({ kind: "planet", key: it.key })}
-                    className="vela-tile vela-tile-hover relative w-full overflow-hidden p-6 text-left backdrop-blur-xl"
-                  >
-                    <div className="relative flex items-center gap-3">
-                      <span className="font-glyph text-[22px]" style={{ color: t.accent }}>{it.glyph}</span>
-                      <div className="min-w-0">
-                        <div className="font-cinzel text-[21px] font-light leading-tight text-white">{it.name}</div>
-                        <div className="mt-0.5 font-body text-[12.5px] text-txt-3">{it.pos}</div>
-                      </div>
-                    </div>
-                    {it.body && <p className="relative mt-3.5 font-body text-[16px] leading-relaxed text-txt-2">{it.body}</p>}
-                    <span className="relative mt-3 inline-block font-body text-[13px] text-[#8fe4f5]">Mehr dazu →</span>
-                  </button>
+                  <ForceCard it={it} accent={t.accent} onOpen={() => openInfo({ kind: "planet", key: it.key })} />
                 </Reveal>
               ))}
             </div>
@@ -373,6 +361,38 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
 
 function MotionSpacer() {
   return <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-2" />;
+}
+
+/** One "force" card on a theme page. The body is a REAL reading — the stored
+ *  cockpit interpretation if there is one, else generated live with the full
+ *  interpretive craft (same viewKey as the tap-sheet, so both share a cache).
+ *  The old template line only shows as a last-resort fallback. */
+function ForceCard({ it, accent, onOpen }: { it: { key: string; name: string; glyph: string; pos: string; body: string }; accent: string; onOpen: () => void }) {
+  const st = subjectTask({ kind: "planet", key: it.key });
+  const stored = storedReading({ kind: "planet", key: it.key });
+  const { text, loading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !stored && !IS_DEMO);
+  const body = stored || text || (loading ? "" : it.body);
+  return (
+    <button onClick={onOpen} className="vela-tile vela-tile-hover relative w-full overflow-hidden p-6 text-left backdrop-blur-xl">
+      <div className="relative flex items-center gap-3">
+        <span className="font-glyph text-[22px]" style={{ color: accent }}>{it.glyph}</span>
+        <div className="min-w-0">
+          <div className="font-cinzel text-[21px] font-light leading-tight text-white">{it.name}</div>
+          <div className="mt-0.5 font-body text-[12.5px] text-txt-3">{it.pos}</div>
+        </div>
+      </div>
+      {body ? (
+        <p className="relative mt-3.5 font-body text-[16px] leading-relaxed text-txt-2">{body}</p>
+      ) : loading ? (
+        <div className="relative mt-4 space-y-2.5">
+          {[100, 90, 74].map((w, i) => (
+            <div key={i} className="h-3 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
+          ))}
+        </div>
+      ) : null}
+      <span className="relative mt-3 inline-block font-body text-[13px] text-[#8fe4f5]">Mehr dazu →</span>
+    </button>
+  );
 }
 
 /** One accordion section of a theme reading ("## Titel" blocks) — context in
