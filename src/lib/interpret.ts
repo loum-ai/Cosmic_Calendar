@@ -7,6 +7,7 @@
  * from the client compute; this only upgrades the *texts*.
  */
 import { supabase } from "./supabase";
+import { retry } from "./retry";
 import { signName } from "./data";
 import type { BirthInput } from "./compute";
 
@@ -100,8 +101,13 @@ export async function ensureInterpretation(birth: BirthInput, name: string): Pro
     aspects: aspects.map((a: any) => ({ a: a.a, b: a.b, type: a.type, orb: a.orb })),
   };
 
-  // 3) grounded German interpretation
-  const interp = await supabase.functions.invoke("interpret", { body: { facts } });
+  // 3) grounded German interpretation — retry while Gemini is overloaded
+  //    (503 → fallback), so a transient spike doesn't lock in generic text.
+  const interp = await retry(
+    () => supabase.functions.invoke("interpret", { body: { facts } }),
+    (r) => !r.error && !!r.data?.interpretation && !r.data?.fallback,
+    { tries: 4, delayMs: 2000 },
+  );
   if (interp.error || !interp.data?.interpretation) {
     return { ok: false, cached: false, error: interp.error?.message || "interpret failed" };
   }

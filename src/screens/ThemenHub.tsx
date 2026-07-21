@@ -8,6 +8,7 @@ import { resolveSheet } from "@/lib/sheets";
 import { computeHumanDesign } from "@/lib/humandesign";
 import { chartContext, chartHash, shortHash } from "@/lib/factsContext";
 import { aiPortrait } from "@/lib/interpret";
+import { retry } from "@/lib/retry";
 import { supabase } from "@/lib/supabase";
 import type { BirthInput } from "@/lib/compute";
 import { Reveal } from "@/components/Reveal";
@@ -184,15 +185,21 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
     setText(""); setLoading(true);
     (async () => {
       try {
-        const { data } = await supabase.functions.invoke("generate", {
-          body: {
-            chart_hash: chartHash(),
-            cacheKey: `theme:${t.key}:v2:${shortHash(chartHash())}`,
-            context: chartContext(),
-            task: fiveLevelTask(t),
-            long: true,
-          },
-        });
+        // Retry while Gemini is overloaded (503 → empty), so a transient
+        // "high demand" spike doesn't leave the theme without its deep reading.
+        const { data } = await retry(
+          () => supabase.functions.invoke("generate", {
+            body: {
+              chart_hash: chartHash(),
+              cacheKey: `theme:${t.key}:v2:${shortHash(chartHash())}`,
+              context: chartContext(),
+              task: fiveLevelTask(t),
+              long: true,
+            },
+          }),
+          (r) => !!r.data?.text,
+          { tries: 4, delayMs: 1800 },
+        );
         if (!cancelled) setText(data?.text || "");
       } catch {
         /* leave the detail cards as the reading */

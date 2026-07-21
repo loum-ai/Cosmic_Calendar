@@ -2,6 +2,17 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Loader2, Copy, ExternalLink, Sparkles, LogOut, Check, ShieldCheck, X, ChevronRight, Pencil, Power, Trash2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { searchPlace, type Place } from "@/lib/geocode";
+import { retry } from "@/lib/retry";
+
+/** Invoke interpret, retrying while Gemini is overloaded (503 → fallback).
+ *  ok = a real AI reading came back (not the basis-komposition fallback). */
+function interpretWithRetry(client_id: string, publish: boolean, onRetry?: (a: number) => void) {
+  return retry(
+    () => supabase.functions.invoke("interpret", { body: { client_id, publish } }),
+    (r) => !r.error && !!r.data?.ok && !r.data?.fallback,
+    { tries: 4, delayMs: 2500, onRetry },
+  );
+}
 
 interface ClientRow { id: string; name: string; birth_date: string; birth_time?: string; birth_place?: string; lat?: number; lon?: number; access_token: string; created_at: string; status?: string; published_at?: string }
 
@@ -213,7 +224,7 @@ function Cockpit({ email }: { email: string }) {
         const comp = await supabase.functions.invoke("compute-chart", { body: { client_id: rc.id } });
         if (comp.error || !comp.data?.ok) throw new Error(comp.error?.message || "Berechnung fehlgeschlagen");
         setWorking("Deutung neu erstellen (Gemini) …");
-        const intp = await supabase.functions.invoke("interpret", { body: { client_id: rc.id, publish: false } });
+        const intp = await interpretWithRetry(rc.id, false, (a) => setWorking(`Gemini ist gerade ausgelastet — neuer Versuch (${a}/3) …`));
         if (intp.error || !intp.data?.ok) throw new Error(intp.error?.message || "Deutung fehlgeschlagen");
       }
       setEditing(false);
@@ -263,7 +274,7 @@ function Cockpit({ email }: { email: string }) {
       if (comp.error || !comp.data?.ok) throw new Error(comp.error?.message || "Berechnung fehlgeschlagen");
 
       setStep("Deutung als Entwurf schreiben (Gemini) …");
-      const intp = await supabase.functions.invoke("interpret", { body: { client_id: client.id, publish: false } });
+      const intp = await interpretWithRetry(client.id, false, (a) => setStep(`Gemini ist gerade ausgelastet — neuer Versuch (${a}/3) …`));
       if (intp.error || !intp.data?.ok) throw new Error(intp.error?.message || "Deutung fehlgeschlagen");
 
       setCreated({ name, link: linkFor(client.access_token) });
