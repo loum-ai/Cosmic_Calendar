@@ -9,7 +9,12 @@ const singleFile = process.env.SINGLEFILE === "1";
 // GitHub Pages serves a project repo under /<repo>/ — set base accordingly.
 const ghPages = process.env.GHPAGES === "1";
 
+// Build stamp — shown in the app footer so "which version am I seeing?"
+// is answerable in two seconds, on any device.
+const buildId = new Date().toISOString().slice(0, 16).replace("T", " ") + " UTC";
+
 export default defineConfig({
+  define: { __BUILD_ID__: JSON.stringify(buildId) },
   base: ghPages ? "/Cosmic_Calendar/" : singleFile ? "./" : "/",
   plugins: [react(), ...(singleFile ? [viteSingleFile()] : [])],
   // inline all assets (incl. webp images) into the single HTML for offline preview
