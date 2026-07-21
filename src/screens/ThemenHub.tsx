@@ -98,12 +98,17 @@ export function ThemenHub() {
   // Start with the QUESTION, not the structure: on a client's first visit ask
   // "Was beschäftigt dich gerade?" — picking a theme routes straight into it,
   // or they skip directly to their blueprint. Asked once (localStorage).
+  // Fail OPEN: if storage is unavailable, SHOW the question (worst case a
+  // returning visitor sees it again — never the other way around). Session-
+  // scoped on purpose: "Was beschäftigt dich GERADE?" is a fresh question on
+  // every visit and routes returning clients by their current concern.
   const entryKey = `vela_entryq_${shortHash(chartHash())}`;
   const [entryDone, setEntryDone] = useState<boolean>(() => {
-    try { return !viewer || localStorage.getItem(entryKey) === "1"; } catch { return true; }
+    if (!viewer) return true;
+    try { return sessionStorage.getItem(entryKey) === "1"; } catch { return false; }
   });
   const finishEntry = (themeKey?: string) => {
-    try { localStorage.setItem(entryKey, "1"); } catch { /* ignore */ }
+    try { sessionStorage.setItem(entryKey, "1"); } catch { /* ignore */ }
     setEntryDone(true);
     if (themeKey) openTheme(themeKey);
   };
@@ -120,7 +125,7 @@ export function ThemenHub() {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center px-6 py-16 lg:px-10">
         <div className="w-full max-w-[640px]">
-          <div className="vela-wordmark mb-4 text-[12px]">Vela</div>
+          <div className="vela-wordmark mb-4 text-[12px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
           <h1 className="font-cinzel text-[34px] font-light leading-[1.12] text-white [text-shadow:0_0_30px_rgba(79,214,239,0.3)] lg:text-[46px]">
             Was beschäftigt dich gerade, {first}?
           </h1>
@@ -163,7 +168,7 @@ export function ThemenHub() {
     <div className="animate-slideUp px-6 pb-40 pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] lg:px-10 lg:pt-12">
       <div className="mx-auto w-full max-w-[860px]">
         <header className="mb-10">
-          <div className="vela-wordmark mb-3 text-[12px]">Vela</div>
+          <div className="vela-wordmark mb-3 text-[12px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
           <h1 className="font-cinzel text-[40px] font-light leading-[1.05] tracking-[0.01em] text-white [text-shadow:0_0_30px_rgba(79,214,239,0.3)] lg:text-[58px]">
             {viewer ? `Willkommen, ${first}` : first}
           </h1>
