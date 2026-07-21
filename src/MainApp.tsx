@@ -69,7 +69,7 @@ export function MainApp() {
       <SheetHost />
       <DetailView />
       {!viewer && <Onboarding />}
-      <TutorialOverlay />
+      {!viewer && <TutorialOverlay />}
       {printOpen && <PrintFlow />}
       <div className="vela-grain" />
     </div>
