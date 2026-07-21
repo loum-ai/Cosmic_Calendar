@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Loader2, Copy, ExternalLink, Sparkles, LogOut, Check, ShieldCheck, X, ChevronRight, Pencil, Power, Trash2 } from "lucide-react";
+import { Loader2, Copy, ExternalLink, Sparkles, LogOut, Check, ShieldCheck, X, ChevronRight, Pencil, Power, Trash2, RefreshCw } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { searchPlace, type Place } from "@/lib/geocode";
 import { retry } from "@/lib/retry";
@@ -173,6 +173,27 @@ function Cockpit({ email }: { email: string }) {
     setPublishing(false);
     setReview(null);
     await loadClients();
+  }
+
+  // Re-run interpret for an existing client (with retry). Needed because
+  // "Aktualisieren" only flips status — this actually regenerates the reading,
+  // e.g. to replace a Gemini-overload fallback with the real portrait.
+  async function regenerateReading() {
+    if (!review) return;
+    const rid = review.id, rname = review.name;
+    setErr(null); setPublishing(true);
+    setWorking("Deutung neu erzeugen (Gemini) …");
+    try {
+      const keepPublished = reviewData?.status === "published";
+      const intp = await interpretWithRetry(rid, keepPublished, (a) => setWorking(`Gemini ist gerade ausgelastet — neuer Versuch (${a}/3) …`));
+      if (intp.error || !intp.data?.ok) throw new Error(intp.error?.message || "Deutung fehlgeschlagen");
+      if (intp.data?.fallback) setErr("Gemini war gerade überlastet — es wurde eine einfache Version gespeichert. Bitte in ein paar Minuten nochmal neu erzeugen.");
+    } catch (e: any) {
+      setErr(e?.message || "Neu erzeugen fehlgeschlagen.");
+    } finally {
+      setWorking(null); setPublishing(false);
+    }
+    await openReview({ id: rid, name: rname } as ClientRow);
   }
 
   const setSummary = (v: string) => setEditDraft((d: any) => ({ ...d, summary: v }));
@@ -511,7 +532,13 @@ function Cockpit({ email }: { email: string }) {
                     ))}
                   </div>
 
-                  <div className="mt-5 flex gap-2">
+                  <button onClick={regenerateReading} disabled={publishing || !!working}
+                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-[rgba(79,214,239,0.3)] px-4 py-3 font-body text-[13px] text-[#8fe4f5] hover:bg-[rgba(79,214,239,0.08)] disabled:opacity-40">
+                    {working ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                    {working ? working : "Deutung neu erzeugen (mit Portrait)"}
+                  </button>
+
+                  <div className="mt-3 flex gap-2">
                     <button onClick={saveDraft} disabled={publishing} className="flex items-center justify-center gap-1.5 rounded-2xl border border-line px-4 py-3 font-body text-[13px] text-txt-2 hover:bg-surface-2 disabled:opacity-40">
                       {savedMsg ? <Check className="h-4 w-4 text-mint" /> : null} {savedMsg ? "Gespeichert" : "Entwurf speichern"}
                     </button>
