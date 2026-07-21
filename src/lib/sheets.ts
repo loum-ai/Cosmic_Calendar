@@ -10,6 +10,7 @@ import {
   CHART,
   HOUSE,
   HOUSEWHAT,
+  HOUSEWHY,
   IS_DEMO,
   NODES,
   PINFO,
@@ -101,6 +102,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       sections: [
         { label: "Was — der Planet", body: info.what },
         { label: `Wie — ${p.name} in ${signName(p.lon)}`, body: aiSign(p.key) || (IS_DEMO && READINGS[p.key]?.sign) || SIGNWHAT[si] },
+        { label: `Warum — das ${h}. Haus`, body: HOUSEWHY[h - 1] },
         { label: `Wo — ${h}. Haus · ${HOUSE[h - 1]}`, body: aiHouse(p.key) || (IS_DEMO && READINGS[p.key]?.house) || HOUSEWHAT[h - 1] },
         { label: "Bei dir", body: p.txt || `${THEME[p.key] ?? p.name} drückt sich bei dir über ${signName(p.lon)} im ${h}. Haus aus — dem Bereich „${HOUSE[h - 1]}". ${SIGNWHAT[si] ?? ""} Genau diese Färbung bringst du in dieses Lebensthema ein.`, accent: MINT },
       ],
@@ -149,6 +151,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       color: "#c4a6ff",
       sections: [
         { label: "Was ist das?", body: HOUSEWHAT[h - 1] },
+        { label: "Warum dieses Haus?", body: HOUSEWHY[h - 1] },
         {
           label: "Bei dir",
           body: ps.length

@@ -104,6 +104,24 @@ export const SIGNWHAT = ["Widder ist mutig, direkt und voller Tatendrang — fä
 
 export const HOUSEWHAT = ["Wie du wirkst und auftrittst — dein erster Eindruck.", "Geld, Besitz und was dir wirklich wertvoll ist.", "Reden, Lernen, Alltag und nahe Kontakte.", "Zuhause, Familie und woher du kommst.", "Kreativität, Spiel, Romantik und Selbstausdruck.", "Arbeit, Gewohnheiten und Gesundheit.", "Partnerschaft und enge Beziehungen auf Augenhöhe.", "Tiefe Bindung, Wandel und gemeinsame Werte.", "Reisen, Sinn, Glauben und der weite Horizont.", "Beruf, Berufung und was du in der Welt erreichst.", "Freunde, Gruppen und Zukunftsträume.", "Rückzug, Innenwelt und das Unbewusste."];
 
+// Das PRINZIP hinter jedem Haus — die Logik des Horoskop-Kreises. Damit ein
+// Mensch VERSTEHT, warum ein Haus seinen Lebensbereich bedeutet (das erklärt
+// astro.com nie). Wird in den „Warum"-Abschnitten der Tap-Sheets gezeigt.
+export const HOUSEWHY = [
+  "Es beginnt im Osten, wo zur Geburt die Sonne aufging — der Punkt des Anfangs. Deshalb steht das 1. Haus für deinen Start und dein Auftreten.",
+  "Direkt nach dem Ich kommt, was das Ich hat und braucht. Deshalb geht es im 2. Haus um Besitz, Geld und deine Werte.",
+  "Der nahe Umkreis — Geschwister, Nachbarn, kurze Wege. Deshalb steht das 3. Haus für Reden, Lernen und den Alltag.",
+  "Der tiefste Punkt des Kreises, die Wurzel ganz unten. Deshalb geht es im 4. Haus um Zuhause, Familie und Herkunft.",
+  "Was aus dir herausströmt und Freude macht. Deshalb steht das 5. Haus für Kreativität, Spiel, Liebe und Kinder.",
+  "Der Alltag, der dich trägt und den Körper fordert. Deshalb geht es im 6. Haus um Arbeit, Routine und Gesundheit.",
+  "Genau gegenüber dem Ich steht das Du. Deshalb steht das 7. Haus für Partnerschaft und das enge Gegenüber.",
+  "Wo zwei sich verbinden, geht es um Geteiltes und Tiefe. Deshalb steht das 8. Haus für Bindung, Wandel und Krise.",
+  "Über die Begegnung hinaus weitet sich der Blick in die Ferne. Deshalb geht es im 9. Haus um Sinn, Glauben und Horizont.",
+  "Der höchste Punkt am Himmel, für alle sichtbar (die Himmelsmitte). Deshalb steht das 10. Haus für Beruf, Rolle und Ansehen.",
+  "Über den Beruf hinaus das größere Wir. Deshalb steht das 11. Haus für Freunde, Gruppen und Zukunft.",
+  "Der letzte Raum vor dem neuen Anfang, im Verborgenen. Deshalb geht es im 12. Haus um Rückzug, Seele und das Unbewusste.",
+];
+
 export const THEME: Record<string, string> = {
   sun: "Dein Wesenskern",
   moon: "Dein Gefühl",
