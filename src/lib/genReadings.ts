@@ -68,25 +68,69 @@ export function useReading(viewKey: string, task: string, enabled = true) {
   return { text, loading: !!loading };
 }
 
+/** The interpretive craft applied to EVERY single-factor reading — the
+ *  mechanics that make a reading worth money instead of a textbook line:
+ *  synthesis, the explained WHY, one everyday anchor, gift AND shadow,
+ *  cross-references to tight aspects — in plain, warm German. */
+const CRAFT = `So deutest du (wichtig):
+- SYNTHESE: Verwebe alles zu EINER Aussage über den Menschen — nicht Planet, Zeichen und Haus einzeln erklären.
+- WARUM: Erkläre in einem Halbsatz, warum dieser Lebensbereich dazugehört (z. B. warum dieses Haus für dieses Thema steht) — setze nichts voraus.
+- ALLTAG: Nenne EINE konkrete Alltagssituation, in der sich das zeigt („Das merkst du, wenn …").
+- BEIDE SEITEN: Benenne die Gabe UND die Schattenseite im selben Atemzug — ehrlich, aber ermutigend.
+- ZUSAMMENSPIEL: Wenn ein enger Aspekt aus den FAKTEN diese Kraft deutlich färbt, nenne ihn kurz und sag, was er verändert.
+Sprache: kurze Sätze. Warmes, leicht verständliches Deutsch, Du-Form. Keine Fachbegriffe ohne sofortige Übersetzung. Kein Satz, der in jedes Horoskop passen könnte.`;
+
+const dignityHint = (p: { dignity?: string | null } | undefined): string => {
+  const d = p && (p as { dignity?: string | null }).dignity;
+  if (d === "domicile" || d === "exaltation") return " Diese Stellung ist besonders kraftvoll und stimmig — lass das im Ton mitschwingen (ohne Fachbegriff).";
+  if (d === "detriment" || d === "fall") return " Diese Stellung ist herausgefordert — die Kraft muss erst ihren eigenen Weg finden; deute das als Lernweg, nicht als Schwäche (ohne Fachbegriff).";
+  return "";
+};
+
 /** Build {viewKey, task} for an explainable subject so it can be generated. */
 export function subjectTask(d: SheetDescriptor | null): { viewKey: string; task: string } | null {
   if (!d) return null;
   if (d.kind === "planet") {
-    if (d.key === "asc") return { viewKey: "asc", task: `Deute den Aszendenten in ${signName(ASC)} für diese Person — wie wirkt sie nach außen, welchen ersten Eindruck macht sie? 3–4 Sätze, Du-Form, konkret.` };
+    if (d.key === "asc") {
+      return {
+        viewKey: "asc:v2",
+        task: `Deute den Aszendenten in ${signName(ASC)} für diese Person — EIN Absatz, 5–6 kurze Sätze.
+Der Aszendent ist das Zeichen, das bei der Geburt am Osthorizont aufstieg — deshalb steht er für den ersten Eindruck und das Auftreten. Sag, wie diese Person auf andere wirkt, bevor sie ein Wort sagt, und was hinter dieser Fassade oft übersehen wird.
+${CRAFT}`,
+      };
+    }
     const p = CHART.find((x) => x.key === d.key);
     if (!p) return null;
     const h = p.house ?? 1;
-    return { viewKey: `planet:${d.key}`, task: `Deute ${p.name} in ${signName(p.lon)}, ${h}. Haus (${HOUSE[h - 1]})${p.retro ? ", rückläufig," : ""} für diese Person. Was bedeutet diese Stellung konkret für sie? 3–4 Sätze, Du-Form.` };
+    return {
+      viewKey: `planet:${d.key}:v2`,
+      task: `Deute ${p.name} in ${signName(p.lon)} im ${h}. Haus (${HOUSE[h - 1]})${p.retro ? " — rückläufig: diese Kraft wirkt zuerst nach innen, die Person macht sie erst mit sich selbst aus —" : ""} für diese Person. EIN Absatz, 5–7 kurze Sätze.${dignityHint(p as { dignity?: string | null })}
+Zusätzlich ein Satz zur Reifung: Wirkt diese Kraft von Anfang an, oder wächst sie erst über die Jahre ins Volle?
+${CRAFT}`,
+    };
   }
   if (d.kind === "node") {
     const n = NODES.find((x) => x.key === d.key);
     if (!n) return null;
-    return { viewKey: `node:${d.key}`, task: `Deute ${n.name} in ${signName(n.lon)} für diese Person — welches Entwicklungsthema zeigt sich? 2–3 Sätze, Du-Form.` };
+    const isNorth = d.key === "node_n";
+    return {
+      viewKey: `node:${d.key}:v2`,
+      task: `Deute den ${n.name} in ${signName(n.lon)}${n.house ? `, ${n.house}. Haus (${HOUSE[n.house - 1]})` : ""} für diese Person — EIN Absatz, 4–6 kurze Sätze.
+${isNorth
+  ? "Der Nordknoten ist die gewählte Wachstumsrichtung — wohin sich dieses Leben entwickeln WILL. Es fühlt sich anfangs ungewohnt an, ist aber die Richtung, in der alles leichter wird. Bestimmung, kein Schicksal."
+  : "Der Südknoten ist das Vertraute und Mitgebrachte — Gaben, die schon da sind, aber auch die Komfortzone, in der man sich versteckt. Was davon darf diese Person würdigen und trotzdem langsam loslassen?"}
+${CRAFT}`,
+    };
   }
   if (d.kind === "aspect") {
     const a = computeAspects().find((x) => x.key === d.key);
     if (!a) return null;
-    return { viewKey: `aspect:${d.key}`, task: `Deute den Aspekt ${a.A.name} ${a.def.type} ${a.B.name} (Orbis ${a.orb.toFixed(1)}°) für diese Person. Wie spielt das in ihrem Leben zusammen? 3–4 Sätze, Du-Form, konkret.` };
+    return {
+      viewKey: `aspect:${d.key}:v2`,
+      task: `Deute den Aspekt ${a.A.name} ${a.def.type} ${a.B.name} (Orbis ${a.orb.toFixed(1)}° — ${a.orb < 2 ? "sehr eng, eine der prägendsten Verbindungen dieses Charts" : "spürbar im Alltag"}) für diese Person. EIN Absatz, 5–7 kurze Sätze.
+Sag, welche zwei Kräfte hier verbunden sind (in Alltagssprache), wie sich dieses Zusammenspiel von INNEN anfühlt, und woran die Person es in einer typischen Situation erkennt. Gabe und Falle dieser Verbindung im selben Atemzug — und was der reife Umgang damit ist.
+${CRAFT}`,
+    };
   }
   return null;
 }
