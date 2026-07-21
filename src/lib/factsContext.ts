@@ -1,4 +1,23 @@
 import { CHART, NODES, ASC, MC, HOUSE, signName, houseOf, computeAspects } from "./data";
+import { computeTransits } from "./transits";
+
+/** Current-sky facts: the tightest transits touching this natal chart today —
+ *  slow movers first (they carry the real developmental weight). Lets any
+ *  reading say what is happening for this person RIGHT NOW. */
+export function transitContext(): string {
+  try {
+    const SLOW = ["jupiter", "saturn", "uranus", "neptune", "pluto"];
+    const hits = computeTransits(CHART, new Date())
+      .sort((a, b) => (SLOW.includes(b.tKey) ? 1 : 0) - (SLOW.includes(a.tKey) ? 1 : 0) || a.orb - b.orb)
+      .slice(0, 10);
+    if (!hits.length) return "";
+    const lines = ["AKTUELLE TRANSITE (wo die Planeten HEUTE laufen und welche Punkte des Geburtsbilds sie gerade berühren — langsame Planeten wirken über Monate bis Jahre, je enger der Orbis, desto spürbarer):"];
+    for (const h of hits) lines.push(`- ${h.tName} (laufend${h.tRetro ? ", rückläufig" : ""}) ${h.type} ${h.nName} im Geburtsbild (Orbis ${h.orb.toFixed(1)}°)`);
+    return lines.join("\n");
+  } catch {
+    return "";
+  }
+}
 
 /** Rich, grounded facts string for the active chart — the context every
  *  generated reading is built on. Includes the ASPECTS (the tensions), so the
