@@ -60,9 +60,8 @@ ${COMMON_RULES}`,
     title: "Konkret: was zu dir passt",
     task: (t) => `Schreibe NUR den Abschnitt „Konkret: was zu dir passt" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen.
 Linse: ${t.lens}
-Viele Menschen SUCHEN in diesem Thema noch — sie haben ihre Richtung oder Passion nicht gefunden. Nimm diese Suche ernst, ohne Plattitüden.
-Beginne mit einem kurzen Absatz „Kompass": 2–3 Erkennungszeichen aus DIESEM Chart, woran diese Person merkt, dass etwas wirklich zu ihr passt (körperlich, emotional, im Alltag spürbar). Würdige dabei, was vermutlich schon da ist, statt alles Bisherige zu entwerten.
-Danach GENAU 4–6 nummerierte Punkte im Format „1. …" (jeder Punkt eine eigene Zeile, 2–3 Sätze). Denke BREIT über Lebenswelten — handwerklich-gestaltend, technisch, körperlich/draußen, führend-organisierend, beratend-menschlich, kaufmännisch, kreativ, heilend — und wähle die, die WIRKLICH aus diesem Chart folgen, nicht reflexhaft Schreibtisch- und Beraterberufe. Beim Thema Berufung heißt das konkrete Berufsfelder und Rollen; bei Beziehungsthemen konkrete Muster und Bedürfnisse; sinngemäß für jedes andere Thema.
+Viele Menschen SUCHEN in diesem Thema noch — sie haben ihre Richtung oder Passion nicht gefunden. Nimm diese Suche ernst, ohne Plattitüden, und würdige, was vermutlich schon da ist, statt Bisheriges zu entwerten.
+GENAU 4–6 nummerierte Punkte im Format „1. …" (jeder Punkt eine eigene Zeile, 2–3 Sätze). Denke BREIT über Lebenswelten — handwerklich-gestaltend, technisch, körperlich/draußen, führend-organisierend, beratend-menschlich, kaufmännisch, kreativ, heilend — und wähle die, die WIRKLICH aus diesem Chart folgen, nicht reflexhaft Schreibtisch- und Beraterberufe. Beim Thema Berufung heißt das konkrete Berufsfelder und Rollen; bei Beziehungsthemen konkrete Muster und Bedürfnisse; sinngemäß für jedes andere Thema.
 JEDER Punkt nennt: was es ist → WARUM es zu diesem Chart passt (die Stellung) → WORAUF es einzahlt (welches Bedürfnis oder Potenzial es nährt) → woran die Person im Alltag merkt, dass es trägt.
 ${COMMON_RULES}`,
   },
@@ -96,6 +95,19 @@ export function ThemenHub() {
   const portrait = aiPortrait();
   const portraitParas = portrait ? portrait.split(/\n\n+/).map((s) => s.trim()).filter(Boolean) : [];
 
+  // Start with the QUESTION, not the structure: on a client's first visit ask
+  // "Was beschäftigt dich gerade?" — picking a theme routes straight into it,
+  // or they skip directly to their blueprint. Asked once (localStorage).
+  const entryKey = `vela_entryq_${shortHash(chartHash())}`;
+  const [entryDone, setEntryDone] = useState<boolean>(() => {
+    try { return !viewer || localStorage.getItem(entryKey) === "1"; } catch { return true; }
+  });
+  const finishEntry = (themeKey?: string) => {
+    try { localStorage.setItem(entryKey, "1"); } catch { /* ignore */ }
+    setEntryDone(true);
+    if (themeKey) openTheme(themeKey);
+  };
+
   // land at the top when opening a theme / HD, or returning to the hub
   useEffect(() => { window.scrollTo({ top: 0 }); }, [activeTheme]);
 
@@ -103,6 +115,49 @@ export function ThemenHub() {
   if (activeTheme) return <ThemeReading themeKey={activeTheme} />;
 
   const first = String(PROFILE.name).split(" ")[0];
+
+  if (viewer && !entryDone) {
+    return (
+      <div className="flex min-h-dvh flex-col items-center justify-center px-6 py-16 lg:px-10">
+        <div className="w-full max-w-[640px]">
+          <div className="vela-wordmark mb-4 text-[12px]">Vela</div>
+          <h1 className="font-cinzel text-[34px] font-light leading-[1.12] text-white [text-shadow:0_0_30px_rgba(79,214,239,0.3)] lg:text-[46px]">
+            Was beschäftigt dich gerade, {first}?
+          </h1>
+          <p className="mt-3 font-body text-[15px] leading-relaxed text-txt-2">
+            Wähle, was dich bewegt — dein Geburtsbild wird genau durch diese Linse gelesen.
+          </p>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            {THEMES.map((th, i) => (
+              <Reveal key={th.key} i={i}>
+                <button
+                  onClick={() => finishEntry(th.key)}
+                  className="vela-tile vela-tile-hover flex w-full items-center gap-3.5 p-4 text-left backdrop-blur-xl"
+                >
+                  <span
+                    className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-glyph text-[21px]"
+                    style={{ color: th.accent, background: `radial-gradient(circle, ${th.accent}2b, transparent 72%)`, border: `1px solid ${th.accent}3a` }}
+                  >
+                    {th.glyph}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block font-cinzel text-[19px] font-light leading-tight text-white">{th.label}</span>
+                    <span className="mt-0.5 block truncate font-body text-[12.5px] text-txt-3">{th.teaser}</span>
+                  </span>
+                </button>
+              </Reveal>
+            ))}
+          </div>
+          <button
+            onClick={() => finishEntry()}
+            className="mx-auto mt-8 block font-body text-[14px] text-[#8fe4f5] transition hover:translate-x-0.5"
+          >
+            Überspringen — direkt zu meinem Blueprint →
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="animate-slideUp px-6 pb-40 pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] lg:px-10 lg:pt-12">
@@ -254,14 +309,20 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
   const closeTheme = useApp((s) => s.closeTheme);
   const openInfo = useApp((s) => s.openInfo);
   const chartVersion = useApp((s) => s.chartVersion);
+  const setQ = useApp((s) => s.setQ);
+  const ask = useApp((s) => s.ask);
   const t = themeByKey(themeKey);
   const [intro, setIntro] = useState<{ text: string; loading: boolean }>({ text: "", loading: true });
   const [secState, setSecState] = useState<Record<string, { text: string; loading: boolean }>>({});
+  const [kompass, setKompass] = useState<{ text: string; loading: boolean }>({ text: "", loading: true });
+  const [fragen, setFragen] = useState<string[]>([]);
 
   useEffect(() => {
     if (!t) return;
     let cancelled = false;
     setIntro({ text: "", loading: true });
+    setKompass({ text: "", loading: true });
+    setFragen([]);
     setSecState(Object.fromEntries(THEME_SECTIONS.map((d) => [d.key, { text: "", loading: true }])));
     const ctx = chartContext();
     const h = shortHash(chartHash());
@@ -270,7 +331,7 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
     const fire = (part: string, task: string, apply: (txt: string) => void, ctxOverride?: string) => {
       retry(
         () => supabase.functions.invoke("generate", {
-          body: { chart_hash: chartHash(), cacheKey: `theme:${t.key}:v4:${part}:${h}`, context: ctxOverride ?? ctx, task, long: true, model: AI_MODEL },
+          body: { chart_hash: chartHash(), cacheKey: `theme:${t.key}:v5:${part}:${h}`, context: ctxOverride ?? ctx, task, long: true, model: AI_MODEL },
         }),
         (r) => !!r.data?.text,
         { tries: 4, delayMs: 1800 },
@@ -279,6 +340,17 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
         .catch(() => { if (!cancelled) apply(""); });
     };
     fire("intro", introTask(t), (txt) => setIntro({ text: txt, loading: false }));
+    // Der Kompass — its own distinct element (Laura: yes, but reworded and
+    // implemented as its own thing, not buried in "Konkret").
+    fire("kompass", `Schreibe für das Lebensthema „${t.label}" dieses Menschen GENAU 3 Zeilen — jede beginnt mit „– " (Gedankenstrich, Leerzeichen), keine Nummern, kein sonstiger Text davor oder danach.
+Linse: ${t.lens}
+Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leben MERKT, dass etwas in diesem Bereich wirklich zu ihr passt — körperlich spürbar, emotional oder im Alltag beobachtbar, abgeleitet aus DIESEM Chart (ohne die Stellung technisch zu nennen). Jede Zeile 1–2 kurze Sätze, Du-Form. Kein Satz, der auf jeden zutrifft.`,
+      (txt) => setKompass({ text: txt, loading: false }));
+    // Weiterfragen — personal follow-up questions the reader can tap to ask Vela.
+    fire("fragen", `Formuliere GENAU 3 kurze Anschlussfragen zum Lebensthema „${t.label}", die DIESER Mensch nach seiner Deutung vermutlich stellen würde — jede Zeile im Format „1. …", aus seiner Ich-Perspektive („Warum …ich…?"), persönlich an seinem Chart orientiert, maximal 12 Wörter pro Frage. Nichts außer den drei Zeilen.`,
+      (txt) => setFragen(
+        txt.split(/\n+/).map((l) => l.replace(/^\d+[.)]\s*/, "").trim()).filter((l) => l.length > 4).slice(0, 3),
+      ));
     for (const d of THEME_SECTIONS) {
       // "Gerade jetzt" gets the current-sky facts and a month-bucketed cache
       // key, so it refreshes as the sky moves on — the rest stays timeless.
@@ -349,6 +421,30 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
                 <p className={`font-body text-[17.5px] leading-[1.75] text-txt-2 ${i === 0 ? "text-[19px] font-medium text-white" : "mt-5"}`}>{p}</p>
               </Reveal>
             ))}
+            {/* Der Kompass — distinct, quiet highlight: how YOU recognise what fits */}
+            {(kompass.text || kompass.loading) && (
+              <Reveal>
+                <div className="mt-8 rounded-[22px] border p-5 backdrop-blur-xl lg:p-6" style={{ borderColor: `${t.accent}38`, background: `linear-gradient(135deg, ${t.accent}0e, transparent 60%)` }}>
+                  <div className="mb-3 font-mono text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: t.accent }}>Woran du erkennst, was zu dir passt</div>
+                  {kompass.text ? (
+                    <div className="space-y-2.5">
+                      {kompass.text.replace(/\*\*/g, "").split(/\n+/).map((l) => l.replace(/^[–-]\s*/, "").trim()).filter(Boolean).slice(0, 4).map((l, i) => (
+                        <div key={i} className="flex gap-3">
+                          <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: t.accent, boxShadow: `0 0 8px ${t.accent}` }} />
+                          <p className="font-body text-[15.5px] leading-relaxed text-txt-2">{l}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-2.5 py-1">
+                      {[96, 88, 80].map((w, i) => (
+                        <div key={i} className="h-3 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Reveal>
+            )}
             {sections.length > 0 && (
               <div className="mt-8 space-y-3">
                 {sections.map((s, i) => (
@@ -375,9 +471,25 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
           </div>
         )}
 
-        <p className="mt-8 rounded-[20px] border border-white/8 bg-white/[0.03] p-5 font-body text-[14px] leading-relaxed text-txt-3">
-          Frag Vela unten alles zu diesem Thema — sie liest es aus deinem Chart.
-        </p>
+        {/* Weiterfragen — tap a personal follow-up question, Vela answers in the composer */}
+        <div className="mt-8 rounded-[20px] border border-white/8 bg-white/[0.03] p-5">
+          <p className="font-body text-[14px] leading-relaxed text-txt-3">
+            {fragen.length ? "Frag weiter — das liegt dir vielleicht gerade auf der Zunge:" : "Frag Vela unten alles zu diesem Thema — sie liest es aus deinem Chart."}
+          </p>
+          {fragen.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {fragen.map((f) => (
+                <button
+                  key={f}
+                  onClick={() => { setQ(f); void ask(f); }}
+                  className="rounded-pill border border-white/[0.12] bg-white/[0.05] px-3.5 py-2 text-left font-body text-[13px] leading-snug text-ink-soft/90 backdrop-blur-md transition hover:border-[rgba(79,214,239,0.45)] active:scale-95"
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         <MotionSpacer />
       </div>
     </div>
