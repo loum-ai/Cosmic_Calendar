@@ -15,19 +15,54 @@ import type { BirthInput } from "@/lib/compute";
 import { Reveal } from "@/components/Reveal";
 import { useApp, DEMO_BIRTH } from "@/store/useApp";
 
-/** Task for a life-theme reading — the LENS + what to foreground. The full
- *  5-level dramaturgy and the anti-generic rules live in the generate function's
- *  SYSTEM_LONG (long: true). */
-function fiveLevelTask(t: LifeTheme): string {
-  return `Deute das Lebensthema „${t.label}" (${t.teaser}) für DIESEN Menschen — tief, persönlich, konkret und vor allem NACHVOLLZIEHBAR, wie in einer echten Beratung.
-Lies das Chart durch genau diese Linse: ${t.lens}
-Nutze das ganze Bild aus den FAKTEN, im Dienst dieses Themas. Beantworte dabei ausdrücklich die Fragen, die dieser Mensch WIRKLICH hat — in verwobener Sprache, ohne Zwischenüberschriften, ohne Aufzählung:
-- WARUM / ZUSAMMENHANG: Mach nachvollziehbar, warum genau diese Stellungen für dieses Thema stehen — z. B. warum ein bestimmtes Haus oder ein Planet hier zählt. Setze nichts voraus, erkläre die Verbindung in einem Satz, statt sie nur zu behaupten (der Mensch soll verstehen, WIESO).
-- SPANNUNG: Benenne die zentrale Spannung PRÄZISE am Chart (der exakte Aspekt, z. B. ein bestimmtes Quadrat), nicht vage.
-- ENTWICKLUNG: Sag klar, WIE sich dieser Mensch in diesem Bereich entwickelt — was reift früh, was erst spät, was ist der nächste Schritt. Die Mondknoten als Richtung.
-- KONKRET & GREIFBAR: Werde anschaulich — wie zeigt sich das im echten Leben? Beim Thema Berufung z. B. welche ART von Tätigkeit, Rolle und Umfeld zu genau diesem Menschen passt (echte, konkrete Beispiele nennen), bei anderen Themen entsprechend konkret. Keine Abstraktion ohne Beispiel.
-Kein Satz darf in jedes Horoskop passen. Warm, klar, ehrlich. Absätze durch Leerzeilen trennen.`;
+/** The theme reading is generated in FIVE focused, parallel, individually
+ *  cached calls: a short flowing intro + four accordion sections. One call per
+ *  section keeps each text tight (no wall of text, no repetition) and lets the
+ *  page load progressively. The mechanism is identical for EVERY life theme
+ *  (PRINZIPIEN §1 — no theme is privileged); the lens does the specialising. */
+const COMMON_RULES = `Sprich mit „du", warm, klar, ehrlich. Kein Satz darf in jedes Horoskop passen — jeder Satz folgt aus DIESEN Fakten. Erwähne nur die Stellungen, die für genau diesen Abschnitt nötig sind — keine allgemeine Chart-Zusammenfassung, keine Wiederholungen. Fachbegriffe sofort übersetzen. Absätze durch Leerzeilen trennen.`;
+
+function introTask(t: LifeTheme): string {
+  return `Schreibe NUR den EINSTIEG einer Deutung zum Lebensthema „${t.label}" (${t.teaser}) für DIESEN Menschen — genau 2–3 Absätze, ohne Überschrift.
+Linse: ${t.lens}
+Inhalt: der rote Faden dieses Themas bei diesem Menschen — sofort persönlich, etwas Wahres über IHN, kein Vorgeplänkel. NOCH KEINE Details zu Lebensphasen, konkreten Empfehlungen oder der zentralen Spannung — die folgen in eigenen Abschnitten.
+${COMMON_RULES}`;
 }
+
+const THEME_SECTIONS: { key: string; title: string; task: (t: LifeTheme) => string }[] = [
+  {
+    key: "kraefte",
+    title: "Was in dir wirkt",
+    task: (t) => `Schreibe NUR den Abschnitt „Was in dir wirkt" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 3–4 Absätze.
+Linse: ${t.lens}
+Inhalt: die 2–3 tragenden Kräfte für dieses Thema, als Geschichte verwoben. Erkläre dabei NACHVOLLZIEHBAR, WARUM genau diese Stellungen dieses Thema prägen (z. B. warum dieses Haus für diesen Lebensbereich steht) — die Verbindung erklären, nicht behaupten; nichts voraussetzen.
+${COMMON_RULES}`,
+  },
+  {
+    key: "phasen",
+    title: "Deine Lebensabschnitte",
+    task: (t) => `Schreibe NUR den Abschnitt „Deine Lebensabschnitte" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 3–4 Absätze.
+Linse: ${t.lens}
+Inhalt: wie sich dieses Thema über das Leben ENTWICKELT — was früh da ist (bis ~29, vor der ersten Saturn-Wiederkehr), was in der Lebensmitte reift (~30–45), was in den reifen Jahren trägt. Mach es an Saturn, den langsamen Planeten und den Mondknoten fest und nenne ungefähre Altersspannen. Saturn reift über Jahre — was er berührt, kommt oft erst spät ins Volle.
+${COMMON_RULES}`,
+  },
+  {
+    key: "konkret",
+    title: "Konkret: was zu dir passt",
+    task: (t) => `Schreibe NUR den Abschnitt „Konkret: was zu dir passt" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen.
+Linse: ${t.lens}
+Inhalt: die KONKRETESTE Ebene dieses Themas als GENAU 3–5 nummerierte Punkte im Format „1. …" (jeder Punkt eine eigene Zeile, 2–3 Sätze): echte, benennbare Beispiele — beim Thema Berufung konkrete Berufsfelder, Rollen und Arbeitsumgebungen; bei Beziehungsthemen konkrete Muster und Bedürfnisse; sinngemäß für jedes andere Thema. JEDER Punkt mit kurzer Begründung am Chart (welche Stellung ihn trägt). Keine Abstraktion ohne Beispiel.
+${COMMON_RULES}`,
+  },
+  {
+    key: "weg",
+    title: "Deine Spannung & dein Weg",
+    task: (t) => `Schreibe NUR den Abschnitt „Deine Spannung & dein Weg" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 3 Absätze.
+Linse: ${t.lens}
+Inhalt: die zentrale Spannung EXAKT am Chart benannt (der konkrete Aspekt) — und halte das Paradox: benenne die Abwehr UND die Gabe im selben Atemzug. Dann die Richtung: der Nordknoten als gewählte Wachstumsrichtung (Bestimmung, nicht Schicksal), der Südknoten als das Vertraute, das losgelassen werden darf. Der letzte Satz soll bleiben und Mut machen.
+${COMMON_RULES}`,
+  },
+];
 
 /**
  * Themen-Hub — the calm home (per the product briefing). Instead of dumping the
@@ -199,40 +234,37 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
   const openInfo = useApp((s) => s.openInfo);
   const chartVersion = useApp((s) => s.chartVersion);
   const t = themeByKey(themeKey);
-  const [text, setText] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [intro, setIntro] = useState<{ text: string; loading: boolean }>({ text: "", loading: true });
+  const [secState, setSecState] = useState<Record<string, { text: string; loading: boolean }>>({});
 
   useEffect(() => {
     if (!t) return;
     let cancelled = false;
-    setText(""); setLoading(true);
-    (async () => {
-      try {
-        // Retry while Gemini is overloaded (503 → empty), so a transient
-        // "high demand" spike doesn't leave the theme without its deep reading.
-        const { data } = await retry(
-          () => supabase.functions.invoke("generate", {
-            body: {
-              chart_hash: chartHash(),
-              cacheKey: `theme:${t.key}:v2:${shortHash(chartHash())}`,
-              context: chartContext(),
-              task: fiveLevelTask(t),
-              long: true,
-              model: AI_MODEL,
-            },
-          }),
-          (r) => !!r.data?.text,
-          { tries: 4, delayMs: 1800 },
-        );
-        if (!cancelled) setText(data?.text || "");
-      } catch {
-        /* leave the detail cards as the reading */
-      }
-      if (!cancelled) setLoading(false);
-    })();
+    setIntro({ text: "", loading: true });
+    setSecState(Object.fromEntries(THEME_SECTIONS.map((d) => [d.key, { text: "", loading: true }])));
+    const ctx = chartContext();
+    const h = shortHash(chartHash());
+    // One focused call per part, all in parallel, each retried through Gemini
+    // overload (503 → empty) and cached individually server-side.
+    const fire = (part: string, task: string, apply: (txt: string) => void) => {
+      retry(
+        () => supabase.functions.invoke("generate", {
+          body: { chart_hash: chartHash(), cacheKey: `theme:${t.key}:v3:${part}:${h}`, context: ctx, task, long: true, model: AI_MODEL },
+        }),
+        (r) => !!r.data?.text,
+        { tries: 4, delayMs: 1800 },
+      )
+        .then(({ data }) => { if (!cancelled) apply(data?.text || ""); })
+        .catch(() => { if (!cancelled) apply(""); });
+    };
+    fire("intro", introTask(t), (txt) => setIntro({ text: txt, loading: false }));
+    for (const d of THEME_SECTIONS) {
+      fire(d.key, d.task(t), (txt) => setSecState((s) => ({ ...s, [d.key]: { text: txt, loading: false } })));
+    }
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [themeKey, chartVersion]);
+  const loading = intro.loading;
 
   if (!t) return null;
 
@@ -247,7 +279,11 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
     })
     .filter(Boolean) as { key: string; name: string; glyph: string; pos: string; body: string }[];
 
-  const paras = text.split(/\n\n+/).map((s) => s.trim()).filter(Boolean);
+  const paras = intro.text.split(/\n\n+/).map((s) => s.trim()).filter(Boolean);
+  // Accordion sections — shown as soon as the intro is there; each streams in
+  // on its own (still-loading sections shimmer, failed ones disappear).
+  const sections = THEME_SECTIONS.map((d) => ({ title: d.title, body: secState[d.key]?.text ?? "", loading: secState[d.key]?.loading ?? true }))
+    .filter((s) => s.loading || s.body);
 
   return (
     <div className="animate-slideUp px-6 pb-40 pt-[calc(env(safe-area-inset-top,0px)+2rem)] lg:px-10 lg:pt-10">
@@ -280,13 +316,22 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
               "Deine Kräfte finden Worte …",
             ]}
           />
-        ) : paras.length ? (
+        ) : paras.length || sections.length ? (
           <div className="mb-4">
             {paras.map((p, i) => (
               <Reveal key={i} i={i}>
                 <p className={`font-body text-[17.5px] leading-[1.75] text-txt-2 ${i === 0 ? "text-[19px] font-medium text-white" : "mt-5"}`}>{p}</p>
               </Reveal>
             ))}
+            {sections.length > 0 && (
+              <div className="mt-8 space-y-3">
+                {sections.map((s, i) => (
+                  <Reveal key={s.title} i={i}>
+                    <ThemeSection title={s.title} body={s.body} loading={s.loading} accent={t.accent} defaultOpen={i === 0} />
+                  </Reveal>
+                ))}
+              </div>
+            )}
           </div>
         ) : null}
 
@@ -328,6 +373,69 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
 
 function MotionSpacer() {
   return <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-2" />;
+}
+
+/** One accordion section of a theme reading ("## Titel" blocks) — context in
+ *  layers instead of a wall of text. Numbered lines render as list items. */
+function ThemeSection({ title, body, loading, accent, defaultOpen }: { title: string; body: string; loading?: boolean; accent: string; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(!!defaultOpen);
+  const paras = body.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  return (
+    <button
+      type="button"
+      onClick={() => setOpen((o) => !o)}
+      aria-expanded={open}
+      className="vela-tile vela-tile-hover relative w-full overflow-hidden p-5 text-left backdrop-blur-xl lg:p-6"
+    >
+      <div className="relative flex items-center justify-between gap-3">
+        <h3 className="font-cinzel text-[20px] font-light leading-tight text-white lg:text-[22px]">{title}</h3>
+        <span
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-transform duration-300"
+          style={{ color: accent, background: `${accent}14`, border: `1px solid ${accent}33`, transform: open ? "rotate(90deg)" : "none" }}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </span>
+      </div>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="body"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <div className="mt-3.5 space-y-3.5">
+              {loading && !paras.length && (
+                <div className="space-y-2.5 py-1">
+                  {[100, 92, 84].map((w, i) => (
+                    <div key={i} className="h-3 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
+                  ))}
+                </div>
+              )}
+              {paras.map((p, i) => {
+                const num = p.match(/^(\d+)[.)]\s+(.*)$/s);
+                return num ? (
+                  <div key={i} className="flex gap-3">
+                    <span
+                      className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-[11px] font-bold"
+                      style={{ color: accent, background: `${accent}16`, border: `1px solid ${accent}33` }}
+                    >
+                      {num[1]}
+                    </span>
+                    <p className="font-body text-[16px] leading-[1.7] text-txt-2">{num[2]}</p>
+                  </div>
+                ) : (
+                  <p key={i} className="font-body text-[16px] leading-[1.7] text-txt-2">{p}</p>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </button>
+  );
 }
 
 const ALL_CENTERS = ["Kopf", "Ajna", "Kehle", "G", "Ego", "Sakral", "Solarplexus", "Milz", "Wurzel"];
