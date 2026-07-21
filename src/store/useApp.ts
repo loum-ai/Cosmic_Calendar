@@ -4,7 +4,7 @@ import { localOracle } from "@/lib/oracle";
 import { computeChart, type BirthInput } from "@/lib/compute";
 import { applyChart, signName, PROFILE } from "@/lib/data";
 import { ensureInterpretation, clearInterpretation } from "@/lib/interpret";
-import { supabase } from "@/lib/supabase";
+import { supabase, AI_MODEL } from "@/lib/supabase";
 import { chartContext, chartHash, shortHash } from "@/lib/factsContext";
 
 // Birth data behind the bundled demo chart (Laura). Used to fetch the real AI
@@ -205,6 +205,7 @@ export const useApp = create<AppState>((set, get) => ({
           cacheKey: "q:" + shortHash(q),
           context: chartContext(),
           task: `Die Person fragt dich: "${q}". Antworte als Vela auf Basis ihres Geburtsbildes — konkret, ehrlich und ermutigend, 3–5 Sätze. Beziehe dich auf passende Stellungen aus den Fakten.`,
+          model: AI_MODEL,
         },
       });
       if (error || !data?.text) throw new Error("no answer");

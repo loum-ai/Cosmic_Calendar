@@ -6,7 +6,7 @@
  * generic per-sign one-liners. The chart wheel/positions still render instantly
  * from the client compute; this only upgrades the *texts*.
  */
-import { supabase } from "./supabase";
+import { supabase, AI_MODEL } from "./supabase";
 import { retry } from "./retry";
 import { signName } from "./data";
 import type { BirthInput } from "./compute";
@@ -104,7 +104,7 @@ export async function ensureInterpretation(birth: BirthInput, name: string): Pro
   // 3) grounded German interpretation — retry while Gemini is overloaded
   //    (503 → fallback), so a transient spike doesn't lock in generic text.
   const interp = await retry(
-    () => supabase.functions.invoke("interpret", { body: { facts } }),
+    () => supabase.functions.invoke("interpret", { body: { facts, model: AI_MODEL } }),
     (r) => !r.error && !!r.data?.interpretation && !r.data?.fallback,
     { tries: 4, delayMs: 2000 },
   );
