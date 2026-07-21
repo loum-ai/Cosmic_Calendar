@@ -13,3 +13,9 @@ export const supabase = createClient<Database>(URL, ANON, {
 
 export const FUNCTIONS_URL = `${URL}/functions/v1`;
 export const SUPABASE_ANON = ANON;
+
+// The Gemini model the app asks the edge functions to use. Switched to
+// gemini-2.5-flash because gemini-3.5-flash was returning sustained 503
+// "high demand" (overloaded on Google's side). 2.5-flash has capacity and
+// good German prose. Central constant so all call sites stay in sync.
+export const AI_MODEL = "gemini-2.5-flash";

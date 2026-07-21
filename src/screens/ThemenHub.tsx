@@ -9,7 +9,7 @@ import { computeHumanDesign } from "@/lib/humandesign";
 import { chartContext, chartHash, shortHash } from "@/lib/factsContext";
 import { aiPortrait } from "@/lib/interpret";
 import { retry } from "@/lib/retry";
-import { supabase } from "@/lib/supabase";
+import { supabase, AI_MODEL } from "@/lib/supabase";
 import type { BirthInput } from "@/lib/compute";
 import { Reveal } from "@/components/Reveal";
 import { useApp, DEMO_BIRTH } from "@/store/useApp";
@@ -195,6 +195,7 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
               context: chartContext(),
               task: fiveLevelTask(t),
               long: true,
+              model: AI_MODEL,
             },
           }),
           (r) => !!r.data?.text,
