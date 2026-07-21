@@ -14,8 +14,12 @@ export const supabase = createClient<Database>(URL, ANON, {
 export const FUNCTIONS_URL = `${URL}/functions/v1`;
 export const SUPABASE_ANON = ANON;
 
-// The Gemini model the app asks the edge functions to use. Switched to
-// gemini-2.5-flash because gemini-3.5-flash was returning sustained 503
-// "high demand" (overloaded on Google's side). 2.5-flash has capacity and
-// good German prose. Central constant so all call sites stay in sync.
+// The Gemini models the app asks the edge functions to use. Central constants
+// so all call sites stay in sync.
+// AI_MODEL — fast tier: chat, single-factor tap readings. gemini-2.5-flash
+// (3.5-flash was sustained-503 overloaded).
+// AI_MODEL_CORE — quality tier for the one-time deep readings (theme
+// sections, portrait): gemini-pro-latest, chosen via a real A/B on the
+// client's own chart (more concrete, more tangible, more logical output).
 export const AI_MODEL = "gemini-2.5-flash";
+export const AI_MODEL_CORE = "gemini-pro-latest";

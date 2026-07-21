@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Loader2, Copy, ExternalLink, Sparkles, LogOut, Check, ShieldCheck, X, ChevronRight, Pencil, Power, Trash2, RefreshCw } from "lucide-react";
-import { supabase, AI_MODEL } from "@/lib/supabase";
+import { supabase, AI_MODEL_CORE } from "@/lib/supabase";
 import { searchPlace, type Place } from "@/lib/geocode";
 import { retry } from "@/lib/retry";
 
@@ -8,7 +8,7 @@ import { retry } from "@/lib/retry";
  *  ok = a real AI reading came back (not the basis-komposition fallback). */
 function interpretWithRetry(client_id: string, publish: boolean, onRetry?: (a: number) => void) {
   return retry(
-    () => supabase.functions.invoke("interpret", { body: { client_id, publish, model: AI_MODEL } }),
+    () => supabase.functions.invoke("interpret", { body: { client_id, publish, model: AI_MODEL_CORE } }),
     (r) => !r.error && !!r.data?.ok && !r.data?.fallback,
     { tries: 4, delayMs: 2500, onRetry },
   );
