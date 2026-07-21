@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { GenerativeLoader } from "@/components/GenerativeLoader";
+import { ChartWheel } from "@/components/ChartWheel";
 import { ArrowLeft, ChevronRight, CircleDot, Hexagon, Info, Sparkles } from "lucide-react";
 import { THEMES, themeByKey, type LifeTheme } from "@/lib/themes";
 import { CHART, PROFILE, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
@@ -72,6 +73,28 @@ export function ThemenHub() {
             )}
           </p>
         </header>
+
+        {/* Dein Geburtsrad — the chart itself, first thing on the page (per
+            Laura: "bei Chart sollte oben schon das Chart sein"). The whole card
+            opens the full explorer; the wheel inside is inert here. */}
+        <Reveal>
+          <section className="mb-10">
+            <button
+              onClick={() => setHomeView("chart")}
+              className="group relative w-full overflow-hidden rounded-[30px] border border-white/10 bg-stage p-5 text-left shadow-glass backdrop-blur-2xl transition hover:border-[rgba(79,214,239,0.45)] lg:p-8"
+            >
+              <div className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(79,214,239,0.26),rgba(79,214,239,0.05)_45%,transparent_66%)] blur-2xl animate-breath" />
+              <div className="pointer-events-none relative mx-auto w-full max-w-[420px] drop-shadow-[0_0_36px_rgba(79,214,239,0.22)]">
+                <ChartWheel />
+              </div>
+              <div className="relative mt-4 flex items-center justify-center gap-2 font-body text-[14px] text-txt-2">
+                <span className="font-cinzel text-[17px] font-light text-white">Dein Geburtsrad</span>
+                <span className="text-txt-3">·</span>
+                <span className="text-[#8fe4f5] transition group-hover:translate-x-0.5">tippen zum Erkunden →</span>
+              </div>
+            </button>
+          </section>
+        </Reveal>
 
         {/* Dein Portrait — the deep, synthesized whole-chart reading, the head
             of the page. Leads with meaning; the themes below go deeper per lens. */}
