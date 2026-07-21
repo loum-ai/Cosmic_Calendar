@@ -7,7 +7,7 @@ import { THEMES, themeByKey, type LifeTheme } from "@/lib/themes";
 import { CHART, PROFILE, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
 import { resolveSheet } from "@/lib/sheets";
 import { computeHumanDesign } from "@/lib/humandesign";
-import { chartContext, chartHash, shortHash } from "@/lib/factsContext";
+import { chartContext, chartHash, shortHash, transitContext } from "@/lib/factsContext";
 import { subjectTask, useReading, storedReading } from "@/lib/genReadings";
 import { aiPortrait } from "@/lib/interpret";
 import { retry } from "@/lib/retry";
@@ -21,7 +21,7 @@ import { useApp, DEMO_BIRTH } from "@/store/useApp";
  *  section keeps each text tight (no wall of text, no repetition) and lets the
  *  page load progressively. The mechanism is identical for EVERY life theme
  *  (PRINZIPIEN §1 — no theme is privileged); the lens does the specialising. */
-const COMMON_RULES = `Sprich mit „du", warm, klar, ehrlich. Kein Satz darf in jedes Horoskop passen — jeder Satz folgt aus DIESEN Fakten. Erwähne nur die Stellungen, die für genau diesen Abschnitt nötig sind — keine allgemeine Chart-Zusammenfassung, keine Wiederholungen. Fachbegriffe sofort übersetzen. Absätze durch Leerzeilen trennen.`;
+const COMMON_RULES = `Sprich mit „du", warm, klar, ehrlich. Kein Satz darf in jedes Horoskop passen — jeder Satz folgt aus DIESEN Fakten. Erwähne nur die Stellungen, die für genau diesen Abschnitt nötig sind — keine allgemeine Chart-Zusammenfassung, keine Wiederholungen. Fachbegriffe sofort übersetzen. Kein Markdown, keine Sternchen, keine Überschriften — nur Fließtext und ggf. nummerierte Zeilen. Absätze durch Leerzeilen trennen.`;
 
 function introTask(t: LifeTheme): string {
   return `Schreibe NUR den EINSTIEG einer Deutung zum Lebensthema „${t.label}" (${t.teaser}) für DIESEN Menschen — genau 2–3 Absätze, ohne Überschrift.
@@ -48,11 +48,22 @@ Inhalt: wie sich dieses Thema über das Leben ENTWICKELT — was früh da ist (b
 ${COMMON_RULES}`,
   },
   {
+    key: "jetzt",
+    title: "Gerade jetzt",
+    task: (t) => `Schreibe NUR den Abschnitt „Gerade jetzt" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 2–3 Absätze.
+Linse: ${t.lens}
+Inhalt: Nutze die AKTUELLEN TRANSITE aus den FAKTEN. Wähle die 1–2 laufenden Entwicklungen, die DIESES Thema jetzt am spürbarsten berühren (langsame Planeten zuerst — sie tragen die echten Entwicklungen). Erkläre in einem Halbsatz, was ein Transit ist (der laufende Himmel berührt einen Punkt deines Geburtsbilds). Sag, was diese Entwicklung für die kommenden Monate bedeutet und was JETZT ein guter, konkreter Schritt ist. Nüchtern-warm: keine Dramatik, keine Heilsversprechen.
+${COMMON_RULES}`,
+  },
+  {
     key: "konkret",
     title: "Konkret: was zu dir passt",
     task: (t) => `Schreibe NUR den Abschnitt „Konkret: was zu dir passt" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen.
 Linse: ${t.lens}
-Inhalt: die KONKRETESTE Ebene dieses Themas als GENAU 3–5 nummerierte Punkte im Format „1. …" (jeder Punkt eine eigene Zeile, 2–3 Sätze): echte, benennbare Beispiele — beim Thema Berufung konkrete Berufsfelder, Rollen und Arbeitsumgebungen; bei Beziehungsthemen konkrete Muster und Bedürfnisse; sinngemäß für jedes andere Thema. JEDER Punkt mit kurzer Begründung am Chart (welche Stellung ihn trägt). Keine Abstraktion ohne Beispiel.
+Viele Menschen SUCHEN in diesem Thema noch — sie haben ihre Richtung oder Passion nicht gefunden. Nimm diese Suche ernst, ohne Plattitüden.
+Beginne mit einem kurzen Absatz „Kompass": 2–3 Erkennungszeichen aus DIESEM Chart, woran diese Person merkt, dass etwas wirklich zu ihr passt (körperlich, emotional, im Alltag spürbar). Würdige dabei, was vermutlich schon da ist, statt alles Bisherige zu entwerten.
+Danach GENAU 4–6 nummerierte Punkte im Format „1. …" (jeder Punkt eine eigene Zeile, 2–3 Sätze). Denke BREIT über Lebenswelten — handwerklich-gestaltend, technisch, körperlich/draußen, führend-organisierend, beratend-menschlich, kaufmännisch, kreativ, heilend — und wähle die, die WIRKLICH aus diesem Chart folgen, nicht reflexhaft Schreibtisch- und Beraterberufe. Beim Thema Berufung heißt das konkrete Berufsfelder und Rollen; bei Beziehungsthemen konkrete Muster und Bedürfnisse; sinngemäß für jedes andere Thema.
+JEDER Punkt nennt: was es ist → WARUM es zu diesem Chart passt (die Stellung) → WORAUF es einzahlt (welches Bedürfnis oder Potenzial es nährt) → woran die Person im Alltag merkt, dass es trägt.
 ${COMMON_RULES}`,
   },
   {
@@ -247,10 +258,10 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
     const h = shortHash(chartHash());
     // One focused call per part, all in parallel, each retried through Gemini
     // overload (503 → empty) and cached individually server-side.
-    const fire = (part: string, task: string, apply: (txt: string) => void) => {
+    const fire = (part: string, task: string, apply: (txt: string) => void, ctxOverride?: string) => {
       retry(
         () => supabase.functions.invoke("generate", {
-          body: { chart_hash: chartHash(), cacheKey: `theme:${t.key}:v3:${part}:${h}`, context: ctx, task, long: true, model: AI_MODEL },
+          body: { chart_hash: chartHash(), cacheKey: `theme:${t.key}:v4:${part}:${h}`, context: ctxOverride ?? ctx, task, long: true, model: AI_MODEL },
         }),
         (r) => !!r.data?.text,
         { tries: 4, delayMs: 1800 },
@@ -260,7 +271,12 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
     };
     fire("intro", introTask(t), (txt) => setIntro({ text: txt, loading: false }));
     for (const d of THEME_SECTIONS) {
-      fire(d.key, d.task(t), (txt) => setSecState((s) => ({ ...s, [d.key]: { text: txt, loading: false } })));
+      // "Gerade jetzt" gets the current-sky facts and a month-bucketed cache
+      // key, so it refreshes as the sky moves on — the rest stays timeless.
+      const isNow = d.key === "jetzt";
+      const part = isNow ? `jetzt:${new Date().toISOString().slice(0, 7)}` : d.key;
+      const ctxOv = isNow ? `${ctx}\n\n${transitContext()}` : undefined;
+      fire(part, d.task(t), (txt) => setSecState((s) => ({ ...s, [d.key]: { text: txt, loading: false } })), ctxOv);
     }
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -399,7 +415,8 @@ function ForceCard({ it, accent, onOpen }: { it: { key: string; name: string; gl
  *  layers instead of a wall of text. Numbered lines render as list items. */
 function ThemeSection({ title, body, loading, accent, defaultOpen }: { title: string; body: string; loading?: boolean; accent: string; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(!!defaultOpen);
-  const paras = body.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  // strip stray markdown emphasis the model might emit despite instructions
+  const paras = body.replace(/\*\*/g, "").split(/\n+/).map((s) => s.trim()).filter(Boolean);
   return (
     <button
       type="button"
