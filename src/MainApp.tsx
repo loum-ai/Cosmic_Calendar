@@ -6,7 +6,6 @@ import { TabBar } from "@/components/TabBar";
 import { Composer } from "@/components/Composer";
 import { SheetHost } from "@/components/SheetHost";
 import { DetailView } from "@/components/DetailView";
-import { CoachHint } from "@/components/CoachHint";
 import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { Onboarding } from "@/components/Onboarding";
 import { PrintFlow } from "@/components/PrintFlow";
@@ -63,7 +62,8 @@ export function MainApp() {
         </AnimatePresence>
       </div>
 
-      <CoachHint />
+      {/* CoachHint entfernt — die „tippe auf alles, was leuchtet"-Botschaft
+          lebt jetzt in der Geburtsrad-Karte auf dem Hub (Lauras Entscheidung). */}
       <Composer />
       <TabBar />
       <SheetHost />

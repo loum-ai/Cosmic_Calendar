@@ -121,60 +121,40 @@ export function ThemenHub() {
           </p>
         </header>
 
-        {/* Dein Geburtsrad — the chart itself, first thing on the page (per
-            Laura: "bei Chart sollte oben schon das Chart sein"). The whole card
-            opens the full explorer; the wheel inside is inert here. */}
+        {/* Dein Geburtsrad — the chart, visible on the first screen but COMPACT
+            (per Laura: heading + explanation, and the themes must stay in
+            reach). The whole card opens the full explorer; the "tippe auf
+            alles, was leuchtet" line lives here now — the floating chip is gone. */}
         <Reveal>
           <section className="mb-10">
+            <div className="vela-label mb-4 flex items-center gap-1.5"><CircleDot className="h-3.5 w-3.5" /> Dein Geburtsrad</div>
             <button
               onClick={() => setHomeView("chart")}
-              className="group relative w-full overflow-hidden rounded-[30px] border border-white/10 bg-stage p-5 text-left shadow-glass backdrop-blur-2xl transition hover:border-[rgba(79,214,239,0.45)] lg:p-8"
+              className="group relative w-full overflow-hidden rounded-[30px] border border-white/10 bg-stage p-5 text-left shadow-glass backdrop-blur-2xl transition hover:border-[rgba(79,214,239,0.45)] lg:p-6"
             >
               <div className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(79,214,239,0.26),rgba(79,214,239,0.05)_45%,transparent_66%)] blur-2xl animate-breath" />
-              <div className="pointer-events-none relative mx-auto w-full max-w-[420px] drop-shadow-[0_0_36px_rgba(79,214,239,0.22)]">
-                <ChartWheel />
-              </div>
-              <div className="relative mt-4 flex items-center justify-center gap-2 font-body text-[14px] text-txt-2">
-                <span className="font-cinzel text-[17px] font-light text-white">Dein Geburtsrad</span>
-                <span className="text-txt-3">·</span>
-                <span className="text-[#8fe4f5] transition group-hover:translate-x-0.5">tippen zum Erkunden →</span>
+              <div className="relative flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
+                <div className="pointer-events-none relative w-full max-w-[300px] shrink-0 drop-shadow-[0_0_36px_rgba(79,214,239,0.22)]">
+                  <ChartWheel />
+                </div>
+                <div className="relative min-w-0 text-center sm:text-left">
+                  <p className="font-body text-[15px] leading-relaxed text-txt-2">
+                    Der Himmel im Moment deiner Geburt: Jeder leuchtende Punkt ist ein Planet — eine Kraft in dir. Die zwölf Felder sind deine Lebensbereiche, die Linien zeigen, wie deine Kräfte zusammenspielen.
+                  </p>
+                  <p className="mt-3 font-body text-[14px] leading-relaxed text-txt-3">
+                    Tippe auf alles, was leuchtet — jeder Punkt, jede Linie erklärt sich.
+                  </p>
+                  <span className="mt-4 inline-block font-body text-[14px] text-[#8fe4f5] transition group-hover:translate-x-0.5">Rad öffnen & erkunden →</span>
+                </div>
               </div>
             </button>
           </section>
         </Reveal>
 
-        {/* Dein Portrait — the deep, synthesized whole-chart reading, the head
-            of the page. Leads with meaning; the themes below go deeper per lens. */}
-        {portraitParas.length > 0 ? (
-          <section className="mb-10">
-            <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Dein Portrait</div>
-            <div className="rounded-[24px] border border-white/8 bg-[rgba(13,25,33,0.5)] p-6 backdrop-blur-xl lg:p-8">
-              {portraitParas.map((p, i) => (
-                <Reveal key={i} i={i}>
-                  <p className={`font-body leading-[1.75] text-txt-2 ${i === 0 ? "text-[18.5px] font-medium text-white" : "mt-5 text-[16.5px]"}`}>{p}</p>
-                </Reveal>
-              ))}
-            </div>
-          </section>
-        ) : aiLoading ? (
-          <section className="mb-10">
-            <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Dein Portrait</div>
-            <div className="rounded-[24px] border border-white/8 bg-[rgba(13,25,33,0.5)] p-6 backdrop-blur-xl lg:p-8">
-              <GenerativeLoader
-                messages={[
-                  "Die Sterne ordnen sich zu deinem Bild …",
-                  "Vela liest dein ganzes Geburtsbild …",
-                  "Deine Kräfte finden Worte …",
-                ]}
-                widths={[100, 92, 96, 84, 70]}
-              />
-            </div>
-          </section>
-        ) : null}
 
-        {portraitParas.length > 0 && (
-          <div className="vela-label mb-4 flex items-center gap-1.5"><CircleDot className="h-3.5 w-3.5" /> Lebensthemen</div>
-        )}
+
+        {/* Lebensthemen — the heart of the hub, in reach right after the wheel */}
+        <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Lebensthemen</div>
         <div className="grid gap-4 sm:grid-cols-2">
           {THEMES.map((t, i) => (
             <Reveal key={t.key} i={i}>
@@ -198,6 +178,35 @@ export function ThemenHub() {
             </Reveal>
           ))}
         </div>
+
+        {/* Dein Portrait — the deep, synthesized whole-chart reading, the head
+            of the page. Leads with meaning; the themes below go deeper per lens. */}
+        {portraitParas.length > 0 ? (
+          <section className="mt-10">
+            <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Dein Portrait</div>
+            <div className="rounded-[24px] border border-white/8 bg-[rgba(13,25,33,0.5)] p-6 backdrop-blur-xl lg:p-8">
+              {portraitParas.map((p, i) => (
+                <Reveal key={i} i={i}>
+                  <p className={`font-body leading-[1.75] text-txt-2 ${i === 0 ? "text-[18.5px] font-medium text-white" : "mt-5 text-[16.5px]"}`}>{p}</p>
+                </Reveal>
+              ))}
+            </div>
+          </section>
+        ) : aiLoading ? (
+          <section className="mt-10">
+            <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Dein Portrait</div>
+            <div className="rounded-[24px] border border-white/8 bg-[rgba(13,25,33,0.5)] p-6 backdrop-blur-xl lg:p-8">
+              <GenerativeLoader
+                messages={[
+                  "Die Sterne ordnen sich zu deinem Bild …",
+                  "Vela liest dein ganzes Geburtsbild …",
+                  "Deine Kräfte finden Worte …",
+                ]}
+                widths={[100, 92, 96, 84, 70]}
+              />
+            </div>
+          </section>
+        ) : null}
 
         {/* Human Design — a second lens on the same birth data */}
         {birth && (

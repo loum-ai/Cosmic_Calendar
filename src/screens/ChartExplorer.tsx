@@ -6,7 +6,7 @@ import { chartContext } from "@/lib/factsContext";
 import { ChartWheel } from "@/components/ChartWheel";
 import { Reveal } from "@/components/Reveal";
 import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
-import { CHART, ASC, PROFILE, SN, PINFO, signName, computeAspects, IS_DEMO } from "@/lib/data";
+import { CHART, ASC, PROFILE, SN, PINFO, THEME, signName, computeAspects, IS_DEMO } from "@/lib/data";
 import { ASPECT_TEXT } from "@/lib/readings";
 import { aiSummary, aiAspect, aiSign } from "@/lib/interpret";
 import { chartPatterns, type Pattern } from "@/lib/patterns";
@@ -29,10 +29,12 @@ function PatternCard({ p }: { p: Pattern }) {
       <div className="relative">
         <div className="mb-2.5 flex items-center gap-2.5">
           {p.glyphs.length > 0 && <span className="font-glyph text-[18px]" style={{ color: KIND_COL[p.kind] }}>{p.glyphs.join(" ")}</span>}
-          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: KIND_COL[p.kind] }}>{KIND_LABEL[p.kind]}</span>
+          {/* meaning-first (canonical): jargon lives up here in the eyebrow … */}
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: KIND_COL[p.kind] }}>{KIND_LABEL[p.kind]} · {p.title}</span>
         </div>
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-cinzel text-[22px] font-normal leading-tight text-white">{p.title}</h3>
+          {/* … and the headline says what it MEANS */}
+          <h3 className="font-cinzel text-[22px] font-normal leading-tight text-white">{p.human}</h3>
           <ChevronDown className={`mt-1.5 h-5 w-5 shrink-0 text-txt-3 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
         </div>
         {/* collapsed: a single calm teaser line — no wall of text */}
@@ -69,6 +71,14 @@ const COL: Record<string, string> = {
 };
 const col = (k: string) => COL[k] ?? "#cbb9ff";
 
+// meaning verbs for the signature headline — what the connection DOES
+const SIG_VERB: Record<string, string> = {
+  Konjunktion: "wirken als eine Kraft",
+  Sextil: "beflügeln einander",
+  Quadrat: "fordern einander heraus",
+  Trigon: "fließen zusammen",
+  Opposition: "suchen Balance",
+};
 const FLOW = ["Trigon", "Sextil", "Konjunktion"];
 const PLANET_GROUPS: { label: string; keys: string[] }[] = [
   { label: "Persönlich", keys: ["sun", "moon", "mercury", "venus", "mars"] },
@@ -228,13 +238,15 @@ export function ChartExplorer() {
             >
               <span className="pointer-events-none absolute -right-6 -top-10 font-glyph text-[150px] leading-none opacity-[0.07]" style={{ color: tightest.def.c }}>{tightest.def.g}</span>
               <div className="relative">
-                <div className="vela-label">Deine Signatur · {domElem}-betont</div>
-                <h2 className="mt-3 font-cinzel text-[30px] font-light leading-[1.15] text-white lg:text-[40px]">
-                  <span style={{ color: col(tightest.A.key) }}>{tightest.A.name}</span>{" "}
-                  <span className="text-txt-2">{tightest.def.type}</span>{" "}
-                  <span style={{ color: col(tightest.B.key) }}>{tightest.B.name}</span>
+                {/* meaning-first (canonical): the aspect jargon is the eyebrow … */}
+                <div className="vela-label">Deine Signatur · {domElem}-betont · {tightest.A.name} {tightest.def.type} {tightest.B.name} · {tightest.orb.toFixed(1)}°</div>
+                {/* … and the headline says what it MEANS for this person */}
+                <h2 className="mt-3 font-cinzel text-[28px] font-light leading-[1.18] text-white lg:text-[38px]">
+                  <span style={{ color: col(tightest.A.key) }}>{THEME[tightest.A.key] ?? tightest.A.name}</span>
+                  <span className="text-txt-2"> und </span>
+                  <span style={{ color: col(tightest.B.key) }}>{(THEME[tightest.B.key] ?? tightest.B.name).charAt(0).toLowerCase() + (THEME[tightest.B.key] ?? tightest.B.name).slice(1)}</span>
+                  <span className="text-txt-2"> {SIG_VERB[tightest.def.type] ?? "wirken zusammen"}</span>
                 </h2>
-                <div className="mt-2 font-mono text-[12px] text-txt-3">exaktester Aspekt · {tightest.orb.toFixed(1)}° Orbis</div>
                 {heroTxt && <p className="mt-5 max-w-[60ch] font-body text-[16px] leading-relaxed text-txt-2">{heroTxt}</p>}
               </div>
             </button>

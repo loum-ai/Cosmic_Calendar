@@ -39,3 +39,11 @@ Detail-Layer (Progressive Disclosure).
 Menschen kaufen ihr Horoskop bei der Astrologin (€89,90) und erhalten einen
 persönlichen Link. Nutzer bedienen sich nicht selbst; die App ist die
 Auslieferung einer kuratierten, persönlichen Deutung.
+
+## 5. Bedeutung zuerst, Fachbegriff als Eyebrow
+
+Überall, wo etwas benannt wird, liest der Mensch zuerst, was es für IHN
+BEDEUTET — der Fachbegriff („Mars Sextil Lilith", „Stellium in Skorpion",
+„T-Quadrat") steht klein darüber als Eyebrow, nie als Headline. Der Fachbegriff
+ist Beleg und Lernangebot; die Bedeutung ist die Botschaft. Gilt kanonisch für
+jede Karte, jede Headline, jedes Sheet.
