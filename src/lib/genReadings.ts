@@ -78,7 +78,7 @@ const CRAFT = `So deutest du (wichtig):
 - ALLTAG: Nenne EINE konkrete Alltagssituation, in der sich das zeigt („Das merkst du, wenn …").
 - BEIDE SEITEN: Benenne die Gabe UND die Schattenseite im selben Atemzug — ehrlich, aber ermutigend.
 - ZUSAMMENSPIEL: Wenn ein enger Aspekt aus den FAKTEN diese Kraft deutlich färbt, nenne ihn kurz und sag, was er verändert.
-Sprache: kurze Sätze. Warmes, leicht verständliches Deutsch, Du-Form. Keine Fachbegriffe ohne sofortige Übersetzung. Kein Satz, der in jedes Horoskop passen könnte. TONFÄRBUNG: Sachlich-geerdet, wie ein kluger Berufs- und Lebensberater, der Astrologie als präzises Werkzeug nutzt — nicht wie ein Mystiker. Alltagssprache statt Seelen-Vokabular: VERMEIDE Wörter wie „Seele", „heilig", „Bestimmung", „Schicksal", „Energien", „Universum", „spirituell", „Erwachen", „Dunkelheit", „verborgene Kräfte", „Transformation". Sprich stattdessen von Bedürfnissen, Mustern, Stärken, konkretem Verhalten und Situationen. Tiefe ja — aber am Alltag belegt, nie raunend. Warm und klar, ohne Pathos.`;
+Sprache: kurze Sätze. Warmes, leicht verständliches Deutsch, Du-Form. Keine Fachbegriffe ohne sofortige Übersetzung. Kein Satz, der in jedes Horoskop passen könnte. KOMPAKT: Schreibe dicht — jeder Satz trägt neue Information, keine Füllsätze, nichts doppelt. Lieber ein starker Satz als drei mittelmäßige. TONFÄRBUNG: Sachlich-geerdet, wie ein kluger Berufs- und Lebensberater, der Astrologie als präzises Werkzeug nutzt — nicht wie ein Mystiker. Alltagssprache statt Seelen-Vokabular: VERMEIDE Wörter wie „Seele", „heilig", „Bestimmung", „Schicksal", „Energien", „Universum", „spirituell", „Erwachen", „Dunkelheit", „verborgene Kräfte", „Transformation". Sprich stattdessen von Bedürfnissen, Mustern, Stärken, konkretem Verhalten und Situationen. Tiefe ja — aber am Alltag belegt, nie raunend. Warm und klar, ohne Pathos.`;
 
 const dignityHint = (p: { dignity?: string | null } | undefined): string => {
   const d = p && (p as { dignity?: string | null }).dignity;
@@ -93,8 +93,8 @@ export function subjectTask(d: SheetDescriptor | null): { viewKey: string; task:
   if (d.kind === "planet") {
     if (d.key === "asc") {
       return {
-        viewKey: "asc:v3",
-        task: `Deute den Aszendenten in ${signName(ASC)} für diese Person — EIN Absatz, 5–6 kurze Sätze.
+        viewKey: "asc:v4",
+        task: `Deute den Aszendenten in ${signName(ASC)} für diese Person — EIN Absatz, 4–5 kurze Sätze.
 Der Aszendent ist das Zeichen, das bei der Geburt am Osthorizont aufstieg — deshalb steht er für den ersten Eindruck und das Auftreten. Sag, wie diese Person auf andere wirkt, bevor sie ein Wort sagt, und was hinter dieser Fassade oft übersehen wird.
 ${CRAFT}`,
       };
@@ -103,8 +103,8 @@ ${CRAFT}`,
     if (!p) return null;
     const h = p.house ?? 1;
     return {
-      viewKey: `planet:${d.key}:v3`,
-      task: `Deute ${p.name} in ${signName(p.lon)} im ${h}. Haus (${HOUSE[h - 1]})${p.retro ? " — rückläufig: diese Kraft wirkt zuerst nach innen, die Person macht sie erst mit sich selbst aus —" : ""} für diese Person. EIN Absatz, 5–7 kurze Sätze.${dignityHint(p as { dignity?: string | null })}
+      viewKey: `planet:${d.key}:v4`,
+      task: `Deute ${p.name} in ${signName(p.lon)} im ${h}. Haus (${HOUSE[h - 1]})${p.retro ? " — rückläufig: diese Kraft wirkt zuerst nach innen, die Person macht sie erst mit sich selbst aus —" : ""} für diese Person. EIN Absatz, 4–5 kurze Sätze.${dignityHint(p as { dignity?: string | null })}
 Zusätzlich ein Satz zur Reifung: Wirkt diese Kraft von Anfang an, oder wächst sie erst über die Jahre ins Volle?
 ${CRAFT}`,
     };
@@ -114,8 +114,8 @@ ${CRAFT}`,
     if (!n) return null;
     const isNorth = d.key === "node_n";
     return {
-      viewKey: `node:${d.key}:v3`,
-      task: `Deute den ${n.name} in ${signName(n.lon)}${n.house ? `, ${n.house}. Haus (${HOUSE[n.house - 1]})` : ""} für diese Person — EIN Absatz, 4–6 kurze Sätze.
+      viewKey: `node:${d.key}:v4`,
+      task: `Deute den ${n.name} in ${signName(n.lon)}${n.house ? `, ${n.house}. Haus (${HOUSE[n.house - 1]})` : ""} für diese Person — EIN Absatz, 3–4 kurze Sätze.
 ${isNorth
   ? "Der Nordknoten ist die gewählte Wachstumsrichtung — wohin sich dieses Leben entwickeln WILL. Es fühlt sich anfangs ungewohnt an, ist aber die Richtung, in der alles leichter wird. Eine wählbare Entwicklung, kein festgelegtes Los."
   : "Der Südknoten ist das Vertraute und Mitgebrachte — Gaben, die schon da sind, aber auch die Komfortzone, in der man sich versteckt. Was davon darf diese Person würdigen und trotzdem langsam loslassen?"}
@@ -126,8 +126,8 @@ ${CRAFT}`,
     const a = computeAspects().find((x) => x.key === d.key);
     if (!a) return null;
     return {
-      viewKey: `aspect:${d.key}:v3`,
-      task: `Deute den Aspekt ${a.A.name} ${a.def.type} ${a.B.name} (Orbis ${a.orb.toFixed(1)}° — ${a.orb < 2 ? "sehr eng, eine der prägendsten Verbindungen dieses Charts" : "spürbar im Alltag"}) für diese Person. EIN Absatz, 5–7 kurze Sätze.
+      viewKey: `aspect:${d.key}:v4`,
+      task: `Deute den Aspekt ${a.A.name} ${a.def.type} ${a.B.name} (Orbis ${a.orb.toFixed(1)}° — ${a.orb < 2 ? "sehr eng, eine der prägendsten Verbindungen dieses Charts" : "spürbar im Alltag"}) für diese Person. EIN Absatz, 4–5 kurze Sätze.
 Sag, welche zwei Kräfte hier verbunden sind (in Alltagssprache), wie sich dieses Zusammenspiel von INNEN anfühlt, und woran die Person es in einer typischen Situation erkennt. Gabe und Falle dieser Verbindung im selben Atemzug — und was der reife Umgang damit ist.
 ${CRAFT}`,
     };

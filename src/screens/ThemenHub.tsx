@@ -21,10 +21,10 @@ import { useApp, DEMO_BIRTH } from "@/store/useApp";
  *  section keeps each text tight (no wall of text, no repetition) and lets the
  *  page load progressively. The mechanism is identical for EVERY life theme
  *  (PRINZIPIEN §1 — no theme is privileged); the lens does the specialising. */
-const COMMON_RULES = `Sprich mit „du", warm, klar, ehrlich. Kein Satz darf in jedes Horoskop passen — jeder Satz folgt aus DIESEN Fakten. Erwähne nur die Stellungen, die für genau diesen Abschnitt nötig sind — keine allgemeine Chart-Zusammenfassung, keine Wiederholungen. Fachbegriffe sofort übersetzen. Da das Geschlecht der Person nicht aus den Fakten hervorgeht: formuliere geschlechtsneutral (z. B. „in der Osteopathie arbeiten" statt „als Osteopathin", „eine schützende Rolle" statt „als Beschützerin"). Kein Markdown, keine Sternchen, keine Überschriften — nur Fließtext und ggf. nummerierte Zeilen. Absätze durch Leerzeilen trennen. TONFÄRBUNG: Sachlich-geerdet, wie ein kluger Berufs- und Lebensberater, der Astrologie als präzises Werkzeug nutzt — nicht wie ein Mystiker. Alltagssprache statt Seelen-Vokabular: VERMEIDE Wörter wie „Seele", „heilig", „Bestimmung", „Schicksal", „Energien", „Universum", „spirituell", „Erwachen", „Dunkelheit", „verborgene Kräfte", „Transformation". Sprich stattdessen von Bedürfnissen, Mustern, Stärken, konkretem Verhalten und Situationen. Tiefe ja — aber am Alltag belegt, nie raunend. Warm und klar, ohne Pathos.`;
+const COMMON_RULES = `Sprich mit „du", warm, klar, ehrlich. Kein Satz darf in jedes Horoskop passen — jeder Satz folgt aus DIESEN Fakten. Erwähne nur die Stellungen, die für genau diesen Abschnitt nötig sind — keine allgemeine Chart-Zusammenfassung, keine Wiederholungen. Fachbegriffe sofort übersetzen. Da das Geschlecht der Person nicht aus den Fakten hervorgeht: formuliere geschlechtsneutral (z. B. „in der Osteopathie arbeiten" statt „als Osteopathin", „eine schützende Rolle" statt „als Beschützerin"). Kein Markdown, keine Sternchen, keine Überschriften — nur Fließtext und ggf. nummerierte Zeilen. Absätze durch Leerzeilen trennen. KOMPAKT: Schreibe dicht — jeder Satz trägt neue Information, keine Füllsätze, nichts doppelt in anderen Worten. Lieber ein starker Satz als drei mittelmäßige. TONFÄRBUNG: Sachlich-geerdet, wie ein kluger Berufs- und Lebensberater, der Astrologie als präzises Werkzeug nutzt — nicht wie ein Mystiker. Alltagssprache statt Seelen-Vokabular: VERMEIDE Wörter wie „Seele", „heilig", „Bestimmung", „Schicksal", „Energien", „Universum", „spirituell", „Erwachen", „Dunkelheit", „verborgene Kräfte", „Transformation". Sprich stattdessen von Bedürfnissen, Mustern, Stärken, konkretem Verhalten und Situationen. Tiefe ja — aber am Alltag belegt, nie raunend. Warm und klar, ohne Pathos.`;
 
 function introTask(t: LifeTheme): string {
-  return `Schreibe NUR den EINSTIEG einer Deutung zum Lebensthema „${t.label}" (${t.teaser}) für DIESEN Menschen — genau 2–3 Absätze, ohne Überschrift.
+  return `Schreibe NUR den EINSTIEG einer Deutung zum Lebensthema „${t.label}" (${t.teaser}) für DIESEN Menschen — genau 2 kurze Absätze (je 2–3 Sätze), ohne Überschrift.
 Linse: ${t.lens}
 Inhalt: der rote Faden dieses Themas bei diesem Menschen — sofort persönlich, etwas Wahres über IHN, kein Vorgeplänkel. NOCH KEINE Details zu Lebensphasen, konkreten Empfehlungen oder der zentralen Spannung — die folgen in eigenen Abschnitten.
 ${COMMON_RULES}`;
@@ -33,9 +33,9 @@ ${COMMON_RULES}`;
 const THEME_SECTIONS: { key: string; title: string; v?: string; task: (t: LifeTheme) => string }[] = [
   {
     key: "kraefte",
-    v: "2",
+    v: "3",
     title: "Was in dir wirkt",
-    task: (t) => `Schreibe NUR den Abschnitt „Was in dir wirkt" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 3–4 Absätze.
+    task: (t) => `Schreibe NUR den Abschnitt „Was in dir wirkt" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 2–3 kompakte Absätze (je 2–4 Sätze).
 Linse: ${t.lens}
 Inhalt: die 2–3 tragenden Kräfte für dieses Thema, als Geschichte verwoben. Erkläre dabei NACHVOLLZIEHBAR, WARUM genau diese Stellungen dieses Thema prägen (z. B. warum dieses Haus für diesen Lebensbereich steht) — die Verbindung erklären, nicht behaupten; nichts voraussetzen.
 FORM: Beginne JEDEN Absatz mit 2–4 prägnanten Leitworten und einem Gedankenstrich („Leitworte — dann der Absatz…"), damit der Text scannbar ist.
@@ -43,9 +43,9 @@ ${COMMON_RULES}`,
   },
   {
     key: "phasen",
-    v: "2",
+    v: "3",
     title: "Deine Lebensabschnitte",
-    task: (t) => `Schreibe NUR den Abschnitt „Deine Lebensabschnitte" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 3–4 Absätze.
+    task: (t) => `Schreibe NUR den Abschnitt „Deine Lebensabschnitte" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — genau 3 kompakte Absätze (je 2–3 dichte Sätze).
 Linse: ${t.lens}
 Inhalt: wie sich dieses Thema über das Leben ENTWICKELT — was früh da ist, was in der Lebensmitte reift, was in den reifen Jahren trägt. Mach es an Saturn, den langsamen Planeten und den Mondknoten fest.
 FORM: GENAU drei Absätze, jeder beginnt mit der Altersspanne und einem Gedankenstrich: „Bis 29 — …", „30 bis 45 — …", „Ab Mitte 40 — …".
@@ -53,9 +53,9 @@ ${COMMON_RULES}`,
   },
   {
     key: "jetzt",
-    v: "2",
+    v: "3",
     title: "Gerade jetzt",
-    task: (t) => `Schreibe NUR den Abschnitt „Gerade jetzt" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 2–3 Absätze.
+    task: (t) => `Schreibe NUR den Abschnitt „Gerade jetzt" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — genau 2 kompakte Absätze (je 2–4 Sätze).
 Linse: ${t.lens}
 Inhalt: Nutze die AKTUELLEN TRANSITE aus den FAKTEN. Wähle die 1–2 laufenden Entwicklungen, die DIESES Thema jetzt am spürbarsten berühren (langsame Planeten zuerst — sie tragen die echten Entwicklungen). Erkläre in einem Halbsatz, was ein Transit ist (der laufende Himmel berührt einen Punkt deines Geburtsbilds). Sag, was diese Entwicklung für die kommenden Monate bedeutet und was JETZT ein guter, konkreter Schritt ist. Nüchtern-warm: keine Dramatik, keine Heilsversprechen.
 FORM: Beginne JEDEN Absatz mit 2–4 prägnanten Leitworten und einem Gedankenstrich („Leitworte — dann der Absatz…"), damit der Text scannbar ist.
@@ -63,19 +63,20 @@ ${COMMON_RULES}`,
   },
   {
     key: "konkret",
+    v: "2",
     title: "Konkret: was zu dir passt",
     task: (t) => `Schreibe NUR den Abschnitt „Konkret: was zu dir passt" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen.
 Linse: ${t.lens}
 Viele Menschen SUCHEN in diesem Thema noch — sie haben ihre Richtung oder Passion nicht gefunden. Nimm diese Suche ernst, ohne Plattitüden, und würdige, was vermutlich schon da ist, statt Bisheriges zu entwerten.
-GENAU 4–6 nummerierte Punkte im Format „1. …" (jeder Punkt eine eigene Zeile, 2–3 Sätze). Denke BREIT über Lebenswelten — handwerklich-gestaltend, technisch, körperlich/draußen, führend-organisierend, beratend-menschlich, kaufmännisch, kreativ, heilend — und wähle die, die WIRKLICH aus diesem Chart folgen, nicht reflexhaft Schreibtisch- und Beraterberufe. Beim Thema Berufung heißt das konkrete Berufsfelder und Rollen; bei Beziehungsthemen konkrete Muster und Bedürfnisse; sinngemäß für jedes andere Thema.
+GENAU 4–5 nummerierte Punkte im Format „1. …" (jeder Punkt eine eigene Zeile, genau 2 knappe Sätze — fasse dich je Punkt kurz). Denke BREIT über Lebenswelten — handwerklich-gestaltend, technisch, körperlich/draußen, führend-organisierend, beratend-menschlich, kaufmännisch, kreativ, heilend — und wähle die, die WIRKLICH aus diesem Chart folgen, nicht reflexhaft Schreibtisch- und Beraterberufe. Beim Thema Berufung heißt das konkrete Berufsfelder und Rollen; bei Beziehungsthemen konkrete Muster und Bedürfnisse; sinngemäß für jedes andere Thema.
 JEDER Punkt nennt: was es ist → WARUM es zu diesem Chart passt (die Stellung) → WORAUF es einzahlt (welches Bedürfnis oder Potenzial es nährt) → woran die Person im Alltag merkt, dass es trägt.
 ${COMMON_RULES}`,
   },
   {
     key: "weg",
-    v: "2",
+    v: "3",
     title: "Deine Spannung & dein Weg",
-    task: (t) => `Schreibe NUR den Abschnitt „Deine Spannung & dein Weg" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 3 Absätze.
+    task: (t) => `Schreibe NUR den Abschnitt „Deine Spannung & dein Weg" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — genau 3 kompakte Absätze (je 2–4 kurze Sätze).
 Linse: ${t.lens}
 Inhalt: Wähle die DEUTLICHSTE Spannung am Chart (der konkrete Aspekt) und formuliere sie als Beobachtung mit Spielraum („Eine der deutlichsten Spannungen bei dir …") — nicht als einzige Wahrheit; nenne kurz eine ZWEITE Facette, die ebenfalls hineinspielt. Benenne bei der Schwierigkeit auch die Stärke darin. Dann die Richtung: der Nordknoten als Wachstumsrichtung (eine wählbare Entwicklung, kein festgelegtes Los), der Südknoten als das Vertraute, das gewürdigt und langsam gelockert werden darf. Der letzte Satz soll bleiben und Mut machen.
 FORM: Beginne JEDEN Absatz mit 2–4 prägnanten Leitworten und einem Gedankenstrich („Leitworte — dann der Absatz…"), damit der Text scannbar ist.
@@ -344,7 +345,7 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
     const fire = (part: string, task: string, apply: (txt: string) => void, ctxOverride?: string) => {
       retry(
         () => supabase.functions.invoke("generate", {
-          body: { chart_hash: chartHash(), cacheKey: `theme:${t.key}:v7:${part}:${h}`, context: ctxOverride ?? ctx, task, long: true, model: AI_MODEL_CORE },
+          body: { chart_hash: chartHash(), cacheKey: `theme:${t.key}:v8:${part}:${h}`, context: ctxOverride ?? ctx, task, long: true, model: AI_MODEL_CORE },
         }),
         (r) => !!r.data?.text,
         { tries: 4, delayMs: 1800 },
