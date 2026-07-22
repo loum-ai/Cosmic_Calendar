@@ -30,29 +30,35 @@ Inhalt: der rote Faden dieses Themas bei diesem Menschen — sofort persönlich,
 ${COMMON_RULES}`;
 }
 
-const THEME_SECTIONS: { key: string; title: string; task: (t: LifeTheme) => string }[] = [
+const THEME_SECTIONS: { key: string; title: string; v?: string; task: (t: LifeTheme) => string }[] = [
   {
     key: "kraefte",
+    v: "2",
     title: "Was in dir wirkt",
     task: (t) => `Schreibe NUR den Abschnitt „Was in dir wirkt" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 3–4 Absätze.
 Linse: ${t.lens}
 Inhalt: die 2–3 tragenden Kräfte für dieses Thema, als Geschichte verwoben. Erkläre dabei NACHVOLLZIEHBAR, WARUM genau diese Stellungen dieses Thema prägen (z. B. warum dieses Haus für diesen Lebensbereich steht) — die Verbindung erklären, nicht behaupten; nichts voraussetzen.
+FORM: Beginne JEDEN Absatz mit 2–4 prägnanten Leitworten und einem Gedankenstrich („Leitworte — dann der Absatz…"), damit der Text scannbar ist.
 ${COMMON_RULES}`,
   },
   {
     key: "phasen",
+    v: "2",
     title: "Deine Lebensabschnitte",
     task: (t) => `Schreibe NUR den Abschnitt „Deine Lebensabschnitte" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 3–4 Absätze.
 Linse: ${t.lens}
-Inhalt: wie sich dieses Thema über das Leben ENTWICKELT — was früh da ist (bis ~29, vor der ersten Saturn-Wiederkehr), was in der Lebensmitte reift (~30–45), was in den reifen Jahren trägt. Mach es an Saturn, den langsamen Planeten und den Mondknoten fest und nenne ungefähre Altersspannen. Saturn reift über Jahre — was er berührt, kommt oft erst spät ins Volle.
+Inhalt: wie sich dieses Thema über das Leben ENTWICKELT — was früh da ist, was in der Lebensmitte reift, was in den reifen Jahren trägt. Mach es an Saturn, den langsamen Planeten und den Mondknoten fest.
+FORM: GENAU drei Absätze, jeder beginnt mit der Altersspanne und einem Gedankenstrich: „Bis 29 — …", „30 bis 45 — …", „Ab Mitte 40 — …".
 ${COMMON_RULES}`,
   },
   {
     key: "jetzt",
+    v: "2",
     title: "Gerade jetzt",
     task: (t) => `Schreibe NUR den Abschnitt „Gerade jetzt" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 2–3 Absätze.
 Linse: ${t.lens}
 Inhalt: Nutze die AKTUELLEN TRANSITE aus den FAKTEN. Wähle die 1–2 laufenden Entwicklungen, die DIESES Thema jetzt am spürbarsten berühren (langsame Planeten zuerst — sie tragen die echten Entwicklungen). Erkläre in einem Halbsatz, was ein Transit ist (der laufende Himmel berührt einen Punkt deines Geburtsbilds). Sag, was diese Entwicklung für die kommenden Monate bedeutet und was JETZT ein guter, konkreter Schritt ist. Nüchtern-warm: keine Dramatik, keine Heilsversprechen.
+FORM: Beginne JEDEN Absatz mit 2–4 prägnanten Leitworten und einem Gedankenstrich („Leitworte — dann der Absatz…"), damit der Text scannbar ist.
 ${COMMON_RULES}`,
   },
   {
@@ -67,10 +73,12 @@ ${COMMON_RULES}`,
   },
   {
     key: "weg",
+    v: "2",
     title: "Deine Spannung & dein Weg",
     task: (t) => `Schreibe NUR den Abschnitt „Deine Spannung & dein Weg" einer Deutung zum Lebensthema „${t.label}" für DIESEN Menschen — 3 Absätze.
 Linse: ${t.lens}
-Inhalt: die zentrale Spannung EXAKT am Chart benannt (der konkrete Aspekt) — und halte das Paradox: benenne die Abwehr UND die Gabe im selben Atemzug. Dann die Richtung: der Nordknoten als gewählte Wachstumsrichtung (Bestimmung, nicht Schicksal), der Südknoten als das Vertraute, das losgelassen werden darf. Der letzte Satz soll bleiben und Mut machen.
+Inhalt: Wähle die DEUTLICHSTE Spannung am Chart (der konkrete Aspekt) und formuliere sie als Beobachtung mit Spielraum („Eine der deutlichsten Spannungen bei dir …") — nicht als einzige Wahrheit; nenne kurz eine ZWEITE Facette, die ebenfalls hineinspielt. Benenne bei der Schwierigkeit auch die Stärke darin. Dann die Richtung: der Nordknoten als Wachstumsrichtung (eine wählbare Entwicklung, kein festgelegtes Los), der Südknoten als das Vertraute, das gewürdigt und langsam gelockert werden darf. Der letzte Satz soll bleiben und Mut machen.
+FORM: Beginne JEDEN Absatz mit 2–4 prägnanten Leitworten und einem Gedankenstrich („Leitworte — dann der Absatz…"), damit der Text scannbar ist.
 ${COMMON_RULES}`,
   },
 ];
@@ -360,7 +368,7 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
       // "Gerade jetzt" gets the current-sky facts and a month-bucketed cache
       // key, so it refreshes as the sky moves on — the rest stays timeless.
       const isNow = d.key === "jetzt";
-      const part = isNow ? `jetzt:${new Date().toISOString().slice(0, 7)}` : d.key;
+      const part = (isNow ? `jetzt:${new Date().toISOString().slice(0, 7)}` : d.key) + (d.v ?? "");
       const ctxOv = isNow ? `${ctx}\n\n${transitContext()}` : undefined;
       fire(part, d.task(t), (txt) => setSecState((s) => ({ ...s, [d.key]: { text: txt, loading: false } })), ctxOv);
     }
@@ -579,16 +587,28 @@ function ThemeSection({ title, body, loading, accent, defaultOpen }: { title: st
               )}
               {paras.map((p, i) => {
                 const num = p.match(/^(\d+)[.)]\s+(.*)$/s);
-                return num ? (
-                  <div key={i} className="flex gap-3">
-                    <span
-                      className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-[11px] font-bold"
-                      style={{ color: accent, background: `${accent}16`, border: `1px solid ${accent}33` }}
-                    >
-                      {num[1]}
-                    </span>
-                    <p className="font-body text-[16px] leading-[1.7] text-txt-2">{num[2]}</p>
-                  </div>
+                if (num) {
+                  return (
+                    <div key={i} className="flex gap-3">
+                      <span
+                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-[11px] font-bold"
+                        style={{ color: accent, background: `${accent}16`, border: `1px solid ${accent}33` }}
+                      >
+                        {num[1]}
+                      </span>
+                      <p className="font-body text-[16px] leading-[1.7] text-txt-2">{num[2]}</p>
+                    </div>
+                  );
+                }
+                // "Leitworte — Absatz…" rhythm: style the short lead-in in the
+                // theme accent so long sections scan instead of souping.
+                const lead = p.match(/^([^—.!?\n]{2,44}?)\s+—\s+(.*)$/s);
+                return lead ? (
+                  <p key={i} className="font-body text-[16px] leading-[1.7] text-txt-2">
+                    <span className="font-display text-[15px] font-semibold" style={{ color: accent }}>{lead[1]}</span>
+                    <span className="text-txt-3"> — </span>
+                    {lead[2]}
+                  </p>
                 ) : (
                   <p key={i} className="font-body text-[16px] leading-[1.7] text-txt-2">{p}</p>
                 );
