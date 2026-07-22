@@ -520,8 +520,9 @@ function MotionSpacer() {
 function ForceCard({ it, accent, onOpen }: { it: { key: string; name: string; glyph: string; pos: string; body: string }; accent: string; onOpen: () => void }) {
   const st = subjectTask({ kind: "planet", key: it.key });
   const stored = storedReading({ kind: "planet", key: it.key });
-  const { text, loading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !stored && !IS_DEMO);
-  const body = stored || text || (loading ? "" : it.body);
+  // craft reading FIRST (deep, grounded); thin stored text only as fallback
+  const { text, loading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !IS_DEMO);
+  const body = text || (loading ? "" : stored || it.body);
   return (
     <button onClick={onOpen} className="vela-tile vela-tile-hover relative w-full overflow-hidden p-6 text-left backdrop-blur-xl">
       <div className="relative flex items-center gap-3">

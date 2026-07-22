@@ -20,8 +20,8 @@ export function DetailView() {
   // else generated live with the interpretive craft — template only as fallback.
   const st = subjectTask(detail);
   const stored = detail ? storedReading(detail) : null;
-  const { text: genText, loading: genLoading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !stored && !IS_DEMO);
-  const personal = stored || genText;
+  const { text: genText, loading: genLoading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !IS_DEMO);
+  const personal = genText || stored;
 
   return (
     <AnimatePresence>

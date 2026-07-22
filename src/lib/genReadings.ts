@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { create } from "zustand";
-import { supabase, AI_MODEL } from "./supabase";
+import { supabase, AI_MODEL_CORE } from "./supabase";
 import { chartContext, chartHash } from "./factsContext";
 import { ASC, CHART, NODES, HOUSE, signName, computeAspects } from "./data";
 import { aiSign, aiHouse, aiAspect } from "./interpret";
@@ -46,7 +46,7 @@ export const useReadings = create<ReadingsState>((set, get) => ({
     set((st) => ({ loading: { ...st.loading, [full]: true } }));
     try {
       const { data, error } = await supabase.functions.invoke("generate", {
-        body: { chart_hash: chartHash(), cacheKey: viewKey, context, task, model: AI_MODEL },
+        body: { chart_hash: chartHash(), cacheKey: viewKey, context, task, model: AI_MODEL_CORE },
       });
       if (error || !data?.text) throw new Error("no text");
       set((st) => ({ cache: { ...st.cache, [full]: data.text }, loading: { ...st.loading, [full]: false } }));
