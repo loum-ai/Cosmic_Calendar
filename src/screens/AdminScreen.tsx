@@ -96,7 +96,7 @@ function LoginCard() {
           <input value={pw} onChange={(e) => setPw(e.target.value)} type="password" placeholder="Passwort"
             className="w-full rounded-2xl border border-line bg-surface px-4 py-3 font-body text-sm text-txt outline-none focus:border-lilac" />
           <button disabled={busy || !email || !pw} onClick={submit}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-white disabled:opacity-50">
+            className="flex w-full items-center justify-center gap-2 btn-moon px-5 py-3 font-display text-sm font-semibold disabled:opacity-50">
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             {mode === "signin" ? "Anmelden" : "Konto anlegen"}
           </button>
@@ -329,7 +329,7 @@ function Cockpit({ email }: { email: string }) {
         {/* primary action */}
         {!creating && (
           <button onClick={() => { setCreating(true); setCreated(null); setErr(null); }}
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-sm font-semibold text-white shadow-glow transition active:scale-[0.99]">
+            className="mt-6 flex w-full items-center justify-center gap-2 btn-moon px-5 py-3.5 font-display text-sm font-semibold transition active:scale-[0.99]">
             <Sparkles className="h-4 w-4" /> Neue Kundin-Website erstellen
           </button>
         )}
@@ -376,7 +376,7 @@ function Cockpit({ email }: { email: string }) {
             </label>
             {place && <div className="font-mono text-[10px] text-txt-3">✓ {place.lat.toFixed(2)}°, {place.lon.toFixed(2)}°</div>}
             <button disabled={!canSubmit} onClick={createClient}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-white disabled:opacity-40">
+              className="flex w-full items-center justify-center gap-2 btn-moon px-5 py-3 font-display text-sm font-semibold disabled:opacity-40">
               {step ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
               {step || "Persönliche Website erstellen"}
             </button>
@@ -435,7 +435,7 @@ function Cockpit({ email }: { email: string }) {
         {/* review & publish modal */}
         {review && (
           <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[rgba(4,4,10,0.74)] p-4 backdrop-blur-md" onClick={() => setReview(null)}>
-            <div onClick={(e) => e.stopPropagation()} className="max-h-[88vh] w-full max-w-[560px] overflow-y-auto rounded-card border border-[rgba(79,214,239,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
+            <div onClick={(e) => e.stopPropagation()} className="max-h-[88vh] w-full max-w-[560px] overflow-y-auto rounded-card border border-[rgba(167,139,250,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="vela-label">Deutung prüfen</div>
@@ -500,7 +500,7 @@ function Cockpit({ email }: { email: string }) {
                     </label>
                     <p className="font-body text-[11px] leading-relaxed text-txt-3">Änderst du Datum, Zeit oder Ort, wird das Geburtsbild neu berechnet und die Deutung neu als Entwurf erstellt — du gibst sie danach erneut frei.</p>
                     <button onClick={saveClientData} disabled={!!working || !eName || !eDate || !eTime}
-                      className="flex w-full items-center justify-center gap-2 rounded-xl bg-cta-gradient px-5 py-2.5 font-display text-[13px] font-semibold text-white disabled:opacity-40">
+                      className="flex w-full items-center justify-center gap-2 btn-moon px-5 py-2.5 font-display text-[13px] font-semibold disabled:opacity-40">
                       {working ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}{working || "Stammdaten speichern"}
                     </button>
                     {err && <p className="font-body text-[12px] text-rose-300">{err}</p>}
@@ -533,7 +533,7 @@ function Cockpit({ email }: { email: string }) {
                   </div>
 
                   <button onClick={regenerateReading} disabled={publishing || !!working}
-                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-[rgba(79,214,239,0.3)] px-4 py-3 font-body text-[13px] text-[#8fe4f5] hover:bg-[rgba(79,214,239,0.08)] disabled:opacity-40">
+                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-[rgba(167,139,250,0.3)] px-4 py-3 font-body text-[13px] text-[#BBA8FF] hover:bg-[rgba(167,139,250,0.08)] disabled:opacity-40">
                     {working ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                     {working ? working : "Deutung neu erzeugen (mit Portrait)"}
                   </button>
@@ -542,7 +542,7 @@ function Cockpit({ email }: { email: string }) {
                     <button onClick={saveDraft} disabled={publishing} className="flex items-center justify-center gap-1.5 rounded-2xl border border-line px-4 py-3 font-body text-[13px] text-txt-2 hover:bg-surface-2 disabled:opacity-40">
                       {savedMsg ? <Check className="h-4 w-4 text-mint" /> : null} {savedMsg ? "Gespeichert" : "Entwurf speichern"}
                     </button>
-                    <button onClick={publishReview} disabled={publishing} className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-white shadow-glow disabled:opacity-40">
+                    <button onClick={publishReview} disabled={publishing} className="flex flex-1 items-center justify-center gap-2 btn-moon px-5 py-3 font-display text-sm font-semibold disabled:opacity-40">
                       {publishing ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
                       {reviewData.status === "published" ? "Aktualisieren" : "Freigeben — Link aktivieren"}
                     </button>

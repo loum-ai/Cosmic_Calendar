@@ -32,7 +32,7 @@ export function DetailView() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 40 }}
           transition={{ duration: 0.32, ease: EASE.smooth }}
-          className="fixed inset-0 z-[88] overflow-y-auto bg-[#0d0d0d]"
+          className="fixed inset-0 z-[88] overflow-y-auto bg-[#111019]"
         >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_46%_24%_at_50%_-6%,rgba(116,96,200,0.09),transparent_55%)]" />
 
@@ -46,7 +46,7 @@ export function DetailView() {
 
             {/* title */}
             <div className="flex items-center gap-4">
-              <span className="vela-glyph text-5xl" style={{ color: content.color, textShadow: "0 0 24px rgba(79,214,239,0.4)" }}>
+              <span className="vela-glyph text-5xl" style={{ color: content.color, textShadow: "0 0 24px rgba(167,139,250,0.4)" }}>
                 {content.glyph}
               </span>
               <h1 className="font-display text-[clamp(28px,7vw,40px)] font-extrabold leading-[1.05] tracking-[-0.02em] text-txt">

@@ -75,7 +75,7 @@ export function PrintView({ include }: { include?: PrintInclude }) {
           <X className="h-4 w-4" /> Schließen
         </button>
         <span className="font-body text-[12px] text-white/55">Vorschau · „Drucken" → Ziel „Als PDF speichern"</span>
-        <button onClick={() => window.print()} className="flex items-center gap-2 rounded-pill bg-cta-gradient px-4 py-2 font-display text-[13px] font-semibold text-white">
+        <button onClick={() => window.print()} className="flex items-center gap-2 btn-moon px-4 py-2 font-display text-[13px] font-semibold">
           <Printer className="h-4 w-4" /> Drucken / PDF
         </button>
       </div>

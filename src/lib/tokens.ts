@@ -3,13 +3,13 @@
  * where Tailwind classes don't reach. Mirrors tailwind.config.ts.
  */
 export const COLORS = {
-  space: "#0d0d0d",
+  space: "#111019",
   space2: "#171717",
   ink: "#f6f3ff",
   inkSoft: "#f3effe",
   violet: "#8B5CF6",
-  cyan: "#2DD4BF",
-  mint: "#2DD4BF",
+  cyan: "#20F0D0",
+  mint: "#20F0D0",
   lilac: "#b9a8ff",
   mintSoft: "#7defd6",
 } as const;

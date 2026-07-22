@@ -61,9 +61,9 @@ export function ProfilScreen() {
         <OrbImage size={72} float={false} />
         <div className="min-w-0">
           <div className="vela-label mb-1.5">Dein Profil</div>
-          <h1 className="font-cinzel text-[28px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_20px_rgba(79,214,239,0.35)] lg:text-[36px]">{PROFILE.name}</h1>
+          <h1 className="font-cinzel text-[28px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_20px_rgba(167,139,250,0.35)] lg:text-[36px]">{PROFILE.name}</h1>
           <div className="mt-1.5 flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2dd4bf]" />
+            <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#20F0D0]" />
             <span className="font-mono text-[11px] text-txt-2">{PROFILE.memberSince}</span>
           </div>
         </div>
@@ -76,7 +76,7 @@ export function ProfilScreen() {
         return (
           <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
             {ps.map((p) => (
-              <div key={p.id} className="rounded-card border border-[rgba(79,214,239,0.18)] bg-glasswash p-4">
+              <div key={p.id} className="rounded-card border border-[rgba(167,139,250,0.18)] bg-glasswash p-4">
                 <div className="mb-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-lilac">{p.glyphs.join(" ")} Signatur</div>
                 <h3 className="font-cinzel text-[17px] font-semibold leading-tight text-white">{p.title}</h3>
                 <p className="mt-1 line-clamp-3 font-body text-[12.5px] leading-relaxed text-txt-2">{p.text}</p>
@@ -101,7 +101,7 @@ export function ProfilScreen() {
       {!viewer && (
         <button
           onClick={() => setOnboardingOpen(true)}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3.5 font-display text-[14px] font-semibold text-white shadow-glow transition active:scale-[0.98]"
+          className="mt-4 flex w-full items-center justify-center gap-2 btn-moon px-5 py-3.5 font-display text-[14px] font-semibold transition active:scale-[0.98]"
         >
           <Sparkles className="h-4 w-4" />
           {saved ? "Geburtsdaten ändern" : "Erhalte dein Horoskop"}

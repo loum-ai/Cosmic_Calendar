@@ -105,7 +105,7 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
           personal.map((sec) => (
             <div key={sec.label} className="rounded-2xl border border-mint/25 bg-mint/[0.06] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
               <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-mint">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#2dd4bf]" />
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#20F0D0]" />
                 {sec.label}
               </div>
               <p className="font-body text-[16px] font-medium leading-[1.55] text-white">{sec.body}</p>
@@ -115,7 +115,7 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
 
         <button
           onClick={talkToVela}
-          className="flex w-full items-center justify-center gap-2 rounded-pill border border-[rgba(79,214,239,0.4)] bg-[rgba(79,214,239,0.1)] px-4 py-3 font-display text-[13.5px] font-semibold text-[#bdeefb] transition hover:bg-[rgba(79,214,239,0.16)] active:scale-[0.99]"
+          className="flex w-full items-center justify-center gap-2 rounded-pill border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.1)] px-4 py-3 font-display text-[13.5px] font-semibold text-[#bdeefb] transition hover:bg-[rgba(167,139,250,0.16)] active:scale-[0.99]"
         >
           <Sparkles className="h-4 w-4" /> Mit Vela darüber sprechen
         </button>

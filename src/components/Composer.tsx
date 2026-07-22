@@ -45,7 +45,7 @@ export function Composer() {
             className="pointer-events-auto mb-2.5"
           >
             {loading && !answer && (
-              <div className="mb-2.5 rounded-[24px] border border-white/10 bg-[rgba(13,25,33,0.94)] p-4 shadow-glass backdrop-blur-xl">
+              <div className="mb-2.5 rounded-[24px] border border-white/10 bg-[rgba(18,18,29,0.94)] p-4 shadow-glass backdrop-blur-xl">
                 <GenerativeLoader
                   messages={[
                     "Vela liest dein Bild …",
@@ -57,10 +57,10 @@ export function Composer() {
               </div>
             )}
             {answer && (
-              <div className="mb-2.5 max-h-56 overflow-y-auto rounded-[24px] border border-white/10 bg-[rgba(13,25,33,0.94)] p-4 shadow-glass backdrop-blur-xl">
+              <div className="mb-2.5 max-h-56 overflow-y-auto rounded-[24px] border border-white/10 bg-[rgba(18,18,29,0.94)] p-4 shadow-glass backdrop-blur-xl">
                 <div className="mb-2 flex items-center justify-between gap-2">
                   {demo ? (
-                    <span className="inline-flex items-center gap-1.5 rounded-pill border border-[rgba(79,214,239,0.35)] bg-[rgba(79,214,239,0.12)] px-2.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-[rgba(79,214,239,0.95)]">
+                    <span className="inline-flex items-center gap-1.5 rounded-pill border border-[rgba(167,139,250,0.35)] bg-[rgba(167,139,250,0.12)] px-2.5 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-[0.14em] text-[rgba(167,139,250,0.95)]">
                       Vela · aus deinem Chart
                     </span>
                   ) : (
@@ -82,7 +82,7 @@ export function Composer() {
                     setQ(ex);
                     void ask(ex);
                   }}
-                  className="shrink-0 whitespace-nowrap rounded-pill border border-white/[0.12] bg-white/[0.06] px-3.5 py-2 font-body text-[12.5px] text-ink-soft/85 backdrop-blur-md transition hover:border-[rgba(79,214,239,0.4)] active:scale-95"
+                  className="shrink-0 whitespace-nowrap rounded-pill border border-white/[0.12] bg-white/[0.06] px-3.5 py-2 font-body text-[12.5px] text-ink-soft/85 backdrop-blur-md transition hover:border-[rgba(167,139,250,0.4)] active:scale-95"
                 >
                   {ex}
                 </button>
@@ -94,8 +94,8 @@ export function Composer() {
       </AnimatePresence>
 
       {/* the always-visible prompt input, floating above the nav */}
-      <div className="pointer-events-auto flex items-center gap-2 rounded-pill border border-white/[0.14] bg-[rgba(15,27,35,0.9)] py-2 pl-4 pr-2 shadow-[0_14px_44px_-12px_rgba(0,0,0,0.7),0_0_26px_-12px_rgba(79,214,239,0.55)] backdrop-blur-xl">
-        <Sparkles className="h-4 w-4 shrink-0 text-[#4fd6ef]" />
+      <div className="pointer-events-auto flex items-center gap-2 rounded-pill border border-white/[0.14] bg-[rgba(22,22,31,0.9)] py-2 pl-4 pr-2 shadow-[0_14px_44px_-12px_rgba(0,0,0,0.7),0_0_26px_-12px_rgba(167,139,250,0.55)] backdrop-blur-xl">
+        <Sparkles className="h-4 w-4 shrink-0 text-[#A78BFA]" />
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -121,7 +121,7 @@ export function Composer() {
           onClick={() => ask()}
           disabled={loading || !q.trim()}
           title="Fragen"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cta-gradient text-[#052029] shadow-glow transition active:scale-90 disabled:opacity-45"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cta-gradient text-[#ffffff] shadow-glow transition active:scale-90 disabled:opacity-45"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" strokeWidth={2.6} />}
         </button>

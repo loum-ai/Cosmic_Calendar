@@ -76,7 +76,7 @@ export function ClientView({ token }: { token: string }) {
   if (status === "ready") return <MainApp />;
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-[#0d0d0d] px-8 text-center text-ink">
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-4 bg-[#111019] px-8 text-center text-ink">
       {status === "loading" && (
         <>
           <Loader2 className="h-7 w-7 animate-spin text-lilac" />
