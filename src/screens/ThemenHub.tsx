@@ -21,7 +21,7 @@ import { useApp, DEMO_BIRTH } from "@/store/useApp";
  *  section keeps each text tight (no wall of text, no repetition) and lets the
  *  page load progressively. The mechanism is identical for EVERY life theme
  *  (PRINZIPIEN §1 — no theme is privileged); the lens does the specialising. */
-const COMMON_RULES = `Sprich mit „du", warm, klar, ehrlich. Kein Satz darf in jedes Horoskop passen — jeder Satz folgt aus DIESEN Fakten. Erwähne nur die Stellungen, die für genau diesen Abschnitt nötig sind — keine allgemeine Chart-Zusammenfassung, keine Wiederholungen. Fachbegriffe sofort übersetzen. Da das Geschlecht der Person nicht aus den Fakten hervorgeht: formuliere geschlechtsneutral (z. B. „in der Osteopathie arbeiten" statt „als Osteopathin", „eine schützende Rolle" statt „als Beschützerin"). Kein Markdown, keine Sternchen, keine Überschriften — nur Fließtext und ggf. nummerierte Zeilen. Absätze durch Leerzeilen trennen.`;
+const COMMON_RULES = `Sprich mit „du", warm, klar, ehrlich. Kein Satz darf in jedes Horoskop passen — jeder Satz folgt aus DIESEN Fakten. Erwähne nur die Stellungen, die für genau diesen Abschnitt nötig sind — keine allgemeine Chart-Zusammenfassung, keine Wiederholungen. Fachbegriffe sofort übersetzen. Da das Geschlecht der Person nicht aus den Fakten hervorgeht: formuliere geschlechtsneutral (z. B. „in der Osteopathie arbeiten" statt „als Osteopathin", „eine schützende Rolle" statt „als Beschützerin"). Kein Markdown, keine Sternchen, keine Überschriften — nur Fließtext und ggf. nummerierte Zeilen. Absätze durch Leerzeilen trennen. TONFÄRBUNG: Sachlich-geerdet, wie ein kluger Berufs- und Lebensberater, der Astrologie als präzises Werkzeug nutzt — nicht wie ein Mystiker. Alltagssprache statt Seelen-Vokabular: VERMEIDE Wörter wie „Seele", „heilig", „Bestimmung", „Schicksal", „Energien", „Universum", „spirituell", „Erwachen", „Dunkelheit", „verborgene Kräfte", „Transformation". Sprich stattdessen von Bedürfnissen, Mustern, Stärken, konkretem Verhalten und Situationen. Tiefe ja — aber am Alltag belegt, nie raunend. Warm und klar, ohne Pathos.`;
 
 function introTask(t: LifeTheme): string {
   return `Schreibe NUR den EINSTIEG einer Deutung zum Lebensthema „${t.label}" (${t.teaser}) für DIESEN Menschen — genau 2–3 Absätze, ohne Überschrift.
@@ -336,7 +336,7 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
     const fire = (part: string, task: string, apply: (txt: string) => void, ctxOverride?: string) => {
       retry(
         () => supabase.functions.invoke("generate", {
-          body: { chart_hash: chartHash(), cacheKey: `theme:${t.key}:v6:${part}:${h}`, context: ctxOverride ?? ctx, task, long: true, model: AI_MODEL_CORE },
+          body: { chart_hash: chartHash(), cacheKey: `theme:${t.key}:v7:${part}:${h}`, context: ctxOverride ?? ctx, task, long: true, model: AI_MODEL_CORE },
         }),
         (r) => !!r.data?.text,
         { tries: 4, delayMs: 1800 },

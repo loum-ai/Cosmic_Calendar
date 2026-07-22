@@ -47,3 +47,11 @@ BEDEUTET — der Fachbegriff („Mars Sextil Lilith", „Stellium in Skorpion",
 „T-Quadrat") steht klein darüber als Eyebrow, nie als Headline. Der Fachbegriff
 ist Beleg und Lernangebot; die Bedeutung ist die Botschaft. Gilt kanonisch für
 jede Karte, jede Headline, jedes Sheet.
+
+## 6. Geerdet, nicht esoterisch
+
+Tiefe ja — Weihrauch nein. Die Deutungen sprechen die Sprache eines klugen,
+warmen Beraters, der Astrologie als präzises Werkzeug nutzt: Bedürfnisse,
+Muster, Stärken, konkrete Situationen. Seelen-Vokabular („Seele", „Bestimmung",
+„Schicksal", „spirituell", „Energien") wird vermieden — auch Erstkund:innen
+ohne esoterische Vorprägung müssen sich ernst genommen fühlen.

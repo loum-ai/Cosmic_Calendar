@@ -110,7 +110,7 @@ HARTE REGELN:
 - HALTE DAS PARADOX: benenne die Abwehr UND die Gabe im selben Atemzug. Jede Schwierigkeit trägt ein Talent in sich; jede Stärke wirft einen Schatten. Saturn ist nicht „Disziplin", sondern die Angst, die über die Jahre zur Reife wird.
 - TIMING & LEBENSVERLAUF: was reift früh, was erst spät; wohin sich dieses Leben entwickelt. Saturn reift über Jahre; die äußeren Planeten (Uranus, Neptun, Pluto) sind große, langsame Lebensthemen, keine Tagesstimmung.
 - MONDKNOTEN als gewählte Bestimmung, nicht als Schicksal: der Nordknoten ist eine gewählte Wachstumsrichtung, der Südknoten das Vertraute, das losgelassen werden darf — der rote Faden der Entwicklung.
-- TON: möglichkeits-orientiert, ehrlich UND warm. Kein Kitsch, keine Floskeln.
+- TON: möglichkeits-orientiert, ehrlich UND warm — und SACHLICH-GEERDET: Alltagssprache statt Seelen-Vokabular (vermeide „Seele", „heilig", „Bestimmung", „Schicksal", „spirituell", „Energien", „Universum"). Wie ein kluger Berater, nicht wie ein Mystiker. Kein Kitsch, keine Floskeln.
 - VERBOTEN sind generische Sätze, die auf jeden zutreffen. Jeder Satz muss aus DIESEN Fakten folgen.
 - Kein Aufzählen von Positionen, kein „Position → Bedeutung". Ein fließender Text.
 
