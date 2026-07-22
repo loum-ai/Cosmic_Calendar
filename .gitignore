@@ -2,12 +2,23 @@
 .DS_Store
 
 # Dependencies / build
-node_modules/
-dist/
+node_modules
+dist
+dist-ssr
 build/
+.vite
+*.tsbuildinfo
+*.log
+logs
+
+# Env
 .env
-.env.*
+.env*.local
+*.local
 !.env.example
+
+# Deploy
+.vercel
 
 # Persönliche Client-Daten — bleiben LOKAL, nie nach GitHub (DSGVO)
 Clients/
@@ -17,3 +28,6 @@ Inspiration/
 
 # claude.ai Artefakt-Export-Cruft
 .thumbnail
+
+# Lokale UX-Test-Datei
+vela-ux-test.html

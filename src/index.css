@@ -1,0 +1,553 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* shadcn/ui token bridge — headless primitives, restyled with Vela tokens. */
+@layer base {
+  :root {
+    /* shadcn/ui HSL bridge — retuned to the deep-space violet palette */
+    --background: 240 43% 4%;
+    --foreground: 255 100% 98%;
+    --card: 248 35% 7%;
+    --card-foreground: 255 100% 98%;
+    --popover: 248 35% 7%;
+    --popover-foreground: 255 100% 98%;
+    --primary: 258 90% 66%;
+    --primary-foreground: 248 40% 6%;
+    --secondary: 250 30% 14%;
+    --secondary-foreground: 255 100% 98%;
+    --muted: 250 20% 16%;
+    --muted-foreground: 255 25% 78%;
+    --accent: 172 66% 50%;
+    --accent-foreground: 248 40% 6%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 258 60% 60%;
+    --input: 250 30% 18%;
+    --ring: 258 90% 75%;
+    --radius: 0.75rem;
+
+    /* ── loum QUINTESSENCE v6 tokens (SSOT: loum Design System) ─────── */
+    /* void-950 canvas · solide Karten · bone/mist Text · aura/mystic/azure */
+    --bg-base: #111019;
+    --bg-surface: rgba(248, 247, 242, 0.045);
+    --bg-surface-hover: rgba(248, 247, 242, 0.08);
+    --bg-card: rgba(167, 139, 250, 0.06);
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --border-accent: rgba(167, 139, 250, 0.28);
+    --accent-primary: #A78BFA;   /* aura-400 — depth */
+    --accent-glow: rgba(167, 139, 250, 0.32);
+    --accent-teal: #20F0D0;      /* mystic-400 — the pulse */
+    --accent-azure: #5599FF;     /* azure-400 — dialog/KI */
+    --text-primary: #F8F7F2;                       /* bone */
+    --text-secondary: rgba(248, 247, 242, 0.85);
+    --text-muted: rgba(238, 245, 248, 0.55);       /* mist 55% */
+    --surface-card: linear-gradient(180deg, #16161F 0%, #12121D 100%);
+    --surface-hero: #1B1926;
+    --card-hairline: rgba(255, 255, 255, 0.07);
+    --shadow-card: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+    --shadow-accent: 0 0 20px rgba(167, 139, 250, 0.3);
+    --grad-halo: linear-gradient(135deg, #5599FF 0%, #7241FF 100%);
+    --glow-lit: 0 0 0.16em rgba(248, 247, 242, 0.55), 0 0 0.4em rgba(248, 247, 242, 0.2);
+
+    /* reusable fine-grain texture (premium "film" finish) */
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    border-color: hsl(var(--border) / 0.2);
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #111019;
+    color: var(--text-primary);
+    /* native controls (date/time pickers, dropdowns) render dark-themed —
+       otherwise their text is dark-on-dark and the fields look empty */
+    color-scheme: dark;
+    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-size: 16.5px;
+    line-height: 1.65;
+    font-variant-emoji: text; /* glyphs as text, never emoji */
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+  * {
+    scrollbar-width: none;
+  }
+}
+
+@layer components {
+  /* ── TYPE SYSTEM (matches the prototype's discipline) ────────────── */
+
+  /* hero headline — Cinzel Regular, UPPERCASE, FLACH (loum Two Faces:
+     die Basis-Display-Zeile trägt keinen Glow und keinen Verlauf) */
+  .vela-hero {
+    font-family: "Cinzel", ui-serif, Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(32px, 7.5vw, 50px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+  }
+  .vela-ghost {
+    font-family: "Cinzel", ui-serif, Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(1.7rem, 7vw, 2.2rem);
+    line-height: 1.14;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: rgba(217, 217, 217, 0.5);
+  }
+  /* brand wordmark — Cinzel Decorative, das lit word: der EINZIGE Glow-Träger */
+  .vela-wordmark {
+    font-family: "Cinzel Decorative", "Cinzel", ui-serif, serif;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #F8F7F2;
+    text-shadow: var(--glow-lit);
+  }
+  /* proper-noun title (person name, card/sheet titles) — Cinzel display */
+  .vela-name {
+    font-family: "Cinzel", ui-serif, Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(2.2rem, 9vw, 3rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: #F8F7F2;
+  }
+  .vela-serif {
+    font-family: "Cinzel", ui-serif, Georgia, serif;
+    font-weight: 400;
+  }
+  /* H2 — section title (H3-Tier = Bricolage semibold, loum .t-h3) */
+  .vela-title {
+    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: rgba(248, 247, 242, 0.95);
+  }
+  /* THE signature: uppercase meta eyebrow (loum .t-meta — muted, nie Akzentfarbe) */
+  .vela-label,
+  .vela-eyebrow {
+    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    opacity: 1;
+  }
+  .vela-sub {
+    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+  .vela-body {
+    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 16.5px;
+    line-height: 1.7;
+    color: rgba(248, 247, 242, 0.8);
+  }
+  /* data readout — quiet sans (no mono) */
+  .vela-data {
+    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+    color: var(--accent-teal);
+    font-variant-emoji: text;
+  }
+  .vela-data-dim {
+    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--text-muted);
+  }
+  /* hairline blueprint rule */
+  .vela-rule {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.14), transparent);
+  }
+
+  /* keyword / tag whisper inside planet cards */
+  .vela-keyword {
+    font-family: "Manrope", sans-serif;
+    font-size: 14px;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.58);
+  }
+  /* loum-Norm: Text trägt NIE einen Verlauf — die Klasse rendert solid bone
+     mit dezentem Glow (das „lit word"-Prinzip für Zahlen-Momente) */
+  .vela-iris-text {
+    background: none;
+    -webkit-background-clip: initial;
+    background-clip: initial;
+    -webkit-text-fill-color: #F8F7F2;
+    color: #F8F7F2;
+    text-shadow: var(--glow-lit);
+  }
+  .vela-glyph {
+    font-family: "Noto Sans Symbols", "Segoe UI Symbol", system-ui, sans-serif;
+    font-variant-emoji: text;
+  }
+
+  /* ── loum CARD CHEMISTRY: SOLIDE dunkle Karte, KEIN Drop-Shadow,
+     KEIN backdrop-blur, KEIN weiß-alpha Glas. Die EINZIGE Kante ist die
+     1px-Inset-Hairline (7%); Tiefe kommt von INNEN. (Figma reading-rest) */
+  .vela-glass {
+    position: relative;
+    background: var(--surface-card);
+    border: 0;
+    box-shadow: inset 0 0 0 1px var(--card-hairline);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+  .vela-glass:hover {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+  }
+  /* ── PREMIUM TILE — gleiche solide Chemie ─────────────────────────── */
+  .vela-tile {
+    position: relative;
+    border-radius: 18px;
+    background: var(--surface-card);
+    border: 0;
+    box-shadow: inset 0 0 0 1px var(--card-hairline);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .vela-tile-hover:hover {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+  }
+
+  /* ── MOON BUTTON — der Haupt-CTA (loum 2026-07-13): WEISSE Fläche,
+     radius 19 (NIE pill), dunkler Text, weicher iris-Schatten ────────── */
+  .btn-moon {
+    border: 0;
+    color: #111019;
+    background: #ffffff;
+    border-radius: 19px;
+    box-shadow: 0 8px 20px 0 rgba(167, 139, 250, 0.25);
+    transition: filter 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+  }
+  .btn-moon:hover {
+    filter: brightness(0.96);
+    box-shadow: 0 10px 24px 0 rgba(167, 139, 250, 0.35);
+  }
+  .btn-moon:active {
+    transform: translateY(1px);
+  }
+
+  /* ── DAILY-MESSAGE SURFACE — solide, Tiefe von innen ──────────────── */
+  .vela-daily {
+    background:
+      radial-gradient(ellipse at center top, rgba(167, 139, 250, 0.08) 0%, transparent 70%),
+      linear-gradient(180deg, #16161F 0%, #12121D 100%);
+    border: 0;
+    box-shadow: inset 0 0 0 1px var(--card-hairline);
+    border-radius: 24px;
+  }
+
+  /* ── CHART WHEEL BACKDROP (section 10) ────────────────────────────── */
+  .vela-chart-bg {
+    background: transparent;
+  }
+
+  /* ── ORACLE HERO — Cinzel-Display, Glow-Disziplin: nur weicher weißer
+     Halo (das lit-word-Prinzip), kein farbiger Text-Glow ─────────────── */
+  .vela-oracle-ghost {
+    font-family: "Cinzel", ui-serif, Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(18px, 5.5vw, 26px);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1.1;
+    color: rgba(248, 247, 242, 0.16);
+  }
+  .vela-oracle-head {
+    font-family: "Cinzel Decorative", "Cinzel", ui-serif, serif;
+    font-weight: 400;
+    font-size: clamp(28px, 8.5vw, 44px);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.06;
+    color: #F8F7F2;
+    text-shadow: var(--glow-lit);
+  }
+  /* ── PREMIUM CARD — tieferes SOLIDES Ink (loum hero-tier), nur Hairline
+     + faint Top-Gloss, kein Farb-Wash, kein Drop-Shadow ─────────────── */
+  .vela-card-grad {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    background: linear-gradient(180deg, #201D2C 0%, #1B1926 60%, #17141F 100%);
+    border: 0;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+    color: #F8F7F2;
+  }
+  .vela-card-grad::before {
+    content: none;
+  }
+  /* secondary surface — solide Karte mit dezenter iris-Tönung von innen */
+  .vela-card-soft {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    background:
+      radial-gradient(80% 60% at 50% 110%, rgba(167, 139, 250, 0.10) 0%, transparent 70%),
+      linear-gradient(180deg, #16161F 0%, #12121D 100%);
+    border: 0;
+    box-shadow: inset 0 0 0 1px var(--card-hairline);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .vela-card-soft:hover {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+  }
+  /* stat / accent chip used inside studio cards */
+  .vela-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 4px 12px;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+  }
+  /* large translucent zodiac watermark glyph in a card corner */
+  .vela-watermark {
+    position: absolute;
+    pointer-events: none;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* "ask bar" — floating UI: dunkles Rauchglas (loum .glass-overlay ist die
+     EINZIGE erlaubte Blur-Fläche), Fokus-Akzent iris */
+  .vela-askbar {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(248, 247, 242, 0.10);
+    background: rgba(10, 10, 16, 0.66);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    box-shadow: inset 0 0 0 1px var(--card-hairline);
+    padding: 8px 8px 8px 20px;
+    text-align: left;
+    font-size: 14px;
+    color: rgba(238, 245, 248, 0.55);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .vela-askbar:hover {
+    border-color: rgba(167, 139, 250, 0.4);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.10);
+  }
+
+  /* ── PURE-CSS IRIDESCENT ORB (soft-light film, hard specular) ─────── */
+  .vela-orb {
+    position: relative;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at 32% 28%,
+      #fbf7ff 0%,
+      #cdb4ff 18%,
+      #7b4fd8 48%,
+      #2a1758 82%,
+      #160a30 100%
+    );
+    box-shadow:
+      inset -22px -22px 50px rgba(10, 4, 30, 0.9),
+      inset 12px 14px 34px rgba(255, 255, 255, 0.2),
+      0 24px 60px -22px rgba(120, 60, 255, 0.6);
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .vela-orb::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    /* cool iridescence — silver/lilac/cyan/ice (no warm yellow/green) */
+    background: conic-gradient(
+      from 200deg at 50% 50%,
+      #c9b6ff,
+      #8b5cff,
+      #5599FF,
+      #9ec8ff,
+      #ece5ff,
+      #c9b6ff
+    );
+    mix-blend-mode: soft-light;
+    opacity: 0.62;
+    filter: blur(3px) saturate(1.25);
+    animation: velaSpin 16s linear infinite;
+  }
+  .vela-orb::after {
+    content: "";
+    position: absolute;
+    top: 15%;
+    left: 23%;
+    width: 26%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #fff 0%, rgba(255, 255, 255, 0.55) 30%, transparent 65%);
+    filter: blur(1px);
+    mix-blend-mode: screen;
+  }
+}
+
+/* ── FINISHING LAYERS: bloom + grain (instant premium) ─────────────── */
+/* restrained top halo bloom — violet glow above the hero */
+.vela-bloom {
+  position: fixed;
+  inset: 0;
+  z-index: -5;
+  pointer-events: none;
+  mix-blend-mode: plus-lighter;
+  opacity: 0.55;
+  background: radial-gradient(ellipse 52% 28% at 50% 1%, rgba(167, 139, 250, 0.28), transparent 64%);
+  filter: blur(32px);
+}
+/* loum-Norm: kein Grain-Film — Flächen sind matt-solide */
+.vela-grain {
+  display: none;
+}
+
+@keyframes velaSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes velaSheenText {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+@keyframes velaComet {
+  0% {
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.55;
+  }
+  90% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(260px, 260px) rotate(42deg);
+  }
+}
+@keyframes velaImpulseIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.94);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+@keyframes velaNebulaDrift {
+  from {
+    transform: translate(0, 0) scale(1.05);
+  }
+  to {
+    transform: translate(-4%, 3%) scale(1.16);
+  }
+}
+
+/* ── PRINTABLE HOROSCOPE ──────────────────────────────────────────── */
+.print-ink {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  .print-paper,
+  .print-paper * {
+    visibility: visible !important;
+  }
+  .print-paper {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-break {
+    break-before: page;
+  }
+  .print-avoid {
+    break-inside: avoid;
+  }
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+}
+
+/* range slider — gradient track + glowing thumb (real, consequential sliders) */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #BBA8FF, #A78BFA 50%, #20F0D0);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 36% 32%, #fff, #e7dcff 55%, #BBA8FF);
+  box-shadow: 0 0 12px #A78BFA, 0 0 26px rgba(32, 240, 208, 0.4);
+  cursor: pointer;
+  margin-top: -8px;
+}
