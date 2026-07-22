@@ -119,6 +119,9 @@ export function ThemenHub() {
   const finishEntry = (themeKey?: string) => {
     try { sessionStorage.setItem(entryKey, "1"); } catch { /* ignore */ }
     setEntryDone(true);
+    // Regel §7: das Rad muss im ersten Viewport stehen — nicht die
+    // Scroll-Position des Frage-Screens erben
+    window.scrollTo({ top: 0 });
     if (themeKey) openTheme(themeKey);
   };
 
@@ -135,7 +138,11 @@ export function ThemenHub() {
       <div className="flex min-h-dvh flex-col items-center justify-center px-6 py-16 lg:px-10">
         <div className="w-full max-w-[640px]">
           <div className="vela-wordmark mb-4 text-[12px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
-          <h1 className="font-cinzel text-[34px] font-light leading-[1.12] text-white [text-shadow:0_0_30px_rgba(167,139,250,0.3)] lg:text-[46px]">
+          {/* KANONISCHE REGEL: das Chart ist IMMER sichtbar — auch hier */}
+          <div className="pointer-events-none mx-auto mb-6 w-full max-w-[220px] drop-shadow-[0_0_28px_rgba(167,139,250,0.22)]">
+            <ChartWheel />
+          </div>
+          <h1 className="text-center font-cinzel text-[30px] font-light leading-[1.12] text-white [text-shadow:0_0_30px_rgba(167,139,250,0.3)] lg:text-[40px]">
             Was beschäftigt dich gerade, {first}?
           </h1>
           <p className="mt-3 font-body text-[15px] leading-relaxed text-txt-2">
@@ -176,26 +183,13 @@ export function ThemenHub() {
   return (
     <div className="animate-slideUp px-6 pb-40 pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] lg:px-10 lg:pt-12">
       <div className="mx-auto w-full max-w-[860px]">
-        <header className="mb-10">
-          <div className="vela-wordmark mb-3 text-[12px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
-          <h1 className="font-cinzel text-[40px] font-light leading-[1.05] tracking-[0.01em] text-white [text-shadow:0_0_30px_rgba(167,139,250,0.3)] lg:text-[58px]">
-            {viewer ? `Willkommen, ${first}` : first}
-          </h1>
-          <p className="mt-4 max-w-[46ch] font-body text-[16px] leading-relaxed text-txt-2">
-            {viewer ? (
-              <>Dein persönlicher astrologischer Blueprint. <span className="text-txt-3">Wähle ein Lebensthema, das dich gerade bewegt.</span></>
-            ) : (
-              "Wähle ein Lebensthema — dein Geburtsbild, gelesen durch diese Linse. Kein Fachchinesisch, nur was es für dich bedeutet."
-            )}
-          </p>
-        </header>
+        <div className="vela-wordmark mb-5 text-[12px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
 
-        {/* Dein Geburtsrad — the chart, visible on the first screen but COMPACT
-            (per Laura: heading + explanation, and the themes must stay in
-            reach). The whole card opens the full explorer; the "tippe auf
-            alles, was leuchtet" line lives here now — the floating chip is gone. */}
+        {/* KANONISCHE REGEL (Laura): Das Chart ist IMMER sichtbar — das
+            Geburtsrad ist das ERSTE Element der Home, noch vor der Begrüßung.
+            Home (mit Rad) ist der aktive Standard-Navigationspunkt. */}
         <Reveal>
-          <section className="mb-10">
+          <section className="mb-8">
             <div className="vela-label mb-4 flex items-center gap-1.5"><CircleDot className="h-3.5 w-3.5" /> Dein Geburtsrad</div>
             <button
               onClick={() => setHomeView("chart")}
@@ -220,7 +214,18 @@ export function ThemenHub() {
           </section>
         </Reveal>
 
-
+        <header className="mb-8">
+          <h1 className="font-cinzel text-[34px] font-light leading-[1.05] tracking-[0.01em] text-white [text-shadow:0_0_30px_rgba(167,139,250,0.3)] lg:text-[48px]">
+            {viewer ? `Willkommen, ${first}` : first}
+          </h1>
+          <p className="mt-3 max-w-[46ch] font-body text-[16px] leading-relaxed text-txt-2">
+            {viewer ? (
+              <>Dein persönlicher astrologischer Blueprint. <span className="text-txt-3">Wähle ein Lebensthema, das dich gerade bewegt.</span></>
+            ) : (
+              "Wähle ein Lebensthema — dein Geburtsbild, gelesen durch diese Linse. Kein Fachchinesisch, nur was es für dich bedeutet."
+            )}
+          </p>
+        </header>
 
         {/* Lebensthemen — the heart of the hub, as a 4-column BENTO grid
             (loum design system): tile 1 is the 2×2 hero, the rest are 1×1;

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { Sparkles, Orbit, Heart, BookOpen, User } from "lucide-react";
 
 const TABS: { key: TabKey; label: string; Icon: typeof Sparkles }[] = [
-  { key: "heute", label: "Chart", Icon: Sparkles },
+  { key: "heute", label: "Home", Icon: Sparkles },
   { key: "transite", label: "Transite", Icon: Orbit },
   { key: "synastrie", label: "Synastrie", Icon: Heart },
   { key: "lernen", label: "Lernen", Icon: BookOpen },
