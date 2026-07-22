@@ -142,9 +142,9 @@ export const THEME: Record<string, string> = {
 
 export const ASPDEF: AspectDef[] = [
   { a: 0, type: "Konjunktion", g: "☌", c: "#e7dcff", w: 1.2, nat: "vereint", verb: "verschmelzen zu einer Kraft", plain: "Zwei Kräfte stehen eng zusammen und wirken wie eine." },
-  { a: 60, type: "Sextil", g: "⚹", c: "#4fd6ef", w: 1, nat: "Chance", verb: "unterstützen sich, wenn du es zulässt", plain: "Eine leichte Chance — sie wirkt, wenn du sie nutzt." },
+  { a: 60, type: "Sextil", g: "⚹", c: "#5599FF", w: 1, nat: "Chance", verb: "unterstützen sich, wenn du es zulässt", plain: "Eine leichte Chance — sie wirkt, wenn du sie nutzt." },
   { a: 90, type: "Quadrat", g: "□", c: "#aa5cff", w: 1, nat: "Spannung", verb: "reiben sich — eine Spannung, die dich antreibt", plain: "Reibung, die Druck macht — und dich wachsen lässt." },
-  { a: 120, type: "Trigon", g: "△", c: "#2fde8c", w: 1, nat: "Fluss", verb: "fließen mühelos zusammen", plain: "Fließt mühelos — ein eingebautes Talent." },
+  { a: 120, type: "Trigon", g: "△", c: "#20F0D0", w: 1, nat: "Fluss", verb: "fließen mühelos zusammen", plain: "Fließt mühelos — ein eingebautes Talent." },
   { a: 180, type: "Opposition", g: "☍", c: "#ff8fb0", w: 1.1, nat: "Balance", verb: "ziehen in Gegenrichtung und suchen Balance", plain: "Zwei Pole, die nach Balance suchen." },
 ];
 
@@ -176,7 +176,7 @@ export interface Transit {
 }
 
 export const TRANSITS: Transit[] = [
-  { tg: "♃", nk: "sun", c: "#2fde8c", title: "Jupiter im Trigon zu deiner Sonne", txt: "Eine offene, großzügige Phase — vieles fällt dir gerade leichter zu. Ein guter Moment, etwas zu beginnen, das du dir lange vorgenommen hast.", impact: "+" },
+  { tg: "♃", nk: "sun", c: "#20F0D0", title: "Jupiter im Trigon zu deiner Sonne", txt: "Eine offene, großzügige Phase — vieles fällt dir gerade leichter zu. Ein guter Moment, etwas zu beginnen, das du dir lange vorgenommen hast.", impact: "+" },
   { tg: "♄", nk: "mars", c: "#aa5cff", title: "Saturn im Quadrat zu deinem Mars", txt: "Dein Tatendrang trifft auf Widerstand und Verzögerung. Nicht dagegen anrennen — geduldig dranbleiben zahlt sich jetzt mehr aus als Tempo.", impact: "-" },
   { tg: "♀", nk: "moon", c: "#e7dcff", title: "Venus auf deinem Mond", txt: "Ein weicher, verbindender Tag. Nähe, Versöhnung und kleine Schönheiten tun dir heute besonders gut.", impact: "+" },
 ];

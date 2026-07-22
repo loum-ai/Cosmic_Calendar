@@ -56,7 +56,7 @@ export interface SheetContent {
   relations?: SheetRelation[];
 }
 
-const MINT = "#2fde8c";
+const MINT = "#20F0D0";
 const lc = (s: string) => (s ? s.charAt(0).toLowerCase() + s.slice(1) : s);
 
 function relText(a: {

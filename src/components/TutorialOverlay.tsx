@@ -64,7 +64,7 @@ export function TutorialOverlay() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-[95] flex flex-col bg-[#0d0d0d]"
+        className="fixed inset-0 z-[95] flex flex-col bg-[#111019]"
       >
         {/* deep-space backdrop — one tight, restrained glow, no haze */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_48%_28%_at_50%_-6%,rgba(116,96,200,0.12),transparent_55%)]" />
@@ -116,7 +116,7 @@ export function TutorialOverlay() {
               <span
                 key={di}
                 className="h-1.5 rounded-full transition-all duration-300"
-                style={{ width: di === i ? 22 : 6, background: di === i ? "#4fd6ef" : "rgba(255,255,255,0.22)" }}
+                style={{ width: di === i ? 22 : 6, background: di === i ? "#A78BFA" : "rgba(255,255,255,0.22)" }}
               />
             ))}
           </div>

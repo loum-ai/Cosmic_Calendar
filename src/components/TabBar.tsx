@@ -31,7 +31,7 @@ export function TabBar() {
       )}
     >
       {/* brand mark — desktop only */}
-      <div className="hidden lg:mb-3 lg:flex lg:h-11 lg:w-11 lg:items-center lg:justify-center lg:rounded-2xl lg:bg-cta-gradient lg:text-[#052029] lg:shadow-glow">
+      <div className="hidden lg:mb-3 lg:flex lg:h-11 lg:w-11 lg:items-center lg:justify-center lg:rounded-2xl lg:bg-cta-gradient lg:text-[#ffffff] lg:shadow-glow">
         <Sparkles className="h-5 w-5" strokeWidth={2.2} />
       </div>
 
@@ -50,7 +50,7 @@ export function TabBar() {
                 <motion.span
                   layoutId="tab-active"
                   transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                  className="absolute inset-0 rounded-full border border-[rgba(79,214,239,0.55)] bg-[rgba(79,214,239,0.14)] shadow-[0_0_18px_-4px_rgba(79,214,239,0.7),inset_0_1px_0_rgba(255,255,255,0.15)]"
+                  className="absolute inset-0 rounded-full border border-[rgba(167,139,250,0.55)] bg-[rgba(167,139,250,0.14)] shadow-[0_0_18px_-4px_rgba(167,139,250,0.7),inset_0_1px_0_rgba(255,255,255,0.15)]"
                 />
               )}
               <Icon
@@ -64,7 +64,7 @@ export function TabBar() {
             <span
               className={cn(
                 "font-body text-[9.5px] font-medium tracking-wide transition-colors duration-200",
-                active ? "text-[#8fe4f5]" : "text-[rgba(198,220,230,0.55)]",
+                active ? "text-[#BBA8FF]" : "text-[rgba(198,220,230,0.55)]",
               )}
             >
               {label}

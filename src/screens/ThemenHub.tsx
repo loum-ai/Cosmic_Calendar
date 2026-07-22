@@ -135,7 +135,7 @@ export function ThemenHub() {
       <div className="flex min-h-dvh flex-col items-center justify-center px-6 py-16 lg:px-10">
         <div className="w-full max-w-[640px]">
           <div className="vela-wordmark mb-4 text-[12px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
-          <h1 className="font-cinzel text-[34px] font-light leading-[1.12] text-white [text-shadow:0_0_30px_rgba(79,214,239,0.3)] lg:text-[46px]">
+          <h1 className="font-cinzel text-[34px] font-light leading-[1.12] text-white [text-shadow:0_0_30px_rgba(167,139,250,0.3)] lg:text-[46px]">
             Was beschäftigt dich gerade, {first}?
           </h1>
           <p className="mt-3 font-body text-[15px] leading-relaxed text-txt-2">
@@ -164,7 +164,7 @@ export function ThemenHub() {
           </div>
           <button
             onClick={() => finishEntry()}
-            className="mx-auto mt-8 block font-body text-[14px] text-[#8fe4f5] transition hover:translate-x-0.5"
+            className="mx-auto mt-8 block font-body text-[14px] text-[#BBA8FF] transition hover:translate-x-0.5"
           >
             Überspringen — direkt zu meinem Blueprint →
           </button>
@@ -178,7 +178,7 @@ export function ThemenHub() {
       <div className="mx-auto w-full max-w-[860px]">
         <header className="mb-10">
           <div className="vela-wordmark mb-3 text-[12px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
-          <h1 className="font-cinzel text-[40px] font-light leading-[1.05] tracking-[0.01em] text-white [text-shadow:0_0_30px_rgba(79,214,239,0.3)] lg:text-[58px]">
+          <h1 className="font-cinzel text-[40px] font-light leading-[1.05] tracking-[0.01em] text-white [text-shadow:0_0_30px_rgba(167,139,250,0.3)] lg:text-[58px]">
             {viewer ? `Willkommen, ${first}` : first}
           </h1>
           <p className="mt-4 max-w-[46ch] font-body text-[16px] leading-relaxed text-txt-2">
@@ -199,11 +199,11 @@ export function ThemenHub() {
             <div className="vela-label mb-4 flex items-center gap-1.5"><CircleDot className="h-3.5 w-3.5" /> Dein Geburtsrad</div>
             <button
               onClick={() => setHomeView("chart")}
-              className="group relative w-full overflow-hidden rounded-[30px] border border-white/10 bg-stage p-5 text-left shadow-glass backdrop-blur-2xl transition hover:border-[rgba(79,214,239,0.45)] lg:p-6"
+              className="group relative w-full overflow-hidden rounded-[30px] border border-white/10 bg-stage p-5 text-left shadow-glass backdrop-blur-2xl transition hover:border-[rgba(167,139,250,0.45)] lg:p-6"
             >
-              <div className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(79,214,239,0.26),rgba(79,214,239,0.05)_45%,transparent_66%)] blur-2xl animate-breath" />
+              <div className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.26),rgba(167,139,250,0.05)_45%,transparent_66%)] blur-2xl animate-breath" />
               <div className="relative flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
-                <div className="pointer-events-none relative w-full max-w-[300px] shrink-0 drop-shadow-[0_0_36px_rgba(79,214,239,0.22)]">
+                <div className="pointer-events-none relative w-full max-w-[300px] shrink-0 drop-shadow-[0_0_36px_rgba(167,139,250,0.22)]">
                   <ChartWheel />
                 </div>
                 <div className="relative min-w-0 text-center sm:text-left">
@@ -213,7 +213,7 @@ export function ThemenHub() {
                   <p className="mt-3 font-body text-[14px] leading-relaxed text-txt-3">
                     Tippe auf jeden Punkt und jede Linie — die Erklärung öffnet sich.
                   </p>
-                  <span className="mt-4 inline-block font-body text-[14px] text-[#8fe4f5] transition group-hover:translate-x-0.5">Rad öffnen & erkunden →</span>
+                  <span className="mt-4 inline-block font-body text-[14px] text-[#BBA8FF] transition group-hover:translate-x-0.5">Rad öffnen & erkunden →</span>
                 </div>
               </div>
             </button>
@@ -222,30 +222,52 @@ export function ThemenHub() {
 
 
 
-        {/* Lebensthemen — the heart of the hub, in reach right after the wheel */}
+        {/* Lebensthemen — the heart of the hub, as a 4-column BENTO grid
+            (loum design system): tile 1 is the 2×2 hero, the rest are 1×1;
+            Human Design completes the last row as a 2×1 cell. */}
         <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Lebensthemen</div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {THEMES.map((t, i) => (
-            <Reveal key={t.key} i={i}>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[minmax(150px,auto)]">
+          {THEMES.map((t, i) => {
+            const hero = i === 0;
+            const wide = i === THEMES.length - 1;
+            return (
+            <Reveal key={t.key} i={i} className={hero ? "sm:col-span-2 lg:col-span-2 lg:row-span-2" : wide ? "lg:col-span-2" : ""}>
               <button
                 onClick={() => openTheme(t.key)}
-                className="vela-tile vela-tile-hover group relative w-full overflow-hidden p-6 text-left backdrop-blur-xl"
+                className={`vela-tile vela-tile-hover group relative flex h-full w-full flex-col overflow-hidden text-left ${hero ? "p-7 lg:p-8" : "p-6"}`}
               >
-                <span className="pointer-events-none absolute -right-4 -top-8 font-glyph text-[112px] leading-none opacity-[0.09]" style={{ color: t.accent }}>{t.glyph}</span>
+                <span className={`pointer-events-none absolute -right-4 -top-8 font-glyph leading-none opacity-[0.09] ${hero ? "text-[180px]" : "text-[112px]"}`} style={{ color: t.accent }}>{t.glyph}</span>
                 <div className="relative flex items-start justify-between">
                   <span
-                    className="inline-flex h-12 w-12 items-center justify-center rounded-full font-glyph text-[24px]"
-                    style={{ color: t.accent, background: `radial-gradient(circle, ${t.accent}2b, transparent 72%)`, boxShadow: `0 0 24px -6px ${t.accent}77`, border: `1px solid ${t.accent}3a` }}
+                    className={`inline-flex items-center justify-center rounded-full font-glyph ${hero ? "h-14 w-14 text-[28px]" : "h-12 w-12 text-[24px]"}`}
+                    style={{ color: t.accent, background: `radial-gradient(circle, ${t.accent}2b, transparent 72%)`, border: `1px solid ${t.accent}3a` }}
                   >
                     {t.glyph}
                   </span>
                   <ChevronRight className="mt-2 h-5 w-5 text-txt-3 transition-transform group-hover:translate-x-0.5" />
                 </div>
-                <div className="relative mt-4 font-cinzel text-[25px] font-light leading-tight text-white">{t.label}</div>
+                <div className={`relative font-cinzel uppercase leading-tight text-txt ${hero ? "mt-auto pt-6 text-[28px] lg:text-[32px]" : "mt-4 text-[21px]"}`}>{t.label}</div>
                 <div className="relative mt-2 font-body text-[14px] leading-relaxed text-txt-3">{t.teaser}</div>
               </button>
             </Reveal>
-          ))}
+          );})}
+          {birth && (
+            <Reveal i={THEMES.length} className="sm:col-span-2 lg:col-span-2">
+              <button
+                onClick={() => openTheme("__hd__")}
+                className="vela-tile vela-tile-hover flex h-full w-full items-center justify-between gap-4 p-6 text-left"
+              >
+                <div className="flex items-center gap-3.5">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.12)] text-lilac"><Hexagon className="h-5 w-5" strokeWidth={1.7} /></span>
+                  <div>
+                    <div className="font-cinzel text-[19px] uppercase text-txt">Human Design</div>
+                    <div className="mt-0.5 font-body text-[13px] text-txt-3">Typ, Strategie, Autorität, Profil & Zentren.</div>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 shrink-0 text-txt-3" />
+              </button>
+            </Reveal>
+          )}
         </div>
 
         {/* Dein Portrait — the deep, synthesized whole-chart reading, the head
@@ -253,7 +275,7 @@ export function ThemenHub() {
         {portraitParas.length > 0 ? (
           <section className="mt-10">
             <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Dein Portrait</div>
-            <div className="rounded-[24px] border border-white/8 bg-[rgba(13,25,33,0.5)] p-6 backdrop-blur-xl lg:p-8">
+            <div className="rounded-[24px] border border-white/8 bg-[rgba(18,18,29,0.5)] p-6 backdrop-blur-xl lg:p-8">
               {portraitParas.map((p, i) => (
                 <Reveal key={i} i={i}>
                   <p className={`font-body leading-[1.75] text-txt-2 ${i === 0 ? "text-[18.5px] font-medium text-white" : "mt-5 text-[16.5px]"}`}>{p}</p>
@@ -264,7 +286,7 @@ export function ThemenHub() {
         ) : aiLoading ? (
           <section className="mt-10">
             <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Dein Portrait</div>
-            <div className="rounded-[24px] border border-white/8 bg-[rgba(13,25,33,0.5)] p-6 backdrop-blur-xl lg:p-8">
+            <div className="rounded-[24px] border border-white/8 bg-[rgba(18,18,29,0.5)] p-6 backdrop-blur-xl lg:p-8">
               <GenerativeLoader
                 messages={[
                   "Dein Bild setzt sich zusammen …",
@@ -277,35 +299,16 @@ export function ThemenHub() {
           </section>
         ) : null}
 
-        {/* Human Design — a second lens on the same birth data */}
-        {birth && (
-          <Reveal i={THEMES.length}>
-            <button
-              onClick={() => openTheme("__hd__")}
-              className="mt-4 flex w-full items-center justify-between gap-4 rounded-[22px] border border-[rgba(79,214,239,0.3)] bg-[rgba(15,27,35,0.5)] p-5 text-left backdrop-blur-xl transition hover:border-[rgba(79,214,239,0.6)]"
-            >
-              <div className="flex items-center gap-3.5">
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(79,214,239,0.4)] bg-[rgba(79,214,239,0.12)] text-[#8fe4f5]" style={{ boxShadow: "0 0 20px -6px rgba(79,214,239,0.7)" }}><Hexagon className="h-5 w-5" strokeWidth={1.7} /></span>
-                <div>
-                  <div className="font-cinzel text-[20px] font-light text-white">Human Design</div>
-                  <div className="mt-0.5 font-body text-[13px] text-txt-3">Typ, Strategie, Autorität, Profil & Zentren.</div>
-                </div>
-              </div>
-              <ChevronRight className="h-5 w-5 shrink-0 text-txt-3" />
-            </button>
-          </Reveal>
-        )}
-
-        {/* the full chart, one tap away */}
+        {/* the full chart, one tap away (Human Design lives in the bento above) */}
         <Reveal i={THEMES.length + 1}>
           <button
             onClick={() => setHomeView("chart")}
-            className="mt-4 flex w-full items-center justify-between gap-4 rounded-[22px] border border-white/10 bg-[rgba(15,27,35,0.5)] p-5 text-left backdrop-blur-xl transition hover:border-[rgba(79,214,239,0.4)]"
+            className="vela-tile vela-tile-hover mt-4 flex w-full items-center justify-between gap-4 p-5 text-left"
           >
             <div className="flex items-center gap-3.5">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.05] text-[#8fe4f5]"><CircleDot className="h-5 w-5" strokeWidth={1.7} /></span>
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.05] text-lilac"><CircleDot className="h-5 w-5" strokeWidth={1.7} /></span>
               <div>
-                <div className="font-cinzel text-[20px] font-light text-white">Ganzes Geburtsrad</div>
+                <div className="font-cinzel text-[19px] uppercase text-txt">Ganzes Geburtsrad</div>
                 <div className="mt-0.5 font-body text-[13px] text-txt-3">Alle Planeten, Häuser & Aspekte — zum Erkunden.</div>
               </div>
             </div>
@@ -496,7 +499,7 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
                 <button
                   key={f}
                   onClick={() => { setQ(f); void ask(f); }}
-                  className="rounded-pill border border-white/[0.12] bg-white/[0.05] px-3.5 py-2 text-left font-body text-[13px] leading-snug text-ink-soft/90 backdrop-blur-md transition hover:border-[rgba(79,214,239,0.45)] active:scale-95"
+                  className="rounded-pill border border-white/[0.12] bg-white/[0.05] px-3.5 py-2 text-left font-body text-[13px] leading-snug text-ink-soft/90 backdrop-blur-md transition hover:border-[rgba(167,139,250,0.45)] active:scale-95"
                 >
                   {f}
                 </button>
@@ -542,7 +545,7 @@ function ForceCard({ it, accent, onOpen }: { it: { key: string; name: string; gl
           ))}
         </div>
       ) : null}
-      <span className="relative mt-3 inline-block font-body text-[13px] text-[#8fe4f5]">Mehr dazu →</span>
+      <span className="relative mt-3 inline-block font-body text-[13px] text-[#BBA8FF]">Mehr dazu →</span>
     </button>
   );
 }
@@ -667,7 +670,7 @@ function HDView({ birth }: { birth: BirthInput }) {
         </button>
 
         <header className="mb-9 flex items-center gap-4">
-          <span className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[rgba(79,214,239,0.4)] bg-[rgba(79,214,239,0.12)] text-[#8fe4f5]" style={{ boxShadow: "0 0 30px -6px rgba(79,214,239,0.8)" }}>
+          <span className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.12)] text-[#BBA8FF]" style={{ boxShadow: "0 0 30px -6px rgba(167,139,250,0.8)" }}>
             <Hexagon className="h-7 w-7" strokeWidth={1.6} />
           </span>
           <div>
@@ -686,7 +689,7 @@ function HDView({ birth }: { birth: BirthInput }) {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="vela-label">{f.k}</div>
-                  <Info className={`h-4 w-4 shrink-0 transition-colors ${open === i ? "text-[#8fe4f5]" : "text-txt-3"}`} />
+                  <Info className={`h-4 w-4 shrink-0 transition-colors ${open === i ? "text-[#BBA8FF]" : "text-txt-3"}`} />
                 </div>
                 <div className="mt-2 font-cinzel text-[20px] font-light leading-tight text-white">{f.v}</div>
                 <AnimatePresence initial={false}>
@@ -702,7 +705,7 @@ function HDView({ birth }: { birth: BirthInput }) {
                     </motion.div>
                   )}
                 </AnimatePresence>
-                {open !== i && <span className="mt-2 inline-block font-body text-[11.5px] text-[#8fe4f5]/70">Was heißt das? →</span>}
+                {open !== i && <span className="mt-2 inline-block font-body text-[11.5px] text-[#BBA8FF]/70">Was heißt das? →</span>}
               </button>
             </Reveal>
           ))}
@@ -714,7 +717,7 @@ function HDView({ birth }: { birth: BirthInput }) {
             {ALL_CENTERS.map((c) => {
               const on = hd.definedCenters.includes(c);
               return (
-                <span key={c} className={`rounded-pill px-3.5 py-1.5 font-body text-[13px] ${on ? "border border-[rgba(79,214,239,0.5)] bg-[rgba(79,214,239,0.14)] text-[#bdeefb]" : "border border-white/10 text-txt-3"}`}>
+                <span key={c} className={`rounded-pill px-3.5 py-1.5 font-body text-[13px] ${on ? "border border-[rgba(167,139,250,0.5)] bg-[rgba(167,139,250,0.14)] text-[#bdeefb]" : "border border-white/10 text-txt-3"}`}>
                   {c}
                 </span>
               );

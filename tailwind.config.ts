@@ -12,30 +12,32 @@ export default {
   theme: {
     extend: {
       colors: {
-        // base — deep steel-teal night sky (byheart-matched)
-        space: "#0b1a22",
-        "space-2": "#14283a",
-        ink: "#f6f3ff",
-        "ink-soft": "#f3effe",
-        // primary accent — violet/lilac glow system
-        violet: "#3ec7e8",
-        // secondary punctual accent — teal
-        cyan: "#2DD4BF",
-        mint: "#2DD4BF",
-        // accent / lilac used for borders & rim-lights
-        lilac: "#86dcef",
-        "mint-soft": "#7defd6",
+        // base — loum QUINTESSENCE v6 void (SSOT: loum Design System tokens/colors.css)
+        space: "#111019",
+        "space-2": "#1A1829",
+        ink: "#F8F7F2",
+        "ink-soft": "#FBFAFF",
+        // primary accent — aura (depth) · QUINTESSENCE
+        violet: "#A78BFA",
+        // secondary punctual accent — mystic (the pulse)
+        cyan: "#20F0D0",
+        mint: "#20F0D0",
+        // rim-lights / soft accent — aura-300
+        lilac: "#BBA8FF",
+        "mint-soft": "#68F8EE",
+        // dialog/KI accent — azure (v6)
+        azure: "#5599FF",
         // ── semantic surface / line / text tokens (single source of truth;
         //    use these instead of inline rgba literals) ──
-        surface: "rgba(255,255,255,0.04)",
-        "surface-2": "rgba(255,255,255,0.07)",
-        card: "rgba(120,80,255,0.06)",
-        line: "rgba(255,255,255,0.08)",
-        "line-soft": "rgba(255,255,255,0.06)",
-        "line-accent": "rgba(150,100,255,0.25)",
-        txt: "rgba(255,255,255,0.98)",
-        "txt-2": "rgba(255,255,255,0.77)",
-        "txt-3": "rgba(255,255,255,0.60)",
+        surface: "rgba(248,247,242,0.04)",
+        "surface-2": "rgba(248,247,242,0.07)",
+        card: "rgba(167,139,250,0.06)",
+        line: "rgba(248,247,242,0.10)",
+        "line-soft": "rgba(248,247,242,0.06)",
+        "line-accent": "rgba(167,139,250,0.25)",
+        txt: "#F8F7F2",
+        "txt-2": "rgba(248,247,242,0.85)",
+        "txt-3": "rgba(238,245,248,0.55)",
         // planet semantic colors
         planet: {
           sun: "#ffd9a0",
@@ -49,50 +51,52 @@ export default {
           asc: "#c4a6ff",
           node: "#9bc0ff",
         },
-        // aspect semantic colors
+        // aspect semantic colors (QUINTESSENCE-abgestimmt: Sextil=azure, Trigon=mystic)
         aspect: {
           conj: "#e7dcff",
-          sextile: "#4fd6ef",
+          sextile: "#5599FF",
           square: "#aa5cff",
-          trine: "#2fde8c",
+          trine: "#20F0D0",
           opp: "#ff8fb0",
         },
       },
       fontFamily: {
-        // wide, engraved all-caps display serif (à la LOUM "THE ANSWER")
-        cinzel: ['"Montserrat"', "sans-serif"],
-        // elegant high-contrast serif for the cinematic hero headlines
-        serif: ['"Montserrat"', "sans-serif"],
-        display: ['"Manrope"', "sans-serif"],
-        body: ['"Manrope"', "sans-serif"],
-        mono: ['"Manrope"', "sans-serif"],
+        // Two Faces (loum v6): Cinzel = Display, Cinzel Decorative = lit word,
+        // Bricolage Grotesque = alles andere
+        cinzel: ['"Cinzel"', "ui-serif", "Georgia", "serif"],
+        deco: ['"Cinzel Decorative"', '"Cinzel"', "ui-serif", "serif"],
+        serif: ['"Cinzel"', "ui-serif", "Georgia", "serif"],
+        display: ['"Bricolage Grotesque"', "ui-sans-serif", "system-ui", "sans-serif"],
+        body: ['"Bricolage Grotesque"', "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ['"Bricolage Grotesque"', "ui-sans-serif", "system-ui", "sans-serif"],
         glyph: ['"Noto Sans Symbols"', '"Segoe UI Symbol"', "system-ui", "sans-serif"],
       },
       borderRadius: {
-        card: "22px",
-        sheet: "26px",
+        card: "18px",
+        sheet: "24px",
         pill: "999px",
       },
       boxShadow: {
-        // deep drop + hairline rim — the signature glass card shadow
-        glass:
-          "0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.07)",
-        // violet glow halo for FABs / primary CTAs
-        glow: "0 4px 24px rgba(79,214,239,0.5), 0 0 0 1px rgba(255,255,255,0.1)",
-        // hover lift — deep drop + soft violet bloom
-        lift: "0 8px 32px rgba(0,0,0,0.4), 0 0 20px rgba(139,92,246,0.2)",
+        // loum card chemistry: die EINZIGE Kante ist die 1px-Inset-Hairline —
+        // kein äußerer Drop-Shadow (Figma reading-rest)
+        glass: "inset 0 0 0 1px rgba(255,255,255,0.07)",
+        // moon-CTA-Schatten — weicher iris-Schatten (Figma event-card CTA)
+        glow: "0 8px 20px rgba(167,139,250,0.25)",
+        // hover lift — hellere Hairline statt Drop-Shadow
+        lift: "inset 0 0 0 1px rgba(255,255,255,0.12)",
       },
       backgroundImage: {
+        // --grad-halo (v6): KI/Dialog-Flächen — Chat-Send, KI-CTA
         "cta-gradient":
-          "linear-gradient(135deg,#5fe0f2,#22a7cc)",
-        "iris-text":
-          "linear-gradient(110deg,#c9f2fb 0%,#4fd6ef 48%,#2fde8c 100%)",
-        // glassy chart-stage — cyan/teal nebula bloom + faint warm accent over glass
+          "linear-gradient(135deg,#5599FF 0%,#7241FF 100%)",
+        // Text trägt NIE einen Verlauf (loum-Norm) — Klasse rendert solid bone
+        "iris-text": "none",
+        // chart-stage — SOLIDE dunkle Karte, Tiefe von INNEN (radiale Glows)
         "stage":
-          "radial-gradient(120% 90% at 80% 0%, rgba(79,214,239,0.20) 0%, transparent 55%), radial-gradient(80% 60% at 8% 105%, rgba(47,222,140,0.12) 0%, transparent 60%), radial-gradient(60% 50% at 55% 60%, rgba(255,130,110,0.06) 0%, transparent 60%), linear-gradient(165deg, rgba(20,40,54,0.72) 0%, rgba(13,28,38,0.74) 60%, rgba(10,22,30,0.84) 100%)",
-        // floating glass panel — translucent, faint teal tint (blur + rim-light via .vela-glass)
+          "radial-gradient(120% 90% at 80% 0%, rgba(167,139,250,0.10) 0%, transparent 55%), radial-gradient(80% 60% at 8% 105%, rgba(32,240,208,0.05) 0%, transparent 60%), linear-gradient(180deg, #16161F 0%, #12121D 100%)",
+        // solide Karten-Füllung (--surface-card)
         "glasswash":
-          "linear-gradient(155deg, rgba(79,214,239,0.13) 0%, rgba(22,42,56,0.46) 45%, rgba(12,26,34,0.6) 100%)",
+          "linear-gradient(180deg, #16161F 0%, #12121D 100%)",
       },
       keyframes: {
         velaSpin: { to: { transform: "rotate(360deg)" } },

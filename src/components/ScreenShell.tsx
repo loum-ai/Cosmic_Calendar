@@ -33,7 +33,7 @@ export function PageHead({ label, title, sub }: { label?: string; title: string;
   return (
     <header className="mb-6">
       {label && <div className="vela-label mb-1.5">{label}</div>}
-      <h1 className="font-cinzel text-[30px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_24px_rgba(79,214,239,0.35)] lg:text-[44px]">
+      <h1 className="font-cinzel text-[30px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_24px_rgba(167,139,250,0.35)] lg:text-[44px]">
         {title}
       </h1>
       {sub && <p className="mt-2.5 font-body text-[13.5px] text-txt-2">{sub}</p>}

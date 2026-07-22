@@ -8,7 +8,7 @@ import { CHART, SN, SIGNWHAT, SIGNMEAN } from "@/lib/data";
 import { computeTransits, skySummary, SIGN_GLYPH, type TransitHit } from "@/lib/transits";
 import { EASE } from "@/lib/tokens";
 
-const IMPACT_COLOR: Record<string, string> = { "+": "#2dd4bf", "-": "#ff8fb0", "~": "#c9b6ff" };
+const IMPACT_COLOR: Record<string, string> = { "+": "#20F0D0", "-": "#ff8fb0", "~": "#c9b6ff" };
 const IMPACT_LABEL: Record<string, string> = { "+": "fördernd", "-": "fordernd", "~": "gemischt" };
 
 /** One transit, cinematic & full-bleed; swipe left/right to move between them. */
@@ -94,7 +94,7 @@ function TransitFull({ hits }: { hits: TransitHit[] }) {
         </button>
         <div className="flex max-w-[55vw] flex-wrap justify-center gap-1.5">
           {hits.slice(0, 12).map((_, di) => (
-            <button key={di} onClick={() => setFull(di)} className="h-1.5 rounded-full transition-all" style={{ width: di === i ? 22 : 6, background: di === i ? "#4fd6ef" : "rgba(255,255,255,0.25)" }} />
+            <button key={di} onClick={() => setFull(di)} className="h-1.5 rounded-full transition-all" style={{ width: di === i ? 22 : 6, background: di === i ? "#A78BFA" : "rgba(255,255,255,0.25)" }} />
           ))}
         </div>
         <button onClick={() => go(1)} className="flex h-11 w-11 items-center justify-center rounded-full bg-cta-gradient text-white active:scale-90">

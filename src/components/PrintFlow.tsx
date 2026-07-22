@@ -72,7 +72,7 @@ export function PrintFlow() {
 
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[rgba(4,4,10,0.74)] p-4 backdrop-blur-md lg:pl-[120px]">
-      <div className="max-h-[88vh] w-full max-w-[440px] overflow-y-auto rounded-card border border-[rgba(79,214,239,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
+      <div className="max-h-[88vh] w-full max-w-[440px] overflow-y-auto rounded-card border border-[rgba(167,139,250,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
         <div className="flex items-start justify-between">
           <div>
             <div className="vela-label">Horoskop · PDF</div>
@@ -106,7 +106,7 @@ export function PrintFlow() {
         <button
           onClick={downloadPdf}
           disabled={count === 0 || busy}
-          className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-cta-gradient px-5 py-3 font-display text-sm font-semibold text-white shadow-glow disabled:opacity-40"
+          className="mt-5 flex w-full items-center justify-center gap-2 btn-moon px-5 py-3 font-display text-sm font-semibold disabled:opacity-40"
         >
           {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />} {busy ? "PDF wird erstellt …" : "PDF herunterladen"}
         </button>
