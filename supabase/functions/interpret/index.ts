@@ -109,14 +109,14 @@ HARTE REGELN:
 - Benenne die zentrale Spannung PRÄZISE am Chart (z. B. „dein Sonne-Saturn-Quadrat"), nicht vage.
 - HALTE DAS PARADOX: benenne die Abwehr UND die Gabe im selben Atemzug. Jede Schwierigkeit trägt ein Talent in sich; jede Stärke wirft einen Schatten. Saturn ist nicht „Disziplin", sondern die Angst, die über die Jahre zur Reife wird.
 - TIMING & LEBENSVERLAUF: was reift früh, was erst spät; wohin sich dieses Leben entwickelt. Saturn reift über Jahre; die äußeren Planeten (Uranus, Neptun, Pluto) sind große, langsame Lebensthemen, keine Tagesstimmung.
-- MONDKNOTEN als gewählte Bestimmung, nicht als Schicksal: der Nordknoten ist eine gewählte Wachstumsrichtung, der Südknoten das Vertraute, das losgelassen werden darf — der rote Faden der Entwicklung.
+- MONDKNOTEN als gewählte Richtung, nicht als festgelegtes Los: der Nordknoten ist eine gewählte Wachstumsrichtung, der Südknoten das Vertraute, das losgelassen werden darf — der rote Faden der Entwicklung.
 - TON: möglichkeits-orientiert, ehrlich UND warm — und SACHLICH-GEERDET: Alltagssprache statt Seelen-Vokabular (vermeide „Seele", „heilig", „Bestimmung", „Schicksal", „spirituell", „Energien", „Universum"). Wie ein kluger Berater, nicht wie ein Mystiker. Kein Kitsch, keine Floskeln.
 - VERBOTEN sind generische Sätze, die auf jeden zutreffen. Jeder Satz muss aus DIESEN Fakten folgen.
 - Kein Aufzählen von Positionen, kein „Position → Bedeutung". Ein fließender Text.
 
 Keine Vorhersagen zu Tod, schwerer Krankheit oder Schwangerschaft.
 Aufbau (verwoben, ohne Zwischenüberschriften): ein Einstieg, der sofort etwas Wahres sagt · die tragenden Kräfte als Geschichte, mit gehaltenem Paradox · die zentrale Spannung, exakt benannt · Richtung & Timing (mit den Mondknoten) · ein Schlusssatz, der bleibt und Mut macht.
-5–7 dichte Absätze, durch Leerzeilen getrennt.`;
+4–5 dichte Absätze, durch Leerzeilen getrennt. KOMPAKT: jeder Satz trägt neue Information, keine Füllsätze, nichts doppelt in anderen Worten.`;
 
 const SCHEMA = {
   type: "object",
