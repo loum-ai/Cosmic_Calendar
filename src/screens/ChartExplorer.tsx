@@ -375,8 +375,8 @@ export function ChartExplorer() {
 function GeneratedReading({ sel, fallback, folded }: { sel: SheetDescriptor; fallback?: string; folded?: { label: string; body: string }[] }) {
   const st = subjectTask(sel);
   const stored = storedReading(sel);
-  const { text, loading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !stored && !IS_DEMO);
-  const shown = stored || text;
+  const { text, loading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !IS_DEMO);
+  const shown = text || stored;
   if (!st) {
     return fallback ? (
       <div className="rounded-2xl border border-mint/25 bg-mint/[0.06] p-3.5">

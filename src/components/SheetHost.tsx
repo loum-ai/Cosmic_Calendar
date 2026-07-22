@@ -35,7 +35,7 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
   };
   const st = subjectTask(descriptor);
   const stored = storedReading(descriptor);
-  const { text: genText, loading: genLoading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !stored && !IS_DEMO);
+  const { text: genText, loading: genLoading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !IS_DEMO);
   const personalText = stored || genText;
 
   const general = content.sections.filter((s) => !s.accent && /^was/i.test(s.label));
