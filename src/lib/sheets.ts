@@ -64,9 +64,9 @@ function relText(a: {
   B: { key: string; name: string; lon: number; house?: number };
   def: { verb: string };
 }): string {
-  const hA = a.A.house ?? houseOf(a.A.lon);
-  const hB = a.B.house ?? houseOf(a.B.lon);
-  return `${a.A.name} in ${signName(a.A.lon)} (${hA}. Haus) und ${a.B.name} in ${signName(a.B.lon)} (${hB}. Haus) — tippe für deine Deutung dieser Verbindung.`;
+  const tA = THEME[a.A.key] ?? a.A.name;
+  const tB = THEME[a.B.key] ? lc(THEME[a.B.key]) : a.B.name;
+  return `${tA} und ${tB} ${a.def.verb} — tippe für deine Deutung dieser Verbindung.`;
 }
 
 export function resolveSheet(d: SheetDescriptor): SheetContent | null {
@@ -75,6 +75,8 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
   if (kind === "planet") {
     if (key === "asc") {
       const si = SN.indexOf(signName(ASC));
+      const sun = CHART.find((x) => x.key === "sun");
+      const sameSign = !!sun && signName(sun.lon) === signName(ASC);
       return {
         title: "Aszendent",
         glyph: "AC",
@@ -82,7 +84,13 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         sections: [
           { label: "Was — die Maske nach außen", body: PINFO.asc.what },
           { label: `Wie — Aszendent in ${signName(ASC)}`, body: aiSign("asc") || (IS_DEMO && READINGS.asc?.sign) || SIGNWHAT[si] },
-          { label: "Bei dir", body: `Dein Aszendent steht in ${signName(ASC)} — so trittst du auf, bevor du ein Wort sagst. ${SIGNWHAT[si]} Das ist der erste Eindruck, den andere von dir bekommen, noch bevor sie dich wirklich kennen.`, accent: MINT },
+          {
+            label: "Bei dir",
+            body: sameSign
+              ? `Dein Aszendent steht in ${signName(ASC)} — und deine Sonne auch: Wie du wirkst und wer du bist, fallen bei dir ungewöhnlich stark zusammen. Was andere zuerst sehen, ist schon ziemlich nah an deinem Kern.`
+              : `Dein Aszendent steht in ${signName(ASC)} — so trittst du auf, bevor du ein Wort sagst. Deine Sonne steht aber in ${sun ? signName(sun.lon) : "einem anderen Zeichen"}: Der erste Eindruck ist bei dir also die Tür, nicht das Haus — wer bleibt, erlebt dahinter einen anderen Kern als die Fassade vermuten lässt.`,
+            accent: MINT,
+          },
         ],
       };
     }
@@ -101,7 +109,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         { label: `Wie — ${p.name} in ${signName(p.lon)}`, body: aiSign(p.key) || (IS_DEMO && READINGS[p.key]?.sign) || SIGNWHAT[si] },
         { label: `Warum — das ${h}. Haus`, body: HOUSEWHY[h - 1] },
         { label: `Wo — ${h}. Haus · ${HOUSE[h - 1]}`, body: aiHouse(p.key) || (IS_DEMO && READINGS[p.key]?.house) || HOUSEWHAT[h - 1] },
-        { label: "Bei dir", body: p.txt || `${THEME[p.key] ?? p.name} drückt sich bei dir über ${signName(p.lon)} im ${h}. Haus aus — dem Bereich „${HOUSE[h - 1]}". ${SIGNWHAT[si] ?? ""} Genau diese Färbung bringst du in dieses Lebensthema ein.`, accent: MINT },
+        { label: "Bei dir", body: p.txt || `${THEME[p.key] ?? p.name} drückt sich bei dir über ${signName(p.lon)} im ${h}. Haus aus — dem Bereich „${HOUSE[h - 1]}". ${asp.length ? `${p.name} ist dabei mit ${asp.length === 1 ? "einer weiteren Kraft" : `${asp.length} weiteren Kräften`} deines Bildes verbunden — was hier passiert, färbt also auch andere Lebensbereiche mit. Die Verbindungen stehen unten.` : `${p.name} steht dabei ohne enge Verbindungen — diese Kraft wirkt bei dir eigenständig und unvermischt.`}`, accent: MINT },
       ],
       relations: asp.map((a) => {
         const other = a.A.key === p.key ? a.B : a.A;
@@ -152,8 +160,8 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         {
           label: "Bei dir",
           body: ps.length
-            ? `Dieser Lebensbereich ist bei dir aktiv besetzt: ${ps.map((p) => `${p.name} in ${signName(p.lon)}`).join(", ")}. Das Thema „${HOUSE[h - 1]}" spielt also eine spürbare Rolle in deinem Leben — ${lc(THEME[ps[0].key] ?? ps[0].name)} ${ps.length > 1 ? "und die weiteren Stellungen prägen" : "prägt"}, wie du es angehst.`
-            : `Hier steht bei dir kein Planet — der Bereich „${HOUSE[h - 1]}" läuft eher leise im Hintergrund mit. Du gehst ihn intuitiv an, statt dass er ein Dauerthema wäre. Das ist völlig normal: Niemand hat in allen zwölf Häusern Planeten.`,
+            ? `${ps.map((p) => `${p.name} in ${signName(p.lon)}`).join(", ")} ${ps.length > 1 ? "stehen" : "steht"} in diesem Haus — „${HOUSE[h - 1]}" ist bei dir also kein Nebenschauplatz, sondern läuft direkt über ${lc(THEME[ps[0].key] ?? ps[0].name)}${ps.length > 1 ? ` und ${lc(THEME[ps[1].key] ?? ps[1].name)}` : ""}. Tippe die Planeten an, um zu sehen, wie genau.`
+            : `Hier steht bei dir kein Planet — der Bereich „${HOUSE[h - 1]}" läuft eher leise im Hintergrund mit, statt ein Dauerthema zu sein. Gedeutet wird er trotzdem: über Planeten, die von anderen Häusern aus Verbindungen hierher knüpfen. Frag unten im Chat nach deinem ${h}. Haus, wenn du es genauer wissen willst.`,
           accent: MINT,
         },
       ],
@@ -174,7 +182,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         {
           label: "Bei dir",
           body: ps.length
-            ? `${ps.map((p) => p.name).join(", ")} ${ps.length > 1 ? "stehen" : "steht"} bei dir in ${s}. Diese Färbung — ${lc(SIGNWHAT[i])} — bringst du vor allem über ${ps.map((p) => lc(THEME[p.key] ?? p.name)).join(" und ")} in dein Leben ein.`
+            ? `${ps.map((p) => p.name).join(", ")} ${ps.length > 1 ? "stehen" : "steht"} bei dir in ${s}. Sichtbar wird diese Färbung vor allem ${ps.map((p) => { const ph = p.house ?? houseOf(p.lon); return `im ${ph}. Haus (${HOUSE[ph - 1]})`; }).join(" und ")} — dort gibt ${s} bei dir den Ton an.`
             : `Kein Planet von dir steht in ${s}. Die Qualität dieses Zeichens — ${lc(SIGNWHAT[i])} — lebst du eher über Menschen und Situationen, die sie dir spiegeln, als unmittelbar aus dir selbst heraus.`,
           accent: MINT,
         },
@@ -224,7 +232,10 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         {
           label: "Bei dir",
           body: mine.length
-            ? `Diese Verbindung kommt bei dir ${mine.length}× vor: ${mine.map((a) => `${a.A.name}–${a.B.name}`).join(", ")}. ${d2.plain}`
+            ? (() => {
+                const tight = mine.reduce((x, y) => (x.orb < y.orb ? x : y), mine[0]);
+                return `Diese Verbindung kommt bei dir ${mine.length}× vor: ${mine.map((a) => `${a.A.name}–${a.B.name}`).join(", ")}. Am engsten ist ${tight.A.name}–${tight.B.name} (${tight.orb.toFixed(1)}°) — dort wirkt dieses Muster bei dir am stärksten.`;
+              })()
             : `Die ${d2.type} kommt in deinem Chart nicht vor — dieses Muster ist bei dir also kein zentrales Thema. Das ist weder gut noch schlecht, nur eine Eigenheit deines Bildes.`,
           accent: MINT,
         },

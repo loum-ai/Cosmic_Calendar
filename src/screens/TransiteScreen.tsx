@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, RotateCcw, X, Sparkles, Loader2 } from "luci
 import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { useReading } from "@/lib/genReadings";
 import { useApp } from "@/store/useApp";
-import { CHART } from "@/lib/data";
+import { CHART, SN, SIGNWHAT, SIGNMEAN } from "@/lib/data";
 import { computeTransits, skySummary, SIGN_GLYPH, type TransitHit } from "@/lib/transits";
 import { EASE } from "@/lib/tokens";
 
@@ -122,7 +122,7 @@ export function TransiteScreen() {
 
   return (
     <ScreenShell>
-      <PageHead label="Heute am Himmel" title="Transite" sub="Was der Himmel gerade in deinem Chart auslöst" />
+      <PageHead label="Heute am Himmel" title="Transite" sub="Was die aktuellen Planetenstände in deinem Chart auslösen" />
 
       <div className="max-w-[360px]">
         <DateScrubber offset={offset} setOffset={setOffset} date={date} />
@@ -169,14 +169,14 @@ export function TransiteScreen() {
 
       {/* cosmic weather — real sky summary */}
       <section className="mt-12">
-        <SectionHead label="Am Himmel" title="Kosmische Wetterlage" sub="Größere Bewegungen über allen" />
+        <SectionHead label="Am Himmel" title="Aktuelle Planetenlage" sub="Größere Bewegungen über allen" />
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div className="vela-tile flex items-start gap-3.5 p-4">
             <span className="vela-glyph mt-0.5 text-xl text-lilac">{SIGN_GLYPH(sky.moonSign)}</span>
             <div className="min-w-0 flex-1">
               <div className="font-display text-sm font-semibold text-txt">Mond in {sky.moonSign}</div>
               <div className="mt-0.5 font-mono text-[10px] text-txt-3">Gefühlslage des Tages</div>
-              <p className="mt-1.5 font-body text-xs leading-relaxed text-txt-2">Die Stimmung trägt heute die Färbung von {sky.moonSign}.</p>
+              <p className="mt-1.5 font-body text-xs leading-relaxed text-txt-2">Der Mond läuft heute durch {sky.moonSign} — {SIGNWHAT[SN.indexOf(sky.moonSign)]} So fühlt sich der Tag kollektiv an.</p>
             </div>
           </div>
           <div className="vela-tile flex items-start gap-3.5 p-4">
@@ -184,7 +184,7 @@ export function TransiteScreen() {
             <div className="min-w-0 flex-1">
               <div className="font-display text-sm font-semibold text-txt">Sonne in {sky.sunSign}</div>
               <div className="mt-0.5 font-mono text-[10px] text-txt-3">Jahreszeit-Thema</div>
-              <p className="mt-1.5 font-body text-xs leading-relaxed text-txt-2">Das aktuelle Grundthema am Himmel.</p>
+              <p className="mt-1.5 font-body text-xs leading-relaxed text-txt-2">Solange die Sonne durch {sky.sunSign} läuft, ist „{SIGNMEAN[SN.indexOf(sky.sunSign)].split(" · ")[1]}" das Grundthema dieser Wochen.</p>
             </div>
           </div>
           <div className="vela-tile flex items-start gap-3.5 p-4 sm:col-span-2">
@@ -197,7 +197,7 @@ export function TransiteScreen() {
               <p className="mt-1.5 font-body text-xs leading-relaxed text-txt-2">
                 {sky.retro.length
                   ? "Diese Themen laufen gerade nach innen — gut zum Überdenken statt Vorpreschen."
-                  : "Alle Planeten laufen vorwärts — günstig, um Dinge nach außen zu bringen."}
+                  : "Alle Planeten laufen vorwärts — ein guter Moment für Dinge, die sonst gern verschoben werden: Verträge klären, Gespräche beginnen, Neues starten."}
               </p>
             </div>
           </div>

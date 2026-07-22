@@ -55,13 +55,24 @@ function transitingBodies(date: Date) {
 const lc = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
 
 // The transiting (sky) planet acts on YOUR natal point. Name the sky planet,
-// theme the natal point — never confuse the two.
-function hitText(tName: string, nKey: string, nName: string, impact: string): string {
+// theme the natal point — never confuse the two. Each aspect type gets its own
+// mechanic and each transit its tempo (slow = development, fast = passing mood),
+// so no two hit texts read like the same sentence with swapped nouns.
+const SLOW_T = new Set(["jupiter", "saturn", "uranus", "neptune", "pluto"]);
+
+function hitText(tKey: string, tName: string, aspType: string, nKey: string, nName: string): string {
   const nT = THEME[nKey] ? `${lc(THEME[nKey])} (${nName})` : nName;
-  const sky = `Der laufende ${tName}`;
-  if (impact === "+") return `${sky} stärkt gerade ${nT} — eine Phase, in der hier vieles leichter fließt und sich öffnet. Nutze den Rückenwind.`;
-  if (impact === "-") return `${sky} fordert ${nT} heraus — Reibung, die dich wachsen lässt, wenn du hinschaust statt auszuweichen.`;
-  return `${sky} trifft auf ${nT} — ein Thema wird neu belebt und will jetzt deine Aufmerksamkeit.`;
+  const dauer = SLOW_T.has(tKey)
+    ? "Das ist keine Tagesstimmung, sondern eine Entwicklung über Wochen bis Monate."
+    : "Das ist eine kurze Wetterlage von wenigen Tagen.";
+  const mech: Record<string, string> = {
+    Konjunktion: `Der laufende ${tName} steht direkt auf ${nT} — beide Kräfte verschmelzen, das Thema wird neu angestoßen und will jetzt bewusst gestaltet werden.`,
+    Sextil: `Der laufende ${tName} bildet eine leichte Brücke zu ${nT} — eine Gelegenheit, die wirkt, wenn du sie aktiv nutzt.`,
+    Quadrat: `Der laufende ${tName} steht quer zu ${nT} — Reibung, die Druck macht und eine Entscheidung oder Anpassung fordert.`,
+    Trigon: `Der laufende ${tName} fließt mühelos mit ${nT} zusammen — was du hier angehst, läuft gerade leichter als sonst.`,
+    Opposition: `Der laufende ${tName} steht ${nT} direkt gegenüber — etwas von außen, oft über andere Menschen, fordert hier eine neue Balance.`,
+  };
+  return `${mech[aspType] ?? `Der laufende ${tName} berührt ${nT}.`} ${dauer}`;
 }
 
 export function computeTransits(natal: Planet[], date: Date): TransitHit[] {
@@ -77,7 +88,7 @@ export function computeTransits(natal: Planet[], date: Date): TransitHit[] {
           hits.push({
             tKey: t.key, tName: t.name, tGlyph: t.glyph, tRetro: t.retro,
             nKey: n.key, nName: n.name, type: a.type, orb: Math.round(orb * 10) / 10, impact: a.impact,
-            title: `${t.name} ${a.type} ${n.name}`, txt: hitText(t.name, n.key, n.name, a.impact),
+            title: `${t.name} ${a.type} ${n.name}`, txt: hitText(t.key, t.name, a.type, n.key, n.name),
           });
           break;
         }

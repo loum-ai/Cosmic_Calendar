@@ -39,7 +39,7 @@ const RULER: Record<string, string> = {
 };
 
 const PHASES = [
-  ["Neumond", "Aufbruch aus dem Dunkeln — du beginnst Dinge instinktiv und unbelastet."],
+  ["Neumond", "Aufbruch aus der Stille — du beginnst Dinge instinktiv und unbelastet."],
   ["zunehmende Sichel", "Du kämpfst dich aus alten Mustern heraus und willst Neues wagen."],
   ["zunehmender Halbmond", "Entscheidung und Tatkraft — du baust aktiv an deinem Leben."],
   ["zunehmender Dreiviertelmond", "Feinschliff und Verfeinerung auf dem Weg zur Erfüllung."],
@@ -144,7 +144,7 @@ export function chartPatterns(): Pattern[] {
   if (ruler)
     out.push({ id: "ruler", kind: "fokus", title: `Chart-Herrscher: ${ruler.name}`, human: `${THEME[rulerKey] ?? ruler.name} führt dein ganzes Bild an`, glyphs: [ruler.glyph],
       text: `Dein Aszendent steht in ${ascSign}, also führt ${ruler.name} dein ganzes Bild an — und steht bei dir in ${signName(ruler.lon)}, ${ruler.house ?? houseOf(ruler.lon)}. Haus. Dort liegt der rote Faden deiner Entwicklung.`,
-      detail: `Wie es ${ruler.name} in ${signName(ruler.lon)} (${ruler.house ?? houseOf(ruler.lon)}. Haus) geht, so geht es dem ganzen Bild — dieser Planet ist dein Leitstern. ${THEME[rulerKey] ? `${THEME[rulerKey]} ist damit das übergeordnete Thema deines Weges.` : ""} Beobachte ihn als Wegweiser: Hier entscheidet sich, wohin sich dein Leben entwickeln will.` });
+      detail: `Wie es ${ruler.name} in ${signName(ruler.lon)} (${ruler.house ?? houseOf(ruler.lon)}. Haus) geht, so geht es dem ganzen Bild — dieser Planet ist dein wichtigster Bezugspunkt. ${THEME[rulerKey] ? `${THEME[rulerKey]} ist damit das übergeordnete Thema deines Weges.` : ""} Beobachte ihn als Wegweiser: Hier entscheidet sich, wohin sich dein Leben entwickeln will.` });
 
   // ── lunar phase at birth ──
   const sun = CHART.find((p) => p.key === "sun");

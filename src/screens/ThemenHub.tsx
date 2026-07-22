@@ -207,10 +207,10 @@ export function ThemenHub() {
                 </div>
                 <div className="relative min-w-0 text-center sm:text-left">
                   <p className="font-body text-[15px] leading-relaxed text-txt-2">
-                    Der Himmel im Moment deiner Geburt: Jeder leuchtende Punkt ist ein Planet — eine Kraft in dir. Die zwölf Felder sind deine Lebensbereiche, die Linien zeigen, wie deine Kräfte zusammenspielen.
+                    Deine Planetenstände im Moment deiner Geburt: Jeder Punkt im Rad ist ein Planet — eine Kraft in dir. Die zwölf Felder sind deine Lebensbereiche, die Linien zeigen, wie deine Kräfte zusammenspielen.
                   </p>
                   <p className="mt-3 font-body text-[14px] leading-relaxed text-txt-3">
-                    Tippe auf alles, was leuchtet — jeder Punkt, jede Linie erklärt sich.
+                    Tippe auf jeden Punkt und jede Linie — die Erklärung öffnet sich.
                   </p>
                   <span className="mt-4 inline-block font-body text-[14px] text-[#8fe4f5] transition group-hover:translate-x-0.5">Rad öffnen & erkunden →</span>
                 </div>
@@ -266,7 +266,7 @@ export function ThemenHub() {
             <div className="rounded-[24px] border border-white/8 bg-[rgba(13,25,33,0.5)] p-6 backdrop-blur-xl lg:p-8">
               <GenerativeLoader
                 messages={[
-                  "Die Sterne ordnen sich zu deinem Bild …",
+                  "Dein Bild setzt sich zusammen …",
                   "Vela liest dein ganzes Geburtsbild …",
                   "Deine Kräfte finden Worte …",
                 ]}
@@ -422,7 +422,7 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
             glyph={t.glyph}
             accent={t.accent}
             messages={[
-              "Die Sterne ordnen sich zu deinem Bild …",
+              "Dein Bild setzt sich zusammen …",
               `Vela liest dich durch die Linse „${t.label}" …`,
               "Deine Kräfte finden Worte …",
             ]}
