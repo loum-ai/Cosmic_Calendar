@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&amp;family=Space+Grotesk:wght@300;400;500&amp;display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+body{margin:0;}
+@keyframes velaSpin{to{transform:rotate(360deg)}}
+@keyframes velaSpinR{to{transform:rotate(-360deg)}}
+@keyframes velaMorph{0%,100%{border-radius:58% 42% 55% 45%/52% 56% 44% 48%}50%{border-radius:46% 54% 47% 53%/58% 42% 60% 40%}}
+@keyframes velaFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes velaDrift{0%{transform:translate(0,0) scale(1)}50%{transform:translate(22px,-18px) scale(1.07)}100%{transform:translate(0,0) scale(1)}}
+@keyframes velaBreath{0%,100%{opacity:.7}50%{opacity:1}}
+@keyframes velaSheen{0%{transform:translateX(-120%)}100%{transform:translateX(220%)}}
+::-webkit-scrollbar{width:0;height:0;}
+input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;}
+input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:linear-gradient(90deg,#c4a6ff,#7ad7ff 50%,#7df0bf);}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:radial-gradient(circle at 36% 32%,#fff,#e7dcff 55%,#bfa6ff);box-shadow:0 0 12px #c4a6ff,0 0 26px #7df0bf88;cursor:pointer;margin-top:-8px;}
+</style>
+</helmet>
+
+<div style="position:relative;min-height:100vh;background:radial-gradient(140% 120% at 50% -10%,#0c0a14,#030308 60%);overflow:hidden;font-family:'Space Grotesk',sans-serif;display:flex;flex-direction:column;align-items:center;">
+
+  <div style="position:absolute;top:-160px;left:-100px;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(150,100,230,0.16),transparent 64%);filter:blur(28px);pointer-events:none;animation:velaDrift 30s ease-in-out infinite;"></div>
+  <div style="position:absolute;bottom:-220px;right:-140px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(70,210,160,0.13),transparent 64%);filter:blur(34px);pointer-events:none;animation:velaDrift 38s ease-in-out infinite reverse;"></div>
+
+  <div style="position:relative;padding:46px 0 4px;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2;">
+    <div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:34px;letter-spacing:6px;color:#f1ecfb;padding-left:6px;">VELA</div>
+    <div style="font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(200,190,230,0.4);">dein fenster zum lebendigen himmel</div>
+  </div>
+
+  <!-- ================= PHONE ================= -->
+  <div style="position:relative;margin:26px 0 70px;width:390px;height:838px;border-radius:54px;padding:11px;background:linear-gradient(155deg,#2a2a36,#0a0a10 52%,#1a1a24);border:1px solid rgba(255,255,255,0.08);box-shadow:0 60px 120px -30px rgba(0,0,0,0.9),0 0 80px -20px rgba(140,100,220,0.25),inset 0 1px 1px rgba(255,255,255,0.14);z-index:2;">
+    <div style="position: relative; width: 100%; height: 100%; border-radius: 44px; overflow: hidden; background: #05050a; font-size: 17px">
+
+      <!-- living wallpaper -->
+      <div style="position:absolute;inset:0;background:radial-gradient(85% 60% at 26% 22%,rgba(150,92,232,0.55),transparent 62%),radial-gradient(78% 64% at 80% 64%,rgba(64,196,150,0.42),transparent 60%),radial-gradient(120% 100% at 50% 116%,rgba(184,124,255,0.30),transparent 70%),#05050a;animation:velaBreath 11s ease-in-out infinite;"></div>
+      <div style="position:absolute;inset:0;background:radial-gradient(60% 40% at 70% 20%,rgba(120,200,255,0.18),transparent 60%);filter:blur(8px);animation:velaDrift 26s ease-in-out infinite;"></div>
+      <div style="position:absolute;inset:0;background:rgba(5,5,10,0.30);"></div>
+
+      <!-- status bar -->
+      <div style="position:absolute;top:0;left:0;right:0;height:50px;display:flex;align-items:center;justify-content:space-between;padding:16px 30px 0;z-index:40;font-size:12px;color:rgba(240,236,252,0.8);font-weight:500;"><span>9:41</span><span style="width:17px;height:9px;border:1px solid rgba(240,236,252,0.5);border-radius:2px;"></span></div>
+
+      <!-- ============ HOME · GEBURTSHOROSKOP ============ -->
+      <sc-if value="{{ isHeute }}" hint-placeholder-val="{{ true }}">
+        <div style="position:absolute;inset:0;padding:54px 18px 204px;display:flex;flex-direction:column;z-index:10;overflow-y:auto;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(225,218,250,0.5);">Geburtshoroskop</div>
+              <div style="margin-top:5px;font-family:'Cormorant Garamond',serif;font-weight:300;font-size:28px;line-height:1;color:#f6f2fe;">Amelie Sturm</div>
+              <div style="margin-top:4px;font-size:9px;letter-spacing:0.5px;color:rgba(220,213,244,0.5);">14 · 03 · 1996 · 07:42 · Lissabon</div>
+            </div>
+            <div onClick="{{ openHelp }}" title="Hilfe — so liest du dein Rad" style="flex:0 0 auto;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:1px solid rgba(196,166,255,0.45);color:#c4a6ff;font-size:16px;cursor:pointer;">?</div>
+          </div>
+
+          <sc-if value="{{ leadOpen }}" hint-placeholder-val="{{ true }}">
+            <div style="position:relative;margin-top:16px;padding:15px 40px 15px 16px;border-radius:18px;background:linear-gradient(135deg,rgba(150,110,230,0.16),rgba(95,205,160,0.1));border:1px solid rgba(196,166,255,0.24);">
+              <div onClick="{{ closeLead }}" title="Schließen" style="position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:rgba(234,228,250,0.6);background:rgba(255,255,255,0.05);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"></path><path d="m6 6 12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"></path></svg>
+              </div>
+              <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(196,166,255,0.85);margin-bottom:6px;">Kurz gesagt</div>
+              <div style="font-size:14px;line-height:1.6;color:rgba(234,228,250,0.92);font-weight:300;">{{ lead }}</div>
+              <div style="margin-top:9px;font-size:11px;line-height:1.5;color:rgba(220,213,244,0.6);font-weight:300;">Scroll für mehr — oder frag unten einfach drauflos.</div>
+            </div>
+          </sc-if>
+
+          <div style="margin-top:22px;"><span style="display:inline-block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#c4a6ff;background:rgba(196,166,255,0.12);border:1px solid rgba(196,166,255,0.3);padding:5px 11px;border-radius:999px;">Dein Geburtsrad</span></div>
+          <div style="display:flex;justify-content:center;margin:4px 0 0;">{{ chartSvg }}</div>
+          <div style="text-align:center;font-size:11px;letter-spacing:0.3px;color:rgba(216,208,240,0.62);margin-top:0;">Tippe einen Punkt oder eine Linie, um ihn zu verstehen</div>
+
+          <div style="margin-top:18px;">
+            <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#bda4f7;margin-bottom:11px;">Überblick</div>
+            {{ dashboard }}
+          </div>
+
+          <div style="margin-top:22px;">
+            <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#bda4f7;margin-bottom:11px;">Was dich ausmacht</div>
+            {{ synthesis }}
+          </div>
+
+          <div style="margin-top:24px;">
+            <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(225,218,250,0.42);">Deine Planeten</div>
+            <div style="font-size:11px;color:rgba(220,213,244,0.5);margin:4px 0 12px;font-weight:300;">Wisch durch und tippe für die Bedeutung.</div>
+            {{ planetStrip }}
+          </div>
+
+          <div style="margin-top:26px;">
+            <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(225,218,250,0.42);margin-bottom:12px;">Deine Häuser · Lebensbereiche</div>
+            {{ houseGrid }}
+          </div>
+
+          <div style="margin-top:26px;">
+            <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(225,218,250,0.42);margin-bottom:12px;">Zeichen &amp; Knoten</div>
+            {{ signChips }}
+          </div>
+        </div>
+
+        <div style="position:absolute;left:0;right:0;bottom:78px;z-index:41;padding:12px 14px 12px;background:linear-gradient(180deg,transparent,rgba(5,5,10,0.94) 34%);">
+          <div style="display:flex;gap:7px;overflow-x:auto;padding-bottom:9px;">
+            <sc-for list="{{ askExamples }}" as="ex" hint-placeholder-count="3">
+              <div onClick="{{ ex.onTap }}" style="flex:0 0 auto;padding:8px 13px;border-radius:999px;background:rgba(255,255,255,0.06);border:1px solid rgba(196,166,255,0.28);color:rgba(234,228,250,0.85);font-size:11px;cursor:pointer;white-space:nowrap;">{{ ex.label }}</div>
+            </sc-for>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 7px 7px 16px;border-radius:999px;background:rgba(28,24,42,0.92);border:1px solid rgba(196,166,255,0.32);backdrop-filter:blur(12px);box-shadow:0 10px 32px -10px rgba(120,90,200,0.55);">
+            <input value="{{ q }}" onInput="{{ onQ }}" onKeyDown="{{ onAskKey }}" placeholder="Frag dein Horoskop…" style="flex:1;background:transparent;border:none;outline:none;color:#f3eefe;font-family:'Space Grotesk',sans-serif;font-size:13px;">
+            <div onClick="{{ onAsk }}" style="flex:0 0 auto;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:linear-gradient(135deg,#b388ff,#7ad7ff 55%,#6cf0b0);color:#0a0712;font-size:17px;">↑</div>
+          </div>
+        </div>
+
+        <sc-if value="{{ showHelp }}" hint-placeholder-val="{{ false }}">
+          <div style="display:contents">
+            <div onClick="{{ closeHelp }}" style="position:absolute;inset:0;background:rgba(4,4,10,0.6);backdrop-filter:blur(3px);z-index:44;"></div>
+            <div style="position:absolute;left:16px;right:16px;top:74px;z-index:45;padding:24px 22px;border-radius:26px;background:rgba(22,18,34,0.95);border:1px solid rgba(196,166,255,0.28);box-shadow:0 30px 70px -20px rgba(0,0,0,0.8);">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:26px;color:#f6f2fe;line-height:1;">So liest du dein Rad</div>
+              <div style="margin-top:18px;display:flex;flex-direction:column;gap:15px;">
+                <sc-for list="{{ helpItems }}" as="h" hint-placeholder-count="4">
+                  <div style="display:flex;gap:13px;align-items:flex-start;">
+                    <div style="flex:0 0 28px;height:28px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);font-family:'Segoe UI Symbol',system-ui,sans-serif;font-size:14px;color:#c4a6ff;">{{ h.icon }}</div>
+                    <div>
+                      <div style="font-size:13px;color:#f1ecfb;font-weight:500;">{{ h.title }}</div>
+                      <div style="margin-top:3px;font-size:12px;line-height:1.5;color:rgba(224,218,246,0.7);font-weight:300;">{{ h.body }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div onClick="{{ closeHelp }}" style="margin-top:22px;padding:13px;border-radius:14px;text-align:center;cursor:pointer;background:linear-gradient(90deg,#b388ff,#7ad7ff 52%,#6cf0b0);color:#0a0712;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:500;">Verstanden</div>
+            </div>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <!-- ============ TRANSITE ============ -->
+      <sc-if value="{{ isTransite }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;padding:56px 18px 92px;display:flex;flex-direction:column;z-index:10;overflow-y:auto;">{{ transiteView }}</div>
+      </sc-if>
+
+      <!-- ============ SYNASTRIE ============ -->
+      <sc-if value="{{ isSynastrie }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;padding:56px 18px 92px;display:flex;flex-direction:column;z-index:10;overflow-y:auto;">{{ synastrieView }}</div>
+      </sc-if>
+
+      <!-- ============ LERNEN ============ -->
+      <sc-if value="{{ isLernen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;padding:56px 18px 86px;display:flex;flex-direction:column;z-index:10;overflow-y:auto;">
+          <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#bda4f7;margin-bottom:6px;">Lernen</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:30px;color:#f6f2fe;line-height:1;">Astrologie</div>
+          <div style="margin-top:8px;font-size:12px;line-height:1.55;color:rgba(224,218,246,0.68);font-weight:300;">Hier lernst du die Bausteine eines Horoskops kennen — Planeten, Tierkreiszeichen, Häuser, Aspekte und Mondknoten. Tippe einen Eintrag für eine einfache Erklärung.</div>
+          <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;">
+            <sc-for list="{{ learnGroups }}" as="g" hint-placeholder-count="5">
+              <div style="border-radius:18px;overflow:hidden;background:rgba(255,255,255,0.035);border:1px solid rgba(255,255,255,0.07);">
+                <div onClick="{{ g.onToggle }}" style="{{ g.headerStyle }}">
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="font-family:'Segoe UI Symbol',system-ui,sans-serif;font-size:15px;color:#c4a6ff;">{{ g.icon }}</span>
+                    <span style="font-size:12.5px;letter-spacing:0.3px;color:#f1ecfb;">{{ g.title }}</span>
+                  </div>
+                  <span style="{{ g.chevStyle }}">⌄</span>
+                </div>
+                <sc-if value="{{ g.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:0 15px 8px;">{{ g.body }}</div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ PROFIL ============ -->
+      <sc-if value="{{ isProfil }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;padding:62px 26px 92px;display:flex;flex-direction:column;z-index:10;">
+          <div style="display:flex;flex-direction:column;align-items:center;margin-top:14px;">
+            <div style="position:relative;width:96px;height:96px;animation:velaFloat 7s ease-in-out infinite;">
+              <div style="position:absolute;inset:0;border-radius:50%;overflow:hidden;box-shadow:0 0 36px rgba(150,110,230,0.5);">
+                <div style="position:absolute;inset:-40%;background:conic-gradient(from 0deg,#b98cff,#7ad7ff,#8bf0c0,#e0c4ff,#b98cff);filter:blur(4px) saturate(1.3);animation:velaSpin 18s linear infinite;"></div>
+                <div style="position:absolute;inset:0;background:radial-gradient(circle at 34% 30%,rgba(255,255,255,0.85),transparent 44%);mix-blend-mode:screen;"></div>
+              </div>
+            </div>
+            <div style="margin-top:16px;font-family:'Cormorant Garamond',serif;font-weight:300;font-size:28px;color:#f6f2fe;">Amelie Sturm</div>
+            <div style="margin-top:4px;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:rgba(225,218,250,0.5);">Mitglied seit März</div>
+          </div>
+          <div style="margin-top:32px;display:flex;flex-direction:column;">
+            <sc-for list="{{ profileRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 2px;border-bottom:1px solid rgba(255,255,255,0.08);">
+                <span style="font-size:13px;color:rgba(228,222,248,0.8);font-weight:300;">{{ r.k }}</span>
+                <span style="font-size:12px;color:rgba(220,213,244,0.55);">{{ r.v }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="margin-top:auto;display:flex;align-items:center;justify-content:center;gap:10px;padding:15px;border-radius:18px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);color:rgba(228,222,248,0.7);font-size:11px;letter-spacing:1px;">
+            <span style="width:7px;height:7px;border-radius:50%;background:#7df0bf;box-shadow:0 0 8px #7df0bf;"></span> Mit dem Himmel verbunden
+          </div>
+        </div>
+      </sc-if>
+
+      {{ sheet }}
+
+      {{ tabbar }}
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:520,&quot;height&quot;:1000},&quot;accentFrom&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#72749d&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;accentTo&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#6cf0b0&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { tab:'heute', sel:0, sheet:null, sheetStack:[], q:'', answer:'', loading:false, showHelp:false, openGroup:'planeten', leadOpen:true, people:[], synSel:0, synName:'', synDate:'', synAdding:false, resonanz:62, collectedKeys:{ aurora:true, lilie:true, qualle:true } };
+
+  PHEN = [
+    { key:'qualle', name:'Die Qualle', tag:'Vela-Wolke · Sichtbar',
+      poetic:'Sie atmet im Dunkeln und vergisst dabei nie zu leuchten.',
+      mythos:'Die Alten nannten sie das Segel, das niemand setzte. Eine Wolke aus erloschenen Sonnen, die noch immer im Licht ihres eigenen Endes treibt — langsam, warm, ohne Eile. Wer sie betrachtet, lernt das Warten neu.',
+      props:[['Distanz','815 Lj'],['Alter','11 000 J'],['Helligkeit','+12 mag'],['Charakter','sammelnd']],
+      conic:'conic-gradient(from 0deg,#b98cff,#7ad7ff,#8bf0c0,#e0c4ff,#ff9ad6,#b98cff)',
+      wall:'radial-gradient(80% 64% at 30% 30%,rgba(150,92,232,0.6),transparent 62%),radial-gradient(78% 64% at 76% 70%,rgba(64,196,150,0.45),transparent 60%),#06040e' },
+    { key:'aurora', name:'Aurora Vela', tag:'Polarschein · Grün',
+      poetic:'Ein grünes Beben, das nur der Nachthimmel sich erlaubt.',
+      mythos:'Wo der Sonnenwind die Hülle der Welt streift, antwortet sie in Grün. Kein Muster wiederholt sich, keine Bewegung kehrt zurück. Die Aurora ist das einzige Phänomen, das man nie zweimal sieht.',
+      props:[['Höhe','120 km'],['Frequenz','selten'],['Farbe','Sauerstoff-Grün'],['Charakter','flüchtig']],
+      conic:'conic-gradient(from 0deg,#6cf0b0,#8bf0c0,#7ad7ff,#9ff0cf,#6cf0b0)',
+      wall:'radial-gradient(80% 64% at 50% 32%,rgba(108,240,176,0.6),transparent 62%),radial-gradient(78% 70% at 72% 76%,rgba(60,160,120,0.5),transparent 60%),#04100b' },
+    { key:'lilie', name:'Die Lichtlilie', tag:'Emissionsnebel · Lila',
+      poetic:'Sie blüht in einer Sprache, die älter ist als jede Blume.',
+      mythos:'Ein Nebel, der die Form einer Blüte annimmt — Zufall, sagen die einen, Erinnerung, die anderen. Ihre Blätter sind Gas, ihr Duft ist Strahlung. Und doch öffnet sie sich, als wüsste sie, dass jemand schaut.',
+      props:[['Distanz','1 300 Lj'],['Spannweite','4 Lj'],['Element','Wasserstoff'],['Charakter','öffnend']],
+      conic:'conic-gradient(from 0deg,#c9a8ff,#b388ff,#e0c4ff,#d59cff,#c9a8ff)',
+      wall:'radial-gradient(80% 70% at 50% 42%,rgba(201,168,255,0.7),transparent 60%),radial-gradient(64% 64% at 30% 72%,rgba(180,120,255,0.5),transparent 60%),#0a0612' },
+    { key:'stillpunkt', name:'Der Stillpunkt', tag:'Sphäre · Blau',
+      poetic:'In ihrer Mitte hört selbst das Licht auf zu rennen.',
+      mythos:'Eine perfekte Kugel aus kaltem Glühen, so ruhig, dass Astronomen sie lange für einen Fehler hielten. Heute weiß man: Sie ist echt, und sie steht still. Ein Ankerpunkt in einem Universum, das sich nie aufhört zu drehen.',
+      props:[['Distanz','420 Lj'],['Radius','0,8 Lj'],['Temperatur','kühl'],['Charakter','ruhend']],
+      conic:'conic-gradient(from 0deg,#7aa0ff,#9bc0ff,#a8b8ff,#7a90ff,#7aa0ff)',
+      wall:'radial-gradient(72% 64% at 50% 40%,rgba(122,160,255,0.6),transparent 60%),radial-gradient(80% 74% at 62% 78%,rgba(90,90,200,0.5),transparent 60%),#060814' },
+  ];
+
+  bloomLayer(conic, spin) {
+    return { position:'absolute', inset:'-40%', background:conic, filter:'blur(5px) saturate(1.35)',
+      animation:`${spin} 20s linear infinite` };
+  }
+
+  ASC = 12;
+  CHART = [
+    { key:'sun',     name:'Sonne',   glyph:'\u2609', lon:354, txt:'Dein Kern sucht Auflösung und Verbindung — du fühlst, bevor du denkst.' },
+    { key:'moon',    name:'Mond',    glyph:'\u263D', lon:188, txt:'Dein Inneres findet Ruhe im Gegenüber und in der Balance.' },
+    { key:'mercury', name:'Merkur',  glyph:'\u263F', lon:340, txt:'Du denkst in Bildern und Ahnungen, selten in Listen.' },
+    { key:'venus',   name:'Venus',   glyph:'\u2640', lon:2,   txt:'Du näherst dich der Liebe direkt, mutig, ohne Umweg.' },
+    { key:'mars',    name:'Mars',    glyph:'\u2642', lon:288, txt:'Deine Kraft ist geduldig und zielt weit über den Moment hinaus.' },
+    { key:'jupiter', name:'Jupiter', glyph:'\u2643', lon:249, txt:'Dein Wachstum liegt darin, den Horizont immer wieder zu weiten.' },
+    { key:'saturn',  name:'Saturn',  glyph:'\u2644', lon:336, txt:'Deine Aufgabe: im Grenzenlosen tragfähige Grenzen zu finden.' },
+    { key:'chiron',  name:'Chiron',  glyph:'\u26B7', lon:28,  txt:'Deine wunde Stelle — und genau dort liegt deine Gabe, andere zu verstehen.' },
+    { key:'lilith',  name:'Lilith',  glyph:'\u26B8', lon:145, txt:'Wo du dich nicht zähmen lässt — dein wildes, eigensinniges Feuer.' },
+  ];
+  SN = ['Widder','Stier','Zwillinge','Krebs','Löwe','Jungfrau','Waage','Skorpion','Schütze','Steinbock','Wassermann','Fische'];
+  SG = ['\u2648','\u2649','\u264A','\u264B','\u264C','\u264D','\u264E','\u264F','\u2650','\u2651','\u2652','\u2653'];
+  signName(lon){ return this.SN[Math.floor(((((lon%360)+360)%360))/30)]; }
+  roFromPlanet(p){ const sign=this.signName(p.lon); const deg=Math.floor((((p.lon%30)+30)%30)); const house=Math.floor(((((p.lon-this.ASC)%360)+360)%360)/30)+1; return { key:p.key, name:p.name, glyph:p.glyph, color:'#e7dcff', sign, deg, house, txt:p.txt }; }
+  HOUSE = ['Ich & Auftreten','Besitz & Werte','Denken & Austausch','Wurzeln & Zuhause','Schöpfung & Liebe','Alltag & Gesundheit','Partnerschaft','Wandel & Tiefe','Sinn & Ferne','Beruf & Berufung','Freunde & Zukunft','Rückzug & Seele'];
+  SIGNMEAN = ['Feuer · Aufbruch & Mut','Erde · Beständigkeit & Genuss','Luft · Neugier & Austausch','Wasser · Gefühl & Geborgenheit','Feuer · Ausdruck & Stolz','Erde · Genauigkeit & Dienst','Luft · Harmonie & Ausgleich','Wasser · Tiefe & Wandlung','Feuer · Weite & Sinn','Erde · Struktur & Ziel','Luft · Freiheit & Idee','Wasser · Hingabe & Traum'];
+  THEME = { sun:'Dein Wesenskern', moon:'Dein Gefühl', mercury:'Dein Denken', venus:'Deine Art zu lieben', mars:'Deine Energie', jupiter:'Dein Wachstum', saturn:'Deine Disziplin' };
+  ASPDEF = [ {a:0,type:'Konjunktion',g:'\u260C',c:'#e7dcff',w:1.2,nat:'vereint',verb:'verschmelzen zu einer Kraft',plain:'Zwei Kräfte stehen eng zusammen und wirken wie eine.'}, {a:60,type:'Sextil',g:'\u26B9',c:'#7ad7ff',w:1,nat:'Chance',verb:'unterstützen sich, wenn du es zulässt',plain:'Eine leichte Chance — sie wirkt, wenn du sie nutzt.'}, {a:90,type:'Quadrat',g:'\u25A1',c:'#c98cff',w:1,nat:'Spannung',verb:'reiben sich — eine Spannung, die dich antreibt',plain:'Reibung, die Druck macht — und dich wachsen lässt.'}, {a:120,type:'Trigon',g:'\u25B3',c:'#7df0bf',w:1,nat:'Fluss',verb:'fließen mühelos zusammen',plain:'Fließt mühelos — ein eingebautes Talent.'}, {a:180,type:'Opposition',g:'\u260D',c:'#ff8fb0',w:1.1,nat:'Balance',verb:'ziehen in Gegenrichtung und suchen Balance',plain:'Zwei Pole, die nach Balance suchen.'} ];
+  signMean(name){ return this.SIGNMEAN[this.SN.indexOf(name)]; }
+  computeAspects(){ const orb=6,out=[]; for(let i=0;i<this.CHART.length;i++)for(let j=i+1;j<this.CHART.length;j++){ let d=Math.abs(this.CHART[i].lon-this.CHART[j].lon); d=Math.min(d,360-d); for(const def of this.ASPDEF){ if(Math.abs(d-def.a)<=orb){ out.push({ key:this.CHART[i].key+'_'+this.CHART[j].key, A:this.CHART[i], B:this.CHART[j], def }); break; } } } return out; }
+  relText(a){ const tA=this.THEME[a.A.key]||a.A.name, tB=this.THEME[a.B.key]||a.B.name; return tA+' und '+(tB.charAt(0).toLowerCase()+tB.slice(1))+' '+a.def.verb+'.'; }
+  roFromKey(key){ if(key==='asc') return { key:'asc', name:'Aszendent', glyph:'AC', color:'#c4a6ff', sign:this.signName(this.ASC), deg:Math.floor(this.ASC%30), house:1, txt:'Dein Aszendent — wie du der Welt begegnest und wie sie dich zuerst sieht.' }; const p=this.CHART.find(x=>x.key===key); return this.roFromPlanet(p); }
+  NODES = [ { key:'node_n', name:'Aufsteigender Knoten', glyph:'\u260A', lon:100 }, { key:'node_s', name:'Absteigender Knoten', glyph:'\u260B', lon:280 } ];
+  PINFO = { sun:{role:'dein Kern',what:'Die Sonne ist dein innerster Antrieb — wer du im Grunde bist und was dich lebendig macht.'}, moon:{role:'dein Gefühl',what:'Der Mond ist deine Gefühlswelt — was du brauchst, um dich sicher und geborgen zu fühlen.'}, mercury:{role:'dein Denken',what:'Merkur steht fürs Denken und Reden — wie du verstehst und dich mitteilst.'}, venus:{role:'deine Liebe',what:'Venus zeigt, was du schön findest und wie du liebst, genießt und dich verbindest.'}, mars:{role:'dein Antrieb',what:'Mars ist deine Energie und dein Mut — wie du handelst und dich durchsetzt.'}, jupiter:{role:'dein Wachstum',what:'Jupiter steht für Wachstum, Vertrauen und Sinn — wo du dich weitest.'}, saturn:{role:'deine Struktur',what:'Saturn ist Disziplin und Reife — wo du lernst, dranbleibst und stabil wirst.'}, asc:{role:'dein Auftreten',what:'Der Aszendent ist, wie du auf andere wirkst — dein erster Eindruck nach außen.'}, chiron:{role:'deine Wunde & Gabe',what:'Chiron ist die verletzliche Stelle, an der du Schmerz kennst — und gerade dadurch andere heilen und verstehen kannst.'}, lilith:{role:'dein Wildes',what:'Lilith (der schwarze Mond) steht für das Ungezähmte und Tabuisierte in dir — wo du dich nicht anpassen willst.'}, node_n:{role:'deine Richtung',what:'Der aufsteigende Mondknoten zeigt, wohin du dich entwickelst — dein Wachstumsweg in diesem Leben.'}, node_s:{role:'dein Vertrautes',what:'Der absteigende Mondknoten ist das Vertraute, das dir leichtfällt — und das du nach und nach loslassen darfst.'} };
+  SIGNWHAT = ['Widder ist mutig, direkt und voller Tatendrang — fängt gern Neues an.','Stier ist ruhig, beständig und genussvoll — mag Sicherheit und Schönes.','Zwillinge sind neugierig, gesprächig und flink im Kopf.','Krebs ist gefühlvoll, fürsorglich und sucht Geborgenheit.','Löwe ist herzlich, stolz und will gesehen werden.','Jungfrau ist genau, hilfsbereit und liebt Ordnung.','Waage sucht Harmonie, Fairness und das Miteinander.','Skorpion ist tief, intensiv und geht den Dingen auf den Grund.','Schütze ist freiheitsliebend, optimistisch und sucht den Sinn.','Steinbock ist zielstrebig, verantwortungsvoll und ausdauernd.','Wassermann ist eigenständig, ideenreich und denkt voraus.','Fische sind einfühlsam, träumerisch und mit allem verbunden.'];
+  HOUSEWHAT = ['Wie du wirkst und auftrittst — dein erster Eindruck.','Geld, Besitz und was dir wirklich wertvoll ist.','Reden, Lernen, Alltag und nahe Kontakte.','Zuhause, Familie und woher du kommst.','Kreativität, Spiel, Romantik und Selbstausdruck.','Arbeit, Gewohnheiten und Gesundheit.','Partnerschaft und enge Beziehungen auf Augenhöhe.','Tiefe Bindung, Wandel und gemeinsame Werte.','Reisen, Sinn, Glauben und der weite Horizont.','Beruf, Berufung und was du in der Welt erreichst.','Freunde, Gruppen und Zukunftsträume.','Rückzug, Innenwelt und das Unbewusste.'];
+  openSheet(kind,key){ this.setState(s=>({ sheetStack: s.sheet? (s.sheetStack||[]).concat([s.sheet]) : (s.sheetStack||[]), sheet:{kind,key} })); }
+  backSheet(){ this.setState(s=>{ const st=(s.sheetStack||[]).slice(); const prev=st.pop(); return { sheet: prev||null, sheetStack: st }; }); }
+  closeSheet(){ this.setState({ sheet:null, sheetStack:[] }); }
+  chartFacts(){ const pl=this.CHART.map(p=>{const ro=this.roFromPlanet(p);return p.name+' in '+ro.sign+' (Haus '+ro.house+')';}).join('; '); const asp=this.computeAspects().map(a=>a.A.name+' '+a.def.type+' '+a.B.name).join('; '); return 'Aszendent '+this.signName(this.ASC)+'. '+pl+'. Verbindungen: '+asp+'.'; }
+  async askClaude(qArg){ const q=((typeof qArg==='string'?qArg:this.state.q)||'').trim(); if(!q) return; this.setState({ q, loading:true, answer:'', sheet:{kind:'answer'} }); const prompt='Du bist ein warmherziger, klarer Begleiter, der ein Geburtshoroskop in einfacher Alltagssprache erklärt. Daten:\n'+this.chartFacts()+'\nBeantworte die Frage persönlich, konkret und ohne Fachjargon. Beziehe dich auf 1–2 passende Stellungen. Keine Schicksalsvorhersagen. Höchstens 90 Wörter, Deutsch.\n\nFrage: '+q; try{ if(!window.claude||!window.claude.complete) throw new Error('no api'); const a=await window.claude.complete({messages:[{role:'user',content:prompt}]}); this.setState({ answer:a, loading:false }); }catch(e){ this.setState({ answer:'Ich kann gerade nicht antworten — bitte versuch es gleich noch einmal.', loading:false }); } }
+  sheetActive(sheet){ const ap=new Set(); let aa=null; if(sheet){ if(sheet.kind==='planet'||sheet.kind==='node') ap.add(sheet.key); else if(sheet.kind==='aspect'){ aa=sheet.key; const a=this.computeAspects().find(z=>z.key===sheet.key); if(a){ap.add(a.A.key);ap.add(a.B.key);} } else if(sheet.kind==='house'){ this.CHART.forEach(p=>{ if(this.roFromPlanet(p).house===sheet.key) ap.add(p.key); }); } else if(sheet.kind==='sign'){ this.CHART.forEach(p=>{ if(this.signName(p.lon)===sheet.key) ap.add(p.key); }); } } return {ap,aa}; }
+  sheetRow(glyph,gc,onClick,title,sub){ const R=React.createElement; return R('div',{key:title,onClick,style:{display:'flex',alignItems:'center',gap:'10px',padding:'10px 0',cursor:'pointer',borderTop:'1px solid rgba(255,255,255,0.06)'}}, R('span',{style:{fontFamily:'"Segoe UI Symbol",system-ui,sans-serif',fontSize:'16px',color:gc,width:'22px',textAlign:'center'}},glyph), R('div',{style:{flex:1}}, R('div',{style:{fontSize:'13px',color:'#f1ecfb'}},title), sub?R('div',{style:{marginTop:'1px',fontSize:'10px',color:'rgba(220,213,244,0.55)'}},sub):null), R('span',{style:{color:'rgba(196,166,255,0.55)',fontSize:'13px'}},'\u203A')); }
+  buildPlanetList(){ const R=React.createElement; return R('div',{}, this.CHART.map(p=>{ const ro=this.roFromPlanet(p); return this.sheetRow(p.glyph,'#e7dcff',()=>this.openSheet('planet',p.key), p.name+' · '+this.PINFO[p.key].role, ro.sign+' · Haus '+ro.house); })); }
+  buildSignList(){ const R=React.createElement; const rows=[]; this.SN.forEach((name,i)=>{ const ps=this.CHART.filter(p=>this.signName(p.lon)===name); if(!ps.length) return; rows.push(this.sheetRow(this.SG[i],'#c4a6ff',()=>this.openSheet('sign',name), name, ps.map(p=>p.name).join(', '))); }); return R('div',{},rows); }
+  buildHouseList(){ const R=React.createElement; const rows=[]; for(let h=1;h<=12;h++){ const ps=this.CHART.filter(p=>this.roFromPlanet(p).house===h); rows.push(this.sheetRow(String(h),'#c4a6ff',()=>this.openSheet('house',h), this.HOUSE[h-1], ps.length?ps.map(p=>p.name).join(', '):'—')); } return R('div',{},rows); }
+  buildNodeList(){ const R=React.createElement; return R('div',{}, this.NODES.map(n=>this.sheetRow(n.glyph,'#9bc0ff',()=>this.openSheet('node',n.key), n.name, this.signName(n.lon)))); }
+  learnSigns(){ const R=React.createElement; return R('div',{}, this.SN.map((name,i)=>this.sheetRow(this.SG[i],'#c4a6ff',()=>this.openSheet('sign',name), name, this.SIGNMEAN[i].split(' · ')[0]))); }
+  learnHouses(){ const R=React.createElement; const rows=[]; for(let h=1;h<=12;h++) rows.push(this.sheetRow(String(h),'#c4a6ff',()=>this.openSheet('house',h), 'Haus '+h+' · '+this.HOUSE[h-1])); return R('div',{},rows); }
+  learnAspects(){ const R=React.createElement; return R('div',{}, this.ASPDEF.map((d,i)=>this.sheetRow(d.g,d.c,()=>this.openSheet('asptype',i), d.type, d.nat))); }
+  learnPlanets(){ const R=React.createElement; return R('div',{}, this.CHART.map(p=>this.sheetRow(p.glyph,'#e7dcff',()=>this.openSheet('planet',p.key), p.name+' · '+this.PINFO[p.key].role)).concat([this.sheetRow('AC','#c4a6ff',()=>this.openSheet('planet','asc'),'Aszendent · '+this.PINFO.asc.role)])); }
+  miniChart(sheet){
+    const R=React.createElement, cx=80, cy=80;
+    const act=this.sheetActive(sheet), ap=act.ap, aa=act.aa;
+    if(!ap.size && !aa) return R('div',{key:'mini',style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'8px',marginTop:'14px',marginBottom:'2px'}},
+      R('div',{style:{width:'112px',height:'112px',borderRadius:'50%',background:'radial-gradient(circle at 38% 34%,#e7dbff,#a98ef0 44%,#5fcfa0 90%,rgba(0,0,0,0) 100%)',filter:'blur(2px)',boxShadow:'0 0 32px rgba(160,120,230,0.45)',opacity:0.9}}),
+      R('div',{style:{fontSize:'9px',letterSpacing:'1.5px',textTransform:'uppercase',color:'rgba(210,202,236,0.45)'}},'kein Punkt in deinem Chart'));
+    const pt=(L,r)=>{ const a=((((L-this.ASC)%360)+360)%360)*Math.PI/180, t=Math.PI-a; return [cx+r*Math.cos(t),cy+r*Math.sin(t)]; };
+    const ch=[];
+    ch.push(R('circle',{key:'r1',cx,cy,r:74,fill:'none',stroke:'rgba(190,175,235,0.16)',strokeWidth:1}));
+    ch.push(R('circle',{key:'r2',cx,cy,r:50,fill:'none',stroke:'rgba(190,175,235,0.09)',strokeWidth:1}));
+    for(let k=0;k<12;k++){ const [x1,y1]=pt(k*30,64),[x2,y2]=pt(k*30,74); ch.push(R('line',{key:'t'+k,x1,y1,x2,y2,stroke:'rgba(190,175,235,0.18)',strokeWidth:1})); }
+    if(aa){ const a=this.computeAspects().find(z=>z.key===aa); if(a){ const [x1,y1]=pt(a.A.lon,50),[x2,y2]=pt(a.B.lon,50); ch.push(R('line',{key:'al',x1,y1,x2,y2,stroke:a.def.c,strokeWidth:2,style:{filter:'drop-shadow(0 0 5px '+a.def.c+')'}})); } }
+    this.CHART.forEach(p=>{ const [px,py]=pt(p.lon,64), on=ap.has(p.key); ch.push(R('circle',{key:'p'+p.key,cx:px,cy:py,r:on?8:3.5,fill:on?'rgba(18,14,30,0.95)':'rgba(196,166,255,0.28)',stroke:on?'#f3eefe':'none',strokeWidth:1,style:on?{filter:'drop-shadow(0 0 6px #c4a6ff)'}:undefined})); if(on) ch.push(R('text',{key:'pg'+p.key,x:px,y:py,fill:'#f3eefe',fontSize:9,textAnchor:'middle',dominantBaseline:'central',fontFamily:'"Segoe UI Symbol",system-ui,sans-serif'},p.glyph)); });
+    this.NODES.forEach(n=>{ if(ap.has(n.key)){ const [nx,ny]=pt(n.lon,50); ch.push(R('circle',{key:'n'+n.key,cx:nx,cy:ny,r:7,fill:'rgba(18,14,30,0.95)',stroke:'#9bc0ff',strokeWidth:1})); ch.push(R('text',{key:'ng'+n.key,x:nx,y:ny,fill:'#bcd8ff',fontSize:9,textAnchor:'middle',dominantBaseline:'central',fontFamily:'"Segoe UI Symbol",system-ui,sans-serif'},n.glyph)); } });
+    return R('div',{key:'mini',style:{display:'flex',justifyContent:'center',marginTop:'12px'}}, R('svg',{width:158,height:158,viewBox:'0 0 160 160'},ch));
+  }
+  buildSheet(sheet, q, answer, loading){
+    if(!sheet) return null; const R=React.createElement;
+    const sec=(label,body,accent)=>R('div',{key:label,style:{marginTop:'14px'}}, R('div',{style:{fontSize:'9px',letterSpacing:'2px',textTransform:'uppercase',color:accent||'rgba(196,166,255,0.85)',marginBottom:'5px'}},label), R('div',{style:{fontSize:'13px',lineHeight:1.6,color:'rgba(228,222,248,0.82)',fontWeight:300}},body));
+    let title='', glyph='', gc='#e7dcff', kids=[];
+    if(sheet.kind==='planet'||sheet.kind==='node'){ const info=this.PINFO[sheet.key];
+      if(sheet.kind==='node'){ const n=this.NODES.find(x=>x.key===sheet.key); title=n.name; glyph=n.glyph; gc='#9bc0ff'; kids.push(sec('Was ist das?',info.what)); kids.push(sec('Bei dir', n.glyph+' steht in '+this.signName(n.lon)+'. '+this.SIGNWHAT[this.SN.indexOf(this.signName(n.lon))],'#7df0bf')); }
+      else { const ro=this.roFromKey(sheet.key); title=ro.name+' — '+info.role; glyph=ro.glyph; gc=ro.color; kids.push(sec('Was ist das?',info.what)); kids.push(sec('Bei dir', ro.sign+', '+ro.deg+'° · Haus '+ro.house+'. '+ro.txt,'#7df0bf'));
+        if(sheet.key!=='asc'){ const asp=this.computeAspects().filter(a=>a.A.key===sheet.key||a.B.key===sheet.key); if(asp.length) kids.push(R('div',{key:'rel',style:{marginTop:'14px'}}, R('div',{style:{fontSize:'9px',letterSpacing:'2px',textTransform:'uppercase',color:'rgba(196,166,255,0.85)',marginBottom:'10px'}},'Verbindungen'), R('div',{style:{display:'flex',flexDirection:'column',gap:'14px'}}, asp.map(a=>{ const other=a.A.key===sheet.key?a.B:a.A; return R('div',{key:a.key,onClick:()=>this.openSheet('aspect',a.key),style:{cursor:'pointer'}}, R('div',{style:{display:'flex',alignItems:'center',gap:'7px'}}, R('span',{style:{fontFamily:'"Segoe UI Symbol",system-ui,sans-serif',fontSize:'13px',color:a.def.c}},a.def.g), R('span',{style:{fontSize:'12.5px',color:a.def.c,borderBottom:'1px solid '+a.def.c+'66',paddingBottom:'1px'}}, a.def.type+' zu '+other.name), R('span',{style:{marginLeft:'auto',fontSize:'13px',color:a.def.c}},'\u2192')), R('div',{style:{marginTop:'5px',fontSize:'12px',lineHeight:1.5,color:'rgba(224,218,246,0.72)',fontWeight:300}}, this.relText(a))); })))); }
+      }
+    } else if(sheet.kind==='house'){ const h=sheet.key; title='Haus '+h+' — '+this.HOUSE[h-1]; glyph=String(h); gc='#c4a6ff'; const ps=this.CHART.filter(p=>this.roFromPlanet(p).house===h); kids.push(sec('Was ist das?',this.HOUSEWHAT[h-1])); kids.push(sec('Bei dir', ps.length? ps.map(p=>p.name).join(', ')+(ps.length>1?' stehen':' steht')+' in diesem Lebensbereich.' : 'Hier steht bei dir kein Planet — der Bereich läuft eher leise mit.','#7df0bf')); }
+    else if(sheet.kind==='sign'){ const s=sheet.key, i=this.SN.indexOf(s); title=s+' — '+this.SIGNMEAN[i].split(' · ')[0]; glyph=this.SG[i]; gc='#c4a6ff'; const ps=this.CHART.filter(p=>this.signName(p.lon)===s); kids.push(sec('Was ist das?',this.SIGNWHAT[i])); kids.push(sec('Bei dir', ps.length? 'Deine '+ps.map(p=>p.name).join(', ')+(ps.length>1?' tragen':' trägt')+' diese Färbung.' : 'Kein Planet von dir steht in diesem Zeichen.','#7df0bf')); }
+    else if(sheet.kind==='aspect'){ const a=this.computeAspects().find(z=>z.key===sheet.key); if(a){ title=a.A.name+' '+a.def.type+' '+a.B.name; glyph=a.def.g; gc=a.def.c; kids.push(sec('Was bedeutet '+a.def.type+'?', a.def.plain)); kids.push(sec('Bei dir', this.relText(a),'#7df0bf')); } }
+    else if(sheet.kind==='asptype'){ const d=this.ASPDEF[sheet.key]; title=d.type; glyph=d.g; gc=d.c; const mine=this.computeAspects().filter(a=>a.def.type===d.type); kids.push(sec('Was ist das?', d.plain)); kids.push(sec('Bei dir', mine.length? mine.map(a=>a.A.name+'–'+a.B.name).join(', ') : 'Diese Verbindung kommt in deinem Chart nicht vor.','#7df0bf')); }
+    else if(sheet.kind==='transit'){ const tr=this.TRANSITS[sheet.key], ro=this.roFromKey(tr.nk); title=tr.title; glyph=tr.tg; gc=tr.c; kids.push(sec('Was passiert gerade?', tr.txt)); kids.push(sec('Bei dir', 'Dieser Transit berührt deinen '+ro.name+' in '+ro.sign+' (Haus '+ro.house+'). '+ro.txt,'#7df0bf')); }
+    else if(sheet.kind==='answer'){ title='Dein Horoskop antwortet'; glyph='\u2726'; gc='#ffd9a0'; if(q) kids.push(R('div',{key:'q',style:{marginTop:'10px',fontFamily:'"Cormorant Garamond",serif',fontStyle:'italic',fontWeight:300,fontSize:'17px',color:'rgba(238,232,252,0.85)'}},'\u201e'+q+'\u201c')); kids.push(R('div',{key:'a',style:{marginTop:'12px',fontSize:'13.5px',lineHeight:1.65,color:'rgba(230,224,250,0.88)',fontWeight:300}}, loading?'Ich schaue in deine Karte…':answer)); }
+    if(sheet.kind!=='answer') kids.unshift(this.miniChart(sheet));
+    const backBtn = (this.state.sheetStack||[]).length ? R('div',{key:'bk',onClick:()=>this.backSheet(),title:'Zurück',style:{flex:'0 0 auto',cursor:'pointer',width:'28px',height:'28px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(255,255,255,0.06)',color:'rgba(234,228,250,0.72)'}}, R('svg',{width:15,height:15,viewBox:'0 0 24 24',fill:'none'}, R('path',{d:'m15 18-6-6 6-6',stroke:'currentColor',strokeWidth:2,strokeLinecap:'round',strokeLinejoin:'round'}))) : null;
+    const head=R('div',{key:'head',style:{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'9px'}}, R('div',{style:{display:'flex',alignItems:'center',gap:'9px',flex:1,minWidth:0}}, backBtn, R('span',{style:{fontFamily:'"Segoe UI Symbol",system-ui,sans-serif',fontSize:'22px',color:gc,flex:'0 0 auto'}},glyph), R('div',{style:{fontFamily:'"Cormorant Garamond",serif',fontWeight:400,fontSize:'21px',color:'#f6f2fe',lineHeight:1.1}},title)), R('div',{onClick:()=>this.closeSheet(),style:{flex:'0 0 auto',cursor:'pointer',width:'28px',height:'28px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(255,255,255,0.07)',color:'rgba(235,228,250,0.7)'}}, R('svg',{width:14,height:14,viewBox:'0 0 24 24',fill:'none'}, R('path',{d:'M18 6 6 18',stroke:'currentColor',strokeWidth:2,strokeLinecap:'round'}), R('path',{d:'m6 6 12 12',stroke:'currentColor',strokeWidth:2,strokeLinecap:'round'}))));
+    const card=R('div',{key:'card',style:{position:'absolute',left:'10px',right:'10px',bottom:'14px',maxHeight:'70%',overflowY:'auto',zIndex:46,padding:'18px 18px 22px',borderRadius:'26px',background:'rgba(20,16,32,0.97)',border:'1px solid rgba(196,166,255,0.25)',boxShadow:'0 -12px 50px -10px rgba(0,0,0,0.85)'}}, head, ...kids);
+    const back=R('div',{key:'back',onClick:()=>this.closeSheet(),style:{position:'absolute',inset:0,background:'rgba(4,4,10,0.5)',zIndex:45}});
+    return R(React.Fragment,null,back,card);
+  }
+
+  TRANSITS = [
+    { tg:'\u2643', nk:'sun',  c:'#7df0bf', title:'Jupiter im Trigon zu deiner Sonne', txt:'Eine offene, großzügige Phase — vieles fällt dir gerade leichter zu. Ein guter Moment, etwas zu beginnen, das du dir lange vorgenommen hast.' },
+    { tg:'\u2644', nk:'mars', c:'#c98cff', title:'Saturn im Quadrat zu deinem Mars', txt:'Dein Tatendrang trifft auf Widerstand und Verzögerung. Nicht dagegen anrennen — geduldig dranbleiben zahlt sich jetzt mehr aus als Tempo.' },
+    { tg:'\u2640', nk:'moon', c:'#e7dcff', title:'Venus auf deinem Mond', txt:'Ein weicher, verbindender Tag. Nähe, Versöhnung und kleine Schönheiten tun dir heute besonders gut.' },
+  ];
+  PERSON2 = { name:'Jonas', sun:'Widder', moon:'Krebs', asc:'Waage', bodies:{ sun:8, moon:114, venus:350, mars:62 } };
+
+  buildTransits(){
+    const R=React.createElement;
+    const hero=R('div',{key:'h'},
+      R('div',{style:{display:'flex',alignItems:'center',gap:'8px'}},
+        R('div',{style:{fontSize:'9px',letterSpacing:'3px',textTransform:'uppercase',color:'#9ff0cf'}},'Transite · heute · 16. Juni'),
+        R('div',{title:'Dein Geburtshoroskop ist fix — der Himmel zieht aber weiter. Transite sind die heutigen Planetenstände; wo sie deine Geburtspunkte berühren, wird gerade etwas in dir angestoßen.',style:{cursor:'help',flex:'0 0 auto',width:'15px',height:'15px',borderRadius:'50%',border:'1px solid rgba(159,240,207,0.55)',color:'#9ff0cf',fontSize:'9px',fontWeight:600,display:'flex',alignItems:'center',justifyContent:'center'}},'i')),
+      R('div',{style:{marginTop:'7px',fontFamily:'"Cormorant Garamond",serif',fontWeight:300,fontSize:'29px',color:'#f6f2fe',lineHeight:1.05}},'Was der Himmel heute auslöst'),
+      R('div',{style:{marginTop:'8px',fontSize:'12.5px',lineHeight:1.6,color:'rgba(224,218,246,0.7)',fontWeight:300}},'Tippe eine Karte, um zu sehen, was dieser Transit bei dir bewegt.'));
+    const cards=this.TRANSITS.map((tr,i)=>R('div',{key:i,onClick:()=>this.openSheet('transit',i),style:{display:'flex',gap:'12px',alignItems:'flex-start',padding:'14px',borderRadius:'18px',cursor:'pointer',background:'rgba(255,255,255,0.04)',border:'1px solid '+tr.c+'33'}},
+      R('div',{style:{flex:'0 0 auto',width:'42px',height:'42px',borderRadius:'12px',display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(255,255,255,0.05)',border:'1px solid '+tr.c+'55',fontFamily:'"Segoe UI Symbol",system-ui,sans-serif',fontSize:'18px',color:tr.c}},tr.tg),
+      R('div',{style:{flex:1}}, R('div',{style:{fontSize:'13.5px',color:'#f1ecfb',lineHeight:1.3}},tr.title), R('div',{style:{marginTop:'4px',fontSize:'11.5px',lineHeight:1.5,color:'rgba(222,216,244,0.66)',fontWeight:300}},tr.txt)),
+      R('span',{style:{color:'rgba(196,166,255,0.55)',fontSize:'14px'}},'\u203A')));
+    const impuls=R('div',{key:'imp',onClick:()=>this.askClaude('Worauf sollte ich heute besonders achten?'),style:{padding:'14px',borderRadius:'16px',textAlign:'center',cursor:'pointer',background:'linear-gradient(90deg,#b388ff,#7ad7ff 52%,#6cf0b0)',color:'#0a0712',fontSize:'12px',letterSpacing:'1px',fontWeight:500}},'Tagesimpuls holen');
+    return R('div',{style:{display:'flex',flexDirection:'column',gap:'13px'}}, hero, ...cards, impuls);
+  }
+  dayOfYear(m,d){ const md=[0,31,59,90,120,151,181,212,243,273,304,334]; return (md[(m-1)%12]||0)+d; }
+  mkPerson(name,dateStr){ const pr=(dateStr||'').split('-'); const m=+pr[1]||1, d=+pr[2]||1; const doy=this.dayOfYear(m,d); const sunLon=((doy+279)%365)/365*360; let h=0; const s=(name||'')+(dateStr||''); for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))%360; const moonLon=(sunLon+90+h*1.7)%360, venusLon=(sunLon+40+h*0.6)%360, marsLon=(sunLon*2+h)%360, ascLon=(h*2.3)%360; return { name:(name||'Person'), date:dateStr, bodies:{sun:sunLon,moon:moonLon,venus:venusLon,mars:marsLon}, sun:this.signName(sunLon), moon:this.signName(moonLon), asc:this.signName(ascLon) }; }
+  addPerson(){ const n=(this.state.synName||'').trim(), d=this.state.synDate; if(!n||!d) return; const people=this.state.people.concat([this.mkPerson(n,d)]); this.setState({ people, synSel:people.length-1, synAdding:false, synName:'', synDate:'' }); }
+  buildSynForm(){
+    const R=React.createElement;
+    const inp=(val,on,ph,type)=>R('input',{type:type||'text',value:val,onInput:on,placeholder:ph,style:{padding:'14px 16px',borderRadius:'14px',background:'rgba(255,255,255,0.05)',border:'1px solid rgba(196,166,255,0.25)',color:'#f3eefe',fontFamily:'"Space Grotesk",sans-serif',fontSize:'14px',outline:'none',colorScheme:'dark'}});
+    return R('div',{style:{display:'flex',flexDirection:'column',gap:'14px'}},
+      R('div',{key:'h'}, R('div',{style:{fontSize:'9px',letterSpacing:'3px',textTransform:'uppercase',color:'rgba(225,218,250,0.5)'}},'Synastrie'),
+        R('div',{style:{marginTop:'6px',fontFamily:'"Cormorant Garamond",serif',fontWeight:300,fontSize:'29px',color:'#f6f2fe',lineHeight:1.05}},'Synastrie'),
+        R('div',{style:{marginTop:'8px',fontSize:'12.5px',lineHeight:1.6,color:'rgba(224,218,246,0.7)',fontWeight:300}},'Der Vergleich zweier Geburtshoroskope. Gib Name und Geburtsdatum der zweiten Person ein.')),
+      R('div',{key:'f',style:{display:'flex',flexDirection:'column',gap:'10px'}},
+        inp(this.state.synName,e=>this.setState({synName:e.target.value}),'Name',''),
+        inp(this.state.synDate,e=>this.setState({synDate:e.target.value}),'Geburtsdatum','date')),
+      R('div',{key:'b',onClick:()=>this.addPerson(),style:{padding:'15px',borderRadius:'16px',textAlign:'center',cursor:'pointer',background:'linear-gradient(90deg,#b388ff,#7ad7ff 52%,#6cf0b0)',color:'#0a0712',fontSize:'12px',letterSpacing:'1px',fontWeight:500}},'Chart berechnen & vergleichen'),
+      this.state.people.length? R('div',{key:'c',onClick:()=>this.setState({synAdding:false}),style:{textAlign:'center',cursor:'pointer',fontSize:'11px',color:'rgba(220,213,244,0.55)'}},'Abbrechen') : null);
+  }
+  buildSynastry(){
+    const R=React.createElement;
+    if(this.state.synAdding || !this.state.people.length) return this.buildSynForm();
+    const p2=this.state.people[this.state.synSel]||this.state.people[0], orb=7;
+    const TH2={sun:'Wesen',moon:'Gefühl',venus:'Liebe',mars:'Energie'}, NM2={sun:'Sonne',moon:'Mond',venus:'Venus',mars:'Mars'};
+    const DOM={sun:'Identität',moon:'Gefühlswelt',venus:'Liebe & Werte',mars:'Antrieb'};
+    const CAT={Konjunktion:'eine Verschmelzung beider Kräfte',Sextil:'ein harmonischer Aspekt',Quadrat:'ein Spannungsaspekt',Trigon:'ein harmonischer Aspekt',Opposition:'ein Polaritätsaspekt'};
+    const pairs=[['sun','moon'],['moon','sun'],['venus','mars'],['mars','venus'],['sun','venus']];
+    const seen={}, rows=[];
+    pairs.forEach(pr=>{ const a=this.CHART.find(x=>x.key===pr[0]); const bl=p2.bodies[pr[1]]; if(!a||bl==null) return; let d=Math.abs(a.lon-bl); d=Math.min(d,360-d); const def=this.ASPDEF.find(x=>Math.abs(d-x.a)<=orb); if(!def) return; const k=pr.join('_'); if(seen[k]) return; seen[k]=1; const gen=p2.name+(/s$/i.test(p2.name)?'\u2019':'s'); rows.push({ title:'Deine '+a.name+' '+def.type+' '+gen+' '+NM2[pr[1]], c:def.c, nat:def.nat, txt:'Verbindet deine '+DOM[pr[0]]+' mit '+gen+' '+DOM[pr[1]]+' — '+CAT[def.type]+'.' }); });
+    const head=R('div',{key:'hd'},
+      R('div',{style:{fontSize:'9px',letterSpacing:'3px',textTransform:'uppercase',color:'rgba(225,218,250,0.5)'}},'Synastrie'),
+      R('div',{style:{marginTop:'6px',fontFamily:'"Cormorant Garamond",serif',fontWeight:300,fontSize:'30px',color:'#f6f2fe',lineHeight:1.05}},'Du & '+p2.name));
+    const orbs=R('div',{key:'orbs',style:{display:'flex',alignItems:'center',justifyContent:'center',margin:'4px 0 2px',height:'118px'}},
+      R('div',{style:{width:'94px',height:'94px',borderRadius:'50%',background:'radial-gradient(circle at 35% 30%,#fff,#cdbcff 55%,rgba(0,0,0,0) 80%)',boxShadow:'0 0 28px #cdbcff88',marginRight:'-20px',zIndex:2}}),
+      R('div',{style:{width:'94px',height:'94px',borderRadius:'50%',background:'radial-gradient(circle at 35% 30%,#fff,#86e6bf 55%,rgba(0,0,0,0) 80%)',boxShadow:'0 0 28px #86e6bf88'}}));
+    const meta=R('div',{key:'meta',style:{textAlign:'center',fontSize:'11px',color:'rgba(222,216,244,0.6)',fontWeight:300}}, p2.name+' · Sonne '+p2.sun+' · Mond '+p2.moon+' · Aszendent '+p2.asc);
+    const lbl=R('div',{key:'lbl',style:{marginTop:'6px',fontSize:'9px',letterSpacing:'2px',textTransform:'uppercase',color:'rgba(196,166,255,0.8)'}},'Verbindungen (Aspekte)');
+    const cards=rows.map((r,i)=>R('div',{key:i,style:{padding:'15px 16px',borderRadius:'18px',background:'rgba(255,255,255,0.04)',border:'1px solid '+r.c+'33'}},
+      R('div',{style:{fontSize:'9px',letterSpacing:'2px',textTransform:'uppercase',color:r.c}},r.nat),
+      R('div',{style:{marginTop:'5px',fontSize:'14px',color:'#f1ecfb',lineHeight:1.25}},r.title),
+      R('div',{style:{marginTop:'7px',fontSize:'12.5px',lineHeight:1.55,color:'rgba(224,218,246,0.75)',fontWeight:300}},r.txt)));
+    const ask=R('div',{key:'ask',onClick:()=>this.askClaude('Wie gut passe ich mit '+p2.name+' zusammen?'),style:{padding:'14px',borderRadius:'16px',textAlign:'center',cursor:'pointer',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(196,166,255,0.3)',color:'rgba(234,228,250,0.85)',fontSize:'12px',letterSpacing:'0.5px'}},'Mehr über euch fragen');
+    const add=R('div',{key:'add',style:{padding:'13px',borderRadius:'16px',textAlign:'center',cursor:'pointer',background:'linear-gradient(90deg,#b388ff,#7ad7ff 52%,#6cf0b0)',color:'#0a0712',fontSize:'12px',letterSpacing:'1px',fontWeight:500}},'+ Weitere Person');
+    const switcher=R('div',{key:'sw',style:{display:'flex',gap:'7px',flexWrap:'wrap'}}, this.state.people.map((pp,i)=>R('div',{key:i,onClick:()=>this.setState({synSel:i}),style:{padding:'7px 13px',borderRadius:'999px',cursor:'pointer',fontSize:'11px',background:i===this.state.synSel?'rgba(196,166,255,0.18)':'rgba(255,255,255,0.05)',border:'1px solid '+(i===this.state.synSel?'rgba(196,166,255,0.5)':'rgba(255,255,255,0.1)'),color:i===this.state.synSel?'#f3eefe':'rgba(220,213,244,0.7)'}},pp.name)).concat([R('div',{key:'np',onClick:()=>this.setState({synAdding:true}),style:{padding:'7px 13px',borderRadius:'999px',cursor:'pointer',fontSize:'11px',background:'rgba(255,255,255,0.05)',border:'1px solid rgba(196,166,255,0.3)',color:'#c4a6ff'}},'+ Person')]));
+    const rem=R('div',{key:'rem',onClick:()=>{ const people=this.state.people.filter((_,i)=>i!==this.state.synSel); this.setState({ people, synSel:0, synAdding:!people.length }); },style:{textAlign:'center',cursor:'pointer',fontSize:'11px',color:'rgba(220,213,244,0.45)',paddingTop:'2px'}}, p2.name+' entfernen');
+    return R('div',{style:{display:'flex',flexDirection:'column',gap:'12px'}}, switcher, head, orbs, meta, lbl, ...cards, ask, rem);
+  }
+
+  buildSynthesis(){
+    const R=React.createElement;
+    const eIdx=l=>Math.floor(((l%360)+360)%360/30)%4, mIdx=l=>Math.floor(((l%360)+360)%360/30)%3;
+    const ELEM=['Feuer','Erde','Luft','Wasser'], MOD=['kardinal','fix','veränderlich'];
+    const ELEMTXT={Feuer:'Tatkraft & Begeisterung',Erde:'Bodenhaftung & Substanz',Luft:'Denken & Austausch',Wasser:'Gefühl & Tiefe'};
+    const pts=this.CHART.map(p=>p.lon).concat([this.ASC]);
+    const ec=[0,0,0,0], mc=[0,0,0]; pts.forEach(l=>{ ec[eIdx(l)]++; mc[mIdx(l)]++; });
+    const maxE=Math.max(...ec), domE=ELEM.filter((_,i)=>ec[i]===maxE);
+    const maxM=Math.max(...mc), domM=MOD.filter((_,i)=>mc[i]===maxM), missM=MOD.filter((_,i)=>mc[i]===0);
+    const bySign={}; this.CHART.forEach(p=>{ const s=this.signName(p.lon); (bySign[s]=bySign[s]||[]).push(p); });
+    const stelliums=Object.keys(bySign).filter(s=>bySign[s].length>=3).map(s=>({sign:s, ps:bySign[s]}));
+    const asp=this.computeAspects();
+    const has=(k1,k2,type)=>asp.find(a=>((a.A.key===k1&&a.B.key===k2)||(a.A.key===k2&&a.B.key===k1))&&a.def.type===type);
+    const keys=this.CHART.map(p=>p.key); let grandTrine=null, tSquare=null;
+    for(let i=0;i<keys.length;i++)for(let j=i+1;j<keys.length;j++)for(let k=j+1;k<keys.length;k++){ if(has(keys[i],keys[j],'Trigon')&&has(keys[j],keys[k],'Trigon')&&has(keys[i],keys[k],'Trigon')) grandTrine=[keys[i],keys[j],keys[k]]; }
+    asp.filter(a=>a.def.type==='Opposition').forEach(o=>{ this.CHART.forEach(t=>{ if(t.key!==o.A.key&&t.key!==o.B.key&&has(o.A.key,t.key,'Quadrat')&&has(o.B.key,t.key,'Quadrat')) tSquare={opp:[o.A,o.B],apex:t}; }); });
+    const nm=k=>this.CHART.find(p=>p.key===k).name;
+    const card=(label,title,body,accent,glyphs)=>R('div',{key:label,style:{padding:'15px 16px',borderRadius:'18px',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)'}},
+      (glyphs&&glyphs.length)?R('div',{style:{display:'flex',flexWrap:'wrap',gap:'7px',marginBottom:'11px'}}, glyphs.map((gl,i)=>R('span',{key:i, title:gl.t, onClick:gl.onTap, style:{fontFamily:'"Segoe UI Symbol",system-ui,sans-serif',fontSize:'15px',color:gl.c,cursor:'pointer',width:'30px',height:'30px',display:'inline-flex',alignItems:'center',justifyContent:'center',borderRadius:'9px',background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)'}},gl.g))):null,
+      R('div',{style:{fontSize:'9px',letterSpacing:'2px',textTransform:'uppercase',color:accent||'#c4a6ff'}},label),
+      R('div',{style:{marginTop:'6px',fontFamily:'"Cormorant Garamond",serif',fontWeight:400,fontSize:'21px',color:'#f6f2fe',lineHeight:1.12}},title),
+      R('div',{style:{marginTop:'8px',fontSize:'12.5px',lineHeight:1.6,color:'rgba(226,220,246,0.8)',fontWeight:300}},body));
+    const cards=[];
+    const mLead=domM.join(' & ');
+    const sigBody=(domE.length>1?domE.join(' & ')+' halten sich die Waage':domE[0]+' überwiegt')+' — '+domE.map(e=>ELEMTXT[e]).join(', ').toLowerCase()+'. Du gehst Dinge '+mLead+' an'+(missM.includes('fix')?'; Anfangen fällt dir leichter als Dranbleiben':'')+'.';
+    const sigGl=this.CHART.filter(p=>domE.indexOf(ELEM[eIdx(p.lon)])>=0).map(p=>({g:p.glyph,c:'#e7dcff',t:p.name+' ('+ELEM[eIdx(p.lon)]+')',onTap:()=>this.openSheet('planet',p.key)}));
+    cards.push(card('Chart-Signatur', domE.join(' & ')+' · '+mLead, sigBody, null, sigGl));
+    if(stelliums.length){ const st=stelliums[0]; const hs=[...new Set(st.ps.map(p=>this.roFromPlanet(p).house))].sort((a,b)=>a-b); const hTxt=hs.length>1?'Haus '+hs[0]+'–'+hs[hs.length-1]:'Haus '+hs[0];
+      const stGl=[{g:this.SG[this.SN.indexOf(st.sign)],c:'#c4a6ff',t:st.sign+' (Sternzeichen)',onTap:()=>this.openSheet('sign',st.sign)}].concat(st.ps.map(p=>({g:p.glyph,c:'#e7dcff',t:p.name,onTap:()=>this.openSheet('planet',p.key)})));
+      cards.push(card('Stellium · Schwerpunkt', st.sign+'-Stellium', st.ps.map(p=>p.name).join(', ')+' bündeln sich in '+st.sign+' ('+hTxt+'). Mehrere Kräfte ziehen am selben Strang: '+this.signMean(st.sign).split(' · ')[1]+'. Hier liegt ein Schwerpunkt deines Lebens.', '#7df0bf', stGl)); }
+    const flow=asp.filter(a=>a.def.type==='Trigon'||a.def.type==='Sextil').length, tens=asp.filter(a=>a.def.type==='Quadrat'||a.def.type==='Opposition').length;
+    let patTitle='Aspekt-Klima', patBody;
+    if(grandTrine){ patTitle='Großes Trigon'; patBody=grandTrine.map(nm).join(', ')+' bilden ein Großes Trigon — ein müheloser, eingebauter Fluss von Talent.'; }
+    else if(tSquare){ patTitle='T-Quadrat'; patBody=tSquare.opp[0].name+' und '+tSquare.opp[1].name+' stehen sich gegenüber, '+tSquare.apex.name+' setzt beide unter Druck — dein stärkster Antrieb und Reibungspunkt.'; }
+    else { const cj=asp.find(a=>a.def.type==='Konjunktion'), sq=asp.find(a=>a.def.type==='Quadrat'); patBody=flow+' fließende, '+tens+' fordernde Verbindungen'+(cj?'. '+cj.A.name+' & '+cj.B.name+' wirken wie eine Kraft':'')+(sq?', '+sq.A.name+'–'+sq.B.name+' bleibt eine produktive Spannung':'')+'.'; }
+    const aspGl=[...new Set(asp.map(a=>a.def.type))].map(t=>{ const idx=this.ASPDEF.findIndex(x=>x.type===t), d=this.ASPDEF[idx]; return {g:d.g,c:d.c,t:d.type+' — '+d.nat,onTap:()=>this.openSheet('asptype',idx)}; });
+    cards.push(card('Aspekt-Muster', patTitle, patBody, '#c98cff', aspGl));
+    const sunS=this.signName(this.CHART[0].lon), moonS=this.signName(this.CHART[1].lon), ascS=this.signName(this.ASC);
+    const sameEl=eIdx(this.CHART[0].lon)===eIdx(this.CHART[1].lon);
+    const smTxt=sameEl?'Wesen und Gefühl sprechen dieselbe Sprache ('+sunS+' & '+moonS+') — du wirkst aus einem Guss':'Innen ein Kontrast: dein Wesen ist '+sunS+', dein Gefühl '+moonS+' — zwei Sprachen, die du verbinden lernst';
+    const axGl=[{g:'\u2609',c:'#ffd9a0',t:'Sonne — dein Kern',onTap:()=>this.openSheet('planet','sun')},{g:'\u263D',c:'#cfe0ff',t:'Mond — dein Gefühl',onTap:()=>this.openSheet('planet','moon')}];
+    cards.push(card('Sonne & Mond', 'Kern & Gefühl', smTxt+'.', '#ffd9a0', axGl));
+    return R('div',{style:{display:'flex',flexDirection:'column',gap:'10px'}}, cards);
+  }
+
+  buildChart(sheet){
+    const _act = this.sheetActive(sheet), actAP = _act.ap, actAA = _act.aa;
+    const R = React.createElement, cx = 160, cy = 160;
+    const pt = (L, r) => { const a = (((((L - this.ASC) % 360) + 360) % 360)) * Math.PI / 180; const t = Math.PI - a; return [cx + r * Math.cos(t), cy + r * Math.sin(t)]; };
+    const ch = [];
+    ch.push(R('circle', { key:'glow', cx, cy, r:118, fill:'rgba(150,110,230,0.05)' }));
+    [150,122,72,30].forEach((r,i)=> ch.push(R('circle',{ key:'ring'+i, cx, cy, r, fill:'none', stroke:'rgba(190,175,235,0.16)', strokeWidth: i===0?1.2:1 })));
+    for(let k=0;k<12;k++){
+      const [x1,y1]=pt(k*30,122), [x2,y2]=pt(k*30,150);
+      ch.push(R('line',{ key:'zd'+k, x1,y1,x2,y2, stroke:'rgba(190,175,235,0.2)', strokeWidth:1 }));
+      const [gx,gy]=pt(k*30+15,136);
+      ch.push(R('text',{ key:'zg'+k, x:gx, y:gy, fill:'rgba(225,215,250,0.72)', fontSize:13, textAnchor:'middle', dominantBaseline:'central', fontFamily:'"Segoe UI Symbol",system-ui,sans-serif' }, this.SG[k]));
+    }
+    for(let k=0;k<12;k++){
+      const L=this.ASC+k*30, ang=k%3===0;
+      const [x1,y1]=pt(L,30), [x2,y2]=pt(L,122);
+      ch.push(R('line',{ key:'hc'+k, x1,y1,x2,y2, stroke: ang?'rgba(196,166,255,0.45)':'rgba(190,175,235,0.1)', strokeWidth: ang?1.4:0.8 }));
+      const [nx,ny]=pt(this.ASC+k*30+15,52);
+      ch.push(R('text',{ key:'hn'+k, x:nx, y:ny, fill:'rgba(208,200,234,0.62)', fontSize:10, textAnchor:'middle', dominantBaseline:'central', fontFamily:'"Space Grotesk",sans-serif' }, String(k+1)));
+    }
+    const [acx,acy]=pt(this.ASC,150);
+    ch.push(R('text',{ key:'acl', x:acx-9, y:acy, fill:'#c4a6ff', fontSize:10, textAnchor:'end', dominantBaseline:'central', fontFamily:'"Space Grotesk",sans-serif', fontWeight:500 }, 'AC'));
+    const [mcx,mcy]=pt(this.ASC+270,150);
+    ch.push(R('text',{ key:'mcl', x:mcx, y:mcy-8, fill:'rgba(159,240,207,0.85)', fontSize:9, textAnchor:'middle', fontFamily:'"Space Grotesk",sans-serif' }, 'MC'));
+    const aspects=this.computeAspects();
+    const hasSel = !!sheet && sheet.kind!=='answer';
+    const isActiveAsp = a => actAA ? a.key===actAA : (hasSel ? (actAP.has(a.A.key)||actAP.has(a.B.key)) : false);
+    aspects.forEach(a=>{ const [x1,y1]=pt(a.A.lon,66), [x2,y2]=pt(a.B.lon,66); const on=isActiveAsp(a); const op=!hasSel?0.32:(on?0.95:0.05); ch.push(R('line',{ key:'asl'+a.key, x1,y1,x2,y2, stroke:a.def.c, strokeWidth:on?2.6:a.def.w, opacity:op, style:on?{filter:'drop-shadow(0 0 6px '+a.def.c+')'}:undefined })); });
+    aspects.forEach(a=>{ const [x1,y1]=pt(a.A.lon,66), [x2,y2]=pt(a.B.lon,66); ch.push(R('line',{ key:'ash'+a.key, x1,y1,x2,y2, stroke:'transparent', strokeWidth:16, style:{cursor:'pointer'}, onClick:()=>this.openSheet('aspect',a.key) })); });
+    const sorted=[...this.CHART].sort((u,v)=>u.lon-v.lon); const radMap={}; let prev=sorted.length?sorted[sorted.length-1].lon-360:0, lvl=0;
+    sorted.forEach(p=>{ let g=Math.abs(p.lon-prev); g=Math.min(g,360-g); lvl = g<13 ? Math.min(lvl+1,2) : 0; radMap[p.key]=104-lvl*15; prev=p.lon; });
+    this.NODES.forEach(n=>{ const [nx,ny]=pt(n.lon,90); const on=actAP.has(n.key); ch.push(R('circle',{ key:'nc'+n.key, cx:nx, cy:ny, r:on?11:9, fill:'rgba(226,236,255,0.95)', stroke:on?'#9bc0ff':'rgba(120,160,220,0.6)', strokeWidth:1, opacity:hasSel&&!on?0.4:0.9, style:{cursor:'pointer'}, onClick:()=>this.openSheet('node',n.key) })); ch.push(R('text',{ key:'ng'+n.key, x:nx, y:ny, fill:'#152033', fontSize:11, textAnchor:'middle', dominantBaseline:'central', fontFamily:'"Segoe UI Symbol",system-ui,sans-serif', opacity:hasSel&&!on?0.4:1, style:{pointerEvents:'none'} }, n.glyph)); });
+    this.CHART.forEach(p=>{
+      const rr=radMap[p.key]||104; const [px,py]=pt(p.lon,rr), [tx,ty]=pt(p.lon,122), [dx,dy]=pt(p.lon,rr+11);
+      const on = actAP.has(p.key), dim = hasSel && !on;
+      ch.push(R('line',{ key:'pt'+p.key, x1:tx, y1:ty, x2:dx, y2:dy, stroke:'rgba(225,215,250,0.3)', strokeWidth:1, opacity:dim?0.3:1 }));
+      ch.push(R('circle',{ key:'pc'+p.key, cx:px, cy:py, r: on?13:11, fill: on?'#ffffff':'rgba(234,227,252,0.95)', stroke: on?'#c4a6ff':'rgba(150,120,210,0.55)', strokeWidth: on?1.6:1, opacity:dim?0.4:1, style:{ cursor:'pointer', filter: on?'drop-shadow(0 0 9px rgba(196,166,255,0.95))':'drop-shadow(0 0 5px rgba(150,110,230,0.45))' }, onClick:()=>this.openSheet('planet',p.key) }));
+      ch.push(R('text',{ key:'pg'+p.key, x:px, y:py, fill:'#1b1430', fontSize:13, textAnchor:'middle', dominantBaseline:'central', fontFamily:'"Segoe UI Symbol",system-ui,sans-serif', opacity:dim?0.4:1, style:{ pointerEvents:'none' } }, p.glyph));
+      ch.push(R('circle',{ key:'ph'+p.key, cx:px, cy:py, r:22, fill:'transparent', style:{cursor:'pointer'}, onClick:()=>this.openSheet('planet',p.key) }));
+    });
+    ch.push(R('circle',{ key:'cd', cx, cy, r:2.5, fill:'rgba(225,215,250,0.6)' }));
+    return R('svg',{ width:316, height:316, viewBox:'0 0 320 320', style:{ overflow:'visible' } }, ch);
+  }
+
+  buildReadout(selPlanet, selAspect){
+    const R = React.createElement;
+    const panel = (ex)=>Object.assign({ marginTop:'12px', padding:'15px 17px', borderRadius:'18px', background:'rgba(255,255,255,0.045)', border:'1px solid rgba(255,255,255,0.09)', backdropFilter:'blur(10px)' }, ex||{});
+    const aspects=this.computeAspects();
+    if(selAspect){ const a=aspects.find(z=>z.key===selAspect); if(a) return R('div',{ style:panel() },
+      R('div',{ style:{ display:'flex', justifyContent:'space-between', alignItems:'center' } },
+        R('div',{ style:{ fontSize:'9px', letterSpacing:'2px', textTransform:'uppercase', color:'rgba(220,213,244,0.5)' } }, 'Beziehung'),
+        R('div',{ onClick:()=>this.setState({ selAspect:null }), style:{ cursor:'pointer', fontSize:'10px', letterSpacing:'1px', color:'#c4a6ff' } }, 'Schließen')),
+      R('div',{ style:{ display:'flex', alignItems:'center', gap:'9px', marginTop:'9px' } },
+        R('span',{ style:{ fontFamily:'"Segoe UI Symbol",system-ui,sans-serif', fontSize:'20px', color:'#f3eefe' } }, a.A.glyph),
+        R('span',{ style:{ fontFamily:'"Segoe UI Symbol",system-ui,sans-serif', fontSize:'17px', color:a.def.c } }, a.def.g),
+        R('span',{ style:{ fontFamily:'"Segoe UI Symbol",system-ui,sans-serif', fontSize:'20px', color:'#f3eefe' } }, a.B.glyph),
+        R('div',{ style:{ marginLeft:'3px' } },
+          R('div',{ style:{ fontFamily:'"Cormorant Garamond",serif', fontSize:'20px', color:'#f6f2fe', lineHeight:1.05 } }, a.A.name+' '+a.def.type+' '+a.B.name),
+          R('div',{ style:{ marginTop:'2px', fontSize:'9px', letterSpacing:'1px', textTransform:'uppercase', color:a.def.c } }, a.def.nat))),
+      R('div',{ style:{ marginTop:'10px', fontSize:'13px', lineHeight:1.55, color:'rgba(226,220,246,0.8)', fontWeight:300 } }, this.relText(a))
+    ); }
+    if(selPlanet){ const ro=this.roFromKey(selPlanet); return R('div',{ style:panel() },
+      R('div',{ style:{ display:'flex', alignItems:'center', gap:'11px' } },
+        R('span',{ style:{ fontFamily:'"Segoe UI Symbol",system-ui,sans-serif', fontSize:'24px', color:ro.color } }, ro.glyph),
+        R('div',{},
+          R('div',{ style:{ fontFamily:'"Cormorant Garamond",serif', fontWeight:400, fontSize:'23px', color:'#f6f2fe', lineHeight:1 } }, ro.name),
+          R('div',{ style:{ marginTop:'4px', fontSize:'10px', letterSpacing:'1px', textTransform:'uppercase', whiteSpace:'nowrap', color:'rgba(220,213,244,0.6)' } }, ro.sign+' '+ro.deg+'\u00b0 · Haus '+ro.house))),
+      R('div',{ style:{ marginTop:'11px', fontSize:'13px', lineHeight:1.55, color:'rgba(226,220,246,0.78)', fontWeight:300 } }, ro.txt)
+    ); }
+    return R('div',{ style:panel() },
+      R('div',{ style:{ fontFamily:'"Cormorant Garamond",serif', fontWeight:400, fontSize:'19px', color:'#f6f2fe' } }, 'So liest du dein Rad'),
+      R('div',{ style:{ marginTop:'7px', fontSize:'12px', lineHeight:1.6, color:'rgba(226,220,246,0.72)', fontWeight:300 } }, 'Tippe einen Planeten (●) im Rad oder unten in der Liste — oder eine Linie zwischen zweien, um ihre Beziehung zu lesen.'),
+      R('div',{ style:{ marginTop:'9px', display:'flex', flexWrap:'wrap', gap:'7px' } }, [['#7df0bf','fließt'],['#7ad7ff','Chance'],['#c98cff','Spannung'],['#ff8fb0','Balance'],['#e7dcff','vereint']].map((t,i)=>R('div',{ key:i, style:{ display:'flex', alignItems:'center', gap:'5px', fontSize:'9px', color:'rgba(220,213,244,0.6)' } }, R('span',{ style:{ width:'7px', height:'7px', borderRadius:'50%', background:t[0] } }), t[1])))
+    );
+  }
+
+  buildDashboard(){
+    const R=React.createElement;
+    const eIdx=l=>Math.floor(((l%360)+360)%360/30)%4, mIdx=l=>Math.floor(((l%360)+360)%360/30)%3;
+    const ELEM=['Feuer','Erde','Luft','Wasser'], MOD=['kardinal','fix','veränderlich'];
+    const pts=this.CHART.map(p=>p.lon).concat([this.ASC]); const ec=[0,0,0,0],mc=[0,0,0];
+    pts.forEach(l=>{ ec[eIdx(l)]++; mc[mIdx(l)]++; });
+    const domE=ELEM.filter((_,i)=>ec[i]===Math.max(...ec)), domM=MOD.filter((_,i)=>mc[i]===Math.max(...mc));
+    const tr=this.TRANSITS[0], trShort=tr.title.replace(' im ',' ').replace(/ zu dein(?:er|em) /,' ');
+    const tile=(glyph,gc,label,val,onTap)=>R('div',{key:label,onClick:onTap||undefined,style:{padding:'13px 14px',borderRadius:'16px',background:'linear-gradient(160deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))',border:'1px solid rgba(255,255,255,0.08)',cursor:onTap?'pointer':'default'}},
+      R('div',{style:{fontFamily:'"Segoe UI Symbol",system-ui,sans-serif',fontSize:'16px',color:gc}},glyph),
+      R('div',{style:{marginTop:'9px',fontSize:'8.5px',letterSpacing:'1.5px',textTransform:'uppercase',color:'rgba(220,213,244,0.5)'}},label),
+      R('div',{style:{marginTop:'3px',fontFamily:'"Cormorant Garamond",serif',fontSize:'17px',color:'#f3eefe',lineHeight:1.12}},val));
+    return R('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'9px'}},
+      tile('\u2609','#ffd9a0','Sonne',this.signName(this.CHART[0].lon),()=>this.openSheet('planet','sun')),
+      tile('\u263D','#cfe0ff','Mond',this.signName(this.CHART[1].lon),()=>this.openSheet('planet','moon')),
+      tile('AC','#c4a6ff','Aszendent',this.signName(this.ASC),()=>this.openSheet('planet','asc')),
+      tile('\u25C9','#9ff0cf','Element',domE.join(' & '),null),
+      tile('\u25C8','#c4a6ff','Modus',domM.join(' & '),null),
+      tile(tr.tg,tr.c,'Transit heute',trShort,()=>this.setState({tab:'transite'})));
+  }
+  buildPlanetStrip(){
+    const R=React.createElement;
+    return R('div',{style:{display:'flex',gap:'10px',overflowX:'auto',paddingBottom:'4px'}},
+      this.CHART.map(p=>{ const ro=this.roFromPlanet(p); return R('div',{key:p.key,onClick:()=>this.openSheet('planet',p.key),style:{flex:'0 0 auto',width:'94px',padding:'15px 12px',borderRadius:'16px',cursor:'pointer',background:'linear-gradient(160deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))',border:'1px solid rgba(255,255,255,0.08)'}},
+        R('div',{style:{fontFamily:'"Segoe UI Symbol",system-ui,sans-serif',fontSize:'25px',color:'#e7dcff'}},p.glyph),
+        R('div',{style:{marginTop:'11px',fontSize:'12px',color:'#f1ecfb'}},p.name),
+        R('div',{style:{marginTop:'3px',fontSize:'10px',color:'rgba(220,213,244,0.55)'}},ro.sign),
+        R('div',{style:{marginTop:'1px',fontSize:'9px',color:'rgba(220,213,244,0.4)'}},'Haus '+ro.house)); }));
+  }
+  buildHouseGrid(){
+    const R=React.createElement; const tiles=[];
+    for(let h=1;h<=12;h++){ const ps=this.CHART.filter(p=>this.roFromPlanet(p).house===h);
+      tiles.push(R('div',{key:h,onClick:()=>this.openSheet('house',h),style:{padding:'11px 12px',borderRadius:'14px',cursor:'pointer',background:'rgba(255,255,255,0.035)',border:'1px solid rgba(255,255,255,0.07)',display:'flex',alignItems:'center',gap:'9px'}},
+        R('div',{style:{flex:'0 0 auto',width:'24px',height:'24px',borderRadius:'7px',display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(196,166,255,0.14)',color:'#c4a6ff',fontSize:'11px',fontFamily:'"Space Grotesk",sans-serif'}},String(h)),
+        R('div',{style:{flex:1,minWidth:0}}, R('div',{style:{fontSize:'10.5px',color:'#eee8fb',lineHeight:1.2,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},this.HOUSE[h-1]), ps.length?R('div',{style:{marginTop:'2px',fontFamily:'"Segoe UI Symbol",system-ui,sans-serif',fontSize:'11px',color:'#e7dcff'}},ps.map(p=>p.glyph).join(' ')):null))); }
+    return R('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px'}}, tiles);
+  }
+  buildSignChips(){
+    const R=React.createElement; const chips=[];
+    this.SN.forEach((name,i)=>{ const ps=this.CHART.filter(p=>this.signName(p.lon)===name); if(!ps.length) return;
+      chips.push(R('div',{key:name,onClick:()=>this.openSheet('sign',name),style:{display:'flex',alignItems:'center',gap:'7px',padding:'9px 13px',borderRadius:'999px',cursor:'pointer',background:'rgba(255,255,255,0.05)',border:'1px solid rgba(196,166,255,0.22)'}},
+        R('span',{style:{fontFamily:'"Segoe UI Symbol",system-ui,sans-serif',fontSize:'14px',color:'#c4a6ff'}},this.SG[i]),
+        R('span',{style:{fontSize:'11px',color:'rgba(234,228,250,0.85)'}},name),
+        R('span',{style:{fontFamily:'"Segoe UI Symbol",system-ui,sans-serif',fontSize:'11px',color:'#e7dcff'}},ps.map(p=>p.glyph).join('')))); });
+    this.NODES.forEach(n=>{ chips.push(R('div',{key:n.key,onClick:()=>this.openSheet('node',n.key),style:{display:'flex',alignItems:'center',gap:'7px',padding:'9px 13px',borderRadius:'999px',cursor:'pointer',background:'rgba(255,255,255,0.05)',border:'1px solid rgba(150,200,255,0.25)'}},
+      R('span',{style:{fontFamily:'"Segoe UI Symbol",system-ui,sans-serif',fontSize:'13px',color:'#9bc0ff'}},n.glyph),
+      R('span',{style:{fontSize:'11px',color:'rgba(234,228,250,0.85)'}},n.name))); });
+    return R('div',{style:{display:'flex',flexWrap:'wrap',gap:'8px'}}, chips);
+  }
+  makeTabbar(active) {
+    const R = React.createElement;
+    const L=(key,d)=>R('path',{key,d,stroke:'currentColor',strokeWidth:1.9,fill:'none',strokeLinecap:'round',strokeLinejoin:'round'});
+    const LC=(key,cx,cy,r)=>R('circle',{key,cx,cy,r,stroke:'currentColor',strokeWidth:1.9,fill:'none'});
+    const items = [
+      { t:'heute', kids:[ L('a','M20.341 6.484A10 10 0 0 1 10.266 21.85'), L('b','M3.659 17.516A10 10 0 0 1 13.734 2.15'), LC('c',12,12,3), LC('d',19,5,2), LC('e',5,19,2) ] },
+      { t:'transite', kids:[ L('a','M22 12h-4l-3 9L9 3l-3 9H2') ] },
+      { t:'synastrie', kids:[ L('a','M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'), LC('b',9,7,4), L('c','M22 21v-2a4 4 0 0 0-3-3.87'), L('d','M16 3.13a4 4 0 0 1 0 7.75') ] },
+      { t:'lernen', kids:[ L('a','M12 7v14'), L('b','M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z') ] },
+      { t:'profil', kids:[ LC('a',12,8,5), L('b','M20 21a8 8 0 0 0-16 0') ] },
+    ];
+    const mapActive = active;
+    return R('div', { style:{ position:'absolute', bottom:0, left:0, right:0, height:'74px', zIndex:42,
+        display:'flex', alignItems:'flex-start', justifyContent:'space-around', padding:'14px 26px 0',
+        background:'linear-gradient(180deg,transparent,rgba(5,5,10,0.86) 60%)',
+        backdropFilter:'blur(12px)', borderTop:'1px solid rgba(255,255,255,0.06)' } },
+      items.map(it => {
+        const on = it.t === mapActive;
+        return R('div', { key:it.t, onClick:() => this.setState({ tab: it.t }),
+          style:{ cursor:'pointer', display:'flex', flexDirection:'column', alignItems:'center', gap:'6px',
+            color: on ? '#f3eefe' : 'rgba(200,192,228,0.34)', transition:'color .35s' } },
+          R('svg',{ width:23, height:23, viewBox:'0 0 24 24', fill:'none',
+            style:{ filter: on ? 'drop-shadow(0 0 7px rgba(180,150,250,0.7))' : 'none' } }, it.kids),
+          R('div',{ style:{ fontSize:'7.5px', letterSpacing:'0.4px', textTransform:'uppercase', color: on ? '#f3eefe' : 'rgba(200,192,228,0.45)' } }, ({heute:'Chart',transite:'Transite',synastrie:'Synastrie',lernen:'Lernen',profil:'Profil'})[it.t])
+        );
+      })
+    );
+  }
+
+  componentDidMount(){ try{ if(localStorage.getItem('vela_lead')==='hid') this.setState({ leadOpen:false }); }catch(e){} }
+  renderVals() {
+    const tab = this.state.tab;
+    const sheet = this.state.sheet;
+    const sun = this.CHART[0], moon = this.CHART[1];
+    const mkBig = (role, glyph, color, sign, key) => ({ role, glyph, sign, onTap:()=>this.openSheet('planet',key), title: role+' — '+(this.PINFO[key]?this.PINFO[key].role:'')+' · tippen für Erklärung',
+      glyphStyle:{ fontFamily:'"Segoe UI Symbol",system-ui,sans-serif', fontSize:'21px', color, lineHeight:1 },
+      cardStyle:{ display:'flex', flexDirection:'column', alignItems:'center', padding:'14px 6px', borderRadius:'16px', cursor:'pointer', background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.08)', backdropFilter:'blur(8px)' } });
+    const bigThree = [
+      mkBig('Sonne','\u2609','#ffd9a0', this.signName(sun.lon), 'sun'),
+      mkBig('Mond','\u263D','#cfe0ff', this.signName(moon.lon), 'moon'),
+      mkBig('Aszendent','Asc','#c4a6ff', this.signName(this.ASC), 'asc'),
+    ];
+    const sunSign = this.signName(this.CHART[0].lon), ascSign = this.signName(this.ASC);
+    const lead = 'Dein Sternzeichen ist '+sunSign+'. '+this.SIGNWHAT[this.SN.indexOf(sunSign)]+' Nach außen wirkst du eher wie '+ascSign+' (dein Aszendent).';
+    const chartSvg = this.buildChart(sheet);
+    const synthesis = this.buildSynthesis();
+    const transiteView = this.buildTransits();
+    const synastrieView = this.buildSynastry();
+    const sheetEl = this.buildSheet(sheet, this.state.q, this.state.answer, this.state.loading);
+    const og = this.state.openGroup;
+    const mkGroup = (key, icon, title, body) => ({ key, icon, title, body, open: og===key,
+      onToggle:()=>this.setState({ openGroup: og===key?null:key }),
+      headerStyle:{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'13px 14px', cursor:'pointer' },
+      chevStyle:{ color:'rgba(196,166,255,0.6)', fontSize:'13px', transform: og===key?'rotate(180deg)':'none', transition:'transform .2s' } });
+    const dashboard = this.buildDashboard();
+    const planetStrip = this.buildPlanetStrip();
+    const houseGrid = this.buildHouseGrid();
+    const signChips = this.buildSignChips();
+    const groups = [
+      mkGroup('planeten','\u2609','Deine Planeten · was in dir wirkt', this.buildPlanetList()),
+      mkGroup('zeichen','\u264B','Deine Zeichen · wie es sich zeigt', this.buildSignList()),
+      mkGroup('haeuser','\u2462','Deine Häuser · wo es geschieht', this.buildHouseList()),
+      mkGroup('knoten','\u260A','Deine Mondknoten · dein Weg', this.buildNodeList()),
+    ];
+    const learnGroups = [
+      mkGroup('lplaneten','\u2609','Die Planeten', this.learnPlanets()),
+      mkGroup('lzeichen','\u264B','Die Tierkreiszeichen', this.learnSigns()),
+      mkGroup('lhaeuser','\u2462','Die Häuser', this.learnHouses()),
+      mkGroup('laspekte','\u25B3','Die Verbindungen (Aspekte)', this.learnAspects()),
+      mkGroup('lknoten','\u260A','Die Mondknoten', this.buildNodeList()),
+    ];
+    const helpItems = [
+      { icon:'\u2726', title:'Frag einfach', body:'Tippe unten eine Frage ein — dein Horoskop antwortet in normaler, einfacher Sprache.' },
+      { icon:'\u2609', title:'Tippe alles an', body:'Jeder Punkt, jede Linie, jeder Eintrag öffnet eine Erklärung: was es ist und was es bei dir bedeutet.' },
+      { icon:'\u264B', title:'Ring = Sternzeichen', body:'Der äußere Ring färbt, wie eine Kraft sich zeigt.' },
+      { icon:'\u2462', title:'Zahlen = Lebensbereiche', body:'Die Häuser 1–12 zeigen, wo in deinem Leben etwas geschieht.' },
+    ];
+    const accFrom = this.props.accentFrom ?? '#b388ff';
+    const accTo = this.props.accentTo ?? '#6cf0b0';
+    const pillBase = { marginTop:'18px', padding:'15px', borderRadius:'18px', textAlign:'center', cursor:'pointer',
+      fontSize:'12px', letterSpacing:'1.5px', textTransform:'uppercase', color:'#0a0712', fontWeight:500,
+      background:`linear-gradient(90deg,${accFrom},#7ad7ff 52%,${accTo})`,
+      boxShadow:'0 8px 30px -8px rgba(150,110,230,0.6)' };
+
+    const cards = this.PHEN.map((p, i) => ({
+      key:p.key, name:p.name, tag:p.tag,
+      onTap: () => this.setState({ tab:'detail', sel:i }),
+      cardStyle:{ position:'relative', height:'168px', borderRadius:'24px', overflow:'hidden', cursor:'pointer',
+        border:'1px solid rgba(255,255,255,0.09)', boxShadow:'0 20px 44px -18px rgba(0,0,0,0.7)' },
+      bloomStyle:{ position:'absolute', inset:'0', background:p.wall,
+        backgroundColor:'#05050a' },
+    }));
+
+    const sel = this.PHEN[this.state.sel];
+    const isCollected = !!this.state.collectedKeys[sel.key];
+
+    const collectedList = this.PHEN.filter(p => this.state.collectedKeys[p.key]).map(p => {
+      const idx = this.PHEN.indexOf(p);
+      return { key:p.key, name:p.name,
+        onTap: () => this.setState({ tab:'detail', sel:idx }),
+        tileStyle:{ position:'relative', height:'132px', borderRadius:'20px', overflow:'hidden', cursor:'pointer',
+          border:'1px solid rgba(255,255,255,0.09)' },
+        bloomStyle:{ position:'absolute', inset:'0', background:p.wall, backgroundColor:'#05050a' } };
+    });
+
+    return {
+      isHeute: tab==='heute', isTransite: tab==='transite', isSynastrie: tab==='synastrie', isLernen: tab==='lernen', isProfil: tab==='profil',
+      tabbar: this.makeTabbar(tab),
+      chartSvg, bigThree, synthesis, groups, learnGroups, helpItems, sheet: sheetEl, lead, transiteView, synastrieView, dashboard, planetStrip, houseGrid, signChips,
+      leadOpen: this.state.leadOpen,
+      closeLead: ()=>{ try{ localStorage.setItem('vela_lead','hid'); }catch(e){} this.setState({ leadOpen:false }); },
+      q: this.state.q,
+      onQ: (e)=>this.setState({ q:e.target.value }),
+      onAsk: ()=>this.askClaude(),
+      onAskKey: (e)=>{ if(e.key==='Enter'){ e.preventDefault(); this.askClaude(); } },
+      askExamples: ['Wie wirke ich auf andere?','Wo liegen meine Stärken?','Passt heute für ein wichtiges Gespräch?'].map(t=>({ label:t, onTap:()=>this.askClaude(t) })),
+      showHelp: this.state.showHelp,
+      openHelp: ()=>this.setState({ showHelp:true }),
+      closeHelp: ()=>this.setState({ showHelp:false }),
+      resonanz: this.state.resonanz,
+      onResonanz: (e) => this.setState({ resonanz:+e.target.value }),
+      pillStyle: pillBase,
+      goFeatured: () => this.setState({ tab:'detail', sel:0 }),
+      phenCount: this.PHEN.length + ' aktiv',
+      cards,
+      sel,
+      detailWall: { position:'absolute', inset:0, background:sel.wall, backgroundColor:'#05050a' },
+      detailBloom: this.bloomLayer(sel.conic, 'velaSpin'),
+      goBack: () => this.setState({ tab:'entdecken' }),
+      collectLabel: isCollected ? 'In deiner Sammlung ✓' : 'Zur Sammlung hinzufügen',
+      collectStyle: isCollected
+        ? { marginTop:'26px', padding:'15px', borderRadius:'18px', textAlign:'center', cursor:'pointer',
+            fontSize:'12px', letterSpacing:'1.5px', textTransform:'uppercase', fontWeight:500,
+            color:'rgba(159,240,207,0.9)', background:'rgba(127,240,191,0.08)', border:'1px solid rgba(127,240,191,0.3)' }
+        : Object.assign({}, pillBase, { marginTop:'26px' }),
+      toggleCollect: () => this.setState(s => {
+        const ck = Object.assign({}, s.collectedKeys); ck[sel.key] = !ck[sel.key]; return { collectedKeys: ck };
+      }),
+      collected: collectedList,
+      collectedCount: collectedList.length,
+      profileRows: [
+        { k:'Geburtsort', v:'Lissabon, PT' },
+        { k:'Sonnenzeichen', v:'Fische' },
+        { k:'Aszendent', v:'Widder' },
+        { k:'Tägliche Erinnerung', v:'zur Dämmerung' },
+        { k:'Sprache', v:'Deutsch' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
