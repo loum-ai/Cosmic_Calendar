@@ -55,3 +55,18 @@ warmen Beraters, der Astrologie als präzises Werkzeug nutzt: Bedürfnisse,
 Muster, Stärken, konkrete Situationen. Seelen-Vokabular („Seele", „Bestimmung",
 „Schicksal", „spirituell", „Energien") wird vermieden — auch Erstkund:innen
 ohne esoterische Vorprägung müssen sich ernst genommen fühlen.
+
+## §7 Das Chart ist IMMER sichtbar — Home ist der aktive Navi-Punkt
+
+Das Geburtsrad ist das identitätsstiftende Element des Produkts. Deshalb gilt
+kanonisch (Laura, 2026-07-22):
+
+1. Auf der Home ist das Geburtsrad das ERSTE Inhaltselement — noch vor der
+   Begrüßung, niemals unter der Falz. Kein Redesign, kein Umbau darf das Rad
+   vom ersten Screen verdrängen.
+2. Auch Zwischenscreens (z. B. die Einstiegsfrage) zeigen das Rad.
+3. Der Navigationspunkt der Home heißt „Home" und ist der aktive
+   Standard-Tab beim Öffnen der App.
+
+Jede Änderung an Home/Navigation wird gegen diese Regel geprüft, bevor sie
+gemerged wird (Playwright-Screenshot: Rad im ersten Viewport sichtbar).
