@@ -50,7 +50,7 @@ export function Composer() {
                   messages={[
                     "Vela liest dein Bild …",
                     "Deine Frage trifft dein Chart …",
-                    "Einen Moment — ich schaue in die Sterne …",
+                    "Einen Moment — ich prüfe dein Chart …",
                   ]}
                   widths={[100, 88, 94]}
                 />

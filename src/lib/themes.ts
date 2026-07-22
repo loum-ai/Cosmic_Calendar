@@ -80,7 +80,7 @@ export const THEMES: LifeTheme[] = [
   {
     key: "wandel",
     label: "Wandel & Tiefe",
-    teaser: "Krisen, Transformation, das Verborgene",
+    teaser: "Umbrüche, Wendepunkte, das Ungelöste",
     glyph: "♇",
     accent: "#c898f8",
     planets: ["pluto", "chiron"],
@@ -90,7 +90,7 @@ export const THEMES: LifeTheme[] = [
   },
   {
     key: "weg",
-    label: "Weg & Bestimmung",
+    label: "Weg & Richtung",
     teaser: "Wohin führt mein Leben",
     glyph: "☊",
     accent: "#9bc0ff",

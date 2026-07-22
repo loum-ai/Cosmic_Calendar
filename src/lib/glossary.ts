@@ -11,7 +11,7 @@ export interface GlossaryEntry {
 
 export const GLOSSARY: Record<string, GlossaryEntry> = {
   aszendent: { term: "Aszendent", plain: "Auftreten", short: "Wie du auf andere wirkst — dein erster Eindruck." },
-  transit: { term: "Transit", plain: "Was der Himmel heute auslöst", short: "Wie die Planeten gerade dein Geburtsbild berühren." },
+  transit: { term: "Transit", plain: "Was die Planeten heute in deinem Chart auslösen", short: "Wie die Planeten gerade dein Geburtsbild berühren." },
   synastrie: { term: "Synastrie", plain: "Wie ihr zusammenklingt", short: "Der Vergleich zweier Geburtsbilder." },
   konjunktion: { term: "Konjunktion", plain: "eng zusammen", short: "Zwei Kräfte wirken wie eine." },
   sextil: { term: "Sextil", plain: "leichte Chance", short: "Wirkt, wenn du sie nutzt." },

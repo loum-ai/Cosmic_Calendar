@@ -96,7 +96,7 @@ export function applyChart(c: {
 export const SN = ["Widder", "Stier", "Zwillinge", "Krebs", "Löwe", "Jungfrau", "Waage", "Skorpion", "Schütze", "Steinbock", "Wassermann", "Fische"];
 export const SG = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"];
 
-export const HOUSE = ["Ich & Auftreten", "Besitz & Werte", "Denken & Austausch", "Wurzeln & Zuhause", "Schöpfung & Liebe", "Alltag & Gesundheit", "Partnerschaft", "Wandel & Tiefe", "Sinn & Ferne", "Beruf & Berufung", "Freunde & Zukunft", "Rückzug & Seele"];
+export const HOUSE = ["Ich & Auftreten", "Besitz & Werte", "Denken & Austausch", "Wurzeln & Zuhause", "Schöpfung & Liebe", "Alltag & Gesundheit", "Partnerschaft", "Wandel & Tiefe", "Sinn & Ferne", "Beruf & Berufung", "Freunde & Zukunft", "Rückzug & Innenleben"];
 
 export const SIGNMEAN = ["Feuer · Aufbruch & Mut", "Erde · Beständigkeit & Genuss", "Luft · Neugier & Austausch", "Wasser · Gefühl & Geborgenheit", "Feuer · Ausdruck & Stolz", "Erde · Genauigkeit & Dienst", "Luft · Harmonie & Ausgleich", "Wasser · Tiefe & Wandlung", "Feuer · Weite & Sinn", "Erde · Struktur & Ziel", "Luft · Freiheit & Idee", "Wasser · Hingabe & Traum"];
 
@@ -119,7 +119,7 @@ export const HOUSEWHY = [
   "Über die Begegnung hinaus weitet sich der Blick in die Ferne. Deshalb geht es im 9. Haus um Sinn, Glauben und Horizont.",
   "Der höchste Punkt am Himmel, für alle sichtbar (die Himmelsmitte). Deshalb steht das 10. Haus für Beruf, Rolle und Ansehen.",
   "Über den Beruf hinaus das größere Wir. Deshalb steht das 11. Haus für Freunde, Gruppen und Zukunft.",
-  "Der letzte Raum vor dem neuen Anfang, im Verborgenen. Deshalb geht es im 12. Haus um Rückzug, Seele und das Unbewusste.",
+  "Der letzte Raum vor dem neuen Anfang, still und wenig sichtbar. Deshalb geht es im 12. Haus um Rückzug, Innenleben und das Unbewusste.",
 ];
 
 export const THEME: Record<string, string> = {
@@ -127,7 +127,7 @@ export const THEME: Record<string, string> = {
   moon: "Dein Gefühl",
   mercury: "Dein Denken",
   venus: "Deine Art zu lieben",
-  mars: "Deine Energie",
+  mars: "Dein Antrieb",
   jupiter: "Dein Wachstum",
   saturn: "Deine Disziplin",
   uranus: "Dein Freiheitsdrang",
@@ -153,12 +153,12 @@ export const PINFO: Record<string, { role: string; what: string }> = {
   moon: { role: "dein Gefühl", what: "Der Mond ist deine Gefühlswelt — was du brauchst, um dich sicher und geborgen zu fühlen." },
   mercury: { role: "dein Denken", what: "Merkur steht fürs Denken und Reden — wie du verstehst und dich mitteilst." },
   venus: { role: "deine Liebe", what: "Venus zeigt, was du schön findest und wie du liebst, genießt und dich verbindest." },
-  mars: { role: "dein Antrieb", what: "Mars ist deine Energie und dein Mut — wie du handelst und dich durchsetzt." },
+  mars: { role: "dein Antrieb", what: "Mars ist dein Antrieb und dein Mut — wie du handelst und dich durchsetzt." },
   jupiter: { role: "dein Wachstum", what: "Jupiter steht für Wachstum, Vertrauen und Sinn — wo du dich weitest." },
   saturn: { role: "deine Struktur", what: "Saturn ist Disziplin und Reife — wo du lernst, dranbleibst und stabil wirst." },
-  uranus: { role: "dein Eigensinn", what: "Uranus ist die Kraft des Erwachens — Originalität, Freiheit, plötzliche Wendung. Wo du anders bist und es sein darfst." },
-  neptune: { role: "deine Sehnsucht", what: "Neptun steht für Fantasie, Spiritualität und Auflösung — das, was sich den Sinnen entzieht und in Bildern spricht." },
-  pluto: { role: "deine Wandlung", what: "Pluto ist Transformation, Tiefe und Macht — was stirbt, damit Neues entstehen kann." },
+  uranus: { role: "dein Eigensinn", what: "Uranus ist die Kraft der Erneuerung — Originalität, Freiheit, plötzliche Wendung. Wo du anders bist und es sein darfst." },
+  neptune: { role: "deine Sehnsucht", what: "Neptun steht für Vorstellungskraft, Sinnsuche und Auflösung fester Grenzen — das, was sich den Sinnen entzieht und in Bildern spricht." },
+  pluto: { role: "deine Wandlung", what: "Pluto ist tiefgreifende Wandlung, Tiefe und Macht — was losgelassen wird, damit Neues entstehen kann." },
   asc: { role: "dein Auftreten", what: "Der Aszendent ist, wie du auf andere wirkst — dein erster Eindruck nach außen." },
   chiron: { role: "deine Wunde & Gabe", what: "Chiron ist die verletzliche Stelle, an der du Schmerz kennst — und gerade dadurch andere heilen und verstehen kannst." },
   lilith: { role: "dein Wildes", what: "Lilith (der schwarze Mond) steht für das Ungezähmte und Tabuisierte in dir — wo du dich nicht anpassen willst." },

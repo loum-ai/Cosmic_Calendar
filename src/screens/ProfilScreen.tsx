@@ -137,7 +137,7 @@ export function ProfilScreen() {
 
       {/* angles & lights */}
       <section className="mt-8">
-        <SectionHead title="Deine Achsen & Lichter" sub="Tippe für die Bedeutung" />
+        <SectionHead title="Sonne, Mond & Achsen" sub="Tippe für die Bedeutung" />
         <div className="grid grid-cols-4 gap-2.5">
           {big.map((b) =>
             b.noSheet ? (
