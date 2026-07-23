@@ -181,19 +181,30 @@ export function TransiteScreen() {
 
       {strongest ? (
         <>
-          {/* strongest influence — editorial, no box */}
-          <button onClick={() => setFull(0)} className="mt-9 block w-full text-left transition hover:opacity-90">
-            <div className="font-mono text-[11px]" style={{ color: IMPACT_COLOR[strongest.impact] }}>
-              STÄRKSTER EINFLUSS · {IMPACT_LABEL[strongest.impact]}
-            </div>
-            <h2 className="mt-3 font-display text-[clamp(24px,3vw,34px)] font-extrabold leading-[1.08] tracking-[-0.02em] text-txt">
-              {strongest.title}
-            </h2>
-            <p className="mt-3 max-w-[46ch] font-body text-[14px] leading-relaxed text-txt-2">{strongest.txt}</p>
-            <span className="mt-3 inline-flex items-center gap-1 font-body text-[12px] text-lilac">
-              Ganze Geschichte <ChevronRight className="h-3.5 w-3.5" />
-            </span>
-          </button>
+          {/* Stärkster Einfluss — Hero-Karte nach dem Konzept: getönte
+              Hairline in der Ton-Farbe, Eck-Glow, Cinzel-Titel (NICHT der
+              fette Sans von vorher), kompakter Body. */}
+          {(() => {
+            const rgb = IMPACT_COLOR[strongest.impact];
+            return (
+              <button
+                onClick={() => setFull(0)}
+                className="relative mt-9 block w-full overflow-hidden rounded-[18px] px-4 pb-[15px] pt-4 text-left"
+                style={{ background: "linear-gradient(180deg,#1B1926 0%,#141320 100%)", boxShadow: `inset 0 0 0 1px ${rgb}4d` }}
+              >
+                <span aria-hidden className="pointer-events-none absolute -right-10 -top-11 h-[170px] w-[170px] rounded-full" style={{ background: `radial-gradient(circle, ${rgb}29, transparent 68%)` }} />
+                <span className="relative flex items-center justify-between gap-3">
+                  <span className="v-eyebrow" style={{ color: rgb }}>Stärkster Einfluss</span>
+                  <span className="v-meta shrink-0" style={{ color: rgb }}>{IMPACT_LABEL[strongest.impact]} · {strongest.orb.toFixed(1)}°</span>
+                </span>
+                <span className="v-h2 relative mt-3 block text-[17px]">{strongest.title}</span>
+                <p className="relative mt-1.5 font-body text-[12.5px] leading-[1.55] text-[rgba(238,245,248,0.66)]">{strongest.txt}</p>
+                <span className="relative mt-3 inline-flex items-center gap-1 font-body text-[12px] text-lilac">
+                  Ganze Geschichte <ChevronRight className="h-3.5 w-3.5" />
+                </span>
+              </button>
+            );
+          })()}
 
           {/* transit list — plain rows */}
           <section className="mt-12">

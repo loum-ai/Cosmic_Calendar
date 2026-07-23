@@ -25,25 +25,29 @@ export function ScreenShell({ children }: { children: React.ReactNode }) {
 }
 
 /**
- * Unified page header — the new Vela look: a bright caps eyebrow, a large
- * engraved Cinzel title with a soft violet glow, and a calm subtitle. Used by
- * every screen so headers can never drift from the chart explorer again.
+ * Seiten-Kopf — jetzt strikt auf der Type-Ramp aus claude.ai/design:
+ * .v-eyebrow → .v-h1 (Cinzel 400, VERSALIEN) → .v-lede.
+ *
+ * Wichtig: KEIN farbiger Text-Glow mehr. Das loum-System erlaubt den Halo
+ * ausschließlich auf dem „lit word" (.highlight) und auf .card-name — die
+ * Basis-Display-Zeile bleibt flach. Vorher stand hier Cinzel Semibold mit
+ * blauem text-shadow; das war der auffälligste Bruch gegen das System.
+ * Ein Baustein, alle Screens: Kopfzeilen können nicht mehr auseinanderlaufen.
  */
 export function PageHead({ label, title, sub }: { label?: string; title: string; sub?: string }) {
   return (
     <header className="mb-6">
-      {label && <div className="vela-label mb-1.5">{label}</div>}
-      <h1 className="font-cinzel text-[30px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_24px_rgba(120,150,255,0.35)] lg:text-[44px]">
-        {title}
-      </h1>
-      {sub && <p className="mt-2.5 font-body text-[13.5px] text-txt-2">{sub}</p>}
+      {label && <div className="v-eyebrow mb-2">{label}</div>}
+      <h1 className="v-h1">{title}</h1>
+      {sub && <p className="v-lede mt-2.5">{sub}</p>}
     </header>
   );
 }
 
 /**
- * Consistent section header — a calm sans title + quiet sub, with generous
- * top air. Matches the prototype (NOT a giant serif). Optional caps label.
+ * Abschnitts-Kopf — dieselbe Ramp eine Stufe kleiner: .v-eyebrow → .v-h2
+ * (Cinzel 400, VERSALIEN) → .v-body. Ersetzt den alten Sans-Semibold-Titel,
+ * der nicht aus dem Design stammte.
  */
 export function SectionHead({
   title,
@@ -56,9 +60,9 @@ export function SectionHead({
 }) {
   return (
     <header className="mb-4 mt-10 first:mt-0">
-      {label && <div className="vela-label mb-2">{label}</div>}
-      <h2 className="vela-title">{title}</h2>
-      {sub && <p className="vela-sub mt-1">{sub}</p>}
+      {label && <div className="v-eyebrow mb-2">{label}</div>}
+      <h2 className="v-h2">{title}</h2>
+      {sub && <p className="v-body mt-1.5">{sub}</p>}
     </header>
   );
 }
