@@ -198,10 +198,10 @@ export function ChartExplorer() {
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(330px,380px)] lg:gap-8">
           <section className="relative overflow-hidden rounded-[30px] border border-white/10 bg-stage p-6 shadow-glass backdrop-blur-2xl lg:p-10">
             {/* glowing aura behind the wheel — the glass centrepiece breathes */}
-            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.28),rgba(167,139,250,0.06)_45%,transparent_66%)] blur-2xl animate-breath" />
-            <div className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[rgba(167,139,250,0.12)] blur-3xl" />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(120,150,255,0.28),rgba(120,150,255,0.06)_45%,transparent_66%)] blur-2xl animate-breath" />
+            <div className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[rgba(120,150,255,0.12)] blur-3xl" />
             <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-[rgba(32,240,208,0.10)] blur-3xl" />
-            <div className="relative mx-auto w-full max-w-[480px] drop-shadow-[0_0_40px_rgba(167,139,250,0.22)]">
+            <div className="relative mx-auto w-full max-w-[480px] drop-shadow-[0_0_40px_rgba(120,150,255,0.22)]">
               <ChartWheel onPick={select} highlight={highlight} />
             </div>
             <p className="relative mt-6 text-center font-body text-[14px] leading-relaxed text-txt-3">
@@ -211,7 +211,7 @@ export function ChartExplorer() {
 
           {/* desktop reading panel */}
           <aside className="hidden lg:block">
-            <div className="sticky top-6 rounded-card border border-[rgba(167,139,250,0.18)] bg-glasswash p-6 shadow-glass backdrop-blur-xl">
+            <div className="sticky top-6 rounded-card border border-[rgba(120,150,255,0.18)] bg-glasswash p-6 shadow-glass backdrop-blur-xl">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={selKey(sel)}
@@ -342,7 +342,7 @@ export function ChartExplorer() {
 
         {/* ── DEUTUNG (editorial) ── */}
         <Section title="Deine Deutung" sub="Dein Bild in Worten.">
-          <div className="rounded-card border border-[rgba(167,139,250,0.16)] bg-glasswash p-5 lg:p-7">
+          <div className="rounded-card border border-[rgba(120,150,255,0.16)] bg-glasswash p-5 lg:p-7">
             {aiSummary() ? (
               <p className="font-serif text-[18px] italic leading-[1.6] text-txt">{aiSummary()}</p>
             ) : overview.text ? (

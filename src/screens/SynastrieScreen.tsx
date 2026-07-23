@@ -14,7 +14,7 @@ const CATEGORIES = [
   { key: "partner", label: "Partner", color: "#ff8fb0", glyph: "♥" },
   { key: "familie", label: "Familie", color: "#f8c050", glyph: "☖" },
   { key: "freund", label: "Freund", color: "#20F0D0", glyph: "✶" },
-  { key: "beruflich", label: "Beruflich", color: "#A78BFA", glyph: "◇" },
+  { key: "beruflich", label: "Beruflich", color: "#7896FF", glyph: "◇" },
 ] as const;
 
 interface Person { name: string; cat: string; planets: Planet[] }

@@ -115,7 +115,7 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
 
         <button
           onClick={talkToVela}
-          className="flex w-full items-center justify-center gap-2 rounded-pill border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.1)] px-4 py-3 font-display text-[13.5px] font-semibold text-[#bdeefb] transition hover:bg-[rgba(167,139,250,0.16)] active:scale-[0.99]"
+          className="flex w-full items-center justify-center gap-2 rounded-pill border border-[rgba(120,150,255,0.4)] bg-[rgba(120,150,255,0.1)] px-4 py-3 font-display text-[13.5px] font-semibold text-[#bdeefb] transition hover:bg-[rgba(120,150,255,0.16)] active:scale-[0.99]"
         >
           <Sparkles className="h-4 w-4" /> Mit Vela darüber sprechen
         </button>

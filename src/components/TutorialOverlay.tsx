@@ -12,9 +12,10 @@ interface Slide {
 }
 
 /**
- * First-visit, full-bleed tutorial carousel — one per screen. Purely
- * typographic with a large zodiac/glyph graphic, explaining what the user
- * sees here and why it matters. Shown once per screen (persisted).
+ * First-visit tutorial carousel — one per screen. Purely typographic with a
+ * large zodiac/glyph graphic. Shown once per screen (persisted).
+ * Regel §7: darf den Screen dahinter nie voll verdecken — Scrim statt
+ * Deckfläche, das Chart bleibt oben sichtbar.
  */
 const TUTORIALS: Record<TabKey, Slide[]> = {
   heute: [
@@ -64,10 +65,10 @@ export function TutorialOverlay() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-[95] flex flex-col bg-[#111019]"
+        className="fixed inset-0 z-[95] flex flex-col"
       >
-        {/* deep-space backdrop — one tight, restrained glow, no haze */}
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_48%_28%_at_50%_-6%,rgba(116,96,200,0.12),transparent_55%)]" />
+        {/* Scrim statt Deckfläche (Regel §7): oben frei fürs Rad, unten solid für Text */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[rgba(17,16,25,0.30)] via-[rgba(17,16,25,0.72)] via-45% to-[#111019]" />
         {/* huge glyph watermark */}
         <AnimatePresence mode="wait">
           <motion.span
@@ -76,7 +77,7 @@ export function TutorialOverlay() {
             animate={{ opacity: 0.08, scale: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
             transition={{ duration: 0.45, ease: EASE.smooth }}
-            className="vela-glyph pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-[min(70vw,460px)] leading-none text-white"
+            className="vela-glyph pointer-events-none absolute bottom-[8%] left-1/2 -translate-x-1/2 text-[min(58vw,380px)] leading-none text-white"
           >
             {slide.glyph}
           </motion.span>
@@ -91,7 +92,7 @@ export function TutorialOverlay() {
         </button>
 
         {/* slide content */}
-        <div className="relative z-10 mx-auto flex w-full max-w-[640px] flex-1 flex-col justify-center px-8">
+        <div className="relative z-10 mx-auto flex w-full max-w-[640px] flex-1 flex-col justify-end px-8 pb-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={i}
@@ -116,7 +117,7 @@ export function TutorialOverlay() {
               <span
                 key={di}
                 className="h-1.5 rounded-full transition-all duration-300"
-                style={{ width: di === i ? 22 : 6, background: di === i ? "#A78BFA" : "rgba(255,255,255,0.22)" }}
+                style={{ width: di === i ? 22 : 6, background: di === i ? "#7896FF" : "rgba(255,255,255,0.22)" }}
               />
             ))}
           </div>

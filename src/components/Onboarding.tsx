@@ -3,6 +3,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X, Loader2, MapPin, Check, Sparkles } from "lucide-react";
 import { useApp, type SavedBirth } from "@/store/useApp";
 import { searchPlace, type Place } from "@/lib/geocode";
+import { SkyRitual } from "@/components/SkyRitual";
 import { cn } from "@/lib/utils";
 
 const FIELD =
@@ -24,18 +25,23 @@ export function Onboarding() {
   const [name, setName] = React.useState("");
   const [date, setDate] = React.useState("");
   const [time, setTime] = React.useState("");
+  const [timeUnknown, setTimeUnknown] = React.useState(false);
   const [placeQ, setPlaceQ] = React.useState("");
   const [results, setResults] = React.useState<Place[]>([]);
   const [picked, setPicked] = React.useState<Place | null>(null);
   const [searching, setSearching] = React.useState(false);
   const [err, setErr] = React.useState("");
+  // Das Einrasten (Journey Map III): nach erfolgreicher Berechnung spielt
+  // das Ritual — der Himmel dreht zurück auf den Geburtsmoment.
+  const [ritual, setRitual] = React.useState<SavedBirth | null>(null);
 
   // Prefill from a previously saved chart when reopening.
   React.useEffect(() => {
     if (!open) return;
     setName(saved?.name ?? "");
     setDate(saved?.date ?? "");
-    setTime(saved?.time ?? "");
+    setTime(saved?.timeUnknown ? "" : saved?.time ?? "");
+    setTimeUnknown(!!saved?.timeUnknown);
     setPlaceQ(saved?.place ?? "");
     setPicked(saved ? { name: saved.place, lat: saved.lat, lon: saved.lon, label: saved.place } : null);
     setResults([]);
@@ -67,22 +73,32 @@ export function Onboarding() {
 
   const submit = () => {
     setErr("");
-    if (!date || !time) return setErr("Bitte Geburtsdatum und -uhrzeit angeben.");
+    if (!date) return setErr("Bitte ein Geburtsdatum angeben.");
+    if (!time && !timeUnknown) return setErr("Bitte eine Uhrzeit angeben — oder „Ich kenne meine Geburtszeit nicht“ wählen.");
     if (!picked) return setErr("Bitte einen Geburtsort aus der Liste wählen.");
     const birth: SavedBirth = {
       name: name.trim(),
       date,
-      time,
+      // Ohne bekannte Zeit rechnen wir mit Mittag — die Stellungen der langsamen
+      // Punkte stimmen dann, Aszendent und Häuser NICHT (siehe timeUnknown).
+      time: timeUnknown ? "12:00" : time,
       lat: picked.lat,
       lon: picked.lon,
       place: picked.label,
+      timeUnknown,
     };
     try {
       applyComputed(birth);
+      setOpen(false);
+      setRitual(birth);
     } catch {
       setErr("Die Berechnung ist fehlgeschlagen. Bitte Eingaben prüfen.");
     }
   };
+
+  if (ritual) {
+    return <SkyRitual name={ritual.name} date={ritual.date} time={ritual.time} place={ritual.place} timeUnknown={ritual.timeUnknown} onDone={() => setRitual(null)} />;
+  }
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
@@ -126,8 +142,40 @@ export function Onboarding() {
               </div>
               <div>
                 <label className={LABEL}>Uhrzeit</label>
-                <input type="time" className={cn(FIELD, "[color-scheme:dark]")} value={time} onChange={(e) => setTime(e.target.value)} />
+                <input
+                  type="time"
+                  className={cn(FIELD, "[color-scheme:dark]", timeUnknown && "opacity-40")}
+                  value={time}
+                  disabled={timeUnknown}
+                  onChange={(e) => setTime(e.target.value)}
+                />
               </div>
+            </div>
+
+            {/* Journey Map II — der Verlustmoment: lieber ehrlich weiterlassen
+                als zum Raten zwingen. Sagen, was fehlt, und was trotzdem trägt. */}
+            <div className="-mt-2">
+              <button
+                type="button"
+                onClick={() => setTimeUnknown((v) => !v)}
+                aria-pressed={timeUnknown}
+                className="flex w-full items-center gap-2.5 text-left"
+              >
+                <span
+                  className={cn(
+                    "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border transition",
+                    timeUnknown ? "border-violet bg-violet/25" : "border-line bg-white/[0.04]",
+                  )}
+                >
+                  {timeUnknown && <Check className="h-3 w-3 text-lilac" strokeWidth={3} />}
+                </span>
+                <span className="font-body text-[13px] text-txt-2">Ich kenne meine Geburtszeit nicht</span>
+              </button>
+              {timeUnknown && (
+                <p className="mt-2.5 rounded-xl border border-line-soft bg-white/[0.03] px-3.5 py-2.5 font-body text-[12px] leading-relaxed text-txt-3">
+                  Kein Problem — du kommst trotzdem rein. <span className="text-txt-2">Sonne, Planeten in ihren Zeichen und die Aspekte stimmen.</span> Was ohne Zeit nicht belastbar ist: Aszendent, die Häuser und der exakte Mondgrad. Du kannst die Zeit später jederzeit im Profil nachtragen.
+                </p>
+              )}
             </div>
 
             <div className="relative">

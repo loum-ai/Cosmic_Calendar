@@ -16,6 +16,10 @@ export const DEMO_BIRTH: BirthInput = { date: "1987-09-07", time: "18:50", lat: 
 export interface SavedBirth extends BirthInput {
   name: string;
   place: string; // human label of the birth place
+  /** Geburtszeit unbekannt (Journey Map II): gerechnet wird mit 12:00, aber
+   *  Aszendent, Häuser und exakter Mondgrad sind dann NICHT belastbar — die
+   *  App muss das überall sagen, statt Genauigkeit vorzutäuschen. */
+  timeUnknown?: boolean;
 }
 
 const CHART_KEY = "vela_chart";
@@ -26,8 +30,10 @@ function buildProfile(b: SavedBirth, asc: number) {
   const [y, mo, d] = b.date.split("-").map(Number);
   return {
     name: b.name || "Mein Chart",
-    birth: `${d}. ${MONTHS[mo - 1]} ${y} · ${b.time} · ${b.place.split(",")[0]}`,
-    memberSince: `${signName(asc)}-Aszendent · ${b.lat.toFixed(2)}° N · ${b.lon.toFixed(2)}° E`,
+    birth: `${d}. ${MONTHS[mo - 1]} ${y} · ${b.timeUnknown ? "Zeit unbekannt" : b.time} · ${b.place.split(",")[0]}`,
+    memberSince: b.timeUnknown
+      ? `Ohne Geburtszeit · ${b.lat.toFixed(2)}° N · ${b.lon.toFixed(2)}° E`
+      : `${signName(asc)}-Aszendent · ${b.lat.toFixed(2)}° N · ${b.lon.toFixed(2)}° E`,
   };
 }
 

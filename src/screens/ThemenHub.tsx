@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { GenerativeLoader } from "@/components/GenerativeLoader";
 import { ChartWheel } from "@/components/ChartWheel";
-import { ArrowLeft, ChevronRight, CircleDot, Hexagon, Info, Sparkles } from "lucide-react";
+import { ArrowLeft, ChevronRight, CircleDot, Hexagon, Info, Sparkles, X } from "lucide-react";
 import { THEMES, themeByKey, type LifeTheme } from "@/lib/themes";
-import { CHART, PROFILE, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
+import { ASC, CHART, PROFILE, TRANSITS, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
+import { IridescentOrb } from "@/components/IridescentOrb";
 import { resolveSheet } from "@/lib/sheets";
 import { computeHumanDesign } from "@/lib/humandesign";
 import { chartContext, chartHash, shortHash, transitContext } from "@/lib/factsContext";
@@ -101,8 +102,31 @@ export function ThemenHub() {
   const aiVersion = useApp((s) => s.aiVersion);
   void aiVersion; // re-render when the reading lands
   const birth: BirthInput | null = savedBirth ?? hdBirth ?? (IS_DEMO ? DEMO_BIRTH : null);
+  const openInfo = useApp((s) => s.openInfo);
+  const setTab = useApp((s) => s.setTab);
   const portrait = aiPortrait();
   const portraitParas = portrait ? portrait.split(/\n\n+/).map((s) => s.trim()).filter(Boolean) : [];
+
+  // "Kurz gesagt" — schließbare Klartext-Karte über dem Rad (Konzept ChartHome)
+  const [kurz, setKurz] = useState(true);
+  const sunP = CHART.find((p) => p.key === "sun");
+  const moonP = CHART.find((p) => p.key === "moon");
+  const acSign = signName(ASC);
+  const kurzText = `Außen ${acSign}: so wirkst du, bevor du etwas sagst. Innen ${sunP ? signName(sunP.lon) : "—"}-Sonne und ${moonP ? signName(moonP.lon) : "—"}-Mond. Tipp irgendetwas an — alles hier erklärt sich.`;
+
+  // Element-/Modus-Dominanz aus den echten Ständen (Kachel-Grid „Auf einen Blick")
+  const signIdx = (lon: number) => Math.floor((((lon % 360) + 360) % 360) / 30);
+  const ELEMS = ["Feuer", "Erde", "Luft", "Wasser"];
+  const MODES = ["Kardinal", "Fix", "Veränderlich"];
+  const MODE_SUB: Record<string, string> = { Kardinal: "beginnt", Fix: "hält", Veränderlich: "wandelt" };
+  const eCount = [0, 0, 0, 0];
+  const mCount = [0, 0, 0];
+  for (const p of CHART) { const i = signIdx(p.lon); eCount[i % 4]++; mCount[i % 3]++; }
+  const eMax = eCount.indexOf(Math.max(...eCount));
+  const mMax = mCount.indexOf(Math.max(...mCount));
+  const t0 = TRANSITS[0];
+  const t0Aspect = t0?.title.match(/Trigon|Quadrat|Opposition|Sextil|Konjunktion/)?.[0] ?? "heute";
+  const t0Glyph = CHART.find((p) => p.key === t0?.nk)?.glyph ?? "";
 
   // Start with the QUESTION, not the structure: on a client's first visit ask
   // "Was beschäftigt dich gerade?" — picking a theme routes straight into it,
@@ -139,10 +163,10 @@ export function ThemenHub() {
         <div className="w-full max-w-[640px]">
           <div className="vela-wordmark mb-4 text-[12px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
           {/* KANONISCHE REGEL: das Chart ist IMMER sichtbar — auch hier */}
-          <div className="pointer-events-none mx-auto mb-6 w-full max-w-[220px] drop-shadow-[0_0_28px_rgba(167,139,250,0.22)]">
+          <div className="pointer-events-none mx-auto mb-6 w-full max-w-[220px] drop-shadow-[0_0_28px_rgba(120,150,255,0.22)]">
             <ChartWheel />
           </div>
-          <h1 className="text-center font-cinzel text-[30px] font-light leading-[1.12] text-white [text-shadow:0_0_30px_rgba(167,139,250,0.3)] lg:text-[40px]">
+          <h1 className="text-center font-cinzel text-[30px] font-light leading-[1.12] text-white [text-shadow:0_0_30px_rgba(120,150,255,0.3)] lg:text-[40px]">
             Was beschäftigt dich gerade, {first}?
           </h1>
           <p className="mt-3 font-body text-[15px] leading-relaxed text-txt-2">
@@ -171,7 +195,7 @@ export function ThemenHub() {
           </div>
           <button
             onClick={() => finishEntry()}
-            className="mx-auto mt-8 block font-body text-[14px] text-[#BBA8FF] transition hover:translate-x-0.5"
+            className="mx-auto mt-8 block font-body text-[14px] text-[#97B5FF] transition hover:translate-x-0.5"
           >
             Überspringen — direkt zu meinem Blueprint →
           </button>
@@ -183,79 +207,93 @@ export function ThemenHub() {
   return (
     <div className="animate-slideUp px-6 pb-40 pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] lg:px-10 lg:pt-12">
       <div className="mx-auto w-full max-w-[860px]">
-        <div className="vela-wordmark mb-5 text-[12px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
-
-        {/* KANONISCHE REGEL (Laura): Das Chart ist IMMER sichtbar — das
-            Geburtsrad ist das ERSTE Element der Home, noch vor der Begrüßung.
-            Home (mit Rad) ist der aktive Standard-Navigationspunkt. */}
+        {/* Kopf (Konzept ChartHome): Eyebrow · Name · Geburtsdaten — Orb rechts */}
         <Reveal>
-          <section className="mb-8">
-            <div className="vela-label mb-4 flex items-center gap-1.5"><CircleDot className="h-3.5 w-3.5" /> Dein Geburtsrad</div>
-            <button
-              onClick={() => setHomeView("chart")}
-              className="group relative w-full overflow-hidden rounded-[30px] border border-white/10 bg-stage p-5 text-left shadow-glass backdrop-blur-2xl transition hover:border-[rgba(167,139,250,0.45)] lg:p-6"
-            >
-              <div className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(167,139,250,0.26),rgba(167,139,250,0.05)_45%,transparent_66%)] blur-2xl animate-breath" />
-              <div className="relative flex flex-col items-center gap-4 sm:flex-row sm:gap-6">
-                <div className="pointer-events-none relative w-full max-w-[300px] shrink-0 drop-shadow-[0_0_36px_rgba(167,139,250,0.22)]">
-                  <ChartWheel />
-                </div>
-                <div className="relative min-w-0 text-center sm:text-left">
-                  <p className="font-body text-[15px] leading-relaxed text-txt-2">
-                    Deine Planetenstände im Moment deiner Geburt: Jeder Punkt im Rad ist ein Planet — eine Kraft in dir. Die zwölf Felder sind deine Lebensbereiche, die Linien zeigen, wie deine Kräfte zusammenspielen.
-                  </p>
-                  <p className="mt-3 font-body text-[14px] leading-relaxed text-txt-3">
-                    Tippe auf jeden Punkt und jede Linie — die Erklärung öffnet sich.
-                  </p>
-                  <span className="mt-4 inline-block font-body text-[14px] text-[#BBA8FF] transition group-hover:translate-x-0.5">Rad öffnen & erkunden →</span>
-                </div>
-              </div>
-            </button>
+          <div className="mb-6 flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <div className="vela-wordmark text-[11px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
+              <div className="v-eyebrow mt-5">Geburts-Chart</div>
+              <h1 className="mt-1.5 font-cinzel text-[27px] font-normal uppercase leading-tight tracking-[0.06em] text-white lg:text-[34px]">{first}</h1>
+              <div className="mt-1.5 font-body text-[11.5px] text-white/50">{PROFILE.birth}</div>
+            </div>
+            <IridescentOrb size={44} className="mt-2" />
+          </div>
+        </Reveal>
+
+        {/* Kurz gesagt — schließbar, solide Hero-Fläche */}
+        {kurz && (
+          <Reveal>
+            <div className="relative mb-7 rounded-[16px] px-[15px] py-[13px]" style={{ background: "linear-gradient(180deg,#201D2C 0%,#1B1926 55%,#17141F 100%)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,.09), inset 0 1px 0 rgba(255,255,255,.05)" }}>
+              <button onClick={() => setKurz(false)} aria-label="Schließen" className="absolute right-2 top-2 p-1 text-white/40 transition hover:text-white/70">
+                <X className="h-3.5 w-3.5" />
+              </button>
+              <div className="v-eyebrow" style={{ color: "#97B5FF" }}>Kurz gesagt</div>
+              <p className="mr-5 mt-1.5 font-body text-[13px] leading-[1.55] text-[rgba(238,245,248,0.72)]">{kurzText}</p>
+            </div>
+          </Reveal>
+        )}
+
+        {/* KANONISCHE REGEL (Laura): Das Chart ist IMMER sichtbar — das Rad
+            ist das erste Inhaltselement und hier DIREKT interaktiv (Konzept:
+            Punkte, Linien, Zeichen antippen → Sheet öffnet sich). */}
+        <Reveal>
+          <section className="relative mb-9 flex flex-col items-center gap-2.5">
+            <div className="pointer-events-none absolute left-1/2 top-[168px] h-[440px] w-[440px] -translate-x-1/2 -translate-y-1/2 rounded-full mix-blend-plus-lighter" style={{ background: "radial-gradient(circle, rgba(120,150,255,0.24) 0%, rgba(120,157,255,0.10) 45%, transparent 68%)" }} />
+            <div className="pointer-events-none absolute left-1/2 top-[168px] h-[340px] w-[340px] -translate-x-1/2 -translate-y-1/2 rounded-full" style={{ background: "rgba(10,9,18,0.55)", boxShadow: "0 0 60px 20px rgba(10,9,18,0.55)" }} />
+            <div className="relative w-full max-w-[336px]">
+              <ChartWheel />
+            </div>
+            <span className="relative font-body text-[10.5px] uppercase tracking-[1.6px] text-white/[0.38]">Alles ist antippbar — Punkte, Linien, Zeichen</span>
+            <button onClick={() => setHomeView("chart")} className="relative font-body text-[13.5px] text-[#97B5FF] transition hover:translate-x-0.5">Ganzes Rad im Detail →</button>
           </section>
         </Reveal>
 
-        <header className="mb-8">
-          <h1 className="font-cinzel text-[34px] font-light leading-[1.05] tracking-[0.01em] text-white [text-shadow:0_0_30px_rgba(167,139,250,0.3)] lg:text-[48px]">
-            {viewer ? `Willkommen, ${first}` : first}
-          </h1>
-          <p className="mt-3 max-w-[46ch] font-body text-[16px] leading-relaxed text-txt-2">
-            {viewer ? (
-              <>Dein persönlicher astrologischer Blueprint. <span className="text-txt-3">Wähle ein Lebensthema, das dich gerade bewegt.</span></>
-            ) : (
-              "Wähle ein Lebensthema — dein Geburtsbild, gelesen durch diese Linse. Kein Fachchinesisch, nur was es für dich bedeutet."
-            )}
-          </p>
-        </header>
+        {/* Auf einen Blick — Kachel-Grid (Konzept ChartWeiter) */}
+        <Reveal>
+          <section className="mb-9">
+            <div className="v-eyebrow mb-2.5">Auf einen Blick</div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <Kachel glyph={sunP?.glyph ?? "☉"} label="Sonne" value={sunP ? signName(sunP.lon) : "—"} sub={sunP ? `${sunP.house ?? houseOf(sunP.lon)}. Haus` : ""} onClick={() => openInfo({ kind: "planet", key: "sun" })} />
+              <Kachel glyph={moonP?.glyph ?? "☽"} label="Mond" value={moonP ? signName(moonP.lon) : "—"} sub={moonP ? `${moonP.house ?? houseOf(moonP.lon)}. Haus` : ""} onClick={() => openInfo({ kind: "planet", key: "moon" })} />
+              <Kachel glyph="AC" label="Aszendent" value={acSign} sub="Auftritt" onClick={() => openInfo({ kind: "sign", key: signIdx(ASC) })} />
+              <Kachel glyph="◈" label="Element" value={ELEMS[eMax]} sub={`${eCount[eMax]} Stände`} onClick={() => setHomeView("chart")} />
+              <Kachel glyph="◆" label="Modus" value={MODES[mMax]} sub={MODE_SUB[MODES[mMax]]} onClick={() => setHomeView("chart")} />
+              {t0 && <Kachel glyph={`${t0.tg} ${t0Glyph}`} label="Heute" value={t0Aspect} sub="Transit" lit onClick={() => setTab("transite")} />}
+            </div>
+          </section>
+        </Reveal>
 
-        {/* Lebensthemen — the heart of the hub, as a 4-column BENTO grid
-            (loum design system): tile 1 is the 2×2 hero, the rest are 1×1;
-            Human Design completes the last row as a 2×1 cell. */}
-        <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Lebensthemen</div>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[minmax(150px,auto)]">
-          {THEMES.map((t, i) => {
-            const hero = i === 0;
-            const wide = i === THEMES.length - 1;
-            return (
-            <Reveal key={t.key} i={i} className={hero ? "sm:col-span-2 lg:col-span-2 lg:row-span-2" : wide ? "lg:col-span-2" : ""}>
+        {/* Lebensthemen — vertikales Karten-Raster (Bento-Rückbau: die
+            4er-Bento-Section aus PR #97 war loum.ai-Content; die Moodboard-
+            Referenzen stützen gleichmäßiges Karten-Scrolling). */}
+        <div className="mb-4">
+          <div className="vela-label mb-1.5 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Lebensthemen</div>
+          <p className="max-w-[46ch] font-body text-[14.5px] leading-relaxed text-txt-3">
+            {viewer ? "Wähle ein Lebensthema, das dich gerade bewegt — dein Geburtsbild, gelesen durch diese Linse." : "Wähle ein Lebensthema — dein Geburtsbild, gelesen durch diese Linse. Kein Fachchinesisch, nur was es für dich bedeutet."}
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {THEMES.map((t, i) => (
+            <Reveal key={t.key} i={i}>
               <button
                 onClick={() => openTheme(t.key)}
-                className={`vela-tile vela-tile-hover group relative flex h-full w-full flex-col overflow-hidden text-left ${hero ? "p-7 lg:p-8" : "p-6"}`}
+                className="vela-tile vela-tile-hover group relative flex h-full w-full flex-col overflow-hidden p-6 text-left"
               >
-                <span className={`pointer-events-none absolute -right-4 -top-8 font-glyph leading-none opacity-[0.09] ${hero ? "text-[180px]" : "text-[112px]"}`} style={{ color: t.accent }}>{t.glyph}</span>
+                <span className="pointer-events-none absolute -right-4 -top-8 font-glyph text-[112px] leading-none opacity-[0.09]" style={{ color: t.accent }}>{t.glyph}</span>
                 <div className="relative flex items-start justify-between">
                   <span
-                    className={`inline-flex items-center justify-center rounded-full font-glyph ${hero ? "h-14 w-14 text-[28px]" : "h-12 w-12 text-[24px]"}`}
+                    className="inline-flex h-12 w-12 items-center justify-center rounded-full font-glyph text-[24px]"
                     style={{ color: t.accent, background: `radial-gradient(circle, ${t.accent}2b, transparent 72%)`, border: `1px solid ${t.accent}3a` }}
                   >
                     {t.glyph}
                   </span>
                   <ChevronRight className="mt-2 h-5 w-5 text-txt-3 transition-transform group-hover:translate-x-0.5" />
                 </div>
-                <div className={`relative font-cinzel uppercase leading-tight text-txt ${hero ? "mt-auto pt-6 text-[28px] lg:text-[32px]" : "mt-4 text-[21px]"}`}>{t.label}</div>
+                <div className="relative mt-4 font-cinzel text-[21px] uppercase leading-tight text-txt">{t.label}</div>
                 <div className="relative mt-2 font-body text-[14px] leading-relaxed text-txt-3">{t.teaser}</div>
               </button>
             </Reveal>
-          );})}
+          ))}
           {birth && (
             <Reveal i={THEMES.length} className="sm:col-span-2 lg:col-span-2">
               <button
@@ -263,7 +301,7 @@ export function ThemenHub() {
                 className="vela-tile vela-tile-hover flex h-full w-full items-center justify-between gap-4 p-6 text-left"
               >
                 <div className="flex items-center gap-3.5">
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.12)] text-lilac"><Hexagon className="h-5 w-5" strokeWidth={1.7} /></span>
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(120,150,255,0.4)] bg-[rgba(120,150,255,0.12)] text-lilac"><Hexagon className="h-5 w-5" strokeWidth={1.7} /></span>
                   <div>
                     <div className="font-cinzel text-[19px] uppercase text-txt">Human Design</div>
                     <div className="mt-0.5 font-body text-[13px] text-txt-3">Typ, Strategie, Autorität, Profil & Zentren.</div>
@@ -504,7 +542,7 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
                 <button
                   key={f}
                   onClick={() => { setQ(f); void ask(f); }}
-                  className="rounded-pill border border-white/[0.12] bg-white/[0.05] px-3.5 py-2 text-left font-body text-[13px] leading-snug text-ink-soft/90 backdrop-blur-md transition hover:border-[rgba(167,139,250,0.45)] active:scale-95"
+                  className="rounded-pill border border-white/[0.12] bg-white/[0.05] px-3.5 py-2 text-left font-body text-[13px] leading-snug text-ink-soft/90 backdrop-blur-md transition hover:border-[rgba(120,150,255,0.45)] active:scale-95"
                 >
                   {f}
                 </button>
@@ -520,6 +558,23 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
 
 function MotionSpacer() {
   return <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-2" />;
+}
+
+/** Überblick-Kachel (Konzept ChartWeiter): Glass-Tile mit Glyph, Label, Wert. */
+function Kachel({ glyph, label, value, sub, lit, onClick }: { glyph: string; label: string; value: string; sub?: string; lit?: boolean; onClick?: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      data-interactive="true"
+      className="glass-surface flex flex-col gap-1.5 rounded-[14px] px-3 pb-[11px] pt-3 text-left"
+      style={lit ? { background: "linear-gradient(180deg,#1B1926 0%,#151420 100%)", boxShadow: "inset 0 0 0 1px rgba(120,150,255,.3)" } : undefined}
+    >
+      <span className={`font-glyph text-[15px] leading-none ${lit ? "text-[#97B5FF]" : "text-[rgba(238,245,248,0.6)]"}`}>{glyph}</span>
+      <span className="font-body text-[9px] uppercase tracking-[1.6px] text-white/40">{label}</span>
+      <span className="-mt-0.5 font-body text-[13.5px] font-medium text-txt">{value}</span>
+      {sub && <span className="-mt-1 font-body text-[10.5px] text-white/[0.38]">{sub}</span>}
+    </button>
+  );
 }
 
 /** One "force" card on a theme page. The body is a REAL reading — the stored
@@ -550,7 +605,7 @@ function ForceCard({ it, accent, onOpen }: { it: { key: string; name: string; gl
           ))}
         </div>
       ) : null}
-      <span className="relative mt-3 inline-block font-body text-[13px] text-[#BBA8FF]">Mehr dazu →</span>
+      <span className="relative mt-3 inline-block font-body text-[13px] text-[#97B5FF]">Mehr dazu →</span>
     </button>
   );
 }
@@ -675,7 +730,7 @@ function HDView({ birth }: { birth: BirthInput }) {
         </button>
 
         <header className="mb-9 flex items-center gap-4">
-          <span className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[rgba(167,139,250,0.4)] bg-[rgba(167,139,250,0.12)] text-[#BBA8FF]" style={{ boxShadow: "0 0 30px -6px rgba(167,139,250,0.8)" }}>
+          <span className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[rgba(120,150,255,0.4)] bg-[rgba(120,150,255,0.12)] text-[#97B5FF]" style={{ boxShadow: "0 0 30px -6px rgba(120,150,255,0.8)" }}>
             <Hexagon className="h-7 w-7" strokeWidth={1.6} />
           </span>
           <div>
@@ -694,7 +749,7 @@ function HDView({ birth }: { birth: BirthInput }) {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="vela-label">{f.k}</div>
-                  <Info className={`h-4 w-4 shrink-0 transition-colors ${open === i ? "text-[#BBA8FF]" : "text-txt-3"}`} />
+                  <Info className={`h-4 w-4 shrink-0 transition-colors ${open === i ? "text-[#97B5FF]" : "text-txt-3"}`} />
                 </div>
                 <div className="mt-2 font-cinzel text-[20px] font-light leading-tight text-white">{f.v}</div>
                 <AnimatePresence initial={false}>
@@ -710,7 +765,7 @@ function HDView({ birth }: { birth: BirthInput }) {
                     </motion.div>
                   )}
                 </AnimatePresence>
-                {open !== i && <span className="mt-2 inline-block font-body text-[11.5px] text-[#BBA8FF]/70">Was heißt das? →</span>}
+                {open !== i && <span className="mt-2 inline-block font-body text-[11.5px] text-[#97B5FF]/70">Was heißt das? →</span>}
               </button>
             </Reveal>
           ))}
@@ -722,7 +777,7 @@ function HDView({ birth }: { birth: BirthInput }) {
             {ALL_CENTERS.map((c) => {
               const on = hd.definedCenters.includes(c);
               return (
-                <span key={c} className={`rounded-pill px-3.5 py-1.5 font-body text-[13px] ${on ? "border border-[rgba(167,139,250,0.5)] bg-[rgba(167,139,250,0.14)] text-[#bdeefb]" : "border border-white/10 text-txt-3"}`}>
+                <span key={c} className={`rounded-pill px-3.5 py-1.5 font-body text-[13px] ${on ? "border border-[rgba(120,150,255,0.5)] bg-[rgba(120,150,255,0.14)] text-[#bdeefb]" : "border border-white/10 text-txt-3"}`}>
                   {c}
                 </span>
               );

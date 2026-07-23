@@ -6,7 +6,6 @@ import { TabBar } from "@/components/TabBar";
 import { Composer } from "@/components/Composer";
 import { SheetHost } from "@/components/SheetHost";
 import { DetailView } from "@/components/DetailView";
-import { TutorialOverlay } from "@/components/TutorialOverlay";
 import { Onboarding } from "@/components/Onboarding";
 import { PrintFlow } from "@/components/PrintFlow";
 import { useApp } from "@/store/useApp";
@@ -68,8 +67,10 @@ export function MainApp() {
       <TabBar />
       <SheetHost />
       <DetailView />
+      {/* TutorialOverlay entfernt (Laura, 2026-07-22): blockierte den Blick auf
+          die App; das neue App-Konzept erklärt im Onboarding-Ritual statt mit
+          Overlay-Slides. Komponente bleibt für Wiederverwendung erhalten. */}
       {!viewer && <Onboarding />}
-      {!viewer && <TutorialOverlay />}
       {printOpen && <PrintFlow />}
       <div className="vela-grain" />
     </div>

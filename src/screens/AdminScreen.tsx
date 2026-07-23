@@ -435,7 +435,7 @@ function Cockpit({ email }: { email: string }) {
         {/* review & publish modal */}
         {review && (
           <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[rgba(4,4,10,0.74)] p-4 backdrop-blur-md" onClick={() => setReview(null)}>
-            <div onClick={(e) => e.stopPropagation()} className="max-h-[88vh] w-full max-w-[560px] overflow-y-auto rounded-card border border-[rgba(167,139,250,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
+            <div onClick={(e) => e.stopPropagation()} className="max-h-[88vh] w-full max-w-[560px] overflow-y-auto rounded-card border border-[rgba(120,150,255,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="vela-label">Deutung prüfen</div>
@@ -533,7 +533,7 @@ function Cockpit({ email }: { email: string }) {
                   </div>
 
                   <button onClick={regenerateReading} disabled={publishing || !!working}
-                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-[rgba(167,139,250,0.3)] px-4 py-3 font-body text-[13px] text-[#BBA8FF] hover:bg-[rgba(167,139,250,0.08)] disabled:opacity-40">
+                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl border border-[rgba(120,150,255,0.3)] px-4 py-3 font-body text-[13px] text-[#97B5FF] hover:bg-[rgba(120,150,255,0.08)] disabled:opacity-40">
                     {working ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
                     {working ? working : "Deutung neu erzeugen (mit Portrait)"}
                   </button>

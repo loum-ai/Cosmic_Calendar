@@ -10,7 +10,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
  */
 export function GenerativeLoader({
   glyph = "✦",
-  accent = "#A78BFA",
+  accent = "#7896FF",
   messages,
   widths = [100, 94, 97, 86, 72],
 }: {

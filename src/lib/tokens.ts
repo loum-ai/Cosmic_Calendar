@@ -4,14 +4,24 @@
  */
 export const COLORS = {
   space: "#111019",
-  space2: "#171717",
-  ink: "#f6f3ff",
-  inkSoft: "#f3effe",
-  violet: "#8B5CF6",
+  space2: "#1A1829",
+  ink: "#F8F7F2",
+  inkSoft: "rgba(238,245,248,0.80)",
+  violet: "#7896FF",
   cyan: "#20F0D0",
   mint: "#20F0D0",
-  lilac: "#b9a8ff",
+  lilac: "#97B5FF",
   mintSoft: "#7defd6",
+  azure: "#5599FF",
+  solar: "#FFAC89",
+} as const;
+
+/* Aspekt-Töne (cinematic-Konzept): Fluss = mystic, Spannung = solar */
+export const TONE_RGB = {
+  iris: "120,150,255",
+  mystic: "32,240,208",
+  solar: "255,172,137",
+  azure: "85,153,255",
 } as const;
 
 export const PLANET_COLORS: Record<string, string> = {
@@ -29,7 +39,7 @@ export const PLANET_COLORS: Record<string, string> = {
   node_s: "#9bc0ff",
 };
 
-export const CTA_GRADIENT = "linear-gradient(135deg,#8B5CF6,#6D28D9)";
+export const CTA_GRADIENT = "linear-gradient(135deg,#5599FF 0%,#7241FF 100%)"; /* --grad-halo */
 
 /** spring-ish easings used across the prototype */
 export const EASE = {

@@ -30,11 +30,8 @@ export function TabBar() {
         "lg:inset-y-0 lg:left-5 lg:right-auto lg:bottom-auto lg:top-1/2 lg:mx-0 lg:h-auto lg:w-[80px] lg:-translate-y-1/2 lg:flex-col lg:justify-center lg:gap-2 lg:rounded-[32px] lg:px-3 lg:py-6",
       )}
     >
-      {/* brand mark — desktop only */}
-      <div className="hidden lg:mb-3 lg:flex lg:h-11 lg:w-11 lg:items-center lg:justify-center lg:rounded-2xl lg:bg-cta-gradient lg:text-[#ffffff] lg:shadow-glow">
-        <Sparkles className="h-5 w-5" strokeWidth={2.2} />
-      </div>
-
+      {/* Genau fünf Punkte — die Brand-Marke saß hier als sechster Eintrag mit
+          demselben Sparkles-Icon wie Home und las sich als zweites Home. */}
       {TABS.map(({ key, label, Icon }) => {
         const active = tab === key;
         return (
@@ -50,7 +47,7 @@ export function TabBar() {
                 <motion.span
                   layoutId="tab-active"
                   transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                  className="absolute inset-0 rounded-full border border-[rgba(167,139,250,0.55)] bg-[rgba(167,139,250,0.14)] shadow-[0_0_18px_-4px_rgba(167,139,250,0.7),inset_0_1px_0_rgba(255,255,255,0.15)]"
+                  className="absolute inset-0 rounded-full border border-[rgba(120,150,255,0.55)] bg-[rgba(120,150,255,0.14)] shadow-[0_0_18px_-4px_rgba(120,150,255,0.7),inset_0_1px_0_rgba(255,255,255,0.15)]"
                 />
               )}
               <Icon
@@ -64,7 +61,7 @@ export function TabBar() {
             <span
               className={cn(
                 "font-body text-[9.5px] font-medium tracking-wide transition-colors duration-200",
-                active ? "text-[#BBA8FF]" : "text-[rgba(198,220,230,0.55)]",
+                active ? "text-[#97B5FF]" : "text-[rgba(198,220,230,0.55)]",
               )}
             >
               {label}

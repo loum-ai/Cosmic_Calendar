@@ -37,7 +37,7 @@ export interface SkySummary { moonSign: string; sunSign: string; retro: { name: 
 
 const norm = (d: number) => ((d % 360) + 360) % 360;
 
-function transitingBodies(date: Date) {
+export function transitingBodies(date: Date) {
   const origin = new Origin({
     year: date.getUTCFullYear(), month: date.getUTCMonth(), date: date.getUTCDate(),
     hour: date.getUTCHours(), minute: date.getUTCMinutes(),

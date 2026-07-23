@@ -4,8 +4,8 @@ import { ChevronLeft, ChevronRight, RotateCcw, X, Sparkles, Loader2 } from "luci
 import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { useReading } from "@/lib/genReadings";
 import { useApp } from "@/store/useApp";
-import { CHART, SN, SIGNWHAT, SIGNMEAN } from "@/lib/data";
-import { computeTransits, skySummary, SIGN_GLYPH, type TransitHit } from "@/lib/transits";
+import { CHART, SN, SIGNWHAT, SIGNMEAN, signName } from "@/lib/data";
+import { computeTransits, skySummary, transitingBodies, SIGN_GLYPH, type TransitHit } from "@/lib/transits";
 import { EASE } from "@/lib/tokens";
 
 const IMPACT_COLOR: Record<string, string> = { "+": "#20F0D0", "-": "#ff8fb0", "~": "#c9b6ff" };
@@ -53,17 +53,64 @@ function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => vo
   );
 }
 
-function DateScrubber({ offset, setOffset, date }: { offset: number; setOffset: (f: (o: number) => number) => void; date: Date }) {
-  const label = date.toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" });
+/** Zeit-Regler (Konzept): Slider −7…+14 Tage — die Planeten wandern sichtbar. */
+function TimeScrubber({ value, onChange, date }: { value: number; onChange: (v: number) => void; date: Date }) {
+  const label = value === 0 ? "Heute" : date.toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" });
   return (
-    <div className="flex items-center gap-2 rounded-pill border border-line bg-surface px-1.5 py-1.5">
-      <button onClick={() => setOffset((o) => o - 1)} className="flex h-8 w-8 items-center justify-center rounded-full text-txt-2 active:scale-90">
-        <ChevronLeft className="h-4 w-4" />
-      </button>
-      <span className="flex-1 text-center font-mono text-[12px] text-txt-2">{offset === 0 ? "Heute" : label}</span>
-      <button onClick={() => setOffset((o) => o + 1)} className="flex h-8 w-8 items-center justify-center rounded-full text-txt-2 active:scale-90">
-        <ChevronRight className="h-4 w-4" />
-      </button>
+    <div className="flex w-full flex-col gap-2">
+      <div className="flex items-baseline justify-between">
+        <span className="v-eyebrow">Zeit-Regler</span>
+        <span className="font-body text-[12.5px] font-medium" style={{ color: value === 0 ? "#F8F7F2" : "#97B5FF" }}>
+          {label}
+          {value !== 0 && <span className="font-normal text-white/40"> · {value > 0 ? "+" : ""}{value} Tage</span>}
+        </span>
+      </div>
+      <input className="vela-scrub" type="range" min={-7} max={14} step={1} value={value} onChange={(e) => onChange(+e.target.value)} aria-label="Durch die Tage scrubben" />
+      <div className="flex justify-between font-body text-[9.5px] uppercase tracking-[1px] text-white/[0.35]"><span>−7</span><span>Heute</span><span>+14</span></div>
+    </div>
+  );
+}
+
+/** Transit-Rad (Konzept): Geburtspunkte innen statisch, die laufenden Planeten
+ *  wandern außen — echt gerechnet pro Tag (transitingBodies). */
+function TransitWheel({ date, size = 260 }: { date: Date; size?: number }) {
+  const bodies = useMemo(() => transitingBodies(date), [date]);
+  const c = size / 2;
+  const rOut = c - 4;
+  const rT = rOut - 18;
+  const rN = rOut - 46;
+  const pos = (lon: number, r: number) => {
+    const a = ((180 - lon) * Math.PI) / 180;
+    return { x: c + r * Math.cos(a), y: c - r * Math.sin(a) };
+  };
+  return (
+    <div className="relative shrink-0" style={{ width: size, height: size }}>
+      <svg width={size} height={size} className="absolute inset-0" aria-label="Transit-Rad">
+        <circle cx={c} cy={c} r={rOut} fill="rgba(248,247,242,.015)" stroke="rgba(255,255,255,.13)" strokeWidth="1" />
+        <circle cx={c} cy={c} r={rN + 14} fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="1" />
+        {Array.from({ length: 12 }, (_, k) => {
+          const p1 = pos(k * 30, rOut);
+          const p2 = pos(k * 30, rOut - 6);
+          return <line key={k} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="rgba(255,255,255,.22)" strokeWidth="1" />;
+        })}
+        {CHART.map((p) => {
+          const q = pos(p.lon, rN);
+          return <circle key={p.key} cx={q.x} cy={q.y} r="2.2" fill="rgba(248,247,242,.35)" />;
+        })}
+      </svg>
+      {bodies.map((b) => {
+        const q = pos(b.lon, rT);
+        return (
+          <span
+            key={b.key}
+            title={`${b.name} · ${signName(b.lon)}${b.retro ? " · rückläufig" : ""}`}
+            className="vela-glyph absolute flex items-center justify-center rounded-full text-[11px]"
+            style={{ left: q.x - 12, top: q.y - 12, width: 24, height: 24, background: "rgba(120,150,255,.16)", boxShadow: "inset 0 0 0 1px rgba(151,181,255,.6), 0 0 10px rgba(120,150,255,.5)", color: "#EDE6FF", transition: "left .25s ease-out, top .25s ease-out" }}
+          >
+            {b.glyph}
+          </span>
+        );
+      })}
     </div>
   );
 }
@@ -94,7 +141,7 @@ function TransitFull({ hits }: { hits: TransitHit[] }) {
         </button>
         <div className="flex max-w-[55vw] flex-wrap justify-center gap-1.5">
           {hits.slice(0, 12).map((_, di) => (
-            <button key={di} onClick={() => setFull(di)} className="h-1.5 rounded-full transition-all" style={{ width: di === i ? 22 : 6, background: di === i ? "#A78BFA" : "rgba(255,255,255,0.25)" }} />
+            <button key={di} onClick={() => setFull(di)} className="h-1.5 rounded-full transition-all" style={{ width: di === i ? 22 : 6, background: di === i ? "#7896FF" : "rgba(255,255,255,0.25)" }} />
           ))}
         </div>
         <button onClick={() => go(1)} className="flex h-11 w-11 items-center justify-center rounded-full bg-cta-gradient text-white active:scale-90">
@@ -124,8 +171,12 @@ export function TransiteScreen() {
     <ScreenShell>
       <PageHead label="Heute am Himmel" title="Transite" sub="Was die aktuellen Planetenstände in deinem Chart auslösen" />
 
-      <div className="max-w-[360px]">
-        <DateScrubber offset={offset} setOffset={setOffset} date={date} />
+      <div className="mt-1 flex flex-col items-center gap-4">
+        <TransitWheel date={date} />
+        <div className="w-full max-w-[420px]">
+          <TimeScrubber value={offset} onChange={(v) => setOffset(() => v)} date={date} />
+        </div>
+        <span className="text-center font-body text-[10.5px] uppercase tracking-[1.4px] text-white/[0.35]">Zieh am Regler — die Planeten wandern sichtbar</span>
       </div>
 
       {strongest ? (
@@ -171,7 +222,7 @@ export function TransiteScreen() {
       <section className="mt-12">
         <SectionHead label="Am Himmel" title="Aktuelle Planetenlage" sub="Größere Bewegungen über allen" />
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="vela-tile flex items-start gap-3.5 p-4">
+          <div className="vela-tile vela-gradient-card flex items-start gap-3.5 p-4">
             <span className="vela-glyph mt-0.5 text-xl text-lilac">{SIGN_GLYPH(sky.moonSign)}</span>
             <div className="min-w-0 flex-1">
               <div className="font-display text-sm font-semibold text-txt">Mond in {sky.moonSign}</div>
@@ -179,7 +230,7 @@ export function TransiteScreen() {
               <p className="mt-1.5 font-body text-xs leading-relaxed text-txt-2">Der Mond läuft heute durch {sky.moonSign} — {SIGNWHAT[SN.indexOf(sky.moonSign)]} So fühlt sich der Tag kollektiv an.</p>
             </div>
           </div>
-          <div className="vela-tile flex items-start gap-3.5 p-4">
+          <div className="vela-tile vela-gradient-card flex items-start gap-3.5 p-4">
             <span className="vela-glyph mt-0.5 text-xl text-lilac">{SIGN_GLYPH(sky.sunSign)}</span>
             <div className="min-w-0 flex-1">
               <div className="font-display text-sm font-semibold text-txt">Sonne in {sky.sunSign}</div>
@@ -187,7 +238,7 @@ export function TransiteScreen() {
               <p className="mt-1.5 font-body text-xs leading-relaxed text-txt-2">Solange die Sonne durch {sky.sunSign} läuft, ist „{SIGNMEAN[SN.indexOf(sky.sunSign)].split(" · ")[1]}" das Grundthema dieser Wochen.</p>
             </div>
           </div>
-          <div className="vela-tile flex items-start gap-3.5 p-4 sm:col-span-2">
+          <div className="vela-tile vela-gradient-card flex items-start gap-3.5 p-4 sm:col-span-2">
             <span className="vela-glyph mt-0.5 text-xl text-lilac"><RotateCcw className="h-4 w-4" /></span>
             <div className="min-w-0 flex-1">
               <div className="font-display text-sm font-semibold text-txt">

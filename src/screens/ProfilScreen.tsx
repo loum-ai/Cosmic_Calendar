@@ -1,10 +1,9 @@
-import { ChevronRight, Calendar, Clock, MapPin, Compass, Sparkles, ShieldCheck, Loader2 } from "lucide-react";
+import { ChevronRight, Calendar, Clock, MapPin, Compass, Pencil, Sparkles, ShieldCheck, Loader2 } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
 import { GlassPanel } from "@/components/GlassPanel";
 import { OrbImage } from "@/components/OrbImage";
 import { Explainable } from "@/components/Explainable";
 import { KlartextToggle } from "@/components/KlartextToggle";
-import { StatChip, StatRow } from "@/components/Stat";
 import { ASC, CHART, MC, PROFILE, SG, signName } from "@/lib/data";
 import { chartPatterns } from "@/lib/patterns";
 import { aiSummary, getVerification } from "@/lib/interpret";
@@ -56,17 +55,22 @@ export function ProfilScreen() {
 
   return (
     <ScreenShell>
-      {/* avatar + name */}
-      <div className="flex items-center gap-4">
-        <OrbImage size={72} float={false} />
-        <div className="min-w-0">
-          <div className="vela-label mb-1.5">Dein Profil</div>
-          <h1 className="font-cinzel text-[28px] font-semibold leading-none tracking-wide text-white [text-shadow:0_0_20px_rgba(167,139,250,0.35)] lg:text-[36px]">{PROFILE.name}</h1>
-          <div className="mt-1.5 flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#20F0D0]" />
-            <span className="font-mono text-[11px] text-txt-2">{PROFILE.memberSince}</span>
-          </div>
-        </div>
+      {/* Kopf (Konzept ProfilScreen): Orb mit Puls-Halo, Name, Trio, Status */}
+      <div className="mt-2 flex flex-col items-center gap-2 text-center">
+        <span className="relative inline-flex">
+          <span aria-hidden className="vela-orb-halo pointer-events-none absolute -inset-5 rounded-full" style={{ background: "radial-gradient(circle, rgba(120,150,255,.55), transparent 62%)", mixBlendMode: "plus-lighter" }} />
+          <OrbImage size={104} float={false} />
+        </span>
+        <h1 className="mt-1 font-cinzel text-[25px] font-normal uppercase leading-none text-white" style={{ letterSpacing: ".1em" }}>{PROFILE.name}</h1>
+        <span className="font-body text-[11px] uppercase tracking-[2px] text-white/50">
+          {signName(CHART[0].lon)} · {signName(CHART[1].lon)} · {signName(ASC)}
+        </span>
+        {verify?.max_dev_arcsec != null && (
+          <span className="inline-flex items-center gap-1.5 rounded-pill px-3 py-[5px] font-body text-[11px] text-[#20F0D0]" style={{ background: "rgba(32,240,208,.07)", boxShadow: "inset 0 0 0 1px rgba(32,240,208,.3)" }}>
+            <span className="h-[5px] w-[5px] rounded-full bg-[#20F0D0] shadow-[0_0_6px_rgba(32,240,208,.8)]" />
+            Daten geprüft · NOVAS
+          </span>
+        )}
       </div>
 
       {/* canonical signature — the two most defining whole-chart notes */}
@@ -76,7 +80,7 @@ export function ProfilScreen() {
         return (
           <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
             {ps.map((p) => (
-              <div key={p.id} className="rounded-card border border-[rgba(167,139,250,0.18)] bg-glasswash p-4">
+              <div key={p.id} className="rounded-card border border-[rgba(120,150,255,0.18)] bg-glasswash p-4">
                 <div className="mb-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-lilac">{p.glyphs.join(" ")} Signatur</div>
                 <h3 className="font-cinzel text-[17px] font-semibold leading-tight text-white">{p.title}</h3>
                 <p className="mt-1 line-clamp-3 font-body text-[12.5px] leading-relaxed text-txt-2">{p.text}</p>
@@ -90,21 +94,33 @@ export function ProfilScreen() {
         <KlartextToggle />
       </div>
 
-      {/* birth data — stat chips */}
-      <StatRow className="mt-6">
+      {/* Geburtsdaten — Glass-Karte mit Stift (Konzept) */}
+      <div className="vela-glass mt-6 rounded-[16px] px-4 pb-3 pt-3.5">
+        <div className="mb-1.5 flex items-center justify-between">
+          <span className="v-eyebrow">Geburtsdaten</span>
+          {!viewer && saved && (
+            <button onClick={() => setOnboardingOpen(true)} aria-label="Geburtsdaten bearbeiten" className="p-1 text-white/45 transition hover:text-white/80">
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
         {BIRTH_ROWS.map((r) => (
-          <StatChip key={r.value} icon={r.icon} label={r.label} value={r.value} className="min-w-[44%]" />
+          <div key={r.value} className="flex items-center justify-between border-t border-white/[0.06] py-2.5 font-body text-[13px]">
+            <span className="flex items-center gap-2 text-white/45">{r.icon}{r.value}</span>
+            <span className="text-txt">{r.label}</span>
+          </div>
         ))}
-      </StatRow>
+        <p className="mt-2 font-body text-[10.5px] text-white/[0.35]">Nur für deine Deutungen gespeichert. Jederzeit löschbar.</p>
+      </div>
 
-      {/* compute / edit own chart — hidden for client-link viewers */}
-      {!viewer && (
+      {/* Erst-Einrichtung — nur ohne gespeicherte Daten (Klienten-Links nie) */}
+      {!viewer && !saved && (
         <button
           onClick={() => setOnboardingOpen(true)}
           className="mt-4 flex w-full items-center justify-center gap-2 btn-moon px-5 py-3.5 font-display text-[14px] font-semibold transition active:scale-[0.98]"
         >
           <Sparkles className="h-4 w-4" />
-          {saved ? "Geburtsdaten ändern" : "Erhalte dein Horoskop"}
+          Erhalte dein Horoskop
         </button>
       )}
 

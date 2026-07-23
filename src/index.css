@@ -28,15 +28,17 @@
     --radius: 0.75rem;
 
     /* ── loum QUINTESSENCE v6 tokens (SSOT: loum Design System) ─────── */
-    /* void-950 canvas · solide Karten · bone/mist Text · aura/mystic/azure */
+    /* void-950 canvas · Glass-Karten · bone/mist Text · iris/mystic/azure.
+       Akzent seit Moodboard Explorations: #7896FF (war aura-Violett). */
     --bg-base: #111019;
     --bg-surface: rgba(248, 247, 242, 0.045);
     --bg-surface-hover: rgba(248, 247, 242, 0.08);
-    --bg-card: rgba(167, 139, 250, 0.06);
+    --bg-card: rgba(120, 150, 255, 0.06);
     --border-subtle: rgba(255, 255, 255, 0.07);
-    --border-accent: rgba(167, 139, 250, 0.28);
-    --accent-primary: #A78BFA;   /* aura-400 — depth */
-    --accent-glow: rgba(167, 139, 250, 0.32);
+    --border-accent: rgba(120, 150, 255, 0.28);
+    --accent-primary: #7896FF;   /* mainColor — depth */
+    --accent-rgb: 120, 150, 255;
+    --accent-glow: rgba(120, 150, 255, 0.32);
     --accent-teal: #20F0D0;      /* mystic-400 — the pulse */
     --accent-azure: #5599FF;     /* azure-400 — dialog/KI */
     --text-primary: #F8F7F2;                       /* bone */
@@ -44,9 +46,15 @@
     --text-muted: rgba(238, 245, 248, 0.55);       /* mist 55% */
     --surface-card: linear-gradient(180deg, #16161F 0%, #12121D 100%);
     --surface-hero: #1B1926;
-    --card-hairline: rgba(255, 255, 255, 0.07);
+    --card-hairline: rgba(255, 255, 255, 0.12); /* cinematic/glass-Iteration: 12% statt 7% */
     --shadow-card: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
-    --shadow-accent: 0 0 20px rgba(167, 139, 250, 0.3);
+    /* VELA cinematic layer — fg-Ramp auf mist-Basis (claude.ai/design vela-theme.css) */
+    --fg: #F8F7F2;
+    --fg-soft: rgba(238, 245, 248, 0.80);
+    --fg-mute: rgba(238, 245, 248, 0.64);
+    --fg-low: rgba(238, 245, 248, 0.48);
+    --shadow-sheet: 0 -18px 50px -18px rgba(0, 0, 4, 0.7);
+    --shadow-accent: 0 0 20px rgba(120, 150, 255, 0.3);
     --grad-halo: linear-gradient(135deg, #5599FF 0%, #7241FF 100%);
     --glow-lit: 0 0 0.16em rgba(248, 247, 242, 0.55), 0 0 0.4em rgba(248, 247, 242, 0.2);
 
@@ -211,34 +219,54 @@
     font-variant-emoji: text;
   }
 
-  /* ── loum CARD CHEMISTRY: SOLIDE dunkle Karte, KEIN Drop-Shadow,
-     KEIN backdrop-blur, KEIN weiß-alpha Glas. Die EINZIGE Kante ist die
-     1px-Inset-Hairline (7%); Tiefe kommt von INNEN. (Figma reading-rest) */
+  /* ── VELA GLASS CHEMISTRY (cinematic-Iteration, claude.ai/design):
+     transluzente Karte + Blur — der Himmel scheint durch. Solide Flächen
+     bleiben Hero-Karten (.vela-card-grad) vorbehalten. */
+  .glass-surface,
   .vela-glass {
     position: relative;
-    background: var(--surface-card);
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.018) 38%, rgba(17, 16, 25, 0.40) 100%);
+    -webkit-backdrop-filter: blur(12px) saturate(1.25);
+    backdrop-filter: blur(12px) saturate(1.25);
     border: 0;
-    box-shadow: inset 0 0 0 1px var(--card-hairline);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+      0 16px 40px -24px rgba(0, 0, 4, 0.7);
     transition:
-      box-shadow 0.2s ease,
-      transform 0.2s ease;
+      box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   }
+  .glass-surface[data-interactive]:hover,
   .vela-glass:hover {
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
     transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      inset 0 0 0 1px rgba(120, 150, 255, 0.45),
+      0 22px 44px -22px rgba(0, 0, 4, 0.8),
+      0 0 26px -6px rgba(120, 150, 255, 0.35);
   }
-  /* ── PREMIUM TILE — gleiche solide Chemie ─────────────────────────── */
+  /* ── TILE — gleiche Glass-Chemie, r18 ─────────────────────────────── */
   .vela-tile {
     position: relative;
     border-radius: 18px;
-    background: var(--surface-card);
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.018) 38%, rgba(17, 16, 25, 0.40) 100%);
+    -webkit-backdrop-filter: blur(12px) saturate(1.25);
+    backdrop-filter: blur(12px) saturate(1.25);
     border: 0;
-    box-shadow: inset 0 0 0 1px var(--card-hairline);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+      0 16px 40px -24px rgba(0, 0, 4, 0.7);
+    transition: box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .vela-tile-hover:hover {
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
     transform: translateY(-2px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      inset 0 0 0 1px rgba(120, 150, 255, 0.45),
+      0 22px 44px -22px rgba(0, 0, 4, 0.8),
+      0 0 26px -6px rgba(120, 150, 255, 0.35);
   }
 
   /* ── MOON BUTTON — der Haupt-CTA (loum 2026-07-13): WEISSE Fläche,
@@ -248,12 +276,12 @@
     color: #111019;
     background: #ffffff;
     border-radius: 19px;
-    box-shadow: 0 8px 20px 0 rgba(167, 139, 250, 0.25);
+    box-shadow: 0 8px 20px 0 rgba(120, 150, 255, 0.25);
     transition: filter 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
   }
   .btn-moon:hover {
     filter: brightness(0.96);
-    box-shadow: 0 10px 24px 0 rgba(167, 139, 250, 0.35);
+    box-shadow: 0 10px 24px 0 rgba(120, 150, 255, 0.35);
   }
   .btn-moon:active {
     transform: translateY(1px);
@@ -262,7 +290,7 @@
   /* ── DAILY-MESSAGE SURFACE — solide, Tiefe von innen ──────────────── */
   .vela-daily {
     background:
-      radial-gradient(ellipse at center top, rgba(167, 139, 250, 0.08) 0%, transparent 70%),
+      radial-gradient(ellipse at center top, rgba(120, 150, 255, 0.08) 0%, transparent 70%),
       linear-gradient(180deg, #16161F 0%, #12121D 100%);
     border: 0;
     box-shadow: inset 0 0 0 1px var(--card-hairline);
@@ -317,7 +345,7 @@
     overflow: hidden;
     border-radius: 18px;
     background:
-      radial-gradient(80% 60% at 50% 110%, rgba(167, 139, 250, 0.10) 0%, transparent 70%),
+      radial-gradient(80% 60% at 50% 110%, rgba(120, 150, 255, 0.10) 0%, transparent 70%),
       linear-gradient(180deg, #16161F 0%, #12121D 100%);
     border: 0;
     box-shadow: inset 0 0 0 1px var(--card-hairline);
@@ -368,7 +396,7 @@
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
   .vela-askbar:hover {
-    border-color: rgba(167, 139, 250, 0.4);
+    border-color: rgba(120, 150, 255, 0.4);
     box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.10);
   }
 
@@ -425,6 +453,95 @@
   }
 }
 
+/* ══ VELA TYPE-RAMP — Gewichtung über drei Achsen: Größe × Gewicht × Ton.
+   Cinzel = Ritual (max. 1 Display-Moment/Screen), Bricolage = Funktion.
+   (claude.ai/design vela-theme.css) ══ */
+.v-display { font-family: "Cinzel Decorative", "Cinzel", ui-serif, serif; font-weight: 400; font-size: 44px; line-height: 1.22; text-transform: uppercase; color: var(--fg); }
+.v-h1 { font-family: "Cinzel", ui-serif, Georgia, serif; font-weight: 400; font-size: 30px; line-height: 1.14; text-transform: uppercase; color: var(--fg); }
+.v-h2 { font-family: "Cinzel", ui-serif, Georgia, serif; font-weight: 400; font-size: 24px; line-height: 1.18; text-transform: uppercase; color: var(--fg); }
+.v-title { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 700; font-size: 16px; line-height: 1.3; letter-spacing: -0.01em; color: var(--fg); }
+.v-title-sm { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 600; font-size: 14.5px; line-height: 1.3; color: var(--fg); }
+.v-lede { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 400; font-size: 15px; line-height: 1.55; color: var(--fg-soft); }
+.v-body { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 400; font-size: 14px; line-height: 1.6; color: var(--fg-mute); }
+.v-label { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 600; font-size: 13px; line-height: 1.2; color: var(--fg); }
+.v-section { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 600; font-size: 12px; line-height: 1.4; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-soft); }
+.v-eyebrow { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 500; font-size: 11.5px; line-height: 1.4; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-low); }
+.v-meta { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 400; font-size: 11.5px; line-height: 1.45; color: var(--fg-low); }
+
+/* ══ MOODBOARD-EXPLORATIONS — die eingefrorenen Tweaks (TWEAK_DEFAULTS) ══
+   labelColor "Primär": Eyebrows/Section-Marker tragen die Akzentfarbe, nicht
+   Muted-Grau — der auffälligste Unterschied zur vorigen Iteration. */
+.v-eyebrow,
+.v-section,
+.vela-label,
+.vela-eyebrow {
+  color: rgba(120, 150, 255, 0.92);
+}
+
+/* iconGlow 3px: Glyphen/Icons in Glass-Flächen bekommen einen feinen Halo */
+.glass-surface svg,
+.vela-glass svg,
+.vela-tile svg,
+.v-display {
+  filter: drop-shadow(0 0 3px rgba(120, 150, 255, 0.85));
+}
+
+/* Gradient-Kartenvariante (gradCss, Verlauf-Stärke 35%) — für Hinweis- und
+   Strom-Karten: die Fläche füllt mit Farbverlauf statt Blur-Glas. */
+.vela-gradient-card {
+  background:
+    radial-gradient(150% 130% at 50% -20%, rgba(120, 150, 255, 0.226) 0%, rgba(120, 150, 255, 0.086) 34%, rgba(13, 12, 20, 0) 62%),
+    radial-gradient(130% 100% at 50% 122%, rgba(32, 240, 208, 0.079) 0%, rgba(13, 12, 20, 0) 56%),
+    linear-gradient(180deg, #15141F 0%, #100F19 100%);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.13),
+    inset 0 0 0 1px rgba(120, 150, 255, 0.177),
+    inset 0 26px 52px -22px rgba(120, 150, 255, 0.217),
+    inset 0 -30px 56px -28px rgba(32, 240, 208, 0.147),
+    0 26px 60px -28px rgba(120, 150, 255, 0.36),
+    0 12px 34px -18px rgba(0, 0, 4, 0.7);
+}
+
+/* ══ AURORA-HERO-CARD — Liquid-Aurora-Fläche + iridescente Kante ══ */
+.vela-aurora-card { position: relative; overflow: hidden; background: linear-gradient(160deg, #2A2140 0%, #1C1A31 46%, #141224 100%); box-shadow: 0 22px 48px -22px rgba(114, 65, 255, 0.5); }
+.vela-aurora-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: linear-gradient(135deg, rgba(32, 240, 208, 0.18), rgba(120, 150, 255, 0.16) 38%, rgba(242, 98, 181, 0.14) 72%, rgba(255, 172, 137, 0.18)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; pointer-events: none; z-index: 2; }
+.vela-aurora-card .aurora-wash { position: absolute; inset: -44px; background: radial-gradient(58% 55% at 10% -2%, rgba(255, 172, 137, 0.34), transparent 60%), radial-gradient(52% 58% at 90% 6%, rgba(242, 98, 181, 0.32), transparent 62%), radial-gradient(75% 70% at 52% 118%, rgba(120, 157, 255, 0.42), transparent 66%); filter: blur(26px); mix-blend-mode: plus-lighter; pointer-events: none; }
+
+/* ══ SHEET-CHEMIE — Rauchglas-Sheet mit Stapel-Navigation ══ */
+.vela-sheet-surface {
+  background: linear-gradient(180deg, rgba(30, 28, 44, 0.82) 0%, rgba(16, 15, 24, 0.94) 100%);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  backdrop-filter: blur(24px) saturate(1.2);
+  box-shadow: var(--shadow-sheet), inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  border-radius: 28px 28px 0 0;
+}
+
+/* ══ ZEIT-/ABEND-REGLER (vela-scrub) ══ */
+.vela-scrub { -webkit-appearance: none; appearance: none; width: 100%; height: 22px; background: transparent; cursor: pointer; }
+.vela-scrub::-webkit-slider-runnable-track { height: 3px; border-radius: 2px; background: linear-gradient(90deg, rgba(120, 150, 255, 0.55), rgba(255, 255, 255, 0.14)); }
+.vela-scrub::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #EDE6FF; box-shadow: 0 0 12px rgba(120, 150, 255, 0.8), inset 0 0 0 1px rgba(120, 150, 255, 0.6); margin-top: -7.5px; }
+.vela-scrub::-moz-range-track { height: 3px; border-radius: 2px; background: linear-gradient(90deg, rgba(120, 150, 255, 0.55), rgba(255, 255, 255, 0.14)); }
+.vela-scrub::-moz-range-thumb { width: 18px; height: 18px; border: none; border-radius: 50%; background: #EDE6FF; box-shadow: 0 0 12px rgba(120, 150, 255, 0.8), inset 0 0 0 1px rgba(120, 150, 255, 0.6); }
+.vela-scrub-mystic::-webkit-slider-thumb { box-shadow: 0 0 12px rgba(32, 240, 208, 0.75), inset 0 0 0 1px rgba(32, 240, 208, 0.55); }
+.vela-scrub-mystic::-moz-range-thumb { box-shadow: 0 0 12px rgba(32, 240, 208, 0.75), inset 0 0 0 1px rgba(32, 240, 208, 0.55); }
+
+/* ══ SIGNATURE-MOTION ══ */
+.vela-orb-halo { animation: velaOrb 2.8s ease-in-out infinite; }
+@keyframes velaOrb { 0%, 100% { transform: scale(0.94); opacity: 0.5; } 50% { transform: scale(1.1); opacity: 1; } }
+/* Journey-Map-Regel: unter sechs Sekunden — sonst Show statt Ritual */
+.vela-skyturn { animation: velaSky 5.6s cubic-bezier(0.22, 1, 0.36, 1) 1 both; will-change: transform; }
+@keyframes velaSky { 0% { transform: rotate(-300deg); opacity: 0.3; } 58% { transform: rotate(5deg); opacity: 1; } 70% { transform: rotate(0); } 100% { transform: rotate(0); opacity: 1; } }
+.vela-fadeup { animation: velaUp 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes velaUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+.vela-caret { display: inline-block; width: 2px; height: 13px; background: rgba(238, 245, 248, 0.8); margin-left: 3px; vertical-align: -2px; animation: velaCaret 1.1s steps(2) infinite; }
+@keyframes velaCaret { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .vela-skyturn, .vela-orb-halo, .vela-caret, .vela-fadeup { animation: none; }
+  .glass-surface, .vela-glass, .vela-tile { transition: none; }
+}
+
 /* ── FINISHING LAYERS: bloom + grain (instant premium) ─────────────── */
 /* restrained top halo bloom — violet glow above the hero */
 .vela-bloom {
@@ -434,7 +551,7 @@
   pointer-events: none;
   mix-blend-mode: plus-lighter;
   opacity: 0.55;
-  background: radial-gradient(ellipse 52% 28% at 50% 1%, rgba(167, 139, 250, 0.28), transparent 64%);
+  background: radial-gradient(ellipse 52% 28% at 50% 1%, rgba(120, 150, 255, 0.28), transparent 64%);
   filter: blur(32px);
 }
 /* loum-Norm: kein Grain-Film — Flächen sind matt-solide */
@@ -539,15 +656,15 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-runnable-track {
   height: 4px;
   border-radius: 4px;
-  background: linear-gradient(90deg, #BBA8FF, #A78BFA 50%, #20F0D0);
+  background: linear-gradient(90deg, #97B5FF, #7896FF 50%, #20F0D0);
 }
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: radial-gradient(circle at 36% 32%, #fff, #e7dcff 55%, #BBA8FF);
-  box-shadow: 0 0 12px #A78BFA, 0 0 26px rgba(32, 240, 208, 0.4);
+  background: radial-gradient(circle at 36% 32%, #fff, #e7dcff 55%, #97B5FF);
+  box-shadow: 0 0 12px #7896FF, 0 0 26px rgba(32, 240, 208, 0.4);
   cursor: pointer;
   margin-top: -8px;
 }

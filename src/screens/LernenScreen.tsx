@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { Explainable } from "@/components/Explainable";
 import { GlyphBadge } from "@/components/GlyphBadge";
+import { SignPortal } from "@/screens/SignPortal";
 import { useApp } from "@/store/useApp";
 import { cn } from "@/lib/utils";
 import { ASPDEF, CHART, HOUSE, NODES, PINFO, SG, SIGNMEAN, SN } from "@/lib/data";
@@ -38,9 +40,14 @@ function itemsFor(cat: string): LearnItem[] {
   }
 }
 
+const signIdx = (lon: number) => Math.floor((((lon % 360) + 360) % 360) / 30);
+
 export function LernenScreen() {
   const learnCat = useApp((s) => s.learnCat);
   const setLearnCat = useApp((s) => s.setLearnCat);
+  const [portal, setPortal] = useState(false);
+  const sunP = CHART.find((p) => p.key === "sun");
+  const sunSign = sunP ? signIdx(sunP.lon) : 0;
 
   const featuredIdx = new Date().getDate() % ASPDEF.length;
   const featured = ASPDEF[featuredIdx] ?? ASPDEF[0];
@@ -86,6 +93,23 @@ export function LernenScreen() {
         </div>
       </div>
 
+      {/* Sign Portal — die Poster-Bühne pro Zeichen (HiFi-Konzept), startet
+          beim eigenen Sonnenzeichen; das Rad unten dreht durch alle zwölf. */}
+      <button
+        onClick={() => setPortal(true)}
+        className="vela-tile vela-tile-hover group relative mt-7 flex w-full items-center gap-4 overflow-hidden p-5 text-left"
+      >
+        <span aria-hidden className="pointer-events-none absolute -right-3 -top-9 font-glyph text-[120px] leading-none text-[#97B5FF] opacity-[0.1]">{SG[sunSign]}</span>
+        <span className="vela-glyph inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-[24px] text-[#97B5FF]" style={{ background: "rgba(120,150,255,0.12)", boxShadow: "inset 0 0 0 1px rgba(120,150,255,0.4), 0 0 22px -4px rgba(120,150,255,0.5)" }}>
+          {SG[sunSign]}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-cinzel text-[19px] uppercase leading-tight text-txt">Zeichen-Portal</span>
+          <span className="mt-0.5 block font-body text-[13px] text-txt-3">Alle zwölf Zeichen als Bühne — mit deinem Einfluss darin.</span>
+        </span>
+        <ChevronRight className="h-5 w-5 shrink-0 text-txt-3 transition-transform group-hover:translate-x-0.5" />
+      </button>
+
       <SectionHead title="Erkunden" />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {items.map((it) => (
@@ -101,6 +125,8 @@ export function LernenScreen() {
           </Explainable>
         ))}
       </div>
+
+      {portal && <SignPortal initial={sunSign} onClose={() => setPortal(false)} />}
     </ScreenShell>
   );
 }

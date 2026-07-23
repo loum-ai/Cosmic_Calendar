@@ -17,13 +17,13 @@ export function KlartextToggle() {
         "flex items-center gap-2 rounded-pill border px-[18px] py-2 font-body text-[13px] font-medium transition active:scale-95",
         klartext
           ? "border-mint/50 bg-mint/15 text-mint-soft"
-          : "border-[rgba(167,139,250,0.35)] bg-[rgba(167,139,250,0.12)] text-[rgba(167,139,250,0.9)]",
+          : "border-[rgba(120,150,255,0.35)] bg-[rgba(120,150,255,0.12)] text-[rgba(120,150,255,0.9)]",
       )}
     >
       <span
         className={cn(
           "h-1.5 w-1.5 rounded-full transition",
-          klartext ? "bg-mint shadow-[0_0_6px_#20F0D0]" : "bg-[rgba(167,139,250,0.9)]",
+          klartext ? "bg-mint shadow-[0_0_6px_#20F0D0]" : "bg-[rgba(120,150,255,0.9)]",
         )}
       />
       Klartext
