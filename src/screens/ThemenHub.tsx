@@ -159,7 +159,9 @@ export function ThemenHub() {
 
   if (viewer && !entryDone) {
     return (
-      <div className="flex min-h-dvh flex-col items-center justify-center px-6 py-16 lg:px-10">
+      // Freiraum unten: Composer (Fragezeile) und TabBar sind fixiert und
+      // haben sonst die Überschrift verdeckt (gesehen auf Max' Klienten-Link).
+      <div className="flex min-h-dvh flex-col items-center justify-center px-6 pb-[calc(env(safe-area-inset-bottom,0px)+11rem)] pt-16 lg:px-10">
         <div className="w-full max-w-[640px]">
           <div className="vela-wordmark mb-4 text-[12px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
           {/* KANONISCHE REGEL: das Chart ist IMMER sichtbar — auch hier */}
