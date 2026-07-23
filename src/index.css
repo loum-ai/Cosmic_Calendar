@@ -1,6 +1,43 @@
+/* ══════════════════════════════════════════════════════════════════
+   loum Design System — das ORIGINAL aus claude.ai/design (Projekt VELA,
+   _ds/loum-design-system-…), 1:1 ins Repo gezogen. Muss ganz oben stehen:
+   CSS-@import ist nur vor allen Regeln erlaubt.
+
+   Diese Dateien sind unlayered und schlagen damit alles aus @layer weiter
+   unten — die echten .glass-surface / .btn-moon / .t-* gewinnen also gegen
+   die handgebauten Nachbauten, die hier historisch entstanden sind.
+   Ein Import, global: jeder Screen erbt es, auch die Klienten-Ansicht.
+   ══════════════════════════════════════════════════════════════════ */
+@import "./styles/loum/fonts.css";
+@import "./styles/loum/colors.css";
+@import "./styles/loum/typography.css";
+@import "./styles/loum/spacing.css";
+@import "./styles/loum/elevation.css";
+@import "./styles/loum/utilities.css";
+/* Ebene 2: der VELA-Theme-Layer über dem loum-System — stellt die soliden
+   Karten auf Glas um und bringt die v-*-Typo. Reihenfolge ist Pflicht. */
+@import "./styles/vela-theme.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Moodboard Explorations — die eingefrorenen TWEAK_DEFAULTS auf das
+   loum-System gelegt: Hauptfarbe iris-Blau statt aura-Violett. Unlayered
+   und nach dem Import, damit es die Systemwerte überschreibt. */
+:root {
+  --accent-aura: #7896FF;
+  --aura-300: #97B5FF;
+  --aura-400: #7896FF;
+  --color-iris: #7896FF;
+  --rgb-iris: 120, 150, 255;
+  --tone-edge-iris: rgba(120, 150, 255, 0.4);
+  --fill-iris-2: rgba(120, 150, 255, 0.12);
+  --fill-iris-4: rgba(120, 150, 255, 0.22);
+  --accent-mystic: #20F0D0;
+  --color-green: #20F0D0;
+  --rgb-green: 32, 240, 208;
+}
 
 /* shadcn/ui token bridge — headless primitives, restyled with Vela tokens. */
 @layer base {
@@ -453,21 +490,6 @@
   }
 }
 
-/* ══ VELA TYPE-RAMP — Gewichtung über drei Achsen: Größe × Gewicht × Ton.
-   Cinzel = Ritual (max. 1 Display-Moment/Screen), Bricolage = Funktion.
-   (claude.ai/design vela-theme.css) ══ */
-.v-display { font-family: "Cinzel Decorative", "Cinzel", ui-serif, serif; font-weight: 400; font-size: 44px; line-height: 1.22; text-transform: uppercase; color: var(--fg); }
-.v-h1 { font-family: "Cinzel", ui-serif, Georgia, serif; font-weight: 400; font-size: 30px; line-height: 1.14; text-transform: uppercase; color: var(--fg); }
-.v-h2 { font-family: "Cinzel", ui-serif, Georgia, serif; font-weight: 400; font-size: 24px; line-height: 1.18; text-transform: uppercase; color: var(--fg); }
-.v-title { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 700; font-size: 16px; line-height: 1.3; letter-spacing: -0.01em; color: var(--fg); }
-.v-title-sm { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 600; font-size: 14.5px; line-height: 1.3; color: var(--fg); }
-.v-lede { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 400; font-size: 15px; line-height: 1.55; color: var(--fg-soft); }
-.v-body { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 400; font-size: 14px; line-height: 1.6; color: var(--fg-mute); }
-.v-label { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 600; font-size: 13px; line-height: 1.2; color: var(--fg); }
-.v-section { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 600; font-size: 12px; line-height: 1.4; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-soft); }
-.v-eyebrow { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 500; font-size: 11.5px; line-height: 1.4; letter-spacing: 0.18em; text-transform: uppercase; color: var(--fg-low); }
-.v-meta { font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; font-weight: 400; font-size: 11.5px; line-height: 1.45; color: var(--fg-low); }
-
 /* ══ MOODBOARD-EXPLORATIONS — die eingefrorenen Tweaks (TWEAK_DEFAULTS) ══
    labelColor "Primär": Eyebrows/Section-Marker tragen die Akzentfarbe, nicht
    Muted-Grau — der auffälligste Unterschied zur vorigen Iteration. */
@@ -504,10 +526,6 @@
     0 12px 34px -18px rgba(0, 0, 4, 0.7);
 }
 
-/* ══ AURORA-HERO-CARD — Liquid-Aurora-Fläche + iridescente Kante ══ */
-.vela-aurora-card { position: relative; overflow: hidden; background: linear-gradient(160deg, #2A2140 0%, #1C1A31 46%, #141224 100%); box-shadow: 0 22px 48px -22px rgba(114, 65, 255, 0.5); }
-.vela-aurora-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: linear-gradient(135deg, rgba(32, 240, 208, 0.18), rgba(120, 150, 255, 0.16) 38%, rgba(242, 98, 181, 0.14) 72%, rgba(255, 172, 137, 0.18)); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; pointer-events: none; z-index: 2; }
-.vela-aurora-card .aurora-wash { position: absolute; inset: -44px; background: radial-gradient(58% 55% at 10% -2%, rgba(255, 172, 137, 0.34), transparent 60%), radial-gradient(52% 58% at 90% 6%, rgba(242, 98, 181, 0.32), transparent 62%), radial-gradient(75% 70% at 52% 118%, rgba(120, 157, 255, 0.42), transparent 66%); filter: blur(26px); mix-blend-mode: plus-lighter; pointer-events: none; }
 
 /* ══ SHEET-CHEMIE — Rauchglas-Sheet mit Stapel-Navigation ══ */
 .vela-sheet-surface {

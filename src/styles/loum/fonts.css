@@ -1,0 +1,13 @@
+/* ============================================================
+ * loum · WEBFONTS — QUINTESSENCE v6 (2026-07-07)
+ * Zwei Display-Cuts + eine UI-Face (alle via Google Fonts @import):
+ *   Cinzel (Regular)      → BASIS-Display: Display/H1/H2 + Pull-Quote-
+ *                           Grundzeilen. FLACH, gedämpft, KEIN Glow.
+ *   Cinzel Decorative     → das „lit word“ (.highlight) + card-names.
+ *                           DAS Glow-Wort — nur hier trägt Text den Halo.
+ *   Bricolage Grotesque   → alles andere (body, lede, UI, labels, meta)
+ * Inter + DM Sans sind RAUS (user 2026-07-07); self-hosted TTFs entfernt.
+ * ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cinzel+Decorative:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
