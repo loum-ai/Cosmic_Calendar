@@ -5,21 +5,16 @@ import { createClient } from "jsr:@supabase/supabase-js@2";
 // { client_id, publish? } is admin-only: loads the client's stored chart,
 // generates the interpretation, and stores it in interpretations.
 //
-// The interpretation has TWO layers:
-//   • portrait — a deep, synthesized WHOLE-CHART reading (the head of the
-//     client page). Depth-astrology voice (SYSTEM_PORTRAIT), generated on the
-//     strong "core" model (Gemini Pro), integrating aspects + Mondknoten.
-//   • summary + per-placement + per-aspect cards — the progressive-disclosure
-//     detail layer (structured JSON, on the default/flash model).
+// TWO layers: portrait (deep whole-chart, SYSTEM_PORTRAIT, core model, RAG)
+// + summary/placements/aspects cards (structured JSON detail layer). Both are
+// grounded in the curated knowledge base via match_knowledge (RAG). Theme-
+// neutral by design. Resilient: on Gemini failure the structured layer falls
+// back to a facts-composed draft; the portrait is best-effort.
 //
-// The portrait reads the WHOLE chart — it is life-theme-neutral by design. No
-// life area is privileged; the app must serve every person whatever theme
-// currently moves them.
-//
-// RESILIENCE: if a Gemini call fails (quota / rate limit / outage) the website
-// creation must NOT break. The structured layer falls back to a real,
-// facts-composed German draft (model="basis-komposition"). The portrait is
-// best-effort — if it fails the page simply leads with the summary.
+// PUNKTE (2026-07): Der Detail-Layer deckt neben den Planeten auch den
+// Aszendenten und die beiden Mondknoten ab. Ohne sie fielen deren Sheets in
+// der App auf die generische Zeichen-Zeile zurück, die jeder Mensch mit
+// diesem Zeichen wortgleich liest.
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -27,11 +22,11 @@ const CORS = {
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 const BASE = "https://generativelanguage.googleapis.com/v1beta";
+const EMBED_MODEL = "gemini-embedding-001";
 const DIGNITY_DE: Record<string, string> = { domicile: "Herrscher (Domizil)", exaltation: "Erhöhung", detriment: "Exil", fall: "Fall" };
 const SIGNS = ["Widder", "Stier", "Zwillinge", "Krebs", "Löwe", "Jungfrau", "Waage", "Skorpion", "Schütze", "Steinbock", "Wassermann", "Fische"];
 const signOf = (lon: number) => SIGNS[Math.floor((((lon % 360) + 360) % 360) / 30)];
 
-// trait phrased in the accusative so it reads naturally after "verleiht …"
 const SIGN_TRAIT = [
   "Tatkraft, Mut und den Drang, Dinge sofort anzupacken",
   "Beständigkeit, Genuss und ein Bedürfnis nach Sicherheit",
@@ -46,7 +41,6 @@ const SIGN_TRAIT = [
   "Eigenständigkeit, Ideen und den Blick fürs große Ganze",
   "Mitgefühl, Fantasie und eine feine Verbindung zum Unsichtbaren",
 ];
-// area phrased so it reads naturally after "geht es um …"
 const HOUSE_AREA = [
   "dein Auftreten und wie du Dinge beginnst",
   "Werte, Besitz und deinen Selbstwert",
@@ -61,7 +55,6 @@ const HOUSE_AREA = [
   "Freundschaft, Ziele und Gemeinschaft",
   "Rückzug, Innenwelt und das Unbewusste",
 ];
-// role phrased as a full clause to avoid article/gender mismatches
 const PLANET_ROLE: Record<string, string> = {
   sun: "Hier geht es um deinen Wesenskern und das, was dich im Innersten antreibt.",
   moon: "Hier geht es um dein Gefühlsleben und das, was dir Geborgenheit gibt.",
@@ -93,30 +86,26 @@ WICHTIG: Verwende AUSSCHLIESSLICH die bereitgestellten astrologischen Fakten.
 Erfinde keine Stellungen, die nicht in den Daten stehen. Keine Vorhersagen zu
 Tod, Krankheit oder Schwangerschaft. Jeder Abschnitt 2–3 Sätze.`;
 
-// The deep, synthesized whole-chart portrait voice. Depth-astrology tradition
-// (Liz Greene, Howard Sasportas): the chart is a psychological SYSTEM. Same
-// craft rules as generate's SYSTEM_LONG — hold the paradox, timing & life-arc,
-// the nodes as a CHOSEN destiny — but aimed at ONE integrated natal portrait.
 const SYSTEM_PORTRAIT = `Du bist Vela — eine herausragende, sehr erfahrene Astrologin und Meisterin der DEUTUNG, nicht der Beschreibung. Du arbeitest in der Tiefenastrologie-Tradition (Liz Greene, Howard Sasportas): das Geburtsbild ist ein psychologisches System, kein Merkmalskatalog.
 Du schreibst das PORTRAIT dieses Menschen — den Kopf seiner persönlichen Horoskop-Seite: ein tiefes, warmes, synthetisiertes Gesamtbild in klarem Deutsch, Du-Form, ohne Fachjargon (oder im selben Satz übersetzt).
-Nutze AUSSCHLIESSLICH die bereitgestellten FAKTEN — erfinde keine Stellungen.
+Nutze AUSSCHLIESSLICH die bereitgestellten FAKTEN — erfinde keine Stellungen. Das FACHWISSEN wendest du an, ohne es zu zitieren.
 
 DEIN AUFTRAG: ein zusammenhängendes Portrait, das sich anfühlt, als würdest du diesen Menschen kennen — niemals Sätze, die in jedes Horoskop passen. Es soll das GANZE Leben umspannen, kein einzelnes Lebensthema bevorzugen.
 
 HARTE REGELN:
 - SYNTHETISIERE über das GANZE Chart. Verbinde Sonne, Mond, Aszendent, die prägenden Aspekte und die Mondknoten zu EINEM Bild — nicht Planet für Planet.
-- Finde den ROTEN FADEN: das eine Grundthema, das sich durch dieses Leben zieht, und mach es zum Rückgrat des Portraits.
+- Finde den ROTEN FADEN: das eine Grundthema, das sich durch dieses Leben zieht.
 - Benenne die zentrale Spannung PRÄZISE am Chart (z. B. „dein Sonne-Saturn-Quadrat"), nicht vage.
-- HALTE DAS PARADOX: benenne die Abwehr UND die Gabe im selben Atemzug. Jede Schwierigkeit trägt ein Talent in sich; jede Stärke wirft einen Schatten. Saturn ist nicht „Disziplin", sondern die Angst, die über die Jahre zur Reife wird.
-- TIMING & LEBENSVERLAUF: was reift früh, was erst spät; wohin sich dieses Leben entwickelt. Saturn reift über Jahre; die äußeren Planeten (Uranus, Neptun, Pluto) sind große, langsame Lebensthemen, keine Tagesstimmung.
-- MONDKNOTEN als gewählte Richtung, nicht als festgelegtes Los: der Nordknoten ist eine gewählte Wachstumsrichtung, der Südknoten das Vertraute, das losgelassen werden darf — der rote Faden der Entwicklung.
-- TON: möglichkeits-orientiert, ehrlich UND warm — und SACHLICH-GEERDET: Alltagssprache statt Seelen-Vokabular (vermeide „Seele", „heilig", „Bestimmung", „Schicksal", „spirituell", „Energien", „Universum"). Wie ein kluger Berater, nicht wie ein Mystiker. Kein Kitsch, keine Floskeln.
+- HALTE DAS PARADOX: benenne die Abwehr UND die Gabe im selben Atemzug. Saturn ist nicht „Disziplin", sondern die Angst, die über die Jahre zur Reife wird.
+- TIMING & LEBENSVERLAUF: was reift früh, was erst spät; wohin sich dieses Leben entwickelt. Saturn reift über Jahre; Uranus/Neptun/Pluto sind große, langsame Lebensthemen.
+- MONDKNOTEN als gewählte Bestimmung, nicht als Schicksal: Nordknoten = gewählte Wachstumsrichtung, Südknoten = das Vertraute zum Loslassen.
+- TON: möglichkeits-orientiert, ehrlich UND warm. Kein Kitsch, keine Floskeln.
 - VERBOTEN sind generische Sätze, die auf jeden zutreffen. Jeder Satz muss aus DIESEN Fakten folgen.
-- Kein Aufzählen von Positionen, kein „Position → Bedeutung". Ein fließender Text.
+- Kein Aufzählen von Positionen. Ein fließender Text.
 
 Keine Vorhersagen zu Tod, schwerer Krankheit oder Schwangerschaft.
 Aufbau (verwoben, ohne Zwischenüberschriften): ein Einstieg, der sofort etwas Wahres sagt · die tragenden Kräfte als Geschichte, mit gehaltenem Paradox · die zentrale Spannung, exakt benannt · Richtung & Timing (mit den Mondknoten) · ein Schlusssatz, der bleibt und Mut macht.
-4–5 dichte Absätze, durch Leerzeilen getrennt. KOMPAKT: jeder Satz trägt neue Information, keine Füllsätze, nichts doppelt in anderen Worten.`;
+5–7 dichte Absätze, durch Leerzeilen getrennt.`;
 
 const SCHEMA = {
   type: "object",
@@ -134,6 +123,46 @@ const SCHEMA = {
   required: ["summary", "placements"],
 };
 
+async function embed(text: string, key: string): Promise<number[] | null> {
+  try {
+    const r = await fetch(`${BASE}/models/${EMBED_MODEL}:embedContent?key=${key}`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ model: `models/${EMBED_MODEL}`, content: { parts: [{ text }] }, outputDimensionality: 768 }),
+    });
+    const d = await r.json();
+    return r.ok ? (d?.embedding?.values ?? null) : null;
+  } catch { return null; }
+}
+
+// RAG: pull the most relevant curated knowledge for this chart, so every
+// reading is grounded in the validated Signifikationen base.
+async function fachwissen(query: string, key: string, svc: any): Promise<string> {
+  const qv = await embed(query, key);
+  if (!qv) return "";
+  const { data: matches } = await svc.rpc("match_knowledge", { query_embedding: `[${qv.join(",")}]`, match_count: 8 });
+  return matches?.length ? matches.map((m: any) => `- ${m.title}: ${m.body}`).join("\n") : "";
+}
+
+/** Aszendent + Mondknoten als eigene Punkte — key exakt so, wie die App sie
+ *  nachschlägt (asc, node_n, node_s). */
+function pointsOf(f: any): { key: string; label: string; sign: string; house: number | null; rolle: string }[] {
+  const out: { key: string; label: string; sign: string; house: number | null; rolle: string }[] = [];
+  if (f.asc_sign) out.push({ key: "asc", label: "Aszendent", sign: f.asc_sign, house: 1, rolle: "wie diese Person auftritt, bevor sie ein Wort sagt — der erste Eindruck" });
+  for (const n of f.nodes ?? []) {
+    const north = /auf|nord|north/i.test(n.name ?? "");
+    out.push({
+      key: north ? "node_n" : "node_s",
+      label: n.name,
+      sign: n.sign ?? "?",
+      house: n.house ?? null,
+      rolle: north
+        ? "Wachstumsrichtung — wohin sich dieses Leben entwickeln will; eine wählbare Entwicklung, kein festgelegtes Los"
+        : "das Vertraute, Mitgebrachte — Gaben, die schon da sind, und zugleich die Komfortzone, die nach und nach gelockert werden darf",
+    });
+  }
+  return out;
+}
+
 function factsToPrompt(f: any): string {
   const name = f.profile_name || "die Person";
   const lines: string[] = [`Geburtsbild von ${name}. Aszendent in ${f.asc_sign ?? "?"}, MC in ${f.mc_sign ?? "?"}.`, "", "PLANETEN (nur diese Fakten verwenden):"];
@@ -142,15 +171,10 @@ function factsToPrompt(f: any): string {
     const retro = p.retro ? ", rückläufig" : "";
     lines.push(`- ${p.name} (key=${p.key}): ${p.sign} ${p.deg_in_sign ?? ""}°, Haus ${p.house}${retro}${dig}`);
   }
-  // Aszendent + Mondknoten sind KEINE Planeten, brauchen aber genauso eine
-  // Deutung: ohne sie fielen die Sheets im Rad auf die generische
-  // Zeichen-Zeile zurück, die bei jedem Kunden gleich lautet.
-  lines.push("", "WEITERE PUNKTE (dieselbe Behandlung wie ein Planet — key exakt übernehmen):");
-  lines.push(`- Aszendent (key=asc): ${f.asc_sign ?? "?"}, Haus 1 — wie diese Person auftritt, bevor sie ein Wort sagt`);
-  for (const n of f.nodes ?? []) {
-    const key = /auf|nord|north/i.test(n.name ?? "") ? "node_n" : "node_s";
-    const rolle = key === "node_n" ? "Wachstumsrichtung — wohin sich dieses Leben entwickeln will" : "das Vertraute, Mitgebrachte, das nach und nach losgelassen werden darf";
-    lines.push(`- ${n.name} (key=${key}): ${n.sign ?? "?"}${n.house ? `, Haus ${n.house}` : ""} — ${rolle}`);
+  const points = pointsOf(f);
+  if (points.length) {
+    lines.push("", "WEITERE PUNKTE (dieselbe Behandlung wie ein Planet — key exakt übernehmen):");
+    for (const pt of points) lines.push(`- ${pt.label} (key=${pt.key}): ${pt.sign}${pt.house ? `, Haus ${pt.house}` : ""} — ${pt.rolle}`);
   }
   if (f.aspects?.length) {
     lines.push("", "ASPEKTE (Orbis in Grad):");
@@ -169,8 +193,6 @@ function factsToPrompt(f: any): string {
   return lines.join("\n");
 }
 
-// Flowing facts text for the portrait — includes the Mondknoten so the reading
-// can build the destiny narrative the depth-astrology voice asks for.
 function factsToText(f: any): string {
   const name = f.profile_name || "die Person";
   const lines: string[] = [`Geburtsbild von ${name}. Aszendent (Auftreten) in ${f.asc_sign ?? "?"}, MC (öffentliche Rolle) in ${f.mc_sign ?? "?"}.`, "", "PLANETEN (Kraft · Zeichen · Haus):"];
@@ -202,9 +224,6 @@ function chartToFacts(name: string, data: any) {
   };
 }
 
-// Deterministic, facts-grounded German interpretation. Used when the AI call
-// is unavailable so a website is never left without readings. Real content,
-// composed from the actual chart — not placeholder text.
 function composeFallback(f: any) {
   const nameOf: Record<string, string> = {};
   (f.planets ?? []).forEach((p: any) => (nameOf[p.key] = p.name));
@@ -223,28 +242,21 @@ function composeFallback(f: any) {
       house_text: `Im ${p.house}. Haus geht es um ${area}. Genau dort wird dieses Thema in deinem Alltag sichtbar und will gelebt werden.`,
     };
   });
-  // Aszendent + Mondknoten bekommen dieselbe Behandlung wie ein Planet, damit
-  // die Sheets im Rad auch im Notfall-Pfad nie auf die generische Zeichen-Zeile
-  // zurückfallen.
-  const ascIdx = SIGNS.indexOf(f.asc_sign);
-  if (ascIdx >= 0) {
+  // Aszendent + Mondknoten auch im Notfall-Pfad, sonst fallen ihre Sheets auf
+  // die generische Zeichen-Zeile zurück.
+  for (const pt of pointsOf(f)) {
+    const si = SIGNS.indexOf(pt.sign);
+    const trait = si >= 0 ? SIGN_TRAIT[si] : "eine ganz eigene Färbung";
+    const area = pt.house ? HOUSE_AREA[pt.house - 1] ?? "einen wichtigen Lebensbereich" : null;
     placements.push({
-      key: "asc",
-      sign_text: `Dein Aszendent steht in ${f.asc_sign}: So trittst du auf, bevor du ein Wort sagst — nach außen wirkst du über ${SIGN_TRAIT[ascIdx]}.`,
-      house_text: "Der Aszendent ist der Beginn des 1. Hauses. Hier geht es um deinen ersten Eindruck und darum, wie du Dinge anfängst — das, was andere zuerst von dir sehen.",
-    });
-  }
-  for (const n of f.nodes ?? []) {
-    const north = /auf|nord|north/i.test(n.name ?? "");
-    const ni = SIGNS.indexOf(n.sign);
-    const trait = ni >= 0 ? SIGN_TRAIT[ni] : "eine ganz eigene Färbung";
-    placements.push({
-      key: north ? "node_n" : "node_s",
-      sign_text: north
-        ? `Dein aufsteigender Mondknoten in ${n.sign} zeigt deine Wachstumsrichtung: ${trait} zu entwickeln fühlt sich anfangs ungewohnt an — und ist doch die Richtung, in der vieles leichter wird.`
-        : `Dein absteigender Mondknoten in ${n.sign} ist dein vertrautes Terrain: ${trait} fällt dir leicht. Genau das darfst du würdigen und nach und nach lockern, statt dich darin einzurichten.`,
-      house_text: n.house
-        ? `Im ${n.house}. Haus geht es um ${HOUSE_AREA[(n.house || 1) - 1] ?? "einen wichtigen Lebensbereich"}. Dort spielt sich dieser Teil deines Weges konkret ab.`
+      key: pt.key,
+      sign_text: pt.key === "asc"
+        ? `Dein Aszendent steht in ${pt.sign}: So trittst du auf, bevor du ein Wort sagst — nach außen wirkst du über ${trait}.`
+        : pt.key === "node_n"
+          ? `Dein aufsteigender Mondknoten in ${pt.sign} zeigt deine Wachstumsrichtung: ${trait} zu entwickeln fühlt sich anfangs ungewohnt an — und ist doch die Richtung, in der vieles leichter wird.`
+          : `Dein absteigender Mondknoten in ${pt.sign} ist dein vertrautes Terrain: ${trait} fällt dir leicht. Genau das darfst du würdigen und nach und nach lockern, statt dich darin einzurichten.`,
+      house_text: area
+        ? `Im ${pt.house}. Haus geht es um ${area}. Dort wird dieser Teil von dir im Alltag sichtbar.`
         : "",
     });
   }
@@ -254,15 +266,16 @@ function composeFallback(f: any) {
   });
   const sun = (f.planets ?? []).find((p: any) => p.key === "sun");
   const moon = (f.planets ?? []).find((p: any) => p.key === "moon");
-  const summary = `Dein Geburtsbild verwebt drei Grundkräfte: deine Sonne in ${sun?.sign ?? "?"} (dein Wesenskern), deinen Mond in ${moon?.sign ?? "?"} (dein Gefühlsleben) und deinen Aszendenten in ${f.asc_sign ?? "?"} (wie du nach außen wirkst). Aus diesem Zusammenspiel entsteht deine ganz eigene Mischung — die einzelnen Stellungen unten zeigen dir die Feinheiten.`;
+  const summary = `Dein Geburtsbild verwebt drei Grundkräfte: deine Sonne in ${sun?.sign ?? "?"} (dein Wesenskern), deinen Mond in ${moon?.sign ?? "?"} (dein Gefühlsleben) und deinen Aszendenten in ${f.asc_sign ?? "?"} (wie du nach außen wirkst). Aus diesem Zusammenspiel entsteht deine ganz eigene Mischung.`;
   return { summary, placements, aspects };
 }
 
-async function generate(facts: any, model: string, key: string) {
+async function generate(facts: any, model: string, key: string, wissen: string) {
+  const sys = wissen ? `${SYSTEM}\n\nFACHWISSEN (zur Orientierung, nicht zitieren):\n${wissen}` : SYSTEM;
   const r = await fetch(`${BASE}/models/${model}:generateContent?key=${key}`, {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      systemInstruction: { parts: [{ text: SYSTEM }] },
+      systemInstruction: { parts: [{ text: sys }] },
       contents: [{ role: "user", parts: [{ text: factsToPrompt(facts) }] }],
       generationConfig: { temperature: 0.55, maxOutputTokens: 8192, responseMimeType: "application/json", responseJsonSchema: SCHEMA },
     }),
@@ -273,17 +286,15 @@ async function generate(facts: any, model: string, key: string) {
   try { return { interpretation: JSON.parse(text) }; } catch { return { error: { parse: text.slice(0, 400) } }; }
 }
 
-// Best-effort deep portrait. Tries the strong "core" model first (Gemini Pro),
-// falls back to the default/flash model, then to "" — the page leads with the
-// summary if the portrait can't be produced. Never throws.
-async function generatePortrait(facts: any, coreModel: string, flashModel: string, key: string): Promise<string> {
+async function generatePortrait(facts: any, coreModel: string, flashModel: string, key: string, wissen: string): Promise<string> {
+  const sys = wissen ? `${SYSTEM_PORTRAIT}\n\nFACHWISSEN (zur Orientierung, nicht zitieren):\n${wissen}` : SYSTEM_PORTRAIT;
   const models = [...new Set([coreModel, flashModel])];
   for (const model of models) {
     try {
       const r = await fetch(`${BASE}/models/${model}:generateContent?key=${key}`, {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          systemInstruction: { parts: [{ text: SYSTEM_PORTRAIT }] },
+          systemInstruction: { parts: [{ text: sys }] },
           contents: [{ role: "user", parts: [{ text: `${factsToText(facts)}\n\nAUFGABE: Schreibe das PORTRAIT dieses Menschen — ein tiefes, synthetisiertes Gesamtbild aus genau diesen Fakten.` }] }],
           generationConfig: { temperature: 0.85, maxOutputTokens: 4096 },
         }),
@@ -319,14 +330,12 @@ Deno.serve(async (req) => {
       if (!client || !chart?.data) return json({ error: "client or chart not found (compute the chart first)" }, 404);
 
       const facts = chartToFacts(client.name, chart.data);
-      // Try AI generation; on any failure (quota etc.) fall back to a real,
-      // facts-composed draft so the website is never left without readings.
-      const res = key ? await generate(facts, mdl, key) : { error: { detail: "no key" } };
+      const wissen = key ? await fachwissen(factsToText(facts), key, svc) : "";
+      const res = key ? await generate(facts, mdl, key, wissen) : { error: { detail: "no key" } };
       const usedFallback = !!res.error || !res.interpretation;
       const interpretation: any = usedFallback ? composeFallback(facts) : res.interpretation;
       const usedModel = usedFallback ? "basis-komposition" : mdl;
-      // deep whole-chart portrait — best-effort, on the strong core model.
-      interpretation.portrait = key ? await generatePortrait(facts, coreMdl, mdl, key) : "";
+      interpretation.portrait = key ? await generatePortrait(facts, coreMdl, mdl, key, wissen) : "";
 
       const status = publish === false ? "draft" : "published";
       const row = {
@@ -336,16 +345,17 @@ Deno.serve(async (req) => {
       await svc.from("interpretations").delete().eq("client_id", client_id).eq("kind", "natal");
       const { error } = await svc.from("interpretations").insert(row);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true, stored: true, status, model: usedModel, portrait: !!interpretation.portrait, fallback: usedFallback, ai_error: usedFallback ? (res.error ?? null) : null, interpretation });
+      return json({ ok: true, stored: true, status, model: usedModel, portrait: !!interpretation.portrait, grounded: !!wissen, fallback: usedFallback, ai_error: usedFallback ? (res.error ?? null) : null, interpretation });
     }
 
     const facts = body.facts;
     if (!facts?.planets?.length) return json({ error: "missing facts.planets or client_id" }, 400);
-    const res = key ? await generate(facts, mdl, key) : { error: { detail: "no key" } };
+    const wissen = key ? await fachwissen(factsToText(facts), key, svc) : "";
+    const res = key ? await generate(facts, mdl, key, wissen) : { error: { detail: "no key" } };
     const usedFallback = !!res.error || !res.interpretation;
     const interpretation: any = usedFallback ? composeFallback(facts) : res.interpretation;
-    interpretation.portrait = key ? await generatePortrait(facts, coreMdl, mdl, key) : "";
-    return json({ ok: true, model: usedFallback ? "basis-komposition" : mdl, portrait: !!interpretation.portrait, fallback: usedFallback, ai_error: usedFallback ? (res.error ?? null) : null, interpretation });
+    interpretation.portrait = key ? await generatePortrait(facts, coreMdl, mdl, key, wissen) : "";
+    return json({ ok: true, model: usedFallback ? "basis-komposition" : mdl, portrait: !!interpretation.portrait, grounded: !!wissen, fallback: usedFallback, ai_error: usedFallback ? (res.error ?? null) : null, interpretation });
   } catch (e) {
     return json({ error: String(e) }, 500);
   }
