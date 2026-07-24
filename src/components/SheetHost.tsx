@@ -38,13 +38,19 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
   const { text: genText, loading: genLoading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !IS_DEMO);
   const personalText = stored || genText;
 
-  const general = content.sections.filter((s) => !s.accent && /^was/i.test(s.label));
-  const placements = content.sections.filter((s) => !s.accent && !/^was/i.test(s.label));
+  // Lexikon (gilt für jeden) vs. echte Deutung (gilt nur für DIESES Chart).
+  // Nur echte Deutungen dürfen in den „Vela deutet · für dich"-Block — vorher
+  // landeten dort die generischen Zeichen-/Haus-Zeilen (Aszendent, Mondknoten)
+  // und lasen sich bei jedem Kunden gleich.
+  const isGeneral = (s: { accent?: string; source?: string }) => !s.accent && s.source !== "ai";
+  const general = content.sections.filter((s) => isGeneral(s) && /^was|^klartext/i.test(s.label));
+  const notes = content.sections.filter((s) => isGeneral(s) && !/^was|^klartext/i.test(s.label));
+  const placements = content.sections.filter((s) => !s.accent && s.source === "ai");
   const personal = content.sections.filter((s) => s.accent);
-  // For a planet/ascendant we have a full reading (sign + house). Show it INSIDE
-  // the "Vela deutet" box as the substantial interpretation, instead of repeating
-  // it as thin rows above. Aspects/signs/houses keep their own layout.
-  const foldPersonal = (descriptor?.kind === "planet") && placements.length > 0;
+  // Liegt die volle Deutung (Zeichen + Haus) vor, steht sie IM Deutungs-Block
+  // statt als dünne Zeilen darüber. Fehlt sie, füllt die generierte
+  // Craft-Deutung den Block.
+  const foldPersonal = placements.length > 0;
 
   return (
     <>
@@ -62,10 +68,11 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
           </div>
         ))}
 
-        {/* PLACEMENTS — your data point: structured rows, label carries the position */}
-        {placements.length > 0 && !foldPersonal && (
+        {/* SYSTEM — warum dieses Haus, wie genau der Winkel: Lehrstoff, keine
+            persönliche Deutung. Steht deshalb ÜBER dem Deutungs-Block. */}
+        {notes.length > 0 && (
           <div className="space-y-4 border-t border-line pt-5">
-            {placements.map((sec) => (
+            {notes.map((sec) => (
               <div key={sec.label} className="grid grid-cols-[auto_1fr] gap-x-3.5">
                 <div className="mt-1 h-full w-[3px] rounded-full bg-gradient-to-b from-lilac/80 to-violet/30" />
                 <div>

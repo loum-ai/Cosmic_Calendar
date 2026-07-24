@@ -17,6 +17,7 @@ export function ClientView({ token }: { token: string }) {
   const setViewerMode = useApp((s) => s.setViewerMode);
   const bumpChart = useApp((s) => s.bumpChart);
   const setHdBirth = useApp((s) => s.setHdBirth);
+  const setViewerBirth = useApp((s) => s.setViewerBirth);
 
   useEffect(() => {
     let cancelled = false;
@@ -48,6 +49,14 @@ export function ClientView({ token }: { token: string }) {
           },
         });
         applyResolvedInterpretation(data.interpretation, data.verification ?? null);
+        // Geburtsdaten für den Profil-Screen — sonst zeigt er dort die Demo-Zeilen
+        setViewerBirth({
+          date: String(data.client.birth_date),
+          time,
+          place: String(data.client.birth_place ?? ""),
+          lat: data.client.lat ?? null,
+          lon: data.client.lon ?? null,
+        });
         bumpChart();
         setStatus("ready");
         // enable the offline Human Design computation for this client — prefer
@@ -70,8 +79,9 @@ export function ClientView({ token }: { token: string }) {
       cancelled = true;
       setViewerMode(false);
       setHdBirth(null);
+      setViewerBirth(null);
     };
-  }, [token, setViewerMode, bumpChart, setHdBirth]);
+  }, [token, setViewerMode, bumpChart, setHdBirth, setViewerBirth]);
 
   if (status === "ready") return <MainApp />;
 

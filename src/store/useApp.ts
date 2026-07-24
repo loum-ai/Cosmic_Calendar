@@ -22,6 +22,15 @@ export interface SavedBirth extends BirthInput {
   timeUnknown?: boolean;
 }
 
+/** Geburtsdaten, wie sie im Klienten-Link stehen — reine Anzeige (Profil). */
+export interface ViewerBirth {
+  date: string; // YYYY-MM-DD
+  time: string; // HH:MM, leer wenn unbekannt
+  place: string;
+  lat?: number | null;
+  lon?: number | null;
+}
+
 const CHART_KEY = "vela_chart";
 
 const MONTHS = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
@@ -131,6 +140,11 @@ export interface AppState {
   // from the resolved client link, so a client's HD is computed too.
   hdBirth: BirthInput | null;
   setHdBirth: (b: BirthInput | null) => void;
+  // Geburtsdaten des Kunden im Viewer-Modus (aus dem Klienten-Link). Ohne das
+  // fiel der Profil-Screen auf die fest verdrahteten Demo-Zeilen zurück — jeder
+  // Kunde sah dort Lauras Geburtsdatum, -zeit und -ort.
+  viewerBirth: ViewerBirth | null;
+  setViewerBirth: (b: ViewerBirth | null) => void;
 
   // real AI interpretation (Gemini, via edge functions) for the active chart
   aiLoading: boolean;
@@ -268,6 +282,9 @@ export const useApp = create<AppState>((set, get) => ({
 
   hdBirth: null,
   setHdBirth: (b) => set({ hdBirth: b }),
+
+  viewerBirth: null,
+  setViewerBirth: (b) => set({ viewerBirth: b }),
 
   // viewer (client-link) mode: hides admin/onboarding affordances
   viewerMode: false,

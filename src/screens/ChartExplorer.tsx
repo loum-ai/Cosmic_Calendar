@@ -144,7 +144,14 @@ export function ChartExplorer() {
   const tightest = [...aspects].sort((a, b) => a.orb - b.orb)[0];
   const domIdx = bal.e.indexOf(Math.max(...bal.e));
   const domElem = ELEM[domIdx];
-  const heroTxt = tightest ? aiAspect(tightest.A.key, tightest.B.key) || (IS_DEMO && ASPECT_TEXT[tightest.key]) || tightest.def.plain : "";
+  // Die Signatur-Karte trug bisher als Rückfall `def.plain` — die Lexikon-Zeile
+  // des Aspekt-Typs, identisch für jeden Menschen mit diesem Winkel. Jetzt:
+  // gespeicherte Deutung, sonst live generiert (gleicher Cache wie das Sheet).
+  const heroTask = tightest ? subjectTask({ kind: "aspect", key: tightest.key }) : null;
+  const heroGen = useReading(heroTask?.viewKey ?? "", heroTask?.task ?? "", !!heroTask && !IS_DEMO);
+  const heroTxt = tightest
+    ? aiAspect(tightest.A.key, tightest.B.key) || (IS_DEMO && ASPECT_TEXT[tightest.key]) || heroGen.text || (heroGen.loading ? "" : tightest.def.plain)
+    : "";
   const patterns = chartPatterns();
   // hybrid "core": generate a holistic overview — only when we don't already
   // have a stored summary (client) and not on the bespoke demo, to spare quota.
@@ -556,19 +563,20 @@ function DetailView({ content, sel, onPick }: { content: NonNullable<ReturnType<
 
       <div className="mt-4 flex flex-col gap-4">
         {/* general — italic serif definition */}
-        {content.sections.filter((s) => !s.accent && /^was/i.test(s.label)).map((s, i) => (
+        {content.sections.filter((s) => !s.accent && s.source !== "ai" && /^was/i.test(s.label)).map((s, i) => (
           <div key={`g${i}`}>
             <div className="mb-1.5 font-mono text-[9.5px] uppercase tracking-[0.18em] text-txt-3">{s.label}</div>
             <p className="font-serif text-[16px] italic leading-[1.5] text-txt-2">{s.body}</p>
           </div>
         ))}
-        {/* placements — data-point rows (folded into the reading box for planets) */}
+        {/* Lehrstoff-Zeilen bleiben Zeilen; nur ECHTE Deutungen (source: "ai")
+            wandern in den Deutungs-Block. */}
         {(() => {
-          const placementSecs = content.sections.filter((s) => !s.accent && !/^was/i.test(s.label));
-          const fold = sel.kind === "planet" && placementSecs.length > 0;
+          const notes = content.sections.filter((s) => !s.accent && s.source !== "ai" && !/^was/i.test(s.label));
+          const readings = content.sections.filter((s) => !s.accent && s.source === "ai");
           return (
             <>
-              {!fold && placementSecs.map((s, i) => (
+              {notes.map((s, i) => (
                 <div key={`p${i}`} className="grid grid-cols-[auto_1fr] gap-x-3 border-t border-line pt-3.5 first:border-t-0 first:pt-0">
                   <div className="mt-1 h-full w-[3px] rounded-full bg-gradient-to-b from-lilac/80 to-violet/30" />
                   <div>
@@ -578,7 +586,7 @@ function DetailView({ content, sel, onPick }: { content: NonNullable<ReturnType<
                 </div>
               ))}
               {/* personal — Vela's generated reading (grounded), template as fallback */}
-              <GeneratedReading sel={sel} fallback={content.sections.find((s) => s.accent)?.body} folded={fold ? placementSecs : undefined} />
+              <GeneratedReading sel={sel} fallback={content.sections.find((s) => s.accent)?.body} folded={readings.length ? readings : undefined} />
             </>
           );
         })()}

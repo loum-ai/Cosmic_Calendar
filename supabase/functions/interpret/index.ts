@@ -142,12 +142,30 @@ function factsToPrompt(f: any): string {
     const retro = p.retro ? ", rückläufig" : "";
     lines.push(`- ${p.name} (key=${p.key}): ${p.sign} ${p.deg_in_sign ?? ""}°, Haus ${p.house}${retro}${dig}`);
   }
+  // Aszendent + Mondknoten sind KEINE Planeten, brauchen aber genauso eine
+  // Deutung: ohne sie fielen die Sheets im Rad auf die generische
+  // Zeichen-Zeile zurück, die bei jedem Kunden gleich lautet.
+  lines.push("", "WEITERE PUNKTE (dieselbe Behandlung wie ein Planet — key exakt übernehmen):");
+  lines.push(`- Aszendent (key=asc): ${f.asc_sign ?? "?"}, Haus 1 — wie diese Person auftritt, bevor sie ein Wort sagt`);
+  for (const n of f.nodes ?? []) {
+    const key = /auf|nord|north/i.test(n.name ?? "") ? "node_n" : "node_s";
+    const rolle = key === "node_n" ? "Wachstumsrichtung — wohin sich dieses Leben entwickeln will" : "das Vertraute, Mitgebrachte, das nach und nach losgelassen werden darf";
+    lines.push(`- ${n.name} (key=${key}): ${n.sign ?? "?"}${n.house ? `, Haus ${n.house}` : ""} — ${rolle}`);
+  }
   if (f.aspects?.length) {
     lines.push("", "ASPEKTE (Orbis in Grad):");
     for (const a of f.aspects) lines.push(`- ${a.a} ${a.type} ${a.b} (Orbis ${a.orb}°)`);
   }
-  lines.push("", "Aufgabe: Schreibe (1) eine 'summary' (Gesamtbild, 3–4 Sätze), (2) für JEDEN Planeten oben",
-    "einen 'sign_text' und 'house_text', key exakt wie angegeben, und (3) zu JEDEM Aspekt einen 'text'. Deutsch, Du-Form, konkret.");
+  lines.push(
+    "",
+    "Aufgabe: Schreibe (1) eine 'summary' (Gesamtbild, 3–4 Sätze), (2) für JEDEN Planeten UND",
+    "JEDEN weiteren Punkt oben einen 'sign_text' und 'house_text', key exakt wie angegeben,",
+    "und (3) zu JEDEM Aspekt einen 'text'. Deutsch, Du-Form, konkret.",
+    "Beim Aszendenten beschreibt 'sign_text' die Wirkung nach außen und 'house_text', wie sich",
+    "das im 1. Haus (Auftreten, Anfänge, erster Eindruck) zeigt. Bei den Mondknoten beschreibt",
+    "'sign_text' die Qualität des Zeichens auf diesem Weg und 'house_text' den Lebensbereich,",
+    "in dem sich das abspielt.",
+  );
   return lines.join("\n");
 }
 
@@ -205,6 +223,31 @@ function composeFallback(f: any) {
       house_text: `Im ${p.house}. Haus geht es um ${area}. Genau dort wird dieses Thema in deinem Alltag sichtbar und will gelebt werden.`,
     };
   });
+  // Aszendent + Mondknoten bekommen dieselbe Behandlung wie ein Planet, damit
+  // die Sheets im Rad auch im Notfall-Pfad nie auf die generische Zeichen-Zeile
+  // zurückfallen.
+  const ascIdx = SIGNS.indexOf(f.asc_sign);
+  if (ascIdx >= 0) {
+    placements.push({
+      key: "asc",
+      sign_text: `Dein Aszendent steht in ${f.asc_sign}: So trittst du auf, bevor du ein Wort sagst — nach außen wirkst du über ${SIGN_TRAIT[ascIdx]}.`,
+      house_text: "Der Aszendent ist der Beginn des 1. Hauses. Hier geht es um deinen ersten Eindruck und darum, wie du Dinge anfängst — das, was andere zuerst von dir sehen.",
+    });
+  }
+  for (const n of f.nodes ?? []) {
+    const north = /auf|nord|north/i.test(n.name ?? "");
+    const ni = SIGNS.indexOf(n.sign);
+    const trait = ni >= 0 ? SIGN_TRAIT[ni] : "eine ganz eigene Färbung";
+    placements.push({
+      key: north ? "node_n" : "node_s",
+      sign_text: north
+        ? `Dein aufsteigender Mondknoten in ${n.sign} zeigt deine Wachstumsrichtung: ${trait} zu entwickeln fühlt sich anfangs ungewohnt an — und ist doch die Richtung, in der vieles leichter wird.`
+        : `Dein absteigender Mondknoten in ${n.sign} ist dein vertrautes Terrain: ${trait} fällt dir leicht. Genau das darfst du würdigen und nach und nach lockern, statt dich darin einzurichten.`,
+      house_text: n.house
+        ? `Im ${n.house}. Haus geht es um ${HOUSE_AREA[(n.house || 1) - 1] ?? "einen wichtigen Lebensbereich"}. Dort spielt sich dieser Teil deines Weges konkret ab.`
+        : "",
+    });
+  }
   const aspects = (f.aspects ?? []).map((a: any) => {
     const verb = ASPECT_MEAN[a.type] ?? "verbinden sich";
     return { a: a.a, b: a.b, text: `${nameOf[a.a] ?? a.a} und ${nameOf[a.b] ?? a.b} ${verb} (Orbis ${a.orb}°). Je enger dieser Orbis, desto deutlicher spürst du dieses Zusammenspiel in dir.` };

@@ -11,12 +11,20 @@ import { EASE } from "@/lib/tokens";
 const IMPACT_COLOR: Record<string, string> = { "+": "#20F0D0", "-": "#ff8fb0", "~": "#c9b6ff" };
 const IMPACT_LABEL: Record<string, string> = { "+": "fördernd", "-": "fordernd", "~": "gemischt" };
 
+/** EIN Auftrag pro Transit — Detailbühne und Hero-Karte teilen ihn sich, damit
+ *  beide dieselbe (server-gecachte) Deutung zeigen statt zweier Varianten. */
+function transitReading(tr: TransitHit) {
+  return {
+    viewKey: `transit:${tr.tKey}_${tr.nKey}_${tr.type}`,
+    task: `Deute den aktuellen Transit: Der laufende ${tr.tName} bildet ${tr.type === "Konjunktion" ? "eine" : "ein"} ${tr.type} zu ${tr.nName} im Geburtsbild (Orbis ${tr.orb.toFixed(1)}°, ${IMPACT_LABEL[tr.impact]}). Was bedeutet diese Phase konkret für die Person, worauf darf sie achten? 4–5 Sätze, Du-Form.`,
+  };
+}
+
 /** One transit, cinematic & full-bleed; swipe left/right to move between them. */
 function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => void; onNext: () => void }) {
   const c = IMPACT_COLOR[tr.impact];
-  const vk = `transit:${tr.tKey}_${tr.nKey}_${tr.type}`;
-  const task = `Deute den aktuellen Transit: Der laufende ${tr.tName} bildet ${tr.type === "Konjunktion" ? "eine" : "ein"} ${tr.type} zu ${tr.nName} im Geburtsbild (Orbis ${tr.orb.toFixed(1)}°, ${IMPACT_LABEL[tr.impact]}). Was bedeutet diese Phase konkret für die Person, worauf darf sie achten? 4–5 Sätze, Du-Form.`;
-  const { text, loading } = useReading(vk, task);
+  const { viewKey, task } = transitReading(tr);
+  const { text, loading } = useReading(viewKey, task);
   return (
     <motion.div
       drag="x"
@@ -152,6 +160,41 @@ function TransitFull({ hits }: { hits: TransitHit[] }) {
   );
 }
 
+/** „Stärkster Einfluss" — zeigt die ECHTE Deutung dieses Transits (dieselbe,
+ *  die die Detailbühne ausklappt). Die Schablone aus `computeTransits` steht
+ *  nur noch da, solange die Deutung lädt oder wenn sie nicht kommt. */
+function StrongestCard({ tr, onOpen }: { tr: TransitHit; onOpen: () => void }) {
+  const rgb = IMPACT_COLOR[tr.impact];
+  const { viewKey, task } = transitReading(tr);
+  const { text, loading } = useReading(viewKey, task);
+  return (
+    <button
+      onClick={onOpen}
+      className="relative mt-9 block w-full overflow-hidden rounded-[18px] px-4 pb-[15px] pt-4 text-left"
+      style={{ background: "linear-gradient(180deg,#1B1926 0%,#141320 100%)", boxShadow: `inset 0 0 0 1px ${rgb}4d` }}
+    >
+      <span aria-hidden className="pointer-events-none absolute -right-10 -top-11 h-[170px] w-[170px] rounded-full" style={{ background: `radial-gradient(circle, ${rgb}29, transparent 68%)` }} />
+      <span className="relative flex items-center justify-between gap-3">
+        <span className="v-eyebrow" style={{ color: rgb }}>Stärkster Einfluss</span>
+        <span className="v-meta shrink-0" style={{ color: rgb }}>{IMPACT_LABEL[tr.impact]} · {tr.orb.toFixed(1)}°</span>
+      </span>
+      <span className="v-h2 relative mt-3 block text-[17px]">{tr.title}</span>
+      {text || !loading ? (
+        <p className="relative mt-1.5 line-clamp-4 font-body text-[12.5px] leading-[1.55] text-[rgba(238,245,248,0.66)]">{text || tr.txt}</p>
+      ) : (
+        <span className="relative mt-2.5 block space-y-2">
+          {[100, 92, 68].map((w, i) => (
+            <span key={i} className="block h-2.5 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
+          ))}
+        </span>
+      )}
+      <span className="relative mt-3 inline-flex items-center gap-1 font-body text-[12px] text-lilac">
+        Ganze Geschichte <ChevronRight className="h-3.5 w-3.5" />
+      </span>
+    </button>
+  );
+}
+
 export function TransiteScreen() {
   const setFull = useApp((s) => s.setFullTransit);
   const chartVersion = useApp((s) => s.chartVersion);
@@ -184,27 +227,7 @@ export function TransiteScreen() {
           {/* Stärkster Einfluss — Hero-Karte nach dem Konzept: getönte
               Hairline in der Ton-Farbe, Eck-Glow, Cinzel-Titel (NICHT der
               fette Sans von vorher), kompakter Body. */}
-          {(() => {
-            const rgb = IMPACT_COLOR[strongest.impact];
-            return (
-              <button
-                onClick={() => setFull(0)}
-                className="relative mt-9 block w-full overflow-hidden rounded-[18px] px-4 pb-[15px] pt-4 text-left"
-                style={{ background: "linear-gradient(180deg,#1B1926 0%,#141320 100%)", boxShadow: `inset 0 0 0 1px ${rgb}4d` }}
-              >
-                <span aria-hidden className="pointer-events-none absolute -right-10 -top-11 h-[170px] w-[170px] rounded-full" style={{ background: `radial-gradient(circle, ${rgb}29, transparent 68%)` }} />
-                <span className="relative flex items-center justify-between gap-3">
-                  <span className="v-eyebrow" style={{ color: rgb }}>Stärkster Einfluss</span>
-                  <span className="v-meta shrink-0" style={{ color: rgb }}>{IMPACT_LABEL[strongest.impact]} · {strongest.orb.toFixed(1)}°</span>
-                </span>
-                <span className="v-h2 relative mt-3 block text-[17px]">{strongest.title}</span>
-                <p className="relative mt-1.5 font-body text-[12.5px] leading-[1.55] text-[rgba(238,245,248,0.66)]">{strongest.txt}</p>
-                <span className="relative mt-3 inline-flex items-center gap-1 font-body text-[12px] text-lilac">
-                  Ganze Geschichte <ChevronRight className="h-3.5 w-3.5" />
-                </span>
-              </button>
-            );
-          })()}
+          <StrongestCard tr={strongest} onOpen={() => setFull(0)} />
 
           {/* transit list — plain rows */}
           <section className="mt-12">

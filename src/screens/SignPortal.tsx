@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, X } from "lucide-react";
-import { ASC, CHART, HOUSE, NODES, SG, SN, houseOf } from "@/lib/data";
+import { ASC, CHART, HOUSE, NODES, SG, SN, houseOf, IS_DEMO } from "@/lib/data";
 import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
+import { subjectTask, useReading, storedReading } from "@/lib/genReadings";
 import { useApp } from "@/store/useApp";
 
 /**
@@ -29,10 +30,17 @@ interface Row {
 /** Eine "Einfluss"-Zeile: Accordion mit der persönlichen Deutung, "Mehr" öffnet das Sheet. */
 function InfluenceRow({ row, open, onToggle }: { row: Row; open: boolean; onToggle: () => void }) {
   const openInfo = useApp((s) => s.openInfo);
-  const body = useMemo(() => {
+  // Die ECHTE Deutung dieser Stellung — erst die gespeicherte Cockpit-Deutung,
+  // sonst live generiert (gleicher viewKey wie das Sheet, also derselbe Cache).
+  // Die Schablone aus dem Sheet ist nur noch die letzte Rückfallebene.
+  const st = subjectTask(row.sheet);
+  const stored = storedReading(row.sheet);
+  const { text: gen, loading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !IS_DEMO && open);
+  const fallback = useMemo(() => {
     const sheet = resolveSheet(row.sheet);
     return sheet?.sections.find((s) => s.accent)?.body ?? sheet?.sections[0]?.body ?? "";
   }, [row.sheet]);
+  const body = stored || gen || (loading ? "" : fallback);
   return (
     <div
       onClick={onToggle}
@@ -64,7 +72,15 @@ function InfluenceRow({ row, open, onToggle }: { row: Row; open: boolean; onTogg
       </div>
       {open && (
         <div className="vela-fadeup mt-3 border-t border-white/[0.07] pt-3">
-          {body && <p className="font-body text-[13px] leading-[1.6] text-[rgba(238,245,248,0.66)]">{body}</p>}
+          {body ? (
+            <p className="font-body text-[13px] leading-[1.6] text-[rgba(238,245,248,0.66)]">{body}</p>
+          ) : (
+            <div className="space-y-2 py-0.5">
+              {[96, 88, 72].map((w, i) => (
+                <div key={i} className="h-2.5 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
+              ))}
+            </div>
+          )}
           <button
             onClick={(e) => { e.stopPropagation(); openInfo(row.sheet); }}
             className="mt-2.5 font-body text-[12px] text-[#97B5FF]"
@@ -125,7 +141,9 @@ export function SignPortal({ initial, onClose }: { initial: number; onClose: () 
       }
     }
     if (signIdx(ASC) === sign) {
-      r.unshift({ glyph: "↑", title: `Aszendent ${SN[sign]}`, meta: "1. Haus · Auftritt", sheet: { kind: "sign", key: SN[sign] } });
+      // auf den Aszendenten zeigen, nicht auf das allgemeine Zeichen — sonst
+      // steht hier die Zeichen-Lexikon-Zeile statt der eigenen Deutung
+      r.unshift({ glyph: "↑", title: `Aszendent ${SN[sign]}`, meta: "1. Haus · Auftritt", sheet: { kind: "planet", key: "asc" } });
     }
     return r;
   }, [sign]);

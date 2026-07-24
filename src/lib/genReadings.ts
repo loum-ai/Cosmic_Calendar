@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { create } from "zustand";
 import { supabase, AI_MODEL_CORE } from "./supabase";
 import { chartContext, chartHash } from "./factsContext";
-import { ASC, CHART, NODES, HOUSE, signName, computeAspects } from "./data";
+import { ASC, CHART, NODES, HOUSE, signName, houseOf, computeAspects } from "./data";
 import { aiSign, aiHouse, aiAspect } from "./interpret";
 import type { SheetDescriptor } from "./sheets";
 
@@ -11,7 +11,10 @@ import type { SheetDescriptor } from "./sheets";
  *  this over calling `generate` again — saves the daily quota and is instant. */
 export function storedReading(d: SheetDescriptor | null): string | null {
   if (!d) return null;
-  if (d.kind === "planet") {
+  // Planeten UND Punkte (Aszendent, Mondknoten) — der Cockpit-Lauf deckt sie
+  // ab, sobald die Deutung mit asc/node_n/node_s erzeugt wurde. Ältere
+  // Deutungen haben sie nicht; dann greift die Live-Generierung unten.
+  if (d.kind === "planet" || d.kind === "node") {
     const s = aiSign(String(d.key));
     const h = aiHouse(String(d.key));
     return s || h ? [s, h].filter(Boolean).join(" ") : null;
@@ -119,6 +122,21 @@ ${CRAFT}`,
 ${isNorth
   ? "Der Nordknoten ist die gewählte Wachstumsrichtung — wohin sich dieses Leben entwickeln WILL. Es fühlt sich anfangs ungewohnt an, ist aber die Richtung, in der alles leichter wird. Eine wählbare Entwicklung, kein festgelegtes Los."
   : "Der Südknoten ist das Vertraute und Mitgebrachte — Gaben, die schon da sind, aber auch die Komfortzone, in der man sich versteckt. Was davon darf diese Person würdigen und trotzdem langsam loslassen?"}
+${CRAFT}`,
+    };
+  }
+  if (d.kind === "house") {
+    const h = Number(d.key);
+    if (!(h >= 1 && h <= 12)) return null;
+    const inside = CHART.filter((p) => (p.house ?? houseOf(p.lon)) === h);
+    const besetzt = inside.length
+      ? `In diesem Haus stehen: ${inside.map((p) => `${p.name} in ${signName(p.lon)}`).join(", ")}.`
+      : "In diesem Haus steht kein Planet. Deute es deshalb über den Herrscher seines Zeichens und über die Planeten, die aus anderen Häusern per Aspekt hierher wirken — und sag ehrlich, dass dieser Bereich eher leise mitläuft, statt ein Dauerthema zu sein. Das ist kein Mangel.";
+    return {
+      viewKey: `house:${h}:v1`,
+      task: `Deute das ${h}. Haus (${HOUSE[h - 1]}) für DIESEN Menschen — EIN Absatz, 4–5 kurze Sätze.
+${besetzt}
+Erkläre in einem Halbsatz, warum dieses Haus für genau diesen Lebensbereich steht (die Logik des Horoskop-Kreises), und sag dann, wie dieser Bereich bei DIESEM Menschen konkret aussieht — nicht, was das Haus allgemein bedeutet.
 ${CRAFT}`,
     };
   }
