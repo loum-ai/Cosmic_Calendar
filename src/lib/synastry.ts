@@ -21,7 +21,18 @@ export interface CrossHit {
   bKey: string; bName: string; bGlyph: string;
   type: string; orb: number; harmon: number;
 }
-export interface Touchpoint { glyph: string; title: string; text: string }
+/**
+ * Genitiv eines Vornamens. Namen auf s/ß/x/z bekommen im Deutschen nur einen
+ * Apostroph — sonst stand da „Jonass Merkur".
+ */
+export function possessive(name: string): string {
+  const n = (name ?? "").trim();
+  if (!n) return "";
+  return /[sßxzS]$/.test(n) ? `${n}'` : `${n}s`;
+}
+
+/** `key` = der Planet, der das Thema trägt — die Karte zeigt darüber sein Foto. */
+export interface Touchpoint { key: string; glyph: string; title: string; text: string }
 export interface SynResult {
   hits: CrossHit[];
   resonance: number;
@@ -55,17 +66,22 @@ export function synastry(a: Planet[], b: Planet[], partnerName: string): SynResu
   const resonance = total ? Math.round(((harmonious + neutral * 0.5) / total) * 100) : 0;
 
   const flow = (h: CrossHit) => (h.harmon > 0 ? "fließt leicht zusammen — ein müheloses Verstehen" : h.harmon < 0 ? "reibt sich — Spannung, die anzieht und fordert" : "verschmilzt eng — ihr verstärkt euch gegenseitig hier");
-  const mk = (pred: (h: CrossHit) => boolean, title: string, glyph: string): Touchpoint | null => {
-    const h = sig.find(pred);
+  // Jeder Kontakt darf nur EINMAL auftauchen. Vorher konnte derselbe Aspekt
+  // unter zwei Überschriften stehen (Venus–Merkur passt sowohl auf „Nähe &
+  // Gefühl" als auch auf „Wie ihr redet") — das las sich wie ein Fehler.
+  const used = new Set<CrossHit>();
+  const mk = (pred: (h: CrossHit) => boolean, title: string, glyph: string, key: string): Touchpoint | null => {
+    const h = sig.find((x) => !used.has(x) && pred(x));
     if (!h) return null;
-    return { glyph, title, text: `Deine ${h.aName} ${h.type} ${partnerName}s ${h.bName} (${h.orb}°) — ${flow(h)}.` };
+    used.add(h);
+    return { key, glyph, title, text: `Deine ${h.aName} ${h.type} ${possessive(partnerName)} ${h.bName} (${h.orb}°) — ${flow(h)}.` };
   };
 
   const touchpoints = [
-    mk((h) => h.aKey === "sun" || h.bKey === "sun", "Eure Kerne", "☉"),
-    mk((h) => ["moon", "venus"].includes(h.aKey) || ["moon", "venus"].includes(h.bKey), "Nähe & Gefühl", "☽"),
-    mk((h) => h.aKey === "mercury" || h.bKey === "mercury", "Wie ihr redet", "☿"),
-    mk((h) => h.aKey === "mars" || h.bKey === "mars", "Reibung & Anziehung", "♂"),
+    mk((h) => h.aKey === "sun" || h.bKey === "sun", "Eure Kerne", "☉", "sun"),
+    mk((h) => ["moon", "venus"].includes(h.aKey) || ["moon", "venus"].includes(h.bKey), "Nähe & Gefühl", "☽", "moon"),
+    mk((h) => h.aKey === "mercury" || h.bKey === "mercury", "Wie ihr redet", "☿", "mercury"),
+    mk((h) => h.aKey === "mars" || h.bKey === "mars", "Reibung & Anziehung", "♂", "mars"),
   ].filter(Boolean) as Touchpoint[];
 
   return { hits: sig, resonance, harmonious, challenging, total, touchpoints };
