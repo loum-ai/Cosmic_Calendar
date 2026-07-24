@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vela</title>
+    <script>
+      /* GitHub-Pages SPA-Fallback: jeder Pfad (z. B. /Cosmic_Calendar/admin)
+         wird auf die Hash-Route der App umgeleitet (/Cosmic_Calendar/#/admin),
+         damit Deep-Links & Bookmarks nicht auf einer 404-Seite landen. */
+      (function () {
+        var base = "/Cosmic_Calendar/";
+        var l = window.location;
+        var rest = l.pathname.indexOf(base) === 0 ? l.pathname.slice(base.length) : l.pathname.replace(/^\/+/, "");
+        var hash = l.hash && l.hash.length > 1 ? l.hash.slice(1) : rest;
+        l.replace(l.origin + base + "#/" + hash.replace(/^#?\/?/, "") + l.search);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
