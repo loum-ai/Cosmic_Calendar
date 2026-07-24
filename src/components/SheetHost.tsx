@@ -6,6 +6,7 @@ import { Sheet, SheetContent as SheetShell } from "@/components/ui/sheet";
 import { GlyphBadge } from "@/components/GlyphBadge";
 import { subjectTask, useReading, storedReading } from "@/lib/genReadings";
 import { IS_DEMO } from "@/lib/data";
+import { CARD_BG, planetPhoto, planetRgb, planetZoom } from "@/lib/planetArt";
 
 function useIsDesktop() {
   const [d, setD] = useState(false);
@@ -51,13 +52,44 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
   // statt als dünne Zeilen darüber. Fehlt sie, füllt die generierte
   // Craft-Deutung den Block.
   const foldPersonal = placements.length > 0;
+  // Foto nur für Planeten — der Aszendent und die Knoten haben keins
+  const photoKey = descriptor?.kind === "planet" ? String(descriptor.key) : null;
+  const photo = photoKey ? planetPhoto(photoKey) : null;
+  const rgb = planetRgb(photoKey ?? "");
+  const zoom = planetZoom(photoKey ?? "");
 
   return (
     <>
-      <div className="flex items-center gap-3.5 pr-8">
-        <GlyphBadge glyph={content.glyph} size={46} />
-        <h2 className="font-serif text-[26px] font-semibold leading-[1.05] tracking-[0.01em] text-white">{content.title}</h2>
-      </div>
+      {/* Cinematic Bildkopf für Planeten mit Foto — zurückgeholt aus dem
+          lokalen Deploy vom 24.07. (siehe lib/planetArt.ts). Punkte ohne Foto
+          (Aszendent, Knoten, Häuser, Zeichen) behalten den Glyph-Kopf. */}
+      {photo ? (
+        <div
+          className="relative mb-5 h-[220px] overflow-hidden rounded-[20px]"
+          style={{ background: CARD_BG, boxShadow: `inset 0 0 0 1px rgba(${rgb},.22)` }}
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-[42%] -translate-x-1/2 -translate-y-1/2"
+            style={{ width: 340, height: 340, borderRadius: "50%", background: `radial-gradient(circle, rgba(${rgb},.4) 0%, rgba(${rgb},.1) 46%, transparent 68%)`, mixBlendMode: "screen" }}
+          />
+          <img
+            src={photo}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ mixBlendMode: "screen", transform: `scale(${1.06 + zoom * 0.24})`, filter: "drop-shadow(0 8px 26px rgba(0,0,6,.5))" }}
+          />
+          <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[66%]" style={{ background: "linear-gradient(180deg, transparent 0%, rgba(11,9,16,.5) 52%, rgba(11,9,16,.94) 100%)" }} />
+          <span aria-hidden className="vela-glyph absolute left-4 top-3.5 text-[20px]" style={{ color: `rgba(${rgb},.95)`, filter: "drop-shadow(0 1px 6px rgba(0,0,0,.7))" }}>{content.glyph}</span>
+          <h2 className="absolute inset-x-4 bottom-4 pr-10 font-serif text-[23px] font-normal uppercase not-italic leading-[1.06] tracking-[0.02em] text-white">{content.title}</h2>
+        </div>
+      ) : (
+        <div className="flex items-center gap-3.5 pr-8">
+          <GlyphBadge glyph={content.glyph} size={46} />
+          <h2 className="font-serif text-[22px] font-normal uppercase not-italic leading-[1.1] tracking-[0.02em] text-white">{content.title}</h2>
+        </div>
+      )}
 
       <div className="mt-5 flex flex-col gap-6">
         {/* GENERAL — the encyclopedia voice: quiet, italic serif */}

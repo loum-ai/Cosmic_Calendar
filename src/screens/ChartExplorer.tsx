@@ -6,10 +6,11 @@ import { chartContext } from "@/lib/factsContext";
 import { ChartWheel } from "@/components/ChartWheel";
 import { Reveal } from "@/components/Reveal";
 import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
-import { CHART, ASC, PROFILE, SN, PINFO, THEME, signName, computeAspects, IS_DEMO } from "@/lib/data";
+import { CHART, ASC, PROFILE, SN, THEME, signName, computeAspects, IS_DEMO } from "@/lib/data";
 import { ASPECT_TEXT } from "@/lib/readings";
 import { aiSummary, aiAspect, aiSign } from "@/lib/interpret";
 import { chartPatterns, type Pattern } from "@/lib/patterns";
+import { CARD_BG, planetPhoto, planetRgb, planetZoom } from "@/lib/planetArt";
 import { useApp } from "@/store/useApp";
 
 const KIND_LABEL: Record<string, string> = { muster: "Aspektmuster", fokus: "Fokus", balance: "Balance", rhythmus: "Rhythmus" };
@@ -344,7 +345,7 @@ export function ChartExplorer() {
                     <span className="vela-label">{g.label}</span>
                     <span className="h-px flex-1 bg-line" />
                   </div>
-                  <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-4">
                     {items.map((p) => <PlanetCard key={p.key} p={p} on={highlight === p.key} onPick={select} />)}
                   </div>
                 </div>
@@ -474,20 +475,54 @@ function AspectGroup({ title, tone, accent, items, sel, onPick }: { title: strin
   );
 }
 
+/** Cinematic Planeten-Kachel: Foto im Screen-Blend über dunklem Verlauf,
+ *  Glow in der Planetenfarbe, Textblock unten im Scrim. Zurückgeholt aus dem
+ *  lokalen Deploy vom 24.07. (siehe lib/planetArt.ts). */
 function PlanetCard({ p, on, onPick }: { p: (typeof CHART)[number]; on: boolean; onPick: (d: SheetDescriptor) => void }) {
   const h = p.house ?? 1;
-  // plain-language meaning: the personal reading if we have it, else the
-  // general "what this planet is" — so a card never reads as bare jargon.
-  const meaning = aiSign(p.key) || p.txt || PINFO[p.key]?.what || "";
+  const degInSign = Math.floor(((p.lon % 30) + 30) % 30);
+  const photo = planetPhoto(p.key);
+  const rgb = planetRgb(p.key);
+  const zoom = planetZoom(p.key);
   return (
-    <button onClick={() => onPick({ kind: "planet", key: p.key })} className={`flex items-start gap-3 rounded-2xl border px-3.5 py-3 text-left transition ${on ? "border-line-accent bg-surface-2" : "border-[rgba(255,255,255,0.1)] bg-surface hover:border-line-accent hover:bg-surface-2"}`}>
-      <span className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border font-glyph text-[19px]" style={{ color: col(p.key), borderColor: `${col(p.key)}55`, background: `${col(p.key)}12` }}>{p.glyph}</span>
-      <span className="min-w-0">
-        <span className="flex flex-wrap items-baseline gap-x-2">
-          <span className="font-display text-[13.5px] font-semibold text-txt">{p.name}</span>
-          <span className="font-body text-[11px] text-txt-3">{signName(p.lon)} · {h}. Haus</span>
+    <button
+      onClick={() => onPick({ kind: "planet", key: p.key })}
+      className="group relative aspect-[4/5] overflow-hidden rounded-[18px] text-left transition"
+      style={{
+        background: CARD_BG,
+        boxShadow: `inset 0 0 0 1px rgba(${rgb},${on ? 0.42 : 0.16})${on ? `, 0 0 26px -8px rgba(${rgb},.55)` : ""}`,
+      }}
+    >
+      <span
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2"
+        style={{ width: 190, height: 190, borderRadius: "50%", background: `radial-gradient(circle, rgba(${rgb},.36) 0%, rgba(${rgb},.09) 46%, transparent 68%)`, mixBlendMode: "screen" }}
+      />
+      {photo ? (
+        <img
+          src={photo}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+          style={{ mixBlendMode: "screen", transform: `scale(${1.02 + zoom * 0.22})`, transformOrigin: "50% 38%" }}
+        />
+      ) : (
+        <span
+          aria-hidden
+          className="vela-glyph absolute left-1/2 top-[36%] -translate-x-1/2 -translate-y-1/2 text-[46px]"
+          style={{ color: `rgba(${rgb},.85)`, filter: `drop-shadow(0 0 16px rgba(${rgb},.6))` }}
+        >
+          {p.glyph}
         </span>
-        {meaning && <span className="mt-1 block line-clamp-2 font-body text-[12.5px] leading-snug text-txt-2">{meaning}</span>}
+      )}
+      <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[62%]" style={{ background: "linear-gradient(180deg, transparent 0%, rgba(11,9,16,.55) 50%, rgba(11,9,16,.95) 100%)" }} />
+      <span aria-hidden className="vela-glyph absolute left-3 top-2.5 text-[15px]" style={{ color: `rgba(${rgb},.95)`, filter: "drop-shadow(0 1px 5px rgba(0,0,0,.7))" }}>{p.glyph}</span>
+      <span className="absolute inset-x-3 bottom-2.5">
+        <span className="block font-display text-[15px] font-bold leading-tight text-white">{p.name}</span>
+        <span className="mt-0.5 block font-body text-[11.5px] text-white/72">
+          {signName(p.lon)} <span className="font-mono text-[10px] text-white/50">{degInSign}°</span>
+        </span>
+        <span className="mt-px block font-body text-[10.5px] text-white/45">{h}. Haus</span>
       </span>
     </button>
   );
