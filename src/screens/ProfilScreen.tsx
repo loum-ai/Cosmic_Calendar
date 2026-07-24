@@ -1,6 +1,5 @@
 import { ChevronRight, Calendar, Clock, MapPin, Compass, Pencil, Sparkles, ShieldCheck, Loader2 } from "lucide-react";
 import { ScreenShell, SectionHead } from "@/components/ScreenShell";
-import { GlassPanel } from "@/components/GlassPanel";
 import { OrbImage } from "@/components/OrbImage";
 import { Explainable } from "@/components/Explainable";
 import { KlartextToggle } from "@/components/KlartextToggle";
@@ -48,16 +47,48 @@ function birthRows(saved: SavedBirth | null, viewer: ViewerBirth | null) {
 const SETTINGS = ["Benachrichtigungen", "Darstellung", "Datenschutz", "Über Vela"];
 
 /** Signatur-Karte: Überschrift = das Muster, Text = die erzeugte Deutung dazu
- *  (die Beobachtung p.text steht als Rückfallebene, solange sie lädt). */
+ *  (die Beobachtung p.text steht als Rückfallebene, solange sie lädt).
+ *  Regel 1+2: solide Ink-Karte mit Inset-Hairline, Cinzel flach uppercase. */
 function SignaturCard({ p }: { p: Pattern }) {
   const { text: gen } = useReading(p.viewKey, p.task, !IS_DEMO);
   return (
-    <div className="rounded-card border border-[rgba(120,150,255,0.18)] bg-glasswash p-4">
-      <div className="mb-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-lilac">{p.glyphs.join(" ")} Signatur</div>
-      <h3 className="font-cinzel text-[17px] font-semibold leading-tight text-white">{p.human}</h3>
-      <p className="mt-1 line-clamp-3 font-body text-[12.5px] leading-relaxed text-txt-2">{gen || p.text}</p>
+    <div className="vela-card-soft p-4">
+      <div className="mb-2 flex items-center gap-2">
+        <span className="vela-glyph text-[13px] leading-none text-lilac">{p.glyphs.join(" ")}</span>
+        <span className="font-body text-[10px] font-medium uppercase tracking-[0.18em] text-txt-3">Signatur</span>
+      </div>
+      <h3 className="font-cinzel text-[16px] font-normal uppercase leading-[1.16] tracking-[0.02em] text-txt">{p.human}</h3>
+      <p className="mt-2 line-clamp-3 font-body text-[12.5px] leading-[1.62] text-txt-2">{gen || p.text}</p>
     </div>
   );
+}
+
+/**
+ * Regel 5 — Textwände auflösen: lange Deutungen werden in Absätze gebrochen.
+ * Erst an echten Zeilenumbrüchen, sonst an Satzgrenzen zu ~320-Zeichen-Blöcken.
+ * Rein darstellend: der Text selbst bleibt unverändert.
+ */
+function paragraphs(text: string): string[] {
+  const lines = text.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  if (lines.length > 1) return lines;
+  const t = lines[0] ?? "";
+  if (t.length <= 400) return t ? [t] : [];
+  const sentences = t.match(/[^.!?…]+[.!?…]*\s*/g) ?? [t];
+  const out: string[] = [];
+  let buf = "";
+  for (const s of sentences) {
+    buf += s;
+    if (buf.length >= 320) {
+      out.push(buf.trim());
+      buf = "";
+    }
+  }
+  const rest = buf.trim();
+  if (rest) {
+    if (out.length && rest.length < 90) out[out.length - 1] += " " + rest;
+    else out.push(rest);
+  }
+  return out;
 }
 
 export function ProfilScreen() {
@@ -86,13 +117,13 @@ export function ProfilScreen() {
           <span aria-hidden className="vela-orb-halo pointer-events-none absolute -inset-5 rounded-full" style={{ background: "radial-gradient(circle, rgba(120,150,255,.55), transparent 62%)", mixBlendMode: "plus-lighter" }} />
           <OrbImage size={104} float={false} />
         </span>
-        <h1 className="mt-1 font-cinzel text-[25px] font-normal uppercase leading-none text-white" style={{ letterSpacing: ".1em" }}>{PROFILE.name}</h1>
-        <span className="font-body text-[11px] uppercase tracking-[2px] text-white/50">
+        <h1 className="mt-1 font-cinzel text-[26px] font-normal uppercase leading-[1.08] tracking-[0.02em] text-txt">{PROFILE.name}</h1>
+        <span className="font-body text-[11px] uppercase tracking-[0.18em] text-txt-3">
           {signName(CHART[0].lon)} · {signName(CHART[1].lon)} · {signName(ASC)}
         </span>
         {verify?.max_dev_arcsec != null && (
-          <span className="inline-flex items-center gap-1.5 rounded-pill px-3 py-[5px] font-body text-[11px] text-[#20F0D0]" style={{ background: "rgba(32,240,208,.07)", boxShadow: "inset 0 0 0 1px rgba(32,240,208,.3)" }}>
-            <span className="h-[5px] w-[5px] rounded-full bg-[#20F0D0] shadow-[0_0_6px_rgba(32,240,208,.8)]" />
+          <span className="mt-0.5 inline-flex items-center gap-1.5 rounded-pill bg-mint/[0.07] px-3 py-[5px] font-body text-[10.5px] font-medium uppercase tracking-[0.14em] text-mint shadow-[inset_0_0_0_1px_rgba(32,240,208,0.28)]">
+            <span className="h-[5px] w-[5px] rounded-full bg-mint shadow-[0_0_6px_rgba(32,240,208,0.8)]" />
             Daten geprüft · NOVAS
           </span>
         )}
@@ -113,24 +144,25 @@ export function ProfilScreen() {
         <KlartextToggle />
       </div>
 
-      {/* Geburtsdaten — Glass-Karte mit Stift (Konzept) */}
+      {/* Geburtsdaten — solide Ink-Karte mit Stift (Regel 1: kein Blur, kein
+          Drop-Shadow, die einzige Kante ist die Inset-Hairline) */}
       {BIRTH_ROWS.length > 0 && (
-      <div className="vela-glass mt-6 rounded-[16px] px-4 pb-3 pt-3.5">
+      <div className="vela-card-soft mt-6 px-4 pb-3.5 pt-3.5">
         <div className="mb-1.5 flex items-center justify-between">
           <span className="v-eyebrow">Geburtsdaten</span>
           {!viewer && saved && (
-            <button onClick={() => setOnboardingOpen(true)} aria-label="Geburtsdaten bearbeiten" className="p-1 text-white/45 transition hover:text-white/80">
+            <button onClick={() => setOnboardingOpen(true)} aria-label="Geburtsdaten bearbeiten" className="p-1 text-txt-3 transition hover:text-txt">
               <Pencil className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
         {BIRTH_ROWS.map((r) => (
-          <div key={r.value} className="flex items-center justify-between border-t border-white/[0.06] py-2.5 font-body text-[13px]">
-            <span className="flex items-center gap-2 text-white/45">{r.icon}{r.value}</span>
+          <div key={r.value} className="flex items-center justify-between border-t border-line-soft py-2.5 font-body text-[13px]">
+            <span className="flex items-center gap-2 text-txt-3">{r.icon}{r.value}</span>
             <span className="text-txt">{r.label}</span>
           </div>
         ))}
-        <p className="mt-2 font-body text-[10.5px] text-white/[0.35]">Nur für deine Deutungen gespeichert. Jederzeit löschbar.</p>
+        <p className="mt-2.5 font-body text-[10.5px] leading-relaxed text-txt-3">Nur für deine Deutungen gespeichert. Jederzeit löschbar.</p>
       </div>
       )}
 
@@ -148,28 +180,42 @@ export function ProfilScreen() {
       {/* AI interpretation summary + data-verification badge */}
       <section className="mt-8">
         <SectionHead title="Deine Deutung" sub="Von Vela aus deinem echten Geburtsbild" />
-        <GlassPanel className="p-4">
+        <div className="vela-card-soft px-[18px] pb-[18px] pt-[18px]">
           {summary ? (
-            <p className="font-body text-[13.5px] leading-relaxed text-ink/90">{summary}</p>
+            <div className="space-y-2.5">
+              {paragraphs(summary).map((para, i) => (
+                <p
+                  key={i}
+                  className={cn(
+                    "font-body",
+                    i === 0
+                      ? "text-[15px] leading-[1.58] text-txt"
+                      : "text-[13.5px] leading-[1.66] text-txt-2",
+                  )}
+                >
+                  {para}
+                </p>
+              ))}
+            </div>
           ) : aiLoading ? (
             <div className="flex items-center gap-2 text-txt-2">
               <Loader2 className="h-4 w-4 animate-spin" />
               <span className="font-body text-[13px]">Vela erstellt deine persönliche Deutung …</span>
             </div>
           ) : viewer ? (
-            <p className="font-body text-[13px] text-txt-2">Deine persönliche Deutung wird gerade von deiner Astrologin vorbereitet.</p>
+            <p className="font-body text-[13.5px] leading-[1.62] text-txt-2">Deine persönliche Deutung wird gerade von deiner Astrologin vorbereitet.</p>
           ) : (
-            <p className="font-body text-[13px] text-txt-2">Deine persönliche Deutung erstellt Vela aus deinem echten Geburtsbild — frag deine Astrologin nach deinem Zugang.</p>
+            <p className="font-body text-[13.5px] leading-[1.62] text-txt-2">Deine persönliche Deutung erstellt Vela aus deinem echten Geburtsbild — frag deine Astrologin nach deinem Zugang.</p>
           )}
           {verify?.max_dev_arcsec != null && (
-            <div className="mt-3 flex items-center gap-1.5 border-t border-line-soft pt-3">
-              <ShieldCheck className="h-3.5 w-3.5 text-mint" />
-              <span className="font-mono text-[10px] text-txt-3">
+            <div className="mt-4 flex items-center gap-1.5 border-t border-line-soft pt-3">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-mint" />
+              <span className="font-body text-[10px] uppercase tracking-[0.12em] text-txt-3">
                 Daten geprüft gegen NASA-NOVAS · Abweichung {verify.max_dev_arcsec}″
               </span>
             </div>
           )}
-        </GlassPanel>
+        </div>
       </section>
 
       {/* angles & lights */}
@@ -178,19 +224,19 @@ export function ProfilScreen() {
         <div className="grid grid-cols-4 gap-2.5">
           {big.map((b) =>
             b.noSheet ? (
-              <div key={b.key} className="vela-card-soft flex flex-col items-center gap-1 px-2 py-3.5">
-                <span className="vela-glyph text-lg text-lilac">{b.glyph}</span>
-                <span className="font-body text-[10px] uppercase tracking-wide text-txt-2">{b.label}</span>
+              <div key={b.key} className="vela-card-soft flex flex-col items-center gap-1 px-2 py-4">
+                <span className="vela-glyph text-lg leading-none text-lilac">{b.glyph}</span>
+                <span className="mt-0.5 font-body text-[9.5px] font-medium uppercase tracking-[0.14em] text-txt-3">{b.label}</span>
                 <span className="font-display text-[13px] font-semibold text-txt">{signName(b.lon)}</span>
-                <span className="font-mono text-[10px] text-txt-3">{SG[sgi(b.lon)]} {pad(deg(b.lon))}°</span>
+                <span className="font-body text-[10px] text-txt-3">{SG[sgi(b.lon)]} {pad(deg(b.lon))}°</span>
               </div>
             ) : (
               <Explainable key={b.key} sheet={{ kind: "planet", key: b.key }}>
-                <div className="vela-card-soft flex flex-col items-center gap-1 px-2 py-3.5">
-                  <span className="vela-glyph text-lg text-lilac">{b.glyph}</span>
-                  <span className="font-body text-[10px] uppercase tracking-wide text-txt-2">{b.label}</span>
+                <div className="vela-card-soft flex flex-col items-center gap-1 px-2 py-4">
+                  <span className="vela-glyph text-lg leading-none text-lilac">{b.glyph}</span>
+                  <span className="mt-0.5 font-body text-[9.5px] font-medium uppercase tracking-[0.14em] text-txt-3">{b.label}</span>
                   <span className="font-display text-[13px] font-semibold text-txt">{signName(b.lon)}</span>
-                  <span className="font-mono text-[10px] text-txt-3">{SG[sgi(b.lon)]} {pad(deg(b.lon))}°</span>
+                  <span className="font-body text-[10px] text-txt-3">{SG[sgi(b.lon)]} {pad(deg(b.lon))}°</span>
                 </div>
               </Explainable>
             ),
@@ -201,34 +247,38 @@ export function ProfilScreen() {
       {/* settings */}
       <section className="mt-8">
         <SectionHead title="Einstellungen" />
-        <GlassPanel className="p-1">
+        {/* Noch nichts davon ist gebaut — also sehen die Zeilen auch nicht aus
+            wie Buttons: kein Chevron, gedämpfter Text, ehrliche „bald"-Pille. */}
+        <div className="vela-card-soft px-1 py-1">
           {SETTINGS.map((s, i) => (
             <div
               key={s}
               className={cn(
-                "flex w-full items-center justify-between px-4 py-3.5 text-left",
+                "flex w-full select-none items-center justify-between px-4 py-3.5 text-left",
                 i && "border-t border-line-soft",
               )}
             >
-              <span className="font-body text-[13px] text-ink/85">{s}</span>
-              <span className="flex items-center gap-2">
-                <span className="rounded-pill border border-line px-2 py-0.5 text-[9px] uppercase tracking-[0.1em] text-txt-3">Bald</span>
-                <ChevronRight className="h-4 w-4 text-txt-3" />
+              <span className="font-body text-[13px] text-txt-3">{s}</span>
+              <span className="rounded-pill px-2.5 py-[3px] font-body text-[9px] font-medium uppercase tracking-[0.18em] text-txt-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.10)]">
+                bald
               </span>
             </div>
           ))}
-        </GlassPanel>
+        </div>
+        <p className="mt-2.5 px-1 font-body text-[10.5px] leading-relaxed text-txt-3">
+          Diese Bereiche kommen in einer der nächsten Versionen — noch gibt es hier nichts einzustellen.
+        </p>
       </section>
 
       {/* astrologer entry — only outside the client view */}
       {!viewer && (
         <button
           onClick={() => { window.location.hash = "#/admin"; }}
-          className="mt-6 flex w-full items-center justify-between rounded-2xl border border-line bg-surface px-4 py-3.5 text-left transition hover:border-line-accent hover:bg-surface-2"
+          className="vela-card-soft mt-6 flex w-full items-center justify-between px-4 py-3.5 text-left transition hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.35)]"
         >
           <span className="flex items-center gap-2.5">
             <ShieldCheck className="h-4 w-4 text-lilac" />
-            <span className="font-body text-[13px] text-txt">Astrologin · zum Cockpit</span>
+            <span className="font-body text-[13px] font-medium text-txt">Astrologin · zum Cockpit</span>
           </span>
           <ChevronRight className="h-4 w-4 text-txt-3" />
         </button>

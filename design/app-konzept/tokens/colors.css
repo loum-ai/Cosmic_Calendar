@@ -1,0 +1,340 @@
+/* ============================================================
+ * loum · COLOR TOKENS — QUINTESSENCE
+ * v6 · 2026-07-07 · SSOT (ersetzt v5).
+ * 10 Primitives × 11 Stufen · Semantic Tokens · Dark (default) & Light.
+ * Quelle v6: Figma „iPhone 16 Plus – 4" (blaue Variante) —
+ *   void-Ramp um eine Stufe geliftet (Basis #111019, #080610 ist TOT),
+ *   NEU: azure-Primitive (KI/Dialog) + --grad-halo,
+ *   text/muted = mist 55% (rgba 238,245,248,.55).
+ *
+ * Rollen: mystic = pulse (CTA) · orchid = voice · aura = depth/arkana ·
+ *         iris = strom/info · solar = warn/wands · fuchsia = cups/danger ·
+ *         celestial = sky/links · azure = dialog (KI/chat) ·
+ *         void = surfaces · moon = lavender greys.
+ * Legacy-Aliases (Sektion L) halten alle v4-Tokennamen am Leben —
+ * bestehende Components/Kits rendern unverändert, nur in QUINTESSENCE.
+ * ============================================================ */
+
+:root {
+  /* ── 1 · PRIMITIVES — 10 ramps × 11 steps ─────────────────── */
+  /* void v6: Ramp um eine Stufe geliftet (user 2026-07-07).
+   * 950 = #111019 (war 900) · #080610 ist TOT. Werte wandern eine
+   * Stufe nach oben, 50 ist neu. */
+  --void-50:  #F5F5F9; --void-100: #EBEBF0; --void-200: #D4D4DE;
+  --void-300: #ABABBC; --void-400: #84849A; --void-500: #606078;
+  --void-600: #454558; --void-700: #2E3140; --void-800: #222232;
+  --void-900: #1A1829; --void-950: #111019;
+
+  --aura-50:  #F3EEFF; --aura-100: #E8DFFF; --aura-200: #D4C8FF;
+  --aura-300: #BBA8FF; --aura-400: #A78BFA; --aura-500: #8870EC;
+  --aura-600: #6E52D8; --aura-700: #5538C0; --aura-800: #3B22A0;
+  --aura-900: #261278; --aura-950: #140658;
+
+  --orchid-50:  #FDF0FF; --orchid-100: #FAE0FF; --orchid-200: #F5C5FF;
+  --orchid-300: #EDAAFF; --orchid-400: #DA8FFF; --orchid-500: #C468EE;
+  --orchid-600: #A840D8; --orchid-700: #8820BC; --orchid-800: #681098;
+  --orchid-900: #480770; --orchid-950: #280345;
+
+  --fuchsia-50:  #FFF0F8; --fuchsia-100: #FFD8EE; --fuchsia-200: #FFB0DC;
+  --fuchsia-300: #FF82CA; --fuchsia-400: #F262B5; --fuchsia-500: #D840A0;
+  --fuchsia-600: #B82088; --fuchsia-700: #980070; --fuchsia-800: #720058;
+  --fuchsia-900: #4C0040; --fuchsia-950: #280020;
+
+  --solar-50:  #FFF8F2; --solar-100: #FFEEDD; --solar-200: #FFD8BC;
+  --solar-300: #FFC09A; --solar-400: #FFAC89; --solar-500: #F08860;
+  --solar-600: #D86840; --solar-700: #B84820; --solar-800: #8A3010;
+  --solar-900: #5C1C04; --solar-950: #2E0C00;
+
+  --mystic-50:  #ECFFFF; --mystic-100: #D0FFFC; --mystic-200: #A5FFF8;
+  --mystic-300: #68F8EE; --mystic-400: #20F0D0; --mystic-500: #00D8B8;
+  --mystic-600: #00B498; --mystic-700: #009078; --mystic-800: #006C58;
+  --mystic-900: #004838; --mystic-950: #002520;
+
+  --iris-50:  #F0F4FF; --iris-100: #DDE6FF; --iris-200: #BBCEFF;
+  --iris-300: #97B5FF; --iris-400: #789DFF; --iris-500: #5680F0;
+  --iris-600: #3B60D8; --iris-700: #2545B8; --iris-800: #162E90;
+  --iris-900: #0B1C68; --iris-950: #050E38;
+
+  /* azure — NEU v6 · dialog (KI/chat) · Seed 400 = #5599FF
+   * (Chat-Bubble-Start der Figma-Variante 4) */
+  --azure-50:  #EEF5FF; --azure-100: #D9E9FF; --azure-200: #B8D6FF;
+  --azure-300: #8ABBFF; --azure-400: #5599FF; --azure-500: #3D7DF0;
+  --azure-600: #2C5FD8; --azure-700: #2146B8; --azure-800: #183090;
+  --azure-900: #0F1D68; --azure-950: #081038;
+
+  --celestial-50:  #EAF6FF; --celestial-100: #D0EDFF; --celestial-200: #A8DAFF;
+  --celestial-300: #72C4FF; --celestial-400: #5EB5F7; --celestial-500: #389AE8;
+  --celestial-600: #2078CC; --celestial-700: #1458A8; --celestial-800: #0A3C80;
+  --celestial-900: #052258; --celestial-950: #020F30;
+
+  --moon-50:  #FFFFFF; --moon-100: #FBF9FF; --moon-200: #F7F7F1;
+  --moon-300: #E8E5F2; --moon-400: #CFCDE0; --moon-500: #B5AED4;
+  --moon-600: #9892B8; --moon-700: #7D78A0; --moon-800: #625E88;
+  --moon-900: #4A4670; --moon-950: #353260;
+
+  /* ── 2 · SEMANTIC — DARK MODE (default) ───────────────────── */
+  --bg-canvas:    var(--void-950);   /* page · #111019 (v6-Basis) */
+  --bg-primary:   var(--void-900);   /* section / card base · #1A1829 */
+  --bg-secondary: var(--void-800);   /* nested surface · #222232 */
+  --bg-surface:   var(--void-700);   /* raised surface / border-strong · #2E3140 (Wert unverändert) */
+
+  /* card surfaces — Figma „reading-rest" (v6): SOLID dark fills. Depth kommt
+   * von INNEN (radialer Glow), NIE von einem äußeren Drop-Shadow. Die einzige
+   * Kante ist eine 1px-Inset-Hairline bei 7%. */
+  --surface-card:     linear-gradient(180deg, #16161F 0%, #12121D 100%); /* @kind color */
+  --surface-card-top: #16161F; /* @kind color */
+  --surface-card-bot: #12121D; /* @kind color */
+  --surface-hero:     #1B1926; /* hero-card base (r32) · @kind color */
+  --card-hairline:    rgba(255,255,255,0.07); /* die EINZIGE Kante — inset 1px (Figma) · @kind color */
+
+  --text-primary:   #F8F7F2;         /* bone — unverändert */
+  --text-secondary: #FBFAFF;
+  --text-muted:     rgba(238, 245, 248, .55);   /* mist 55% — Figma V4 (user 2026-07-07; ersetzt moon-400) */
+
+  --accent-aura:      var(--aura-400);
+  --accent-orchid:    var(--orchid-400);
+  --accent-fuchsia:   var(--fuchsia-400);
+  --accent-solar:     var(--solar-400);
+  --accent-mystic:    var(--mystic-400);
+  --accent-iris:      var(--iris-400);
+  --accent-azure:     var(--azure-400);
+  --accent-celestial: var(--celestial-400);
+
+  /* ── 3 · GRADIENTS — QUINTESSENCE ─────────────────────────── */
+  /* Bezel — card frames, rings, hairline accents */
+  --grad-bezel:  linear-gradient(90deg, #BBA8FF 0%, #2AEAD3 100%); /* @kind color */
+  /* Aurora — THE headline gradient als FLÄCHE (Liquid-Aurora-Cards; Text trägt NIE einen Verlauf) */
+  --grad-aurora: linear-gradient(108deg, #FFAC89 0%, #F262B5 48%, #789DFF 100%); /* @kind color */
+  /* Halo — NEU v6 · KI/Dialog-Flächen: Chat-Bubbles, Send-CTA, Halo-Ring.
+   * Quelle: Chat-Bubble Figma Variante 4 (azure-400 → Elektro-Violett). */
+  --grad-halo:   linear-gradient(135deg, #5599FF 0%, #7241FF 100%); /* @kind color */
+
+  /* ── DEPRECATED v4 gradient names — pure aliases of the three
+   * QUINTESSENCE gradients above. Kept so old markup renders;
+   * never use in new work, never re-point at other colors. */
+  --grad-signature:   var(--grad-bezel);
+  --grad-prisma:      conic-gradient(from 215deg, #BBA8FF 0deg, #2AEAD3 180deg, #BBA8FF 360deg); /* @kind color */ /* conic form of bezel — CTA ring */
+  --grad-bloom:       var(--grad-aurora);
+  --grad-convergence: var(--grad-aurora);
+  --grad-dawn:        var(--grad-aurora);
+
+  /* ── L · LEGACY ALIASES — v4-Namen → QUINTESSENCE ─────────────
+   * Nichts unterhalb dieser Linie einführt neue Farben; alles
+   * zeigt auf Sektion 1/2. Neue Arbeit nutzt Primitives/Semantics.
+   * ─────────────────────────────────────────────────────────── */
+  --color-green:       var(--mystic-400);   /* the pulse — CTA accent, success */
+  --color-pink:        var(--orchid-400);   /* the voice — highlight, emotion */
+  --color-iris:        var(--aura-400);     /* depth — major arcana */
+  --color-teal:        var(--iris-400);     /* strom / info (slot keeps name) */
+  --color-blue:        var(--azure-400);    /* v6: echtes Blau — dialog (war Alias auf teal) */
+  --color-amber:       var(--solar-400);    /* warn / wands */
+  --color-rose:        var(--fuchsia-300);  /* cups suit */
+  --color-bone:        var(--text-primary);
+  --color-destructive: var(--fuchsia-400);
+
+  /* tonal steps (300 tint · canonical · 500 press) */
+  --green-300:         var(--mystic-300);
+  --green-500:         var(--mystic-500);
+  --pink-300:          var(--orchid-300);
+  --pink-500:          var(--orchid-500);
+
+  /* surfaces */
+  --color-void:        var(--void-950);   /* page bg · #111019 */
+  --color-ink:         var(--void-900);   /* card bg · #1A1829 */
+  --color-surface:     var(--void-800);   /* glass panels · #222232 */
+  --color-border:      var(--void-700);   /* hairline strong · #2E3140 (Wert unverändert) */
+
+  /* RGB triplets for rgba() usage — literal, keep in sync w/ 400er */
+  --rgb-green:         32, 240, 208;   /* @kind color */
+  --rgb-pink:          218, 143, 255;  /* @kind color */
+  --rgb-iris:          167, 139, 250;  /* @kind color */
+  --rgb-teal:          120, 157, 255;  /* @kind color */
+  --rgb-blue:          85, 153, 255;   /* @kind color */ /* v6: azure-400 */
+  --rgb-azure:         85, 153, 255;   /* @kind color */
+  --rgb-amber:         255, 172, 137;  /* @kind color */
+  --rgb-rose:          255, 130, 202;  /* @kind color */
+  --rgb-destructive:   242, 98, 181;   /* @kind color */
+  --rgb-bone:          248, 247, 242;  /* @kind color */
+  --rgb-mist:          238, 245, 248;  /* @kind color */ /* text/muted-Basis */
+  --rgb-void:          17, 16, 25;     /* @kind color */
+
+  /* foreground ramp — bone auf void-950 */
+  --fg:        var(--color-bone);
+  --fg-soft:   rgba(var(--rgb-bone), .85);
+  --fg-mute:   rgba(var(--rgb-mist), .55);   /* text/muted — mist 55% (Figma V4, user 2026-07-07) */
+  --fg-low:    rgba(var(--rgb-bone), .35);
+  --fg-faint:  rgba(var(--rgb-bone), .22);
+  --fg-ritual: rgba(217, 217, 217, .5);   /* rituelle Display-Zeile (Reading-Essence) — neutrales Grau 50% · Figma node 87:232 */
+
+  --glow-lit: 0 0 0.16em rgba(var(--rgb-bone), .55), 0 0 0.4em rgba(var(--rgb-bone), .2); /* dezenter seit 2026-07-13 (user: „zu viel glow in emphasis") · @kind other */
+
+  --hairline:      rgba(var(--rgb-bone), .10);
+  --hairline-soft: rgba(var(--rgb-bone), .06);
+
+  /* shadcn bridge */
+  --background:             var(--bg-canvas);
+  --foreground:             var(--fg);
+  --card:                   var(--bg-primary);
+  --card-foreground:        var(--fg);
+  --popover:                var(--bg-primary);
+  --popover-foreground:     var(--fg);
+  --primary:                var(--color-green);
+  --primary-foreground:     var(--bg-canvas);
+  --secondary:              var(--fill-bone-2);
+  --secondary-foreground:   var(--fg);
+  --muted:                  var(--fill-bone-1);
+  --muted-foreground:       var(--fg-mute);
+  --accent:                 var(--fill-bone-3);
+  --accent-foreground:      var(--fg);
+  --destructive:            var(--color-destructive);
+  --destructive-foreground: var(--bg-canvas);
+  --border:                 var(--hairline);
+  --input:                  var(--hairline);
+  --ring:                   var(--color-green);
+
+  /* semantic roles — brand expression */
+  --voice:      var(--accent-orchid);
+  --pulse:      var(--accent-mystic);
+  --depth:      var(--accent-aura);
+  --info:       var(--accent-iris);
+  --dialog:     var(--accent-azure);   /* NEU v6 — KI/chat */
+  --warn:       var(--accent-solar);
+  --danger:     var(--color-destructive);
+  --selection:  rgba(var(--rgb-green), .35);
+
+  --bg:              var(--bg-canvas);
+  --bg-card:         var(--bg-primary);
+  --bg-glass:        var(--bg-secondary);
+  --bg-field:        color-mix(in oklab, var(--bg-canvas) 92%, var(--accent-mystic) 8%);
+  --bg-field-focus:  color-mix(in oklab, var(--bg-canvas) 88%, var(--accent-mystic) 12%);
+
+  /* fill-scale */
+  --fill-bone-1: rgba(var(--rgb-bone), .04);
+  --fill-bone-2: rgba(var(--rgb-bone), .06);
+  --fill-bone-3: rgba(var(--rgb-bone), .085);
+  --fill-bone-4: rgba(var(--rgb-bone), .12);
+  --fill-bone-5: rgba(var(--rgb-bone), .20);
+
+  --fill-green-1: rgba(var(--rgb-green), .04);
+  --fill-green-2: rgba(var(--rgb-green), .07);
+  --fill-green-3: rgba(var(--rgb-green), .12);
+  --fill-green-4: rgba(var(--rgb-green), .20);
+
+  --fill-pink-1: rgba(var(--rgb-pink), .04);
+  --fill-pink-2: rgba(var(--rgb-pink), .07);
+  --fill-pink-3: rgba(var(--rgb-pink), .12);
+  --fill-pink-4: rgba(var(--rgb-pink), .20);
+
+  --fill-iris-1: rgba(var(--rgb-iris), .04);
+  --fill-iris-2: rgba(var(--rgb-iris), .07);
+  --fill-iris-3: rgba(var(--rgb-iris), .12);
+  --fill-iris-4: rgba(var(--rgb-iris), .20);
+
+  --fill-teal-1: rgba(var(--rgb-teal), .04);
+  --fill-teal-2: rgba(var(--rgb-teal), .07);
+  --fill-teal-3: rgba(var(--rgb-teal), .12);
+  --fill-teal-4: rgba(var(--rgb-teal), .20);
+
+  --fill-azure-1: rgba(var(--rgb-azure), .04);
+  --fill-azure-2: rgba(var(--rgb-azure), .07);
+  --fill-azure-3: rgba(var(--rgb-azure), .12);
+  --fill-azure-4: rgba(var(--rgb-azure), .20);
+
+  --fill-amber-1: rgba(var(--rgb-amber), .04);
+  --fill-amber-2: rgba(var(--rgb-amber), .07);
+  --fill-amber-3: rgba(var(--rgb-amber), .12);
+  --fill-amber-4: rgba(var(--rgb-amber), .20);
+
+  --fill-rose-1: rgba(var(--rgb-rose), .04);
+  --fill-rose-2: rgba(var(--rgb-rose), .07);
+  --fill-rose-3: rgba(var(--rgb-rose), .12);
+  --fill-rose-4: rgba(var(--rgb-rose), .20);
+
+  --fill-destructive-1: rgba(var(--rgb-destructive), .04);
+  --fill-destructive-2: rgba(var(--rgb-destructive), .07);
+  --fill-destructive-3: rgba(var(--rgb-destructive), .12);
+  --fill-destructive-4: rgba(var(--rgb-destructive), .20);
+
+  /* tone tokens — fill + edge */
+  --tone-fill-green: var(--fill-green-4);
+  --tone-fill-pink:  var(--fill-pink-4);
+  --tone-fill-iris:  var(--fill-iris-4);
+  --tone-fill-teal:  var(--fill-teal-4);
+  --tone-fill-azure: var(--fill-azure-4);
+  --tone-fill-amber: var(--fill-amber-4);
+  --tone-fill-rose:  var(--fill-rose-4);
+  --tone-fill-bone:  var(--fill-bone-3);
+
+  --tone-edge-green: rgba(var(--rgb-green), .30);
+  --tone-edge-pink:  rgba(var(--rgb-pink), .30);
+  --tone-edge-iris:  rgba(var(--rgb-iris), .30);
+  --tone-edge-teal:  rgba(var(--rgb-teal), .30);
+  --tone-edge-azure: rgba(var(--rgb-azure), .30);
+  --tone-edge-amber: rgba(var(--rgb-amber), .30);
+  --tone-edge-rose:  rgba(var(--rgb-rose), .30);
+  --tone-edge-bone:  rgba(var(--rgb-bone), .18);
+
+  /* row highlights */
+  --row-hover-bg:    rgba(var(--rgb-bone), .07);
+  --row-selected-bg: rgba(var(--rgb-green), .08);
+  --row-selected-fg: var(--color-green);
+
+  /* iridescent edge + underglow */
+  --edge-iridescent: linear-gradient(135deg, rgba(var(--rgb-green), .55) 0%, transparent 30%, transparent 62%, rgba(var(--rgb-iris), .65) 100%); /* @kind color */
+  --underglow-iris:  radial-gradient(60% 100% at 50% 100%, rgba(var(--rgb-iris), .35) 0%, transparent 70%); /* @kind color */
+}
+
+/* ── 4 · SEMANTIC — LIGHT MODE ────────────────────────────────
+ * STRIKT opt-in: NUR über die Klasse .theme-light auf <html>,
+ * <body> oder einem Container. Bewusst KEIN [data-theme]-Attribut-
+ * Selector — Host-Apps/OS injizieren data-theme="light" und würden
+ * den Brand-Default (dark) ungewollt kippen. Default ist dark.
+ * ─────────────────────────────────────────────────────────── */
+.theme-light {
+  --bg-canvas:    var(--moon-50);
+  --bg-primary:   var(--moon-100);
+  --bg-secondary: var(--moon-300);
+  --bg-surface:   var(--aura-50);
+
+  --surface-card:     linear-gradient(180deg, var(--moon-100), var(--moon-50));
+  --surface-card-top: var(--moon-100);
+  --surface-card-bot: var(--moon-50);
+  --surface-hero:     var(--moon-100);
+  --card-hairline:    rgba(17,16,25,0.08);
+
+  --text-primary:   var(--void-950);   /* #111019 (Wert unverändert) */
+  --text-secondary: var(--void-900);   /* #1A1829 (Wert unverändert) */
+  --text-muted:     var(--void-600);   /* #454558 (Wert unverändert) */
+
+  --accent-aura:      var(--aura-600);
+  --accent-orchid:    var(--orchid-600);
+  --accent-fuchsia:   var(--fuchsia-600);
+  --accent-solar:     var(--solar-600);
+  --accent-mystic:    var(--mystic-600);
+  --accent-iris:      var(--iris-600);
+  --accent-azure:     var(--azure-600);
+  --accent-celestial: var(--celestial-600);
+
+  /* legacy layer follows */
+  --color-bone:  var(--text-primary);
+  --rgb-bone:    17, 16, 25;      /* @kind color */
+  --rgb-mist:    17, 16, 25;      /* @kind color */ /* muted-Basis kippt auf dunkel */
+  --rgb-void:    255, 255, 255;   /* @kind color */
+  --fg-mute:     var(--void-600);   /* text/muted on light · #454558 */
+  --fg-ritual:   rgba(17, 16, 25, .5);   /* rituelle Zeile kippt auf dunkel */
+  --glow-lit:    none; /* @kind other */
+  --color-void:    var(--bg-canvas);
+  --color-ink:     var(--bg-primary);
+  --color-surface: var(--bg-secondary);
+  --color-border:  var(--moon-400);
+
+  --rgb-green:       0, 180, 152;    /* @kind color */
+  --rgb-pink:        168, 64, 216;   /* @kind color */
+  --rgb-iris:        110, 82, 216;   /* @kind color */
+  --rgb-teal:        59, 96, 216;    /* @kind color */
+  --rgb-blue:        44, 95, 216;    /* @kind color */ /* v6: azure-600 */
+  --rgb-azure:       44, 95, 216;    /* @kind color */
+  --rgb-amber:       216, 104, 64;   /* @kind color */
+  --rgb-rose:        216, 64, 160;   /* @kind color */
+  --rgb-destructive: 184, 32, 136;   /* @kind color */
+}

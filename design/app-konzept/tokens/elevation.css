@@ -1,0 +1,62 @@
+/* ============================================================
+ * loum · ELEVATION, GLOW, BLUR & MOTION TOKENS
+ * Single value per role. Components reference tokens, never inline.
+ * SSOT: packages/tokens/src/globals.css v3.1.3
+ * ============================================================ */
+
+:root {
+  /* ── shadows ──────────────────────────────────────────────── */
+  --shadow-card:  0 4px 24px rgba(0, 0, 0, .40);
+  --shadow-lift:  0 30px 60px -30px rgba(0, 0, 0, .65);
+  --shadow-focus: 0 0 0 3px rgba(var(--rgb-green), .22);
+
+  /* floating-surface ramp (Dialog · Sheet · Popover · Tooltip).
+   * each ends with a 1px hairline ring for edge-definition on void. */
+  --shadow-modal:   0 2rem 5rem rgba(0, 0, 0, .65), 0 0 0 1px var(--hairline);
+  --shadow-sheet:   0 1.5rem 4rem rgba(0, 0, 0, .55), 0 0 0 1px var(--hairline);
+  --shadow-popover: 0 1rem 2.5rem rgba(0, 0, 0, .45), 0 0 0 1px var(--hairline);
+  --shadow-tooltip: 0 .5rem 1.5rem rgba(0, 0, 0, .50);
+
+  /* ── glows (additive light on void) ───────────────────────── */
+  --glow-green:       0 0 1.25rem rgba(var(--rgb-green), .35);
+  --glow-pink:        0 0 1.25rem rgba(var(--rgb-pink),  .35);
+  --glow-iris:        0 0 1.25rem rgba(var(--rgb-iris),  .35);
+  --glow-destructive: 0 0 1.25rem rgba(var(--rgb-destructive), .45);
+
+  --ring-cta: 0 0 0 1px rgba(var(--rgb-green), .55),
+              0 0 28px rgba(var(--rgb-green), .20);
+
+  /* ── blur — three tiers (full filter-function, never double-wrap) ──
+   *   --blur-ui     small UI (alerts, popovers, badges, tooltips)
+   *   --blur-glass  large card surfaces (canonical glassmorphism)
+   *   --blur-modal  modal backdrops + veils
+   * Use `backdrop-filter: var(--blur-glass)` — NOT `blur(var(--blur-glass))`.
+   * ───────────────────────────────────────────────────────── */
+  --blur-ui:    blur(16px) saturate(140%); /* @kind other */
+  --blur-glass: blur(28px) saturate(180%); /* @kind other */
+  --blur-modal: blur(8px); /* @kind other */
+
+  /* ── glass-surface chemistry (referenced by .glass-surface) ── */
+  --glass-inset-highlight: rgba(var(--rgb-bone), 0.10);   /* top edge gloss */
+  --glass-depth-shadow:    0 0 0 0 rgba(0,0,0,0);         /* v6: loum cards carry NO outer drop shadow (Figma reading-rest) — transparent no-op keeps comma-lists valid */
+  --glass-refraction:      rgba(var(--rgb-bone), 0.45);   /* refraction band */
+
+  /* ── motion ───────────────────────────────────────────────── */
+  --e-out:    cubic-bezier(.22, 1, .36, 1);     /* @kind other */
+  --e-spring: cubic-bezier(.34, 1.56, .64, 1);  /* @kind other */
+  --ease-out:    var(--e-out);
+  --ease-spring: var(--e-spring);
+
+  --d-quick:   .18s;   /* @kind other */
+  --d-fast:    .16s;   /* @kind other */
+  --d-base:    .25s;   /* @kind other */
+  --d-slow:    .45s;   /* @kind other */
+  --d-glacial: .7s;    /* @kind other */
+
+  /* playbook-naming duration aliases */
+  --t-micro:  120ms; /* @kind other */
+  --t-fast:   200ms; /* @kind other */
+  --t-base:   300ms; /* @kind other */
+  --t-slow:   450ms; /* @kind other */
+  --t-reveal: 700ms; /* @kind other */
+}

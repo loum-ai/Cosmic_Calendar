@@ -6,9 +6,12 @@ import { useReading } from "@/lib/genReadings";
 import { useApp } from "@/store/useApp";
 import { CHART, SN, SIGNWHAT, SIGNMEAN, signName } from "@/lib/data";
 import { computeTransits, skySummary, transitingBodies, SIGN_GLYPH, type TransitHit } from "@/lib/transits";
+import { PLANET_PHOTO, PLANET_GLOW } from "@/lib/planetPhotos";
 import { EASE } from "@/lib/tokens";
 
 const IMPACT_COLOR: Record<string, string> = { "+": "#20F0D0", "-": "#ff8fb0", "~": "#c9b6ff" };
+/** dieselben drei Töne als rgb-Tripel — für Inset-Hairlines und Innen-Glows */
+const IMPACT_RGB: Record<string, string> = { "+": "32,240,208", "-": "255,143,176", "~": "201,182,255" };
 const IMPACT_LABEL: Record<string, string> = { "+": "fördernd", "-": "fordernd", "~": "gemischt" };
 
 /** EIN Auftrag pro Transit — Detailbühne und Hero-Karte teilen ihn sich, damit
@@ -20,9 +23,49 @@ function transitReading(tr: TransitHit) {
   };
 }
 
+/** loum-Kartenchemie: SOLIDE Ink-Fläche, kein Blur, kein äußerer Schatten.
+ *  Tiefe entsteht von INNEN durch einen radialen Glow; die einzige Kante ist
+ *  die 1px-Inset-Hairline (shadow-glass / hover:shadow-lift). */
+const cardFill = (rgb: string, a = 0.1) =>
+  `radial-gradient(122% 96% at 84% -16%, rgba(${rgb},${a}) 0%, transparent 58%), linear-gradient(180deg,#16161F 0%,#12121D 100%)`;
+const CARD_FILL = cardFill("120,150,255");
+
+/** Textwand auflösen (Regel 5): der erste Satz wird zur Lede, der Rest fällt in
+ *  ruhige Absätze zu je zwei Sätzen. Rein visuell — der Text bleibt unberührt. */
+function paragraphs(text: string, group = 2): string[] {
+  const t = (text ?? "").trim();
+  if (!t) return [];
+  const s = (t.match(/[^.!?…]+[.!?…]*/g) ?? [t]).map((x) => x.trim()).filter(Boolean);
+  if (s.length <= 1) return [t];
+  const out = [s[0]];
+  for (let i = 1; i < s.length; i += group) out.push(s.slice(i, i + group).join(" "));
+  return out;
+}
+
+/** Deutungstext als Lede + ruhige Folgeabsätze. */
+function Prose({ text, lede = 17, rest = 15 }: { text: string; lede?: number; rest?: number }) {
+  const parts = paragraphs(text);
+  return (
+    <div className="space-y-3.5">
+      {parts.map((p, i) => (
+        <p
+          key={i}
+          className={i === 0 ? "font-body leading-[1.6] text-txt" : "font-body leading-[1.7] text-txt-2"}
+          style={{ fontSize: i === 0 ? lede : rest }}
+        >
+          {p}
+        </p>
+      ))}
+    </div>
+  );
+}
+
 /** One transit, cinematic & full-bleed; swipe left/right to move between them. */
 function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => void; onNext: () => void }) {
   const c = IMPACT_COLOR[tr.impact];
+  const rgb = IMPACT_RGB[tr.impact];
+  const photo = PLANET_PHOTO[tr.tKey];
+  const pGlow = PLANET_GLOW[tr.tKey] ?? rgb;
   const { viewKey, task } = transitReading(tr);
   const { text, loading } = useReading(viewKey, task);
   return (
@@ -38,22 +81,49 @@ function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => vo
       transition={{ duration: 0.32, ease: EASE.smooth }}
       className="absolute inset-0 flex cursor-grab flex-col overflow-y-auto px-7 pb-32 pt-[calc(env(safe-area-inset-top,0px)+4.75rem)] text-left active:cursor-grabbing lg:px-12"
     >
-      <span className="pointer-events-none absolute -right-10 top-[14%] font-glyph leading-none opacity-[0.06]" style={{ color: c, fontSize: "min(52vw, 300px)" }}>{tr.tGlyph}</span>
+      {/* laufender Planet als angeschnittenes Foto — der Himmel selbst */}
+      <span aria-hidden className="pointer-events-none absolute -right-[16%] top-[4%] aspect-square w-[74vw] max-w-[400px]">
+        <span
+          className="absolute inset-0 rounded-full"
+          style={{ background: `radial-gradient(circle, rgba(${pGlow},.24) 0%, rgba(${rgb},.07) 46%, transparent 70%)`, mixBlendMode: "screen" }}
+        />
+        {photo ? (
+          <img
+            src={photo}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ mixBlendMode: "screen", opacity: 0.42, transform: "scale(1.08)" }}
+          />
+        ) : (
+          <span className="vela-glyph absolute inset-0 flex items-center justify-center leading-none" style={{ color: c, opacity: 0.07, fontSize: "min(46vw, 260px)" }}>
+            {tr.tGlyph}
+          </span>
+        )}
+      </span>
+      {/* Scrim — der Text bleibt jederzeit lesbar */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "linear-gradient(180deg, rgba(17,16,25,.18) 0%, rgba(17,16,25,.62) 46%, rgba(17,16,25,.94) 100%)" }}
+      />
+
       <div className="relative w-full max-w-[640px]">
-        <div className="font-mono text-[11px] tracking-[0.12em]" style={{ color: c }}>TRANSIT · {IMPACT_LABEL[tr.impact].toUpperCase()} · {tr.orb.toFixed(1)}° ORBIS</div>
-        <h2 className="mt-4 font-cinzel font-semibold leading-[1.06] text-white" style={{ fontSize: "clamp(30px,8vw,52px)" }}>{tr.title}</h2>
+        <div className="font-body text-[10.5px] font-medium uppercase tracking-[0.18em]" style={{ color: c }}>
+          Transit · {IMPACT_LABEL[tr.impact]} · {tr.orb.toFixed(1)}° Orbis
+        </div>
+        <h2 className="mt-4 font-cinzel font-normal uppercase leading-[1.08] tracking-[0.01em] text-txt" style={{ fontSize: "clamp(28px,7.4vw,48px)" }}>{tr.title}</h2>
         <div className="mt-4 flex flex-wrap gap-2">
-          <span className="rounded-pill border border-line bg-[rgba(255,255,255,0.05)] px-3 py-1 font-body text-[11px] text-txt-2">laufend: {tr.tName}{tr.tRetro ? " ℞" : ""}</span>
-          <span className="rounded-pill border border-line bg-[rgba(255,255,255,0.05)] px-3 py-1 font-body text-[11px] text-txt-2">dein {tr.nName}</span>
+          <span className="rounded-pill border border-line bg-surface px-3 py-1 font-body text-[11px] text-txt-2">laufend: {tr.tName}{tr.tRetro ? " ℞" : ""}</span>
+          <span className="rounded-pill border border-line bg-surface px-3 py-1 font-body text-[11px] text-txt-2">dein {tr.nName}</span>
         </div>
         <div className="mt-7 max-w-[58ch]">
-          <div className="mb-2 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-mint"><Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich</div>
+          <div className="mb-3 flex items-center gap-1.5 font-body text-[10px] font-medium uppercase tracking-[0.18em] text-mint"><Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich</div>
           {text ? (
-            <p className="font-body text-[16px] leading-relaxed text-txt">{text}</p>
+            <Prose text={text} />
           ) : loading ? (
             <div className="flex items-center gap-2 text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /><span className="font-body text-[13px]">Vela liest den Transit …</span></div>
           ) : (
-            <p className="font-body text-[15px] leading-relaxed text-txt-2">{tr.txt}</p>
+            <Prose text={tr.txt} lede={16} rest={14.5} />
           )}
         </div>
       </div>
@@ -68,13 +138,13 @@ function TimeScrubber({ value, onChange, date }: { value: number; onChange: (v: 
     <div className="flex w-full flex-col gap-2">
       <div className="flex items-baseline justify-between">
         <span className="v-eyebrow">Zeit-Regler</span>
-        <span className="font-body text-[12.5px] font-medium" style={{ color: value === 0 ? "#F8F7F2" : "#97B5FF" }}>
+        <span className={`font-body text-[12.5px] font-medium ${value === 0 ? "text-txt" : "text-lilac"}`}>
           {label}
-          {value !== 0 && <span className="font-normal text-white/40"> · {value > 0 ? "+" : ""}{value} Tage</span>}
+          {value !== 0 && <span className="font-normal text-txt-3"> · {value > 0 ? "+" : ""}{value} Tage</span>}
         </span>
       </div>
       <input className="vela-scrub" type="range" min={-7} max={14} step={1} value={value} onChange={(e) => onChange(+e.target.value)} aria-label="Durch die Tage scrubben" />
-      <div className="flex justify-between font-body text-[9.5px] uppercase tracking-[1px] text-white/[0.35]"><span>−7</span><span>Heute</span><span>+14</span></div>
+      <div className="flex justify-between font-body text-[9.5px] uppercase tracking-[0.18em] text-txt-3"><span>−7</span><span>Heute</span><span>+14</span></div>
     </div>
   );
 }
@@ -94,16 +164,16 @@ function TransitWheel({ date, size = 260 }: { date: Date; size?: number }) {
   return (
     <div className="relative shrink-0" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="absolute inset-0" aria-label="Transit-Rad">
-        <circle cx={c} cy={c} r={rOut} fill="rgba(248,247,242,.015)" stroke="rgba(255,255,255,.13)" strokeWidth="1" />
-        <circle cx={c} cy={c} r={rN + 14} fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="1" />
+        <circle cx={c} cy={c} r={rOut} fill="rgba(248,247,242,.015)" stroke="var(--card-hairline)" strokeWidth="1" />
+        <circle cx={c} cy={c} r={rN + 14} fill="none" stroke="var(--hairline-soft)" strokeWidth="1" />
         {Array.from({ length: 12 }, (_, k) => {
           const p1 = pos(k * 30, rOut);
           const p2 = pos(k * 30, rOut - 6);
-          return <line key={k} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="rgba(255,255,255,.22)" strokeWidth="1" />;
+          return <line key={k} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y} stroke="var(--fg-faint)" strokeWidth="1" />;
         })}
         {CHART.map((p) => {
           const q = pos(p.lon, rN);
-          return <circle key={p.key} cx={q.x} cy={q.y} r="2.2" fill="rgba(248,247,242,.35)" />;
+          return <circle key={p.key} cx={q.x} cy={q.y} r="2.2" fill="var(--fg-low)" />;
         })}
       </svg>
       {bodies.map((b) => {
@@ -113,7 +183,7 @@ function TransitWheel({ date, size = 260 }: { date: Date; size?: number }) {
             key={b.key}
             title={`${b.name} · ${signName(b.lon)}${b.retro ? " · rückläufig" : ""}`}
             className="vela-glyph absolute flex items-center justify-center rounded-full text-[11px]"
-            style={{ left: q.x - 12, top: q.y - 12, width: 24, height: 24, background: "rgba(120,150,255,.16)", boxShadow: "inset 0 0 0 1px rgba(151,181,255,.6), 0 0 10px rgba(120,150,255,.5)", color: "#EDE6FF", transition: "left .25s ease-out, top .25s ease-out" }}
+            style={{ left: q.x - 12, top: q.y - 12, width: 24, height: 24, background: "rgba(120,150,255,.16)", boxShadow: "inset 0 0 0 1px rgba(151,181,255,.6), 0 0 10px rgba(120,150,255,.5)", color: "var(--fg)", transition: "left .25s ease-out, top .25s ease-out" }}
           >
             {b.glyph}
           </span>
@@ -134,7 +204,7 @@ function TransitFull({ hits }: { hits: TransitHit[] }) {
 
   return (
     <motion.div key="tfull" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[95] overflow-hidden bg-stage">
-      <button onClick={() => setFull(null)} className="absolute right-5 top-[calc(env(safe-area-inset-top,0px)+1.1rem)] z-20 flex h-10 w-10 items-center justify-center rounded-full border border-line bg-[rgba(255,255,255,0.06)] text-txt-2 backdrop-blur active:scale-90">
+      <button onClick={() => setFull(null)} className="absolute right-5 top-[calc(env(safe-area-inset-top,0px)+1.1rem)] z-20 flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface-2 text-txt-2 backdrop-blur active:scale-90">
         <X className="h-5 w-5" />
       </button>
 
@@ -142,14 +212,14 @@ function TransitFull({ hits }: { hits: TransitHit[] }) {
         <TransitStage key={i} tr={tr} onPrev={() => go(-1)} onNext={() => go(1)} />
       </AnimatePresence>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+5.2rem)] z-10 text-center font-body text-[11px] text-txt-3">‹ wische für mehr ›</div>
+      <div className="pointer-events-none absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+5.2rem)] z-10 text-center font-body text-[10px] uppercase tracking-[0.18em] text-txt-3">‹ wische für mehr ›</div>
       <div className="absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+1.6rem)] z-20 flex items-center justify-center gap-4 px-6">
-        <button onClick={() => go(-1)} className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-[rgba(255,255,255,0.06)] text-txt-2 backdrop-blur active:scale-90">
+        <button onClick={() => go(-1)} className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-surface-2 text-txt-2 backdrop-blur active:scale-90">
           <ChevronLeft className="h-5 w-5" />
         </button>
         <div className="flex max-w-[55vw] flex-wrap justify-center gap-1.5">
           {hits.slice(0, 12).map((_, di) => (
-            <button key={di} onClick={() => setFull(di)} className="h-1.5 rounded-full transition-all" style={{ width: di === i ? 22 : 6, background: di === i ? "#7896FF" : "rgba(255,255,255,0.25)" }} />
+            <button key={di} onClick={() => setFull(di)} className={`h-1.5 rounded-full transition-all ${di === i ? "bg-violet" : "bg-ink/25"}`} style={{ width: di === i ? 22 : 6 }} />
           ))}
         </div>
         <button onClick={() => go(1)} className="flex h-11 w-11 items-center justify-center rounded-full bg-cta-gradient text-white active:scale-90">
@@ -165,15 +235,42 @@ function TransitFull({ hits }: { hits: TransitHit[] }) {
  *  nur noch da, solange die Deutung lädt oder wenn sie nicht kommt. */
 function StrongestCard({ tr, onOpen }: { tr: TransitHit; onOpen: () => void }) {
   const rgb = IMPACT_COLOR[tr.impact];
+  const toneRgb = IMPACT_RGB[tr.impact];
+  const photo = PLANET_PHOTO[tr.tKey];
+  const pGlow = PLANET_GLOW[tr.tKey] ?? toneRgb;
   const { viewKey, task } = transitReading(tr);
   const { text, loading } = useReading(viewKey, task);
   return (
     <button
       onClick={onOpen}
-      className="relative mt-9 block w-full overflow-hidden rounded-[18px] px-4 pb-[15px] pt-4 text-left"
-      style={{ background: "linear-gradient(180deg,#1B1926 0%,#141320 100%)", boxShadow: `inset 0 0 0 1px ${rgb}4d` }}
+      className="group relative mt-9 block w-full overflow-hidden rounded-[18px] px-4 pb-[15px] pt-4 text-left"
+      style={{ background: "linear-gradient(180deg,#201D2C 0%,#1B1926 52%,#17141F 100%)", boxShadow: `inset 0 0 0 1px ${rgb}4d` }}
     >
-      <span aria-hidden className="pointer-events-none absolute -right-10 -top-11 h-[170px] w-[170px] rounded-full" style={{ background: `radial-gradient(circle, ${rgb}29, transparent 68%)` }} />
+      {/* laufender Planet als echtes Foto — oben rechts angeschnitten */}
+      <span aria-hidden className="pointer-events-none absolute -right-10 -top-14 h-[196px] w-[196px]">
+        <span
+          className="absolute inset-0 rounded-full"
+          style={{ background: `radial-gradient(circle, rgba(${pGlow},.28) 0%, rgba(${toneRgb},.10) 46%, transparent 70%)`, mixBlendMode: "screen" }}
+        />
+        {photo ? (
+          <img
+            src={photo}
+            alt=""
+            className="absolute inset-0 h-full w-full scale-[1.02] object-cover transition-transform duration-700 group-hover:scale-[1.08]"
+            style={{ mixBlendMode: "screen", opacity: 0.62 }}
+          />
+        ) : (
+          <span className="vela-glyph absolute inset-0 flex items-center justify-center leading-none" style={{ fontSize: 120, color: `rgba(${toneRgb},.16)` }}>
+            {tr.tGlyph}
+          </span>
+        )}
+      </span>
+      {/* Scrim — Lesbarkeit über dem Foto */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "linear-gradient(180deg, rgba(17,16,25,.30) 0%, rgba(17,16,25,.76) 52%, rgba(17,16,25,.96) 100%)" }}
+      />
       <span className="relative flex items-center justify-between gap-3">
         <span className="v-eyebrow" style={{ color: rgb }}>Stärkster Einfluss</span>
         <span className="v-meta shrink-0" style={{ color: rgb }}>{IMPACT_LABEL[tr.impact]} · {tr.orb.toFixed(1)}°</span>
@@ -219,7 +316,7 @@ export function TransiteScreen() {
         <div className="w-full max-w-[420px]">
           <TimeScrubber value={offset} onChange={(v) => setOffset(() => v)} date={date} />
         </div>
-        <span className="text-center font-body text-[10.5px] uppercase tracking-[1.4px] text-white/[0.35]">Zieh am Regler — die Planeten wandern sichtbar</span>
+        <span className="text-center font-body text-[10px] uppercase tracking-[0.18em] text-txt-3">Zieh am Regler — die Planeten wandern sichtbar</span>
       </div>
 
       {strongest ? (
@@ -229,19 +326,24 @@ export function TransiteScreen() {
               fette Sans von vorher), kompakter Body. */}
           <StrongestCard tr={strongest} onOpen={() => setFull(0)} />
 
-          {/* transit list — plain rows */}
+          {/* transit list — solide Kacheln, einzige Kante = Inset-Hairline */}
           <section className="mt-12">
             <SectionHead label="Deine Transite" title="Was dich gerade bewegt" sub={`${hits.length} aktive Verbindungen · tippe für die ganze Geschichte`} />
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {hits.slice(0, 12).map((tr, i) => (
-                <button key={i} onClick={() => setFull(i)} className="vela-tile vela-tile-hover flex items-center gap-4 p-4 text-left">
+                <button
+                  key={i}
+                  onClick={() => setFull(i)}
+                  className="relative flex items-center gap-4 overflow-hidden rounded-card p-4 text-left shadow-glass transition-shadow hover:shadow-lift"
+                  style={{ background: CARD_FILL }}
+                >
                   <span className="vela-glyph text-2xl text-lilac">{tr.tGlyph}</span>
-                  <div className="min-w-0 flex-1">
-                    <div className="font-display text-sm font-semibold leading-snug text-txt">{tr.title}</div>
-                    <div className="mt-1 font-mono text-[10px]" style={{ color: IMPACT_COLOR[tr.impact] }}>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-body text-[14.5px] font-semibold leading-snug text-txt">{tr.title}</span>
+                    <span className="mt-1 block font-body text-[10px] uppercase tracking-[0.16em]" style={{ color: IMPACT_COLOR[tr.impact] }}>
                       {IMPACT_LABEL[tr.impact]} · {tr.orb.toFixed(1)}°{tr.tRetro ? " · rückläufig" : ""}
-                    </div>
-                  </div>
+                    </span>
+                  </span>
                   <ChevronRight className="h-4 w-4 shrink-0 text-txt-3" />
                 </button>
               ))}
@@ -249,41 +351,48 @@ export function TransiteScreen() {
           </section>
         </>
       ) : (
-        <p className="mt-9 font-body text-[14px] text-txt-2">An diesem Tag bilden die laufenden Planeten keine engen Aspekte zu deinem Geburtsbild — eine ruhige Phase.</p>
+        <div className="mt-9 rounded-card p-5 shadow-glass" style={{ background: CARD_FILL }}>
+          <p className="font-body text-[14px] leading-[1.62] text-txt">An diesem Tag bilden die laufenden Planeten keine engen Aspekte zu deinem Geburtsbild.</p>
+          <p className="mt-2 font-body text-[13px] leading-[1.65] text-txt-2">Eine ruhige Phase — nichts drängt von außen.</p>
+        </div>
       )}
 
       {/* cosmic weather — real sky summary */}
       <section className="mt-12">
         <SectionHead label="Am Himmel" title="Aktuelle Planetenlage" sub="Größere Bewegungen über allen" />
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="vela-tile vela-gradient-card flex items-start gap-3.5 p-4">
+          <div className="relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass" style={{ background: cardFill(PLANET_GLOW.moon, 0.12) }}>
             <span className="vela-glyph mt-0.5 text-xl text-lilac">{SIGN_GLYPH(sky.moonSign)}</span>
             <div className="min-w-0 flex-1">
-              <div className="font-display text-sm font-semibold text-txt">Mond in {sky.moonSign}</div>
-              <div className="mt-0.5 font-mono text-[10px] text-txt-3">Gefühlslage des Tages</div>
-              <p className="mt-1.5 font-body text-xs leading-relaxed text-txt-2">Der Mond läuft heute durch {sky.moonSign} — {SIGNWHAT[SN.indexOf(sky.moonSign)]} So fühlt sich der Tag kollektiv an.</p>
+              <div className="font-cinzel text-[14px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">Mond in {sky.moonSign}</div>
+              <div className="mt-1 font-body text-[9.5px] uppercase tracking-[0.18em] text-txt-3">Gefühlslage des Tages</div>
+              <p className="mt-2 font-body text-[12.5px] leading-[1.62] text-txt-2">Der Mond läuft heute durch {sky.moonSign} — {SIGNWHAT[SN.indexOf(sky.moonSign)]}</p>
+              <p className="mt-1.5 font-body text-[12px] leading-[1.6] text-txt-3">So fühlt sich der Tag kollektiv an.</p>
             </div>
           </div>
-          <div className="vela-tile vela-gradient-card flex items-start gap-3.5 p-4">
+          <div className="relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass" style={{ background: cardFill(PLANET_GLOW.sun, 0.12) }}>
             <span className="vela-glyph mt-0.5 text-xl text-lilac">{SIGN_GLYPH(sky.sunSign)}</span>
             <div className="min-w-0 flex-1">
-              <div className="font-display text-sm font-semibold text-txt">Sonne in {sky.sunSign}</div>
-              <div className="mt-0.5 font-mono text-[10px] text-txt-3">Jahreszeit-Thema</div>
-              <p className="mt-1.5 font-body text-xs leading-relaxed text-txt-2">Solange die Sonne durch {sky.sunSign} läuft, ist „{SIGNMEAN[SN.indexOf(sky.sunSign)].split(" · ")[1]}" das Grundthema dieser Wochen.</p>
+              <div className="font-cinzel text-[14px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">Sonne in {sky.sunSign}</div>
+              <div className="mt-1 font-body text-[9.5px] uppercase tracking-[0.18em] text-txt-3">Jahreszeit-Thema</div>
+              <p className="mt-2 font-body text-[12.5px] leading-[1.62] text-txt-2">Solange die Sonne durch {sky.sunSign} läuft, ist „{SIGNMEAN[SN.indexOf(sky.sunSign)].split(" · ")[1]}" das Grundthema dieser Wochen.</p>
             </div>
           </div>
-          <div className="vela-tile vela-gradient-card flex items-start gap-3.5 p-4 sm:col-span-2">
+          <div className="relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass sm:col-span-2" style={{ background: CARD_FILL }}>
             <span className="vela-glyph mt-0.5 text-xl text-lilac"><RotateCcw className="h-4 w-4" /></span>
             <div className="min-w-0 flex-1">
-              <div className="font-display text-sm font-semibold text-txt">
+              <div className="font-cinzel text-[14px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">
                 {sky.retro.length ? `Rückläufig: ${sky.retro.map((r) => r.name).join(", ")}` : "Keine rückläufigen Planeten"}
               </div>
-              <div className="mt-0.5 font-mono text-[10px] text-txt-3">Phasen zum Innehalten & Überarbeiten</div>
-              <p className="mt-1.5 font-body text-xs leading-relaxed text-txt-2">
-                {sky.retro.length
-                  ? "Diese Themen laufen gerade nach innen — gut zum Überdenken statt Vorpreschen."
-                  : "Alle Planeten laufen vorwärts — ein guter Moment für Dinge, die sonst gern verschoben werden: Verträge klären, Gespräche beginnen, Neues starten."}
-              </p>
+              <div className="mt-1 font-body text-[9.5px] uppercase tracking-[0.18em] text-txt-3">Phasen zum Innehalten & Überarbeiten</div>
+              {sky.retro.length ? (
+                <p className="mt-2 font-body text-[12.5px] leading-[1.62] text-txt-2">Diese Themen laufen gerade nach innen — gut zum Überdenken statt Vorpreschen.</p>
+              ) : (
+                <>
+                  <p className="mt-2 font-body text-[12.5px] leading-[1.62] text-txt-2">Alle Planeten laufen vorwärts.</p>
+                  <p className="mt-1.5 font-body text-[12px] leading-[1.6] text-txt-3">Ein guter Moment für Dinge, die sonst gern verschoben werden: Verträge klären, Gespräche beginnen, Neues starten.</p>
+                </>
+              )}
             </div>
           </div>
         </div>

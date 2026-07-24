@@ -1,0 +1,417 @@
+/* ============================================================
+ * loum · BASE + UTILITY CLASSES
+ * Ported from apps/web/src/styles/globals.css.
+ * Every text element carries a typography class. Italic only via
+ * .highlight / .emotion. All surfaces are glass, never opaque fills.
+ * ============================================================ */
+
+/* ── base ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body.loum {
+  margin: 0;
+  background: var(--color-void);
+  color: var(--fg);
+  font-family: var(--font-rational);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+::selection { background: var(--selection); color: var(--fg); }
+
+/* ── typography classes ───────────────────────────────────────── */
+.t-display, .t-h1, .t-h2, .t-h3, .t-h4, .t-h5,
+.pull-quote, .card-name, .t-lead { text-wrap: balance; }
+.t-body, .t-body-sm { text-wrap: pretty; }
+
+.t-display {
+  font-family: var(--f-display); font-style: normal; font-weight: 400;
+  font-size: var(--fs-display); line-height: var(--lh-display);
+  letter-spacing: var(--tracking-display); text-transform: uppercase;
+  color: var(--fg); margin: 0;
+  /* FLACH — die Basis-Display-Zeile trägt KEINEN Glow und KEINEN Verlauf.
+   * Der Halo sitzt ausschließlich auf dem „lit word“ (.highlight). */
+}
+/* .t-glow — der Halo (QUINTESSENCE): weißes Wort mit Aura. NUR auf dem
+ * „lit word“ (.highlight), card-names und dem Wordmark — NIE auf einer
+ * ganzen Headline. Ersetzt jeden alten Text-Verlauf. */
+.t-glow { text-shadow: var(--glow-lit); }
+.t-h1 {
+  font-family: var(--f-display); font-style: normal; font-weight: 400;
+  font-size: var(--fs-h1); line-height: var(--lh-h1);
+  letter-spacing: var(--tracking-h1); text-transform: uppercase;
+  color: var(--fg); margin: 0;
+}
+.t-h2 {
+  font-family: var(--f-display); font-style: normal; font-weight: 400;
+  font-size: var(--fs-h2); line-height: var(--lh-h2);
+  letter-spacing: var(--tracking-h2); text-transform: uppercase;
+  color: var(--fg); margin: 0;
+}
+.t-h3 {
+  font-family: var(--font-sans); font-style: normal; font-weight: 600;
+  font-size: var(--fs-h3); line-height: var(--lh-h3);
+  letter-spacing: var(--tracking-h3); color: var(--fg); margin: 0;
+}
+.t-h4 {
+  font-family: var(--font-sans); font-style: normal; font-weight: 500;
+  font-size: var(--fs-h4); line-height: var(--lh-h4);
+  letter-spacing: var(--tracking-h4); color: var(--fg); margin: 0;
+}
+.t-h5 {
+  font-family: var(--font-sans); font-style: normal; font-weight: 600;
+  font-size: var(--fs-h5); line-height: var(--lh-h5);
+  letter-spacing: var(--tracking-h5); color: var(--fg); margin: 0;
+}
+.t-lead {
+  font-family: var(--font-rational); font-weight: 400;
+  font-size: var(--fs-lede); line-height: 1.65;
+  letter-spacing: var(--tracking-body); color: var(--fg-soft); margin: 0;
+}
+.t-body {
+  font-family: var(--font-rational); font-weight: 400;
+  font-size: var(--fs-body); line-height: 1.6; color: var(--fg-soft); margin: 0;
+}
+.t-body-sm {
+  font-family: var(--font-rational); font-weight: 400;
+  font-size: var(--fs-body-sm); line-height: 1.55; color: var(--fg-soft); margin: 0;
+}
+.t-meta, .eyebrow, .timestamp, .meta, .annotation, .mono {
+  font-family: var(--font-ritual); font-weight: 500;
+  font-size: var(--fs-meta); line-height: 1.4;
+  text-transform: uppercase; letter-spacing: var(--tracking-meta);
+  color: var(--fg-mute); margin: 0;
+}
+.card-name {
+  font-family: var(--f-display-deco); font-weight: 400; font-style: normal;
+  text-transform: uppercase; letter-spacing: var(--tracking-card-name);
+  color: var(--fg);
+  text-shadow: var(--glow-lit);
+}
+.pull-quote {
+  /* rituelle Aussage (Reading Essence): Cinzel-Regular-Zeile, FLACH &
+   * gedämpft; nur das .highlight-Wort leuchtet. Kein Verlauf, kein Glow.
+   * Farbe/Tracking: Figma node 87:232 (neutrales Grau 50%, −3%). */
+  font-family: var(--font-emotional); font-weight: 400; font-style: normal;
+  letter-spacing: var(--tracking-display); color: var(--fg-ritual);
+}
+
+/* color utilities — token-only */
+.text      { color: var(--fg); }
+.text-soft { color: var(--fg-soft); }
+.text-mute { color: var(--fg-mute); }
+.c-green { color: var(--color-green); }
+.c-pink  { color: var(--color-pink); }
+.c-iris  { color: var(--color-iris); }
+.c-teal  { color: var(--color-teal); }
+.c-amber { color: var(--color-amber); }
+.c-rose  { color: var(--color-rose); }
+.c-azure { color: var(--color-blue); }
+
+/* ── highlight discipline — THE critical rule ─────────────────────
+ * Emphasis = das „lit word“: Cinzel DECORATIVE + Halo-Glow, helles bone.
+ * Es ist das EINZIGE Element, das Glow trägt — die Basis-Headline
+ * (Cinzel Regular) bleibt FLACH & gedämpft. NIE ein Text-Verlauf.
+ *   .highlight       → lit word (Cinzel Decorative + Glow, bone)
+ *   .highlight.gr    → status-getönt (green), Glow bleibt
+ *   .highlight.grad  → STILLGELEGT — rendert als lit word
+ * ───────────────────────────────────────────────────────────── */
+.highlight {
+  /* das „lit word“: Cinzel Decorative + weißer Halo, UPPERCASE, helles bone im
+   * gedämpften Lauftext. DAS EINZIGE Wort mit Glow. Kein Verlauf.
+   * Werte: Figma node 87:232 („78“) — Decorative 400, −9%, VERSALIEN, weißer Bloom. */
+  font-family: var(--f-display-deco); font-style: normal; font-weight: 400;
+  letter-spacing: var(--tracking-display-deco); text-transform: uppercase;
+  margin: 0 .08em; /* Glow-Bloom soll benachbarte Wörter nicht berühren */
+  color: var(--fg); -webkit-text-fill-color: var(--fg);
+  text-shadow: var(--glow-lit);
+}
+.highlight.gr { color: var(--color-green); -webkit-text-fill-color: var(--color-green); }
+.highlight.ir { color: var(--color-iris); -webkit-text-fill-color: var(--color-iris); }
+/* DEPRECATED — die kursive Gradient-Variante ist raus aus der Sprache:
+ * Hero-Momente tragen GLOW (.t-glow / .t-display), die EINE Gradient-
+ * Headline ist non-italic via .t-gradient. .grad bleibt nur für altes Markup. */
+.highlight.grad {
+  background: none;
+  -webkit-background-clip: initial; background-clip: initial;
+  color: var(--fg); -webkit-text-fill-color: var(--fg);
+  filter: none;
+}
+/* .t-gradient — STILLGELEGT: Text trägt nie einen Verlauf (user 2026-07-05).
+ * Hero-Momente = Glow (.t-glow, soft default auf .t-display). Aurora
+ * existiert NUR als FLÄCHE (Liquid-Aurora-Cards, Gradient-Bars), nie im Text.
+ * Neutralisiert wie .highlight.grad — rendert als solides bone mit Display-Glow.
+ * Klasse bleibt nur für Alt-Markup (Hero/LandingHero). */
+.t-gradient {
+  background: none;
+  -webkit-background-clip: initial; background-clip: initial;
+  color: var(--fg); -webkit-text-fill-color: var(--fg);
+}
+/* .emotion — lit emphasis (QUINTESSENCE: kein Italic im System) */
+.emotion { font-style: normal; font-weight: 600; color: var(--fg); }
+
+/* ── glass surface — canonical chemistry ──────────────────────────
+ * All surfaces are transparent glass, never opaque fills. The cosmos
+ * MUST be visible through them. Differential borders: top bright,
+ * sides dimmer, bottom invisible.
+ * ───────────────────────────────────────────────────────────── */
+.glass-surface {
+  /* loum card — SOLID dark fill, EINE 1px-Inset-Hairline, KEIN äußerer Schatten,
+   * KEIN backdrop-blur. Tiefe/Farbe kommen von innen (Glows). Figma reading-rest. */
+  position: relative;
+  background: var(--surface-card);
+  border: 0;
+  border-radius: var(--r-lg);
+  box-shadow: inset 0 0 0 1px var(--card-hairline);
+  transition: transform var(--t-base) var(--ease-out),
+              box-shadow var(--t-base) var(--ease-out);
+}
+.glass-surface[data-interactive="true"]:hover,
+.glass-surface:has(> button:hover, > a:hover) {
+  transform: translateY(-2px);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+}
+/* refraction band retired — die Karte trägt nur die 1px-Inset-Hairline (Figma). */
+.glass-surface::before { content: none; }
+.glass-overlay {
+  /* floating UI (Menüs/Popover): dunkles Rauchglas wie der Figma-Glow-Button
+   * (rgba(0,0,0,.5)+blur), NICHT weiß-alpha. Kein harter Drop-Shadow. */
+  background: rgba(10,10,16,0.66);
+  backdrop-filter: var(--blur-ui); -webkit-backdrop-filter: var(--blur-ui);
+  border: 1px solid var(--hairline);
+  box-shadow: inset 0 0 0 1px var(--card-hairline);
+}
+
+/* ── card surface tiers + states — loum "Cards auswahl" (Figma) ───
+ * The Card primitive's surface variants and interactive states, keyed
+ * off data-attrs set by <Card variant interactive>. STATES (the board's
+ * Default / Hover / Focus rows): hover brightens the top hairline + lifts;
+ * focus = green ring; active = press. All on tokens, dark-only, glass-first.
+ * ───────────────────────────────────────────────────────────── */
+
+/* interactive affordances */
+.glass-surface[data-interactive="true"] { cursor: pointer; outline: none; }
+/* hover — brighten the top hairline (Figma .09 → .22 step); the transform +
+   shadow lift is already defined on .glass-surface:hover above. */
+.glass-surface[data-interactive="true"]:hover { border-top-color: rgba(var(--rgb-bone), .22); }
+/* keyboard focus — loum's green ring */
+.glass-surface[data-interactive="true"]:focus-visible {
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), var(--shadow-focus);
+}
+/* press */
+.glass-surface[data-interactive="true"]:active { transform: translateY(-1px) scale(.992); }
+
+/* PREMIUM — the elevated / hero surface. Deeper SOLID ink, still flat: the only
+   edge is the inset hairline plus a faint top gloss. NO blurred gradient wash —
+   depth is value + hairline, never a colored glow fill (Figma reading-rest). */
+.glass-surface[data-variant="premium"] {
+  background: linear-gradient(180deg, #201D2C 0%, var(--surface-hero) 60%, #17141F 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.10),
+    inset 0 1px 0 0 rgba(255,255,255,0.06);
+}
+.glass-surface[data-variant="premium"][data-interactive="true"]:hover {
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.14),
+    inset 0 1px 0 0 rgba(255,255,255,0.09);
+}
+
+/* SOLID — opaque ink surface for dense content (no backdrop blur). The board's
+   near-black "Card Headline" card (v6: ≈#151420). */
+.glass-surface[data-variant="solid"] {
+  background: linear-gradient(180deg, var(--void-900), var(--void-950));
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+}
+
+/* AURORA — a SOLID dark card whose signature is a CRISP iridescent edge stroke
+   (mint→violet), NOT a blurry wash. Only a faint, even aura sits low behind the
+   content for depth. Matches the subtle rim-glow of the Figma face-down card. */
+.glass-surface[data-variant="aurora"] { isolation: isolate; border-top-color: rgba(var(--rgb-bone), .14); }
+.glass-surface[data-variant="aurora"]::after {            /* iridescent gradient stroke — the hero detail */
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  padding: 1px; pointer-events: none; z-index: 3;
+  background: var(--edge-iridescent);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: .85; transition: opacity var(--t-base) var(--ease-out);
+}
+.glass-surface[data-variant="aurora"]:hover::after { opacity: 1; }
+.loum-card__aurora {                                      /* faint even aura, behind content */
+  position: absolute; inset: 0; border-radius: inherit; overflow: hidden;
+  pointer-events: none; z-index: 0;
+}
+.loum-card__aurora::before {
+  content: ""; position: absolute; right: -6%; bottom: -14%; width: 60%; height: 58%;
+  background: radial-gradient(closest-side,
+    rgba(var(--rgb-iris), .24), rgba(var(--rgb-green), .07) 58%, transparent 78%);
+  filter: blur(30px); mix-blend-mode: plus-lighter;
+  opacity: .5; transition: opacity var(--t-base) var(--ease-out);
+}
+.glass-surface[data-variant="aurora"]:hover .loum-card__aurora::before { opacity: .72; }
+.loum-card__body { position: relative; z-index: 1; }
+
+/* ── iridescent edge — v4 moodboard chemistry ─────────────────
+ * Dichroitische Kante: mint unten-links → violett oben-rechts.
+ * Auf .glass-surface oder Tarot-Karten legen. Nutzt ::after —
+ * kollidiert nicht mit dem ::before-Refraction-Streifen. */
+.edge-iridescent { position: relative; }
+.edge-iridescent::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  padding: 1px; pointer-events: none; z-index: 2;
+  background: var(--edge-iridescent);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+}
+/* violetter Volumen-Unterglow — unter schwebende Stapel/Karten legen */
+.underglow { position: relative; }
+.underglow::before {
+  content: ""; position: absolute; left: 8%; right: 8%; bottom: -10%;
+  height: 40%; pointer-events: none; z-index: -1;
+  background: var(--underglow-iris); filter: blur(24px);
+}
+
+/* ── glow button — THE brand CTA (Figma „Glow Button" 1:478 · Session-Result) ─
+ * Dunkles Rauchglas-Pill + weiße 1px-Inset-Kante, das VON UNTEN violett glüht
+ * (iris/aura) — genau wie der runde CTA im Session-Result-Screen. Der Glow ist
+ * EIN Farbton (Violett), weich und gleichmäßig aus der Unterkante; KEIN
+ * konischer Regenbogen-Halo (der las sich „buggy"). NIE grüne/pinke Füllung.
+ * ───────────────────────────────────────────────────────────── */
+/* ── MOON BUTTON — seit 2026-07-13 der MAIN CTA (user decision „weißer button,
+ * nicht rounded / main button global anpassen", Figma event-card + blueprint
+ * CTA): WEISSE Fläche, radius 19, dunkler Text, weicher iris-Schatten.
+ * Der Glow-Button bleibt als sekundäre/Halo-Behandlung erhalten. ── */
+.btn-moon {
+  border: 0; color: #111019;
+  background: #FFFFFF;
+  border-radius: 19px;
+  box-shadow: 0 8px 20px 0 rgba(167,139,250,0.25);
+  transition: filter var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out), transform var(--t-fast) var(--ease-out);
+}
+.btn-moon:hover { filter: brightness(0.96); box-shadow: 0 10px 24px 0 rgba(167,139,250,0.35); }
+.btn-moon:active { transform: translateY(1px); }
+
+.btn-glow, .btn-prisma {
+  position: relative; isolation: isolate; border: 0; color: #fff;
+  background:
+    radial-gradient(140% 165% at 50% 150%, rgba(139,92,246,0.70) 0%, rgba(118,68,232,0.26) 38%, rgba(0,0,0,0) 66%),
+    linear-gradient(180deg, #1B1826 0%, #131020 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.10),
+    inset 0 -14px 26px -14px rgba(163,124,255,0.72),
+    0 12px 30px -14px rgba(104,58,220,0.55);
+  transition: box-shadow var(--t-fast) var(--ease-out),
+              background var(--t-fast) var(--ease-out),
+              transform var(--t-fast) var(--ease-out);
+}
+.btn-glow:hover, .btn-prisma:hover {
+  background:
+    radial-gradient(140% 165% at 50% 148%, rgba(155,110,255,0.80) 0%, rgba(126,76,240,0.32) 40%, rgba(0,0,0,0) 68%),
+    linear-gradient(180deg, #1E1A2C 0%, #151125 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.14),
+    inset 0 -16px 30px -14px rgba(178,140,255,0.88),
+    0 16px 38px -14px rgba(116,66,232,0.70);
+}
+.btn-glow:active, .btn-prisma:active { transform: translateY(1px); }
+/* the conic rainbow halo is retired — depth comes from the violet underglow above */
+.btn-glow::before, .btn-prisma::before { content: none; }
+
+/* ── orb blend-modes (Halo freistellungs-regel) ───────────────────
+ * .orb on dark ctx (#090909–#1a1a1a) — standard.
+ * .orb--on-black for pure #000 only. .orb--on-color for aurora/light.
+ * ───────────────────────────────────────────────────────────── */
+.orb            { mix-blend-mode: lighten; }
+.orb--on-black  { mix-blend-mode: hard-light; }
+.orb--on-color  { mix-blend-mode: screen; filter: brightness(1.08) saturate(1.15) contrast(1.08); }
+
+/* ── starfield — every loum surface carries the 3-layer parallax sky.
+ * A CSS recreation: layered radial-gradient "stars" on void. Apply
+ * .loum-starfield to a full-bleed fixed/absolute layer behind content.
+ * ───────────────────────────────────────────────────────────── */
+.loum-starfield {
+  position: absolute; inset: 0; overflow: hidden; pointer-events: none;
+  background-color: var(--color-void);
+  /* layer 3 — static micro-dust, finest + densest */
+  background-image:
+    radial-gradient(0.75px 0.75px at 12% 22%, rgba(var(--rgb-bone), .28), transparent),
+    radial-gradient(0.75px 0.75px at 38% 64%, rgba(var(--rgb-bone), .22), transparent),
+    radial-gradient(0.75px 0.75px at 66% 12%, rgba(var(--rgb-bone), .25), transparent),
+    radial-gradient(0.75px 0.75px at 85% 78%, rgba(var(--rgb-bone), .2), transparent),
+    radial-gradient(0.75px 0.75px at 52% 42%, rgba(var(--rgb-bone), .18), transparent);
+  background-size: 140px 140px;
+}
+.loum-starfield::before, .loum-starfield::after {
+  content: ""; position: absolute; inset: -50%;
+  background-repeat: repeat;
+}
+.loum-starfield::before {
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 30%, rgba(var(--rgb-bone), .7), transparent),
+    radial-gradient(1px 1px at 60% 70%, rgba(var(--rgb-bone), .5), transparent),
+    radial-gradient(1px 1px at 80% 20%, rgba(var(--rgb-teal), .6), transparent),
+    radial-gradient(1.5px 1.5px at 40% 80%, rgba(var(--rgb-bone), .55), transparent),
+    radial-gradient(1px 1px at 90% 55%, rgba(var(--rgb-iris), .5), transparent);
+  background-size: 320px 320px;
+  animation: loum-drift 120s linear infinite;
+}
+.loum-starfield::after {
+  background-image:
+    radial-gradient(1px 1px at 15% 60%, rgba(var(--rgb-bone), .4), transparent),
+    radial-gradient(1px 1px at 70% 40%, rgba(var(--rgb-pink), .35), transparent),
+    radial-gradient(1px 1px at 50% 15%, rgba(var(--rgb-bone), .35), transparent);
+  background-size: 200px 200px;
+  animation: loum-drift 200s linear infinite reverse;
+}
+@keyframes loum-drift { to { transform: translate(60px, 40px); } }
+
+/* orb breath — Energy Sync ritual (4200ms; mobile uses 6720ms) */
+@keyframes loum-breath {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+/* card float — face-down cards drift ~3px, 4s, staggered per card */
+@keyframes loum-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+/* rise — standard entrance */
+@keyframes loum-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+/* aurora wash — cosmos B-01 · hero / final-CTA moments. Additive light. */
+.loum-aurora {
+  position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  mix-blend-mode: plus-lighter;
+  background:
+    radial-gradient(60% 50% at 30% 20%, rgba(var(--rgb-iris), .22), transparent 70%),
+    radial-gradient(50% 45% at 75% 30%, rgba(var(--rgb-green), .16), transparent 70%),
+    radial-gradient(55% 50% at 60% 80%, rgba(var(--rgb-pink), .16), transparent 70%);
+  filter: blur(28px);
+}
+
+/* vault wash — cosmos B-02 · quintessenz / reading. Quiet, top-lit, inward. */
+.loum-vault {
+  position: absolute; inset: 0; pointer-events: none; opacity: .55;
+  mix-blend-mode: plus-lighter;
+  background:
+    radial-gradient(70% 40% at 50% -5%, rgba(var(--rgb-iris), .16), transparent 70%),
+    radial-gradient(45% 35% at 85% 15%, rgba(var(--rgb-teal), .08), transparent 70%);
+  filter: blur(32px);
+}
+
+/* field wash — cosmos B-03 · card draw. Grounded, lit from below. */
+.loum-field {
+  position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  mix-blend-mode: plus-lighter;
+  background:
+    radial-gradient(75% 45% at 50% 105%, rgba(var(--rgb-green), .12), transparent 70%),
+    radial-gradient(45% 40% at 20% 90%, rgba(var(--rgb-teal), .1), transparent 70%);
+  filter: blur(30px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loum-starfield::before, .loum-starfield::after { animation: none; }
+  .orb-breath, [style*="loum-breath"], [style*="loum-float"] { animation: none !important; }
+}

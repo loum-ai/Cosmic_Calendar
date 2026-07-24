@@ -6,6 +6,7 @@ import { ArrowLeft, ChevronRight, CircleDot, Hexagon, Info, Sparkles, X } from "
 import { THEMES, themeByKey, type LifeTheme } from "@/lib/themes";
 import { ASC, CHART, PROFILE, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
 import { computeTransits } from "@/lib/transits";
+import { PLANET_PHOTO, PLANET_GLOW } from "@/lib/planetPhotos";
 import { IridescentOrb } from "@/components/IridescentOrb";
 import { resolveSheet } from "@/lib/sheets";
 import { computeHumanDesign } from "@/lib/humandesign";
@@ -86,6 +87,42 @@ ${COMMON_RULES}`,
   },
 ];
 
+/** loum-Kartenregel: SOLIDE Ink-Fläche. Die EINZIGE Kante ist die 1px
+ *  Inset-Hairline — kein äußerer Drop-Shadow, kein backdrop-blur. Die Tiefe
+ *  kommt von INNEN: ein radialer Glow in der Farbe des Themas/Planeten.
+ *  `tone` ist ein 6-stelliges Hex (#RRGGBB) oder ein "r,g,b"-Tripel. */
+function inkSurface(tone?: string, strength = 0.12) {
+  const a = (x: number) => (tone?.startsWith("#") ? `${tone}${Math.round(x * 255).toString(16).padStart(2, "0")}` : `rgba(${tone ?? "120,150,255"},${x})`);
+  return {
+    background: `radial-gradient(82% 60% at 50% 112%, ${a(strength)} 0%, transparent 68%), linear-gradient(180deg,#16161F 0%,#12121D 100%)`,
+    boxShadow: "inset 0 0 0 1px rgba(255,255,255,.09), inset 0 1px 0 rgba(255,255,255,.05)",
+    transition: "transform .25s cubic-bezier(.22,1,.36,1), filter .2s ease",
+  };
+}
+
+/** Textwände auflösen (Design-Regel 5): erst an echten Leerzeilen brechen,
+ *  sonst an einfachen Umbrüchen — und bleibt dann noch ein Block über ~380
+ *  Zeichen übrig, wird er satzweise in atembare Absätze geteilt. Nummerierte
+ *  Zeilen ("1. …") bleiben immer als EIN Punkt stehen. Rein darstellend. */
+function toParagraphs(raw: string, maxChars = 340): string[] {
+  const clean = (raw || "").replace(/\*\*/g, "").trim();
+  if (!clean) return [];
+  let blocks = clean.split(/\n\s*\n+/).map((s) => s.trim()).filter(Boolean);
+  if (blocks.length === 1) blocks = clean.split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  const out: string[] = [];
+  for (const b of blocks) {
+    if (b.length <= maxChars || /^\d+[.)]\s/.test(b)) { out.push(b); continue; }
+    const sentences = b.match(/[^.!?…]+[.!?…]+[”"»]?\s*/g) ?? [b];
+    let buf = "";
+    for (const s of sentences) {
+      buf += s;
+      if (buf.trim().length >= maxChars * 0.5) { out.push(buf.trim()); buf = ""; }
+    }
+    if (buf.trim()) out.push(buf.trim());
+  }
+  return out;
+}
+
 /**
  * Themen-Hub — the calm home (per the product briefing). Instead of dumping the
  * whole chart, the user picks a LIFE-THEME; the same chart is then read through
@@ -106,7 +143,7 @@ export function ThemenHub() {
   const openInfo = useApp((s) => s.openInfo);
   const setTab = useApp((s) => s.setTab);
   const portrait = aiPortrait();
-  const portraitParas = portrait ? portrait.split(/\n\n+/).map((s) => s.trim()).filter(Boolean) : [];
+  const portraitParas = toParagraphs(portrait ?? "");
 
   // "Kurz gesagt" — schließbare Klartext-Karte über dem Rad (Konzept ChartHome)
   const [kurz, setKurz] = useState(true);
@@ -166,33 +203,34 @@ export function ThemenHub() {
       // haben sonst die Überschrift verdeckt (gesehen auf Max' Klienten-Link).
       <div className="flex min-h-dvh flex-col items-center justify-center px-6 pb-[calc(env(safe-area-inset-bottom,0px)+11rem)] pt-16 lg:px-10">
         <div className="w-full max-w-[640px]">
-          <div className="vela-wordmark mb-4 text-[12px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
+          <div className="vela-wordmark mb-4 text-[12px]">Vela <span className="ml-2 font-body text-[9px] normal-case tracking-normal text-txt-3">Stand {__BUILD_ID__}</span></div>
           {/* KANONISCHE REGEL: das Chart ist IMMER sichtbar — auch hier */}
-          <div className="pointer-events-none mx-auto mb-6 w-full max-w-[220px] drop-shadow-[0_0_28px_rgba(120,150,255,0.22)]">
+          <div className="pointer-events-none mx-auto mb-7 w-full max-w-[220px] drop-shadow-[0_0_28px_rgba(120,150,255,0.22)]">
             <ChartWheel />
           </div>
-          <h1 className="text-center font-cinzel text-[30px] font-light leading-[1.12] text-white [text-shadow:0_0_30px_rgba(120,150,255,0.3)] lg:text-[40px]">
+          <h1 className="text-center font-cinzel text-[27px] font-normal uppercase leading-[1.16] tracking-[0.03em] text-txt lg:text-[36px]">
             Was beschäftigt dich gerade, {first}?
           </h1>
-          <p className="mt-3 font-body text-[15px] leading-relaxed text-txt-2">
+          <p className="mx-auto mt-3.5 max-w-[46ch] text-center font-body text-[15px] leading-relaxed text-txt-2">
             Wähle, was dich bewegt — dein Geburtsbild wird genau durch diese Linse gelesen.
           </p>
-          <div className="mt-8 grid gap-3 sm:grid-cols-2">
+          <div className="mt-9 grid gap-3 sm:grid-cols-2">
             {THEMES.map((th, i) => (
               <Reveal key={th.key} i={i}>
                 <button
                   onClick={() => finishEntry(th.key)}
-                  className="vela-tile vela-tile-hover flex w-full items-center gap-3.5 p-4 text-left backdrop-blur-xl"
+                  className="vela-card-soft flex w-full items-center gap-3.5 p-4 text-left hover:-translate-y-0.5"
+                  style={inkSurface(th.accent)}
                 >
                   <span
                     className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-glyph text-[21px]"
-                    style={{ color: th.accent, background: `radial-gradient(circle, ${th.accent}2b, transparent 72%)`, border: `1px solid ${th.accent}3a` }}
+                    style={{ color: th.accent, background: `radial-gradient(circle at 50% 42%, ${th.accent}30, transparent 72%)`, boxShadow: `inset 0 0 0 1px ${th.accent}3a` }}
                   >
                     {th.glyph}
                   </span>
                   <span className="min-w-0">
-                    <span className="block font-cinzel text-[19px] font-light leading-tight text-white">{th.label}</span>
-                    <span className="mt-0.5 block truncate font-body text-[12.5px] text-txt-3">{th.teaser}</span>
+                    <span className="block font-cinzel text-[18px] font-normal uppercase leading-tight tracking-[0.03em] text-txt">{th.label}</span>
+                    <span className="mt-1 block truncate font-body text-[12.5px] text-txt-3">{th.teaser}</span>
                   </span>
                 </button>
               </Reveal>
@@ -200,7 +238,7 @@ export function ThemenHub() {
           </div>
           <button
             onClick={() => finishEntry()}
-            className="mx-auto mt-8 block font-body text-[14px] text-[#97B5FF] transition hover:translate-x-0.5"
+            className="mx-auto mt-8 block font-body text-[14px] text-lilac transition hover:translate-x-0.5"
           >
             Überspringen — direkt zu meinem Blueprint →
           </button>
@@ -216,10 +254,10 @@ export function ThemenHub() {
         <Reveal>
           <div className="mb-6 flex items-start justify-between gap-4">
             <div className="min-w-0">
-              <div className="vela-wordmark text-[11px]">Vela <span className="ml-2 font-mono text-[9px] normal-case tracking-normal text-white/25">Stand {__BUILD_ID__}</span></div>
+              <div className="vela-wordmark text-[11px]">Vela <span className="ml-2 font-body text-[9px] normal-case tracking-normal text-txt-3">Stand {__BUILD_ID__}</span></div>
               <div className="v-eyebrow mt-5">Geburts-Chart</div>
-              <h1 className="mt-1.5 font-cinzel text-[27px] font-normal uppercase leading-tight tracking-[0.06em] text-white lg:text-[34px]">{first}</h1>
-              <div className="mt-1.5 font-body text-[11.5px] text-white/50">{PROFILE.birth}</div>
+              <h1 className="mt-1.5 font-cinzel text-[27px] font-normal uppercase leading-tight tracking-[0.06em] text-txt lg:text-[34px]">{first}</h1>
+              <div className="mt-1.5 font-body text-[11.5px] text-txt-3">{PROFILE.birth}</div>
             </div>
             <IridescentOrb size={44} className="mt-2" />
           </div>
@@ -229,11 +267,11 @@ export function ThemenHub() {
         {kurz && (
           <Reveal>
             <div className="relative mb-7 rounded-[16px] px-[15px] py-[13px]" style={{ background: "linear-gradient(180deg,#201D2C 0%,#1B1926 55%,#17141F 100%)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,.09), inset 0 1px 0 rgba(255,255,255,.05)" }}>
-              <button onClick={() => setKurz(false)} aria-label="Schließen" className="absolute right-2 top-2 p-1 text-white/40 transition hover:text-white/70">
+              <button onClick={() => setKurz(false)} aria-label="Schließen" className="absolute right-2 top-2 p-1 text-txt-3 transition hover:text-txt">
                 <X className="h-3.5 w-3.5" />
               </button>
-              <div className="v-eyebrow" style={{ color: "#97B5FF" }}>Kurz gesagt</div>
-              <p className="mr-5 mt-1.5 font-body text-[13px] leading-[1.55] text-[rgba(238,245,248,0.72)]">{kurzText}</p>
+              <div className="v-eyebrow">Kurz gesagt</div>
+              <p className="mr-5 mt-1.5 font-body text-[13px] leading-[1.55] text-txt-2">{kurzText}</p>
             </div>
           </Reveal>
         )}
@@ -248,8 +286,8 @@ export function ThemenHub() {
             <div className="relative w-full max-w-[336px]">
               <ChartWheel />
             </div>
-            <span className="relative font-body text-[10.5px] uppercase tracking-[1.6px] text-white/[0.38]">Alles ist antippbar — Punkte, Linien, Zeichen</span>
-            <button onClick={() => setHomeView("chart")} className="relative font-body text-[13.5px] text-[#97B5FF] transition hover:translate-x-0.5">Ganzes Rad im Detail →</button>
+            <span className="relative font-body text-[10.5px] uppercase tracking-[1.6px] text-txt-3">Alles ist antippbar — Punkte, Linien, Zeichen</span>
+            <button onClick={() => setHomeView("chart")} className="relative font-body text-[13.5px] text-lilac transition hover:translate-x-0.5">Ganzes Rad im Detail →</button>
           </section>
         </Reveal>
 
@@ -273,7 +311,7 @@ export function ThemenHub() {
             Referenzen stützen gleichmäßiges Karten-Scrolling). */}
         <div className="mb-4">
           <div className="vela-label mb-1.5 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Lebensthemen</div>
-          <p className="max-w-[46ch] font-body text-[14.5px] leading-relaxed text-txt-3">
+          <p className="max-w-[46ch] font-body text-[14.5px] leading-relaxed text-txt-2">
             {viewer ? "Wähle ein Lebensthema, das dich gerade bewegt — dein Geburtsbild, gelesen durch diese Linse." : "Wähle ein Lebensthema — dein Geburtsbild, gelesen durch diese Linse. Kein Fachchinesisch, nur was es für dich bedeutet."}
           </p>
         </div>
@@ -282,19 +320,20 @@ export function ThemenHub() {
             <Reveal key={t.key} i={i}>
               <button
                 onClick={() => openTheme(t.key)}
-                className="vela-tile vela-tile-hover group relative flex h-full w-full flex-col overflow-hidden p-6 text-left"
+                className="vela-card-soft group relative flex h-full w-full flex-col overflow-hidden p-6 text-left hover:-translate-y-0.5"
+                style={inkSurface(t.accent)}
               >
                 <span className="pointer-events-none absolute -right-4 -top-8 font-glyph text-[112px] leading-none opacity-[0.09]" style={{ color: t.accent }}>{t.glyph}</span>
                 <div className="relative flex items-start justify-between">
                   <span
                     className="inline-flex h-12 w-12 items-center justify-center rounded-full font-glyph text-[24px]"
-                    style={{ color: t.accent, background: `radial-gradient(circle, ${t.accent}2b, transparent 72%)`, border: `1px solid ${t.accent}3a` }}
+                    style={{ color: t.accent, background: `radial-gradient(circle at 50% 42%, ${t.accent}30, transparent 72%)`, boxShadow: `inset 0 0 0 1px ${t.accent}3a` }}
                   >
                     {t.glyph}
                   </span>
                   <ChevronRight className="mt-2 h-5 w-5 text-txt-3 transition-transform group-hover:translate-x-0.5" />
                 </div>
-                <div className="relative mt-4 font-cinzel text-[21px] uppercase leading-tight text-txt">{t.label}</div>
+                <div className="relative mt-5 font-cinzel text-[21px] font-normal uppercase leading-tight tracking-[0.02em] text-txt">{t.label}</div>
                 <div className="relative mt-2 font-body text-[14px] leading-relaxed text-txt-3">{t.teaser}</div>
               </button>
             </Reveal>
@@ -303,13 +342,14 @@ export function ThemenHub() {
             <Reveal i={THEMES.length} className="sm:col-span-2 lg:col-span-2">
               <button
                 onClick={() => openTheme("__hd__")}
-                className="vela-tile vela-tile-hover flex h-full w-full items-center justify-between gap-4 p-6 text-left"
+                className="vela-card-soft flex h-full w-full items-center justify-between gap-4 p-6 text-left hover:-translate-y-0.5"
+                style={inkSurface()}
               >
                 <div className="flex items-center gap-3.5">
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[rgba(120,150,255,0.4)] bg-[rgba(120,150,255,0.12)] text-lilac"><Hexagon className="h-5 w-5" strokeWidth={1.7} /></span>
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[rgba(120,150,255,0.10)] text-lilac" style={{ boxShadow: "inset 0 0 0 1px rgba(120,150,255,0.34)" }}><Hexagon className="h-5 w-5" strokeWidth={1.7} /></span>
                   <div>
-                    <div className="font-cinzel text-[19px] uppercase text-txt">Human Design</div>
-                    <div className="mt-0.5 font-body text-[13px] text-txt-3">Typ, Strategie, Autorität, Profil & Zentren.</div>
+                    <div className="font-cinzel text-[19px] font-normal uppercase tracking-[0.02em] text-txt">Human Design</div>
+                    <div className="mt-1 font-body text-[13px] text-txt-3">Typ, Strategie, Autorität, Profil & Zentren.</div>
                   </div>
                 </div>
                 <ChevronRight className="h-5 w-5 shrink-0 text-txt-3" />
@@ -323,10 +363,10 @@ export function ThemenHub() {
         {portraitParas.length > 0 ? (
           <section className="mt-10">
             <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Dein Portrait</div>
-            <div className="rounded-[24px] border border-white/8 bg-[rgba(18,18,29,0.5)] p-6 backdrop-blur-xl lg:p-8">
+            <div className="vela-card-soft p-6 lg:p-8" style={inkSurface(undefined, 0.1)}>
               {portraitParas.map((p, i) => (
                 <Reveal key={i} i={i}>
-                  <p className={`font-body leading-[1.75] text-txt-2 ${i === 0 ? "text-[18.5px] font-medium text-white" : "mt-5 text-[16.5px]"}`}>{p}</p>
+                  <p className={i === 0 ? "font-body text-[18.5px] leading-[1.62] text-txt" : "mt-5 font-body text-[16.5px] leading-[1.78] text-txt-2"}>{p}</p>
                 </Reveal>
               ))}
             </div>
@@ -334,7 +374,7 @@ export function ThemenHub() {
         ) : aiLoading ? (
           <section className="mt-10">
             <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Dein Portrait</div>
-            <div className="rounded-[24px] border border-white/8 bg-[rgba(18,18,29,0.5)] p-6 backdrop-blur-xl lg:p-8">
+            <div className="vela-card-soft p-6 lg:p-8" style={inkSurface(undefined, 0.1)}>
               <GenerativeLoader
                 messages={[
                   "Dein Bild setzt sich zusammen …",
@@ -351,13 +391,14 @@ export function ThemenHub() {
         <Reveal i={THEMES.length + 1}>
           <button
             onClick={() => setHomeView("chart")}
-            className="vela-tile vela-tile-hover mt-4 flex w-full items-center justify-between gap-4 p-5 text-left"
+            className="vela-card-soft mt-4 flex w-full items-center justify-between gap-4 p-5 text-left hover:-translate-y-0.5"
+            style={inkSurface()}
           >
             <div className="flex items-center gap-3.5">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/12 bg-white/[0.05] text-lilac"><CircleDot className="h-5 w-5" strokeWidth={1.7} /></span>
+              <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-surface text-lilac" style={{ boxShadow: "inset 0 0 0 1px rgba(255,255,255,.12)" }}><CircleDot className="h-5 w-5" strokeWidth={1.7} /></span>
               <div>
-                <div className="font-cinzel text-[19px] uppercase text-txt">Ganzes Geburtsrad</div>
-                <div className="mt-0.5 font-body text-[13px] text-txt-3">Alle Planeten, Häuser & Aspekte — zum Erkunden.</div>
+                <div className="font-cinzel text-[19px] font-normal uppercase tracking-[0.02em] text-txt">Ganzes Geburtsrad</div>
+                <div className="mt-1 font-body text-[13px] text-txt-3">Alle Planeten, Häuser & Aspekte — zum Erkunden.</div>
               </div>
             </div>
             <ChevronRight className="h-5 w-5 shrink-0 text-txt-3" />
@@ -442,7 +483,9 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
     })
     .filter(Boolean) as { key: string; name: string; glyph: string; pos: string; body: string }[];
 
-  const paras = intro.text.split(/\n\n+/).map((s) => s.trim()).filter(Boolean);
+  // Regel 5: der Einstieg darf nie als Textwand ankommen — erster Absatz wird
+  // zur Lede, der Rest atmet in eigenen Absätzen.
+  const paras = toParagraphs(intro.text);
   // Accordion sections — shown as soon as the intro is there; each streams in
   // on its own (still-loading sections shimmer, failed ones disappear).
   const sections = THEME_SECTIONS.map((d) => ({ title: d.title, body: secState[d.key]?.text ?? "", loading: secState[d.key]?.loading ?? true }))
@@ -455,17 +498,27 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
           <ArrowLeft className="h-4 w-4" /> Themen
         </button>
 
-        <header className="mb-8 flex items-center gap-4">
-          <span
-            className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full font-glyph text-[32px]"
-            style={{ color: t.accent, background: `radial-gradient(circle, ${t.accent}2e, transparent 72%)`, boxShadow: `0 0 30px -6px ${t.accent}88`, border: `1px solid ${t.accent}3a` }}
-          >
-            {t.glyph}
-          </span>
-          <div>
-            <h1 className="font-cinzel text-[34px] font-light leading-[1.05] text-white lg:text-[44px]">{t.label}</h1>
-            <p className="mt-1.5 font-body text-[15px] text-txt-3">{t.teaser}</p>
+        {/* Kopf: solider Glyph-Kreis mit tonalem Innen-Glow (kein äußerer
+            Schein), daneben Eyebrow · Cinzel-Display · Teaser. */}
+        <header className="mb-9">
+          <div className="flex items-center gap-5">
+            <span
+              className="inline-flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-full font-glyph text-[34px] lg:h-[88px] lg:w-[88px] lg:text-[40px]"
+              style={{
+                color: t.accent,
+                background: `radial-gradient(circle at 50% 40%, ${t.accent}3d 0%, ${t.accent}16 46%, transparent 72%), linear-gradient(180deg,#1B1926 0%,#141220 100%)`,
+                boxShadow: `inset 0 0 0 1px ${t.accent}45, inset 0 1px 0 rgba(255,255,255,.06)`,
+              }}
+            >
+              {t.glyph}
+            </span>
+            <div className="min-w-0">
+              <div className="v-eyebrow">Lebensthema</div>
+              <h1 className="mt-1.5 font-cinzel text-[30px] font-normal uppercase leading-[1.08] tracking-[0.035em] text-txt lg:text-[40px]">{t.label}</h1>
+              <p className="mt-2 font-body text-[14.5px] leading-relaxed text-txt-3">{t.teaser}</p>
+            </div>
           </div>
+          <div className="vela-rule mt-7" />
         </header>
 
         {/* the reading — 5-level dramaturgy, flowing */}
@@ -483,27 +536,39 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
           <div className="mb-4">
             {paras.map((p, i) => (
               <Reveal key={i} i={i}>
-                <p className={`font-body text-[17.5px] leading-[1.75] text-txt-2 ${i === 0 ? "text-[19px] font-medium text-white" : "mt-5"}`}>{p}</p>
+                {i === 0 ? (
+                  // Lede: größer, heller, mit tonaler Kante — der Einstieg ist
+                  // als eigener Block lesbar, nicht als Anfang einer Wand.
+                  <p className="border-l-2 pl-4 font-body text-[17.5px] leading-[1.62] text-txt lg:pl-5 lg:text-[18.5px]" style={{ borderColor: `${t.accent}59` }}>{p}</p>
+                ) : (
+                  <p className="mt-5 font-body text-[16px] leading-[1.8] text-txt-2">{p}</p>
+                )}
               </Reveal>
             ))}
             {/* Der Kompass — distinct, quiet highlight: how YOU recognise what fits */}
             {(kompass.text || kompass.loading) && (
               <Reveal>
-                <div className="mt-8 rounded-[22px] border p-5 backdrop-blur-xl lg:p-6" style={{ borderColor: `${t.accent}38`, background: `linear-gradient(135deg, ${t.accent}0e, transparent 60%)` }}>
-                  <div className="mb-3 font-mono text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: t.accent }}>Woran du erkennst, was zu dir passt</div>
+                <div
+                  className="vela-card-soft mt-9 p-5 lg:p-6"
+                  style={{
+                    background: `radial-gradient(78% 62% at 50% 112%, ${t.accent}1f 0%, transparent 68%), linear-gradient(180deg,#16161F 0%,#12121D 100%)`,
+                    boxShadow: `inset 0 0 0 1px ${t.accent}33, inset 0 1px 0 rgba(255,255,255,.05)`,
+                  }}
+                >
+                  <div className="mb-3.5 font-body text-[11px] font-medium uppercase tracking-[0.18em]" style={{ color: t.accent }}>Woran du erkennst, was zu dir passt</div>
                   {kompass.text ? (
-                    <div className="space-y-2.5">
+                    <div className="space-y-3">
                       {kompass.text.replace(/\*\*/g, "").split(/\n+/).map((l) => l.replace(/^[–-]\s*/, "").trim()).filter(Boolean).slice(0, 4).map((l, i) => (
-                        <div key={i} className="flex gap-3">
-                          <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: t.accent, boxShadow: `0 0 8px ${t.accent}` }} />
-                          <p className="font-body text-[15.5px] leading-relaxed text-txt-2">{l}</p>
+                        <div key={i} className="flex gap-3.5">
+                          <span className="mt-[10px] h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: t.accent }} />
+                          <p className="font-body text-[16px] leading-[1.7] text-txt-2">{l}</p>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <div className="space-y-2.5 py-1">
                       {[96, 88, 80].map((w, i) => (
-                        <div key={i} className="h-3 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
+                        <div key={i} className="h-3 animate-pulse rounded-full bg-surface-2" style={{ width: `${w}%` }} />
                       ))}
                     </div>
                   )}
@@ -511,7 +576,7 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
               </Reveal>
             )}
             {sections.length > 0 && (
-              <div className="mt-8 space-y-3">
+              <div className="mt-9 space-y-3.5">
                 {sections.map((s, i) => (
                   <Reveal key={s.title} i={i}>
                     <ThemeSection title={s.title} body={s.body} loading={s.loading} accent={t.accent} defaultOpen={i === 0} />
@@ -524,9 +589,9 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
 
         {/* the forces in detail */}
         {items.length > 0 && (
-          <div className="mt-10">
+          <div className="mt-12">
             <div className="vela-label mb-4 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Die Kräfte in deinem Bild</div>
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               {items.map((it, i) => (
                 <Reveal key={it.key} i={i}>
                   <ForceCard it={it} accent={t.accent} onOpen={() => openInfo({ kind: "planet", key: it.key })} />
@@ -537,17 +602,17 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
         )}
 
         {/* Weiterfragen — tap a personal follow-up question, Vela answers in the composer */}
-        <div className="mt-8 rounded-[20px] border border-white/8 bg-white/[0.03] p-5">
-          <p className="font-body text-[14px] leading-relaxed text-txt-3">
+        <div className="vela-card-soft mt-10 p-5" style={inkSurface(undefined, 0.1)}>
+          <p className="font-body text-[14px] leading-relaxed text-txt-2">
             {fragen.length ? "Frag weiter — das liegt dir vielleicht gerade auf der Zunge:" : "Frag Vela unten alles zu diesem Thema — sie liest es aus deinem Chart."}
           </p>
           {fragen.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
+            <div className="mt-3.5 flex flex-wrap gap-2">
               {fragen.map((f) => (
                 <button
                   key={f}
                   onClick={() => { setQ(f); void ask(f); }}
-                  className="rounded-pill border border-white/[0.12] bg-white/[0.05] px-3.5 py-2 text-left font-body text-[13px] leading-snug text-ink-soft/90 backdrop-blur-md transition hover:border-[rgba(120,150,255,0.45)] active:scale-95"
+                  className="rounded-pill border border-line bg-surface px-3.5 py-2 text-left font-body text-[13px] leading-snug text-txt-2 transition hover:border-line-accent active:scale-95"
                 >
                   {f}
                 </button>
@@ -565,19 +630,25 @@ function MotionSpacer() {
   return <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-2" />;
 }
 
-/** Überblick-Kachel (Konzept ChartWeiter): Glass-Tile mit Glyph, Label, Wert. */
+/** Überblick-Kachel (Konzept ChartWeiter): SOLIDE Ink-Kachel mit Hairline und
+ *  Innen-Glow — Glyph, Label, Wert. */
 function Kachel({ glyph, label, value, sub, lit, onClick }: { glyph: string; label: string; value: string; sub?: string; lit?: boolean; onClick?: () => void }) {
   return (
     <button
       onClick={onClick}
       data-interactive="true"
-      className="glass-surface flex flex-col gap-1.5 rounded-[14px] px-3 pb-[11px] pt-3 text-left"
-      style={lit ? { background: "linear-gradient(180deg,#1B1926 0%,#151420 100%)", boxShadow: "inset 0 0 0 1px rgba(120,150,255,.3)" } : undefined}
+      className="vela-card-soft flex flex-col gap-1.5 rounded-[14px] px-3 pb-[11px] pt-3 text-left"
+      style={lit
+        ? {
+            background: "radial-gradient(82% 60% at 50% 112%, rgba(120,150,255,.20) 0%, transparent 68%), linear-gradient(180deg,#1B1926 0%,#151420 100%)",
+            boxShadow: "inset 0 0 0 1px rgba(120,150,255,.3)",
+          }
+        : inkSurface(undefined, 0.08)}
     >
-      <span className={`font-glyph text-[15px] leading-none ${lit ? "text-[#97B5FF]" : "text-[rgba(238,245,248,0.6)]"}`}>{glyph}</span>
-      <span className="font-body text-[9px] uppercase tracking-[1.6px] text-white/40">{label}</span>
+      <span className={`font-glyph text-[15px] leading-none ${lit ? "text-lilac" : "text-txt-3"}`}>{glyph}</span>
+      <span className="font-body text-[9px] uppercase tracking-[1.6px] text-txt-3">{label}</span>
       <span className="-mt-0.5 font-body text-[13.5px] font-medium text-txt">{value}</span>
-      {sub && <span className="-mt-1 font-body text-[10.5px] text-white/[0.38]">{sub}</span>}
+      {sub && <span className="-mt-1 font-body text-[10.5px] text-txt-3">{sub}</span>}
     </button>
   );
 }
@@ -592,25 +663,68 @@ function ForceCard({ it, accent, onOpen }: { it: { key: string; name: string; gl
   // craft reading FIRST (deep, grounded); thin stored text only as fallback
   const { text, loading } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !IS_DEMO);
   const body = text || (loading ? "" : stored || it.body);
+  const photo = PLANET_PHOTO[it.key];
+  const glow = PLANET_GLOW[it.key] ?? "120,150,255";
+  const bodyParas = toParagraphs(body);
   return (
-    <button onClick={onOpen} className="vela-tile vela-tile-hover relative w-full overflow-hidden p-6 text-left backdrop-blur-xl">
-      <div className="relative flex items-center gap-3">
-        <span className="font-glyph text-[22px]" style={{ color: accent }}>{it.glyph}</span>
-        <div className="min-w-0">
-          <div className="font-cinzel text-[21px] font-light leading-tight text-white">{it.name}</div>
-          <div className="mt-0.5 font-body text-[12.5px] text-txt-3">{it.pos}</div>
+    <button
+      onClick={onOpen}
+      className="vela-card-soft relative w-full overflow-hidden p-6 text-left hover:-translate-y-0.5"
+      style={inkSurface(glow, 0.13)}
+    >
+      {/* Planeten-Foto als Kopf der Karte — full-bleed, oben/unten
+          angeschnitten; Name und Stand liegen IN der Karte auf dem Scrim. */}
+      {photo ? (
+        <span className="relative -mx-6 -mt-6 mb-5 block h-[176px] overflow-hidden">
+          <span aria-hidden className="absolute inset-0 block">
+            <img
+              src={photo}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{ mixBlendMode: "screen", transform: "scale(1.18)" }}
+            />
+            <span
+              className="absolute inset-0"
+              style={{ background: `radial-gradient(70% 70% at 50% 34%, rgba(${glow},.22), transparent 70%)`, mixBlendMode: "screen" }}
+            />
+            {/* Scrim läuft exakt in die Kartenfläche aus — keine sichtbare
+                Kante zwischen Foto und Ink. */}
+            <span
+              className="absolute inset-x-0 bottom-0 h-[78%]"
+              style={{ background: "linear-gradient(180deg, transparent 0%, rgba(22,22,31,.55) 46%, rgba(22,22,31,.94) 82%, #16161F 100%)" }}
+            />
+          </span>
+          <span className="absolute inset-x-6 bottom-4 flex items-center gap-3.5">
+            <span className="font-glyph text-[26px] leading-none" style={{ color: `rgba(${glow},.95)` }}>{it.glyph}</span>
+            <span className="min-w-0">
+              <span className="block font-cinzel text-[22px] font-normal uppercase leading-tight tracking-[0.03em] text-txt">{it.name}</span>
+              <span className="mt-1 block font-body text-[12.5px] text-txt-3">{it.pos}</span>
+            </span>
+          </span>
+        </span>
+      ) : (
+        <div className="relative flex items-center gap-3">
+          <span className="font-glyph text-[22px]" style={{ color: accent }}>{it.glyph}</span>
+          <div className="min-w-0">
+            <div className="font-cinzel text-[21px] font-normal uppercase leading-tight tracking-[0.03em] text-txt">{it.name}</div>
+            <div className="mt-1 block font-body text-[12.5px] text-txt-3">{it.pos}</div>
+          </div>
         </div>
-      </div>
-      {body ? (
-        <p className="relative mt-3.5 font-body text-[16px] leading-relaxed text-txt-2">{body}</p>
+      )}
+      {bodyParas.length ? (
+        <div className={photo ? "relative" : "relative mt-4"}>
+          {bodyParas.map((p, i) => (
+            <p key={i} className={`font-body text-[15.5px] leading-[1.72] text-txt-2 ${i > 0 ? "mt-3.5" : ""}`}>{p}</p>
+          ))}
+        </div>
       ) : loading ? (
-        <div className="relative mt-4 space-y-2.5">
+        <div className={`relative space-y-2.5 ${photo ? "" : "mt-4"}`}>
           {[100, 90, 74].map((w, i) => (
-            <div key={i} className="h-3 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
+            <div key={i} className="h-3 animate-pulse rounded-full bg-surface-2" style={{ width: `${w}%` }} />
           ))}
         </div>
       ) : null}
-      <span className="relative mt-3 inline-block font-body text-[13px] text-[#97B5FF]">Mehr dazu →</span>
+      <span className="relative mt-4 inline-block font-body text-[13px] text-lilac">Mehr dazu →</span>
     </button>
   );
 }
@@ -619,17 +733,18 @@ function ForceCard({ it, accent, onOpen }: { it: { key: string; name: string; gl
  *  layers instead of a wall of text. Numbered lines render as list items. */
 function ThemeSection({ title, body, loading, accent, defaultOpen }: { title: string; body: string; loading?: boolean; accent: string; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(!!defaultOpen);
-  // strip stray markdown emphasis the model might emit despite instructions
-  const paras = body.replace(/\*\*/g, "").split(/\n+/).map((s) => s.trim()).filter(Boolean);
+  // strip stray markdown emphasis the model might emit, break walls of text
+  const paras = toParagraphs(body);
   return (
     <button
       type="button"
       onClick={() => setOpen((o) => !o)}
       aria-expanded={open}
-      className="vela-tile vela-tile-hover relative w-full overflow-hidden p-5 text-left backdrop-blur-xl lg:p-6"
+      className="vela-card-soft relative w-full overflow-hidden p-5 text-left lg:p-6"
+      style={inkSurface(accent, 0.1)}
     >
       <div className="relative flex items-center justify-between gap-3">
-        <h3 className="font-cinzel text-[20px] font-light leading-tight text-white lg:text-[22px]">{title}</h3>
+        <h3 className="font-cinzel text-[19px] font-normal uppercase leading-tight tracking-[0.03em] text-txt lg:text-[21px]">{title}</h3>
         <span
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-transform duration-300"
           style={{ color: accent, background: `${accent}14`, border: `1px solid ${accent}33`, transform: open ? "rotate(90deg)" : "none" }}
@@ -647,11 +762,11 @@ function ThemeSection({ title, body, loading, accent, defaultOpen }: { title: st
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
             className="overflow-hidden"
           >
-            <div className="mt-3.5 space-y-3.5">
+            <div className="mt-4 space-y-4">
               {loading && !paras.length && (
                 <div className="space-y-2.5 py-1">
                   {[100, 92, 84].map((w, i) => (
-                    <div key={i} className="h-3 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
+                    <div key={i} className="h-3 animate-pulse rounded-full bg-surface-2" style={{ width: `${w}%` }} />
                   ))}
                 </div>
               )}
@@ -659,10 +774,10 @@ function ThemeSection({ title, body, loading, accent, defaultOpen }: { title: st
                 const num = p.match(/^(\d+)[.)]\s+(.*)$/s);
                 if (num) {
                   return (
-                    <div key={i} className="flex gap-3">
+                    <div key={i} className="flex gap-3.5">
                       <span
-                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-mono text-[11px] font-bold"
-                        style={{ color: accent, background: `${accent}16`, border: `1px solid ${accent}33` }}
+                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-body text-[11px] font-semibold"
+                        style={{ color: accent, background: `${accent}16`, boxShadow: `inset 0 0 0 1px ${accent}33` }}
                       >
                         {num[1]}
                       </span>
@@ -734,14 +849,24 @@ function HDView({ birth }: { birth: BirthInput }) {
           <ArrowLeft className="h-4 w-4" /> Themen
         </button>
 
-        <header className="mb-9 flex items-center gap-4">
-          <span className="inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-[rgba(120,150,255,0.4)] bg-[rgba(120,150,255,0.12)] text-[#97B5FF]" style={{ boxShadow: "0 0 30px -6px rgba(120,150,255,0.8)" }}>
-            <Hexagon className="h-7 w-7" strokeWidth={1.6} />
-          </span>
-          <div>
-            <h1 className="font-cinzel text-[34px] font-light leading-[1.05] text-white lg:text-[44px]">Human Design</h1>
-            <p className="mt-1.5 font-body text-[15px] text-txt-3">{first} · {hd.type}</p>
+        <header className="mb-9">
+          <div className="flex items-center gap-5">
+            <span
+              className="inline-flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-full text-lilac lg:h-[88px] lg:w-[88px]"
+              style={{
+                background: "radial-gradient(circle at 50% 40%, rgba(120,150,255,.24) 0%, rgba(120,150,255,.08) 46%, transparent 72%), linear-gradient(180deg,#1B1926 0%,#141220 100%)",
+                boxShadow: "inset 0 0 0 1px rgba(120,150,255,.42), inset 0 1px 0 rgba(255,255,255,.06)",
+              }}
+            >
+              <Hexagon className="h-7 w-7" strokeWidth={1.6} />
+            </span>
+            <div className="min-w-0">
+              <div className="v-eyebrow">Blueprint</div>
+              <h1 className="mt-1.5 font-cinzel text-[30px] font-normal uppercase leading-[1.08] tracking-[0.035em] text-txt lg:text-[40px]">Human Design</h1>
+              <p className="mt-2 font-body text-[14.5px] text-txt-3">{first} · {hd.type}</p>
+            </div>
           </div>
+          <div className="vela-rule mt-7" />
         </header>
 
         <div className="grid items-start gap-3.5 sm:grid-cols-2">
@@ -750,13 +875,14 @@ function HDView({ birth }: { birth: BirthInput }) {
               <button
                 onClick={() => setOpen(open === i ? null : i)}
                 aria-expanded={open === i}
-                className="vela-tile vela-tile-hover relative w-full overflow-hidden p-5 text-left backdrop-blur-xl"
+                className="vela-card-soft relative w-full overflow-hidden p-5 text-left"
+                style={inkSurface(undefined, 0.1)}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="vela-label">{f.k}</div>
-                  <Info className={`h-4 w-4 shrink-0 transition-colors ${open === i ? "text-[#97B5FF]" : "text-txt-3"}`} />
+                  <Info className={`h-4 w-4 shrink-0 transition-colors ${open === i ? "text-lilac" : "text-txt-3"}`} />
                 </div>
-                <div className="mt-2 font-cinzel text-[20px] font-light leading-tight text-white">{f.v}</div>
+                <div className="mt-2.5 font-cinzel text-[20px] font-normal leading-tight tracking-[0.01em] text-txt">{f.v}</div>
                 <AnimatePresence initial={false}>
                   {open === i && (
                     <motion.div
@@ -770,7 +896,7 @@ function HDView({ birth }: { birth: BirthInput }) {
                     </motion.div>
                   )}
                 </AnimatePresence>
-                {open !== i && <span className="mt-2 inline-block font-body text-[11.5px] text-[#97B5FF]/70">Was heißt das? →</span>}
+                {open !== i && <span className="mt-2.5 inline-block font-body text-[11.5px] text-lilac/70">Was heißt das? →</span>}
               </button>
             </Reveal>
           ))}
@@ -782,7 +908,7 @@ function HDView({ birth }: { birth: BirthInput }) {
             {ALL_CENTERS.map((c) => {
               const on = hd.definedCenters.includes(c);
               return (
-                <span key={c} className={`rounded-pill px-3.5 py-1.5 font-body text-[13px] ${on ? "border border-[rgba(120,150,255,0.5)] bg-[rgba(120,150,255,0.14)] text-[#bdeefb]" : "border border-white/10 text-txt-3"}`}>
+                <span key={c} className={`rounded-pill px-3.5 py-1.5 font-body text-[13px] ${on ? "border border-line-accent bg-[rgba(120,150,255,0.14)] text-lilac" : "border border-line text-txt-3"}`}>
                   {c}
                 </span>
               );
@@ -794,12 +920,12 @@ function HDView({ birth }: { birth: BirthInput }) {
           <div className="vela-label mb-3">Kanäle</div>
           <div className="flex flex-wrap gap-2">
             {hd.channels.length ? hd.channels.map((c) => (
-              <span key={c} className="rounded-pill border border-white/12 bg-white/[0.05] px-3.5 py-1.5 font-mono text-[13px] text-txt-2">{c}</span>
+              <span key={c} className="rounded-pill border border-line bg-surface px-3.5 py-1.5 font-body text-[13px] text-txt-2">{c}</span>
             )) : <span className="font-body text-[13px] text-txt-3">—</span>}
           </div>
         </div>
 
-        <p className="mt-8 rounded-[20px] border border-white/8 bg-white/[0.03] p-5 font-body text-[13.5px] leading-relaxed text-txt-3">
+        <p className="vela-card-soft mt-8 block p-5 font-body text-[13.5px] leading-relaxed text-txt-3" style={inkSurface(undefined, 0.08)}>
           Berechnet aus dem Geburtsbild — Personality (Geburt) + Design (88° Sonnenbogen vorher), gemappt aufs 64-Tore-Rad. Verifiziert gegen das offizielle Chart. Frag Vela unten alles zu deinem Design.
         </p>
       </div>

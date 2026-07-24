@@ -33,7 +33,7 @@ export function Composer() {
   const expanded = open || !!answer || loading;
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-[92px] z-[41] mx-auto w-[min(440px,calc(100%-24px))] lg:bottom-6 lg:left-[120px] lg:right-0 lg:mx-auto lg:w-auto lg:max-w-[640px] lg:px-6">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[41] mx-auto w-[min(440px,calc(100%-24px))] pb-[max(env(safe-area-inset-bottom),14px)] lg:left-0 lg:right-0 lg:mx-auto lg:w-auto lg:max-w-[640px] lg:px-6 lg:pb-6">
       <AnimatePresence>
         {expanded && (
           <motion.div

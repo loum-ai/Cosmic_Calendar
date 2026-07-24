@@ -61,7 +61,7 @@ export function MainApp() {
     <div className="relative min-h-dvh w-full overflow-x-hidden text-ink">
       <AuroraBackground />
 
-      <div className="lg:pl-[120px]">
+      <div>
         <AnimatePresence mode="wait">
           <Screen key={`${tab}-${chartVersion}`} />
         </AnimatePresence>

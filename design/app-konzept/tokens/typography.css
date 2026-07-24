@@ -1,0 +1,87 @@
+/* ============================================================
+ * loum · TYPOGRAPHY TOKENS
+ * Two faces (v6 · QUINTESSENCE 2026-07-07 · Figma Variante 4):
+ *   Cinzel Decorative (ritual display)  → Display/H1/H2 + card-names —
+ *     UPPERCASE, trägt den Glow. Figma-Specimen: Regular · −9% Tracking.
+ *   KEIN Cormorant, KEIN Italic mehr — Emphasis ist das „lit word“ (.highlight)
+ *   Bricolage Grotesque → H3/H4/H5, body, lede, UI, CTAs,
+ *     eyebrows, meta, uppercase labels (ersetzt Inter; DM Sans ist raus)
+ * ============================================================ */
+
+:root {
+  /* ── families ─────────────────────────────────────────────── */
+  --f-serif: var(--f-display); /* retired — Cormorant ist raus; Alt-Markup fällt auf die Basis-Display-Face */
+  --f-display: "Cinzel", ui-serif, Georgia, serif; /* @kind font */
+  --f-display-deco: "Cinzel Decorative", "Cinzel", ui-serif, serif; /* @kind font */
+  --f-sans:  var(--f-ui); /* retired — DM Sans ist raus (v6); Alt-Markup fällt auf die UI-Face */
+  --f-ui:    "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; /* @kind font */
+  --f-mono:  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; /* @kind font */
+
+  /* shadcn aliases */
+  --font-serif: var(--f-serif);
+  --font-sans:  var(--f-ui);   /* body + UI = Bricolage Grotesque (v6) */
+  --font-ui:    var(--f-ui);
+  --font-mono:  var(--f-mono);
+
+  /* loum semantic aliases — ritual / rational */
+  --font-emotional: var(--f-display);  /* Headline/Pull-Quote-Basis = Cinzel Regular, flach — Glow NUR auf .highlight/.card-name */
+  --font-rational:  var(--f-ui);   /* body, lede, sub-heads → Bricolage Grotesque */
+  --font-ritual:    var(--f-ui);
+
+  /* ── semantic sizes (compact editorial scale 2026-06-09) ──── */
+  --fs-display: clamp(2.875rem, 6.6vw, 6.25rem); /* @kind font */
+  --fs-h1:      clamp(2.25rem, 4.4vw, 4rem);      /* @kind font */
+  --fs-h2:      clamp(1.75rem, 3vw, 2.75rem);     /* @kind font */
+  --fs-h3:      clamp(1.5rem, 2.2vw, 2rem);       /* @kind font */
+  --fs-h4:      clamp(1.375rem, 1.65vw, 1.5rem);  /* @kind font */
+  --fs-h5:      18px;                              /* knapp über body (17px) · @kind font */
+  --fs-lede:    19px;     /* @kind font */
+  --fs-body:    17px;     /* @kind font */
+  --fs-body-sm: 15.5px;   /* @kind font */
+  --fs-code:    13.5px;   /* inline code, --tokens · @kind font */
+  --fs-meta:    12.5px;   /* eyebrows · uppercase · .18em · @kind font */
+  --fs-micro:   11.5px;   /* legibility floor · @kind font */
+
+  /* ── line-height ──────────────────────────────────────────── */
+  --lh-display: 1.06;    /* @kind font */
+  --lh-tight:   1.05;    /* @kind font */
+  --lh-body:    1.55;    /* @kind font */
+  --lh-prose:   1.6;     /* @kind font */
+  --lh-h1: 1.1;          /* @kind font */
+  --lh-h2: 1.14;         /* @kind font */
+  --lh-h3: 1.15;         /* @kind font */
+  --lh-h4: 1.25;         /* @kind font */
+  --lh-h5: 1.3;          /* @kind font */
+  --lh-lede:    29px;    /* @kind font */
+  --lh-body-px: 26px;    /* @kind font */
+  --lh-body-sm: 24px;    /* @kind font */
+  --lh-meta-px: 19px;    /* @kind font */
+  --lh-mono:    21px;    /* @kind font */
+
+  /* ── tracking ─────────────────────────────────────────────── */
+  --tracking-display:   -0.03em;  /* Cinzel Regular Basis-Display — Figma node 87:232 · @kind font */
+  --tracking-display-deco: -0.09em;  /* Cinzel Decorative „lit word“ — Figma −9% (node „78“) · @kind font */
+  --tracking-heading:   0;        /* v6: Cinzel natürlich laufen lassen · @kind font */
+  --tracking-body:      0;        /* @kind font */
+  --tracking-meta:      .18em;    /* @kind font */
+  --tracking-meta-wide: .26em;    /* @kind font */
+  --tracking-h1: 0;               /* v6: neutral — Figma trackt Cinzel nicht auf · @kind font */
+  --tracking-h2: 0;               /* @kind font */
+  --tracking-h3: -0.015em;        /* @kind font */
+  --tracking-h4: -0.01em;         /* @kind font */
+  --tracking-h5: 0;               /* @kind font */
+  --tracking-body-px:  .25px;     /* @kind font */
+  --tracking-caption:  2.25px;    /* @kind font */
+  --tracking-card-name: 0;       /* uppercase tarot names — natürliche Cinzel-Laufweite, Flourishes dürfen sich fast berühren (Figma V4) · @kind font */
+  --tracking-mono:     .14em;     /* @kind font */
+
+  /* ── paragraph spacing (gap after a paragraph) ────────────── */
+  --para-h1: 48px;  /* @kind spacing */  --para-h2: 28px;  /* @kind spacing */  --para-h3: 24px;  /* @kind spacing */  --para-h4: 20px;  /* @kind spacing */
+  --para-lede: 18px; /* @kind spacing */ --para-body: 16px; /* @kind spacing */ --para-body-sm: 14px; /* @kind spacing */ --para-mini: 12px; /* @kind spacing */
+
+  /* ── weights ──────────────────────────────────────────────── */
+  --weight-regular:  400;  /* @kind font */
+  --weight-medium:   500;  /* @kind font */
+  --weight-semibold: 600;  /* @kind font */
+  --weight-bold:     700;  /* @kind font */
+}
