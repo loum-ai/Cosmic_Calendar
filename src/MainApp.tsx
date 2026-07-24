@@ -39,17 +39,23 @@ export function MainApp() {
   const refreshInterpretation = useApp((s) => s.refreshInterpretation);
   const aiReady = useApp((s) => s.aiReady);
   const aiLoading = useApp((s) => s.aiLoading);
+  const aiError = useApp((s) => s.aiError);
   const bumpChart = useApp((s) => s.bumpChart);
   const Screen = SCREENS[tab];
 
   // Demo: load the REAL Gemini interpretation so the sample shows specific,
   // generated readings (not the bundled placeholders). Client links already
   // carry their published interpretation.
+  // `!aiError` ist die Abbruchbedingung: ohne sie lief der Effekt nach einem
+  // Fehlschlag sofort wieder an (aiLoading true→false ist eine Abhängigkeit) —
+  // eine Endlosschleife, die die Edge Function bombardierte und über bumpChart
+  // den ganzen Screen im Sekundentakt neu aufbaute. Die bespoke Demo-Texte
+  // tragen die Seite in dem Fall.
   useEffect(() => {
-    if (IS_DEMO && !viewer && !aiReady && !aiLoading) {
+    if (IS_DEMO && !viewer && !aiReady && !aiLoading && !aiError) {
       refreshInterpretation().then(() => bumpChart());
     }
-  }, [viewer, aiReady, aiLoading, refreshInterpretation, bumpChart]);
+  }, [viewer, aiReady, aiLoading, aiError, refreshInterpretation, bumpChart]);
 
   return (
     <div className="relative min-h-dvh w-full overflow-x-hidden text-ink">

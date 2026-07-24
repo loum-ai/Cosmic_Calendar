@@ -4,7 +4,8 @@ import { GenerativeLoader } from "@/components/GenerativeLoader";
 import { ChartWheel } from "@/components/ChartWheel";
 import { ArrowLeft, ChevronRight, CircleDot, Hexagon, Info, Sparkles, X } from "lucide-react";
 import { THEMES, themeByKey, type LifeTheme } from "@/lib/themes";
-import { ASC, CHART, PROFILE, TRANSITS, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
+import { ASC, CHART, PROFILE, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
+import { computeTransits } from "@/lib/transits";
 import { IridescentOrb } from "@/components/IridescentOrb";
 import { resolveSheet } from "@/lib/sheets";
 import { computeHumanDesign } from "@/lib/humandesign";
@@ -124,9 +125,11 @@ export function ThemenHub() {
   for (const p of CHART) { const i = signIdx(p.lon); eCount[i % 4]++; mCount[i % 3]++; }
   const eMax = eCount.indexOf(Math.max(...eCount));
   const mMax = mCount.indexOf(Math.max(...mCount));
-  const t0 = TRANSITS[0];
-  const t0Aspect = t0?.title.match(/Trigon|Quadrat|Opposition|Sextil|Konjunktion/)?.[0] ?? "heute";
-  const t0Glyph = CHART.find((p) => p.key === t0?.nk)?.glyph ?? "";
+  // „Heute"-Kachel: der stärkste ECHTE Transit auf DIESES Geburtsbild.
+  // Vorher stand hier TRANSITS[0] — ein fest verdrahteter Beispiel-Transit aus
+  // den Demo-Daten, den jeder Kunde identisch zu sehen bekam.
+  const t0 = useMemo(() => computeTransits(CHART, new Date())[0] ?? null, []);
+  const t0Glyph = CHART.find((p) => p.key === t0?.nKey)?.glyph ?? "";
 
   // Start with the QUESTION, not the structure: on a client's first visit ask
   // "Was beschäftigt dich gerade?" — picking a theme routes straight into it,
@@ -260,7 +263,7 @@ export function ThemenHub() {
               <Kachel glyph="AC" label="Aszendent" value={acSign} sub="Auftritt" onClick={() => openInfo({ kind: "sign", key: signIdx(ASC) })} />
               <Kachel glyph="◈" label="Element" value={ELEMS[eMax]} sub={`${eCount[eMax]} Stände`} onClick={() => setHomeView("chart")} />
               <Kachel glyph="◆" label="Modus" value={MODES[mMax]} sub={MODE_SUB[MODES[mMax]]} onClick={() => setHomeView("chart")} />
-              {t0 && <Kachel glyph={`${t0.tg} ${t0Glyph}`} label="Heute" value={t0Aspect} sub="Transit" lit onClick={() => setTab("transite")} />}
+              {t0 && <Kachel glyph={`${t0.tGlyph} ${t0Glyph}`} label="Heute" value={t0.type} sub={`${t0.tName} → dein ${t0.nName}`} lit onClick={() => setTab("transite")} />}
             </div>
           </section>
         </Reveal>

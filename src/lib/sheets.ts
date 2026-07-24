@@ -23,6 +23,7 @@ import {
   houseOf,
   signName,
 } from "./data";
+import type { Aspect } from "./data";
 import { GLOSSARY } from "./glossary";
 import { READINGS, ASPECT_TEXT } from "./readings";
 import { aiSign, aiHouse, aiAspect } from "./interpret";
@@ -38,6 +39,15 @@ export interface SheetSection {
   label: string;
   body: string;
   accent?: string;
+  /**
+   * Woher der Text kommt:
+   *   "ai"      — eine ECHTE Deutung dieses Charts (Cockpit-Interpretation
+   *               bzw. die bespoke Demo-Texte). Darf als „deine Deutung" laufen.
+   *   "general" — Lexikon: gilt für jeden Menschen mit dieser Stellung.
+   *               Erklärt das System, ist NIE die persönliche Deutung.
+   * Die Oberflächen trennen danach: Lexikon oben, Deutung im „Vela deutet"-Block.
+   */
+  source?: "ai" | "general";
 }
 
 export interface SheetRelation {
@@ -59,14 +69,43 @@ export interface SheetContent {
 const MINT = "#20F0D0";
 const lc = (s: string) => (s ? s.charAt(0).toLowerCase() + s.slice(1) : s);
 
-function relText(a: {
-  A: { key: string; name: string; lon: number; house?: number };
-  B: { key: string; name: string; lon: number; house?: number };
-  def: { verb: string };
-}): string {
+/** Erster vollständiger Satz eines Textes — als Vorschauzeile. */
+function firstSentence(t: string): string {
+  const m = t.trim().match(/^[\s\S]*?[.!?](?=\s|$)/);
+  return (m ? m[0] : t.trim()).trim();
+}
+
+/**
+ * Eine Stellungs-Zeile entsteht NUR, wenn es dafür eine echte Deutung gibt
+ * (Cockpit-Interpretation oder bespoke Demo-Text). Vorher fiel sie auf die
+ * generische Zeichen-/Haus-Zeile zurück — und die landete in der Oberfläche
+ * im Block „Vela deutet · für dich". Genau das las sich bei jedem Kunden
+ * gleich. Fehlt die echte Deutung, bleibt der Platz leer und die generierte
+ * Craft-Deutung füllt ihn.
+ */
+function placement(label: string, text: string | null | undefined | false): SheetSection | null {
+  return text ? { label, body: text, source: "ai" } : null;
+}
+
+const compact = (secs: (SheetSection | null)[]): SheetSection[] => secs.filter((s): s is SheetSection => !!s);
+
+/** Vorschauzeile für eine Verbindung (die „Verbindungen"-Liste unter einer
+ *  Stellung). Nimmt die ECHTE Deutung, wenn es sie gibt; sonst einen Satz, der
+ *  immer noch aus DIESEM Chart folgt (welche zwei Kräfte, was sie tun, wie eng).
+ *  Nie wieder ein „tippe für deine Deutung"-Platzhalter — der stand vorher
+ *  unter jedem einzelnen Planeten-Sheet. */
+function relText(a: Aspect): string {
+  const real = aiAspect(a.A.key, a.B.key) || (IS_DEMO ? ASPECT_TEXT[a.key] : "");
+  if (real) return firstSentence(real);
   const tA = THEME[a.A.key] ?? a.A.name;
   const tB = THEME[a.B.key] ? lc(THEME[a.B.key]) : a.B.name;
-  return `${tA} und ${tB} ${a.def.verb} — tippe für deine Deutung dieser Verbindung.`;
+  const naehe =
+    a.orb < 1.5
+      ? "sehr eng — eine der prägendsten Verbindungen deines Bildes"
+      : a.orb < 3.5
+        ? "eng genug, um im Alltag deutlich spürbar zu sein"
+        : "weiter gefasst — wirkt eher als Grundton denn als Paukenschlag";
+  return `${tA} und ${tB} ${a.def.verb}. ${a.orb.toFixed(1)}° Orbis, ${naehe}.`;
 }
 
 export function resolveSheet(d: SheetDescriptor): SheetContent | null {
@@ -74,16 +113,15 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
 
   if (kind === "planet") {
     if (key === "asc") {
-      const si = SN.indexOf(signName(ASC));
       const sun = CHART.find((x) => x.key === "sun");
       const sameSign = !!sun && signName(sun.lon) === signName(ASC);
       return {
         title: "Aszendent",
         glyph: "AC",
         color: "#c4a6ff",
-        sections: [
-          { label: "Was — die Maske nach außen", body: PINFO.asc.what },
-          { label: `Wie — Aszendent in ${signName(ASC)}`, body: aiSign("asc") || (IS_DEMO && READINGS.asc?.sign) || SIGNWHAT[si] },
+        sections: compact([
+          { label: "Was — die Maske nach außen", body: PINFO.asc.what, source: "general" },
+          placement(`Wie — Aszendent in ${signName(ASC)}`, aiSign("asc") || (IS_DEMO && READINGS.asc?.sign)),
           {
             label: "Bei dir",
             body: sameSign
@@ -91,26 +129,25 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
               : `Dein Aszendent steht in ${signName(ASC)} — so trittst du auf, bevor du ein Wort sagst. Deine Sonne steht aber in ${sun ? signName(sun.lon) : "einem anderen Zeichen"}: Der erste Eindruck ist bei dir also die Tür, nicht das Haus — wer bleibt, erlebt dahinter einen anderen Kern als die Fassade vermuten lässt.`,
             accent: MINT,
           },
-        ],
+        ]),
       };
     }
     const p = CHART.find((x) => x.key === key);
     if (!p) return null;
     const info = PINFO[p.key];
-    const si = SN.indexOf(signName(p.lon));
     const h = p.house ?? houseOf(p.lon);
     const asp = computeAspects().filter((a) => a.A.key === p.key || a.B.key === p.key);
     return {
       title: `${p.name} — ${info.role}`,
       glyph: p.glyph,
       color: "#e7dcff",
-      sections: [
-        { label: "Was — der Planet", body: info.what },
-        { label: `Wie — ${p.name} in ${signName(p.lon)}`, body: aiSign(p.key) || (IS_DEMO && READINGS[p.key]?.sign) || SIGNWHAT[si] },
-        { label: `Warum — das ${h}. Haus`, body: HOUSEWHY[h - 1] },
-        { label: `Wo — ${h}. Haus · ${HOUSE[h - 1]}`, body: aiHouse(p.key) || (IS_DEMO && READINGS[p.key]?.house) || HOUSEWHAT[h - 1] },
+      sections: compact([
+        { label: "Was — der Planet", body: info.what, source: "general" },
+        placement(`Wie — ${p.name} in ${signName(p.lon)}`, aiSign(p.key) || (IS_DEMO && READINGS[p.key]?.sign)),
+        { label: `Warum — das ${h}. Haus`, body: HOUSEWHY[h - 1], source: "general" },
+        placement(`Wo — ${h}. Haus · ${HOUSE[h - 1]}`, aiHouse(p.key) || (IS_DEMO && READINGS[p.key]?.house)),
         { label: "Bei dir", body: p.txt || `${THEME[p.key] ?? p.name} drückt sich bei dir über ${signName(p.lon)} im ${h}. Haus aus — dem Bereich „${HOUSE[h - 1]}". ${asp.length ? `${p.name} ist dabei mit ${asp.length === 1 ? "einer weiteren Kraft" : `${asp.length} weiteren Kräften`} deines Bildes verbunden — was hier passiert, färbt also auch andere Lebensbereiche mit. Die Verbindungen stehen unten.` : `${p.name} steht dabei ohne enge Verbindungen — diese Kraft wirkt bei dir eigenständig und unvermischt.`}`, accent: MINT },
-      ],
+      ]),
       relations: asp.map((a) => {
         const other = a.A.key === p.key ? a.B : a.A;
         return {
@@ -129,11 +166,11 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
     if (!n) return null;
     const r = READINGS[n.key];
     const idx = SN.indexOf(signName(n.lon));
-    const sections: SheetSection[] = [
-      { label: "Was — der Mondknoten", body: PINFO[n.key].what },
-      { label: `Wie — in ${signName(n.lon)}`, body: aiSign(n.key) || (IS_DEMO && r?.sign) || SIGNWHAT[idx] },
-    ];
-    if (IS_DEMO && r?.house) sections.push({ label: "Die Achse", body: r.house });
+    const sections: SheetSection[] = compact([
+      { label: "Was — der Mondknoten", body: PINFO[n.key].what, source: "general" },
+      placement(`Wie — in ${signName(n.lon)}`, aiSign(n.key) || (IS_DEMO && r?.sign)),
+    ]);
+    if (IS_DEMO && r?.house) sections.push({ label: "Die Achse", body: r.house, source: "ai" });
     {
       const h = n.house ?? houseOf(n.lon);
       const area = HOUSE[h - 1];
@@ -149,14 +186,17 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
 
   if (kind === "house") {
     const h = Number(key);
-    const ps = CHART.filter((p) => houseOf(p.lon) === h);
+    // p.house ist maßgeblich (Placidus aus der Berechnung) — houseOf() ist nur
+    // die Gleich-Haus-Notlösung. Vorher listete das Haus-Sheet die Planeten nach
+    // Gleich-Haus und widersprach damit dem Planeten-Sheet daneben.
+    const ps = CHART.filter((p) => (p.house ?? houseOf(p.lon)) === h);
     return {
       title: `Haus ${h} — ${HOUSE[h - 1]}`,
       glyph: String(h),
       color: "#c4a6ff",
       sections: [
-        { label: "Was ist das?", body: HOUSEWHAT[h - 1] },
-        { label: "Warum dieses Haus?", body: HOUSEWHY[h - 1] },
+        { label: "Was ist das?", body: HOUSEWHAT[h - 1], source: "general" },
+        { label: "Warum dieses Haus?", body: HOUSEWHY[h - 1], source: "general" },
         {
           label: "Bei dir",
           body: ps.length
@@ -178,7 +218,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       glyph: SG[i],
       color: "#c4a6ff",
       sections: [
-        { label: "Was ist das?", body: SIGNWHAT[i] },
+        { label: "Was ist das?", body: SIGNWHAT[i], source: "general" },
         {
           label: "Bei dir",
           body: ps.length
@@ -198,9 +238,9 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       glyph: a.def.g,
       color: a.def.c,
       sections: [
-        { label: "Was ist das?", body: a.def.plain },
+        { label: "Was ist das?", body: a.def.plain, source: "general" },
         { label: "Bei dir", body: aiAspect(a.A.key, a.B.key) || (IS_DEMO && ASPECT_TEXT[a.key]) || relText(a), accent: MINT },
-        { label: "Genauigkeit", body: `${a.orb.toFixed(1)}° Orbis — je enger, desto stärker wirkt die Verbindung.` },
+        { label: "Genauigkeit", body: `${a.orb.toFixed(1)}° Orbis — je enger, desto stärker wirkt die Verbindung.`, source: "general" },
       ],
     };
   }
@@ -213,8 +253,8 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       glyph: "?",
       color: "#b9a8ff",
       sections: [
-        { label: "Klartext", body: e.short },
-        { label: "Einfach gesagt", body: `Statt „${e.term}" kannst du auch sagen: ${e.plain}.` },
+        { label: "Klartext", body: e.short, source: "general" },
+        { label: "Einfach gesagt", body: `Statt „${e.term}" kannst du auch sagen: ${e.plain}.`, source: "general" },
       ],
     };
   }
@@ -228,7 +268,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       glyph: d2.g,
       color: d2.c,
       sections: [
-        { label: "Was ist das?", body: d2.plain },
+        { label: "Was ist das?", body: d2.plain, source: "general" },
         {
           label: "Bei dir",
           body: mine.length

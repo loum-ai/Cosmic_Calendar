@@ -98,6 +98,9 @@ export async function ensureInterpretation(birth: BirthInput, name: string): Pro
     planets: (cd.planets ?? []).map((p: any) => ({
       key: p.key, name: p.name, sign: p.sign, deg_in_sign: p.deg_in_sign, house: p.house, retro: p.retro, dignity: p.dignity,
     })),
+    // Mondknoten mitschicken — sie bekommen (wie der Aszendent) eine eigene
+    // Deutung, sonst zeigen ihre Sheets nur die generische Zeichen-Zeile.
+    nodes: (cd.nodes ?? []).map((n: any) => ({ name: n.name, sign: n.sign ?? signName(n.lon), house: n.house })),
     aspects: aspects.map((a: any) => ({ a: a.a, b: a.b, type: a.type, orb: a.orb })),
   };
 

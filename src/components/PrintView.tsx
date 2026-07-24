@@ -2,7 +2,7 @@ import { Printer, X } from "lucide-react";
 import { ChartWheel } from "./ChartWheel";
 import { useApp } from "@/store/useApp";
 import { CHART, NODES, ASC, MC, CUSPS, PROFILE, SN, HOUSE, ASPDEF, PINFO, signName, computeAspects } from "@/lib/data";
-import { getVerification, aiSummary, aiSign, aiHouse } from "@/lib/interpret";
+import { getVerification, aiSummary, aiPortrait, aiSign, aiHouse } from "@/lib/interpret";
 import { computeTransits, skySummary, yearAhead } from "@/lib/transits";
 
 const ELEM = ["Feuer", "Erde", "Luft", "Wasser"] as const;
@@ -58,6 +58,7 @@ export function PrintView({ include }: { include?: PrintInclude }) {
   const aspects = [...computeAspects()].sort((a, b) => b.def.w - a.def.w || a.orb - b.orb);
   const verify = getVerification();
   const summary = aiSummary();
+  const portraitParas = (aiPortrait() ?? "").split(/\n\n+/).map((s) => s.trim()).filter(Boolean);
   const transits = computeTransits(CHART, TODAY).slice(0, 8);
   const sky = skySummary(TODAY);
   const bal = balance();
@@ -150,8 +151,13 @@ export function PrintView({ include }: { include?: PrintInclude }) {
 
         {/* ── READING ── */}
         <Section show={inc.reading} n="05" title="Deine Deutung" breakBefore>
-          {summary && <p className="font-body text-[13px] leading-relaxed text-[#2a2640]">{summary}</p>}
-          <div className={`${summary ? "mt-4" : ""} space-y-3`}>
+          {/* Das Portrait ist die tiefste Deutung, die es zu diesem Chart gibt —
+              es gehört auch ins PDF, nicht nur auf die Webseite. */}
+          {portraitParas.map((p, i) => (
+            <p key={i} className={`font-body text-[13px] leading-relaxed text-[#2a2640] ${i ? "mt-2.5" : ""}`}>{p}</p>
+          ))}
+          {summary && <p className={`font-body text-[13px] leading-relaxed text-[#2a2640] ${portraitParas.length ? "mt-4 border-t border-[#eceaf2] pt-4" : ""}`}>{summary}</p>}
+          <div className={`${summary || portraitParas.length ? "mt-4" : ""} space-y-3`}>
             {CHART.map((p) => {
               const t = aiSign(p.key) || p.txt;
               const h = aiHouse(p.key);
@@ -172,12 +178,25 @@ export function PrintView({ include }: { include?: PrintInclude }) {
         {/* ── NODES / CHIRON / LILITH ── */}
         <Section show={inc.points} n="06" title="Mondknoten, Chiron & Lilith">
           <div className="space-y-2.5">
-            {[...NODES, ...CHART.filter((p) => p.key === "chiron" || p.key === "lilith")].map((p) => (
-              <div key={p.key} className="print-avoid">
-                <div className="font-display text-[13px] font-semibold text-[#1b1830]"><Glyph k={p.key} g={p.glyph} /> {p.name} · {signName(p.lon)} · {p.house}. Haus</div>
-                {PINFO[p.key] && <p className="mt-0.5 font-body text-[12.5px] leading-relaxed text-[#454059]">{PINFO[p.key].what}</p>}
-              </div>
-            ))}
+            {[...NODES, ...CHART.filter((p) => p.key === "chiron" || p.key === "lilith")].map((p) => {
+              // erst die echte Deutung dieser Stellung, das Lexikon nur, wenn
+              // es sie (noch) nicht gibt
+              const t = aiSign(p.key);
+              const h = aiHouse(p.key);
+              return (
+                <div key={p.key} className="print-avoid">
+                  <div className="font-display text-[13px] font-semibold text-[#1b1830]"><Glyph k={p.key} g={p.glyph} /> {p.name} · {signName(p.lon)} · {p.house}. Haus</div>
+                  {t || h ? (
+                    <>
+                      {t && <p className="mt-0.5 font-body text-[12.5px] leading-relaxed text-[#454059]">{t}</p>}
+                      {h && <p className="mt-0.5 font-body text-[12.5px] leading-relaxed text-[#454059]">{h}</p>}
+                    </>
+                  ) : (
+                    PINFO[p.key] && <p className="mt-0.5 font-body text-[12.5px] leading-relaxed text-[#454059]">{PINFO[p.key].what}</p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </Section>
 

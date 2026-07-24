@@ -4,10 +4,11 @@ import { GlassPanel } from "@/components/GlassPanel";
 import { OrbImage } from "@/components/OrbImage";
 import { Explainable } from "@/components/Explainable";
 import { KlartextToggle } from "@/components/KlartextToggle";
-import { ASC, CHART, MC, PROFILE, SG, signName } from "@/lib/data";
-import { chartPatterns } from "@/lib/patterns";
+import { ASC, CHART, IS_DEMO, MC, PROFILE, SG, signName } from "@/lib/data";
+import { chartPatterns, type Pattern } from "@/lib/patterns";
+import { useReading } from "@/lib/genReadings";
 import { aiSummary, getVerification } from "@/lib/interpret";
-import { useApp, type SavedBirth } from "@/store/useApp";
+import { useApp, type SavedBirth, type ViewerBirth } from "@/store/useApp";
 import { cn } from "@/lib/utils";
 
 const deg = (lon: number) => Math.floor(((lon % 30) + 30) % 30);
@@ -16,6 +17,8 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 const MONTHS_ABBR = ["Jan", "Feb", "März", "Apr", "Mai", "Juni", "Juli", "Aug", "Sep", "Okt", "Nov", "Dez"];
 
+// Nur für das mitgelieferte Beispiel-Chart. NIE als Rückfallebene für einen
+// echten Kunden — sonst stehen im Klienten-Link fremde Geburtsdaten.
 const DEMO_BIRTH_ROWS = [
   { icon: <Calendar className="h-4 w-4" />, label: "7. Sep 1987", value: "Geburtsdatum" },
   { icon: <Clock className="h-4 w-4" />, label: "18:50", value: "Uhrzeit" },
@@ -23,29 +26,51 @@ const DEMO_BIRTH_ROWS = [
   { icon: <Compass className="h-4 w-4" />, label: "48°00′N · 11°21′E", value: "Koordinaten" },
 ];
 
-function birthRows(saved: SavedBirth | null) {
-  if (!saved) return DEMO_BIRTH_ROWS;
-  const [y, mo, d] = saved.date.split("-").map(Number);
+/** Geburtsdaten-Zeilen: eigenes gespeichertes Chart → Klienten-Link → Demo.
+ *  Ohne eigene UND ohne Klienten-Daten bleibt die Karte leer statt falsch. */
+function birthRows(saved: SavedBirth | null, viewer: ViewerBirth | null) {
+  const b = saved
+    ? { date: saved.date, time: saved.time, place: saved.place, lat: saved.lat, lon: saved.lon }
+    : viewer
+      ? { date: viewer.date, time: viewer.time, place: viewer.place, lat: viewer.lat, lon: viewer.lon }
+      : null;
+  if (!b) return IS_DEMO ? DEMO_BIRTH_ROWS : [];
+  const [y, mo, d] = b.date.split("-").map(Number);
+  const coords = b.lat != null && b.lon != null ? `${Number(b.lat).toFixed(2)}° · ${Number(b.lon).toFixed(2)}°` : null;
   return [
     { icon: <Calendar className="h-4 w-4" />, label: `${d}. ${MONTHS_ABBR[mo - 1]} ${y}`, value: "Geburtsdatum" },
-    { icon: <Clock className="h-4 w-4" />, label: saved.time, value: "Uhrzeit" },
-    { icon: <MapPin className="h-4 w-4" />, label: saved.place.split(",")[0], value: "Geburtsort" },
-    { icon: <Compass className="h-4 w-4" />, label: `${saved.lat.toFixed(2)}° · ${saved.lon.toFixed(2)}°`, value: "Koordinaten" },
+    { icon: <Clock className="h-4 w-4" />, label: b.time || "unbekannt", value: "Uhrzeit" },
+    { icon: <MapPin className="h-4 w-4" />, label: (b.place || "—").split(",")[0], value: "Geburtsort" },
+    ...(coords ? [{ icon: <Compass className="h-4 w-4" />, label: coords, value: "Koordinaten" }] : []),
   ];
 }
 
 const SETTINGS = ["Benachrichtigungen", "Darstellung", "Datenschutz", "Über Vela"];
 
+/** Signatur-Karte: Überschrift = das Muster, Text = die erzeugte Deutung dazu
+ *  (die Beobachtung p.text steht als Rückfallebene, solange sie lädt). */
+function SignaturCard({ p }: { p: Pattern }) {
+  const { text: gen } = useReading(p.viewKey, p.task, !IS_DEMO);
+  return (
+    <div className="rounded-card border border-[rgba(120,150,255,0.18)] bg-glasswash p-4">
+      <div className="mb-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-lilac">{p.glyphs.join(" ")} Signatur</div>
+      <h3 className="font-cinzel text-[17px] font-semibold leading-tight text-white">{p.human}</h3>
+      <p className="mt-1 line-clamp-3 font-body text-[12.5px] leading-relaxed text-txt-2">{gen || p.text}</p>
+    </div>
+  );
+}
+
 export function ProfilScreen() {
   const setOnboardingOpen = useApp((s) => s.setOnboardingOpen);
   const saved = useApp((s) => s.savedBirth);
+  const viewerBirth = useApp((s) => s.viewerBirth);
   const viewer = useApp((s) => s.viewerMode);
   const aiVersion = useApp((s) => s.aiVersion);
   const aiLoading = useApp((s) => s.aiLoading);
   void aiVersion; // re-render when the interpretation lands
   const summary = aiSummary();
   const verify = getVerification();
-  const BIRTH_ROWS = birthRows(saved);
+  const BIRTH_ROWS = birthRows(saved, viewerBirth);
   const big = [
     { key: "sun", label: "Sonne", glyph: "☉", lon: CHART[0].lon },
     { key: "moon", label: "Mond", glyph: "☽", lon: CHART[1].lon },
@@ -79,13 +104,7 @@ export function ProfilScreen() {
         if (!ps.length) return null;
         return (
           <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
-            {ps.map((p) => (
-              <div key={p.id} className="rounded-card border border-[rgba(120,150,255,0.18)] bg-glasswash p-4">
-                <div className="mb-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-lilac">{p.glyphs.join(" ")} Signatur</div>
-                <h3 className="font-cinzel text-[17px] font-semibold leading-tight text-white">{p.title}</h3>
-                <p className="mt-1 line-clamp-3 font-body text-[12.5px] leading-relaxed text-txt-2">{p.text}</p>
-              </div>
-            ))}
+            {ps.map((p) => <SignaturCard key={p.id} p={p} />)}
           </div>
         );
       })()}
@@ -95,6 +114,7 @@ export function ProfilScreen() {
       </div>
 
       {/* Geburtsdaten — Glass-Karte mit Stift (Konzept) */}
+      {BIRTH_ROWS.length > 0 && (
       <div className="vela-glass mt-6 rounded-[16px] px-4 pb-3 pt-3.5">
         <div className="mb-1.5 flex items-center justify-between">
           <span className="v-eyebrow">Geburtsdaten</span>
@@ -112,6 +132,7 @@ export function ProfilScreen() {
         ))}
         <p className="mt-2 font-body text-[10.5px] text-white/[0.35]">Nur für deine Deutungen gespeichert. Jederzeit löschbar.</p>
       </div>
+      )}
 
       {/* Erst-Einrichtung — nur ohne gespeicherte Daten (Klienten-Links nie) */}
       {!viewer && !saved && (
