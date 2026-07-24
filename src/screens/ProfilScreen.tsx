@@ -55,10 +55,10 @@ function SignaturCard({ p }: { p: Pattern }) {
     <div className="vela-card-soft p-4">
       <div className="mb-2 flex items-center gap-2">
         <span className="vela-glyph text-[13px] leading-none text-lilac">{p.glyphs.join(" ")}</span>
-        <span className="font-body text-[10px] font-medium uppercase tracking-[0.18em] text-txt-3">Signatur</span>
+        <span className="font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3">Signatur</span>
       </div>
-      <h3 className="font-cinzel text-[16px] font-normal uppercase leading-[1.16] tracking-[0.02em] text-txt">{p.human}</h3>
-      <p className="mt-2 line-clamp-3 font-body text-[12.5px] leading-[1.62] text-txt-2">{gen || p.text}</p>
+      <h3 className="font-cinzel text-[17px] font-normal uppercase leading-[1.16] tracking-[0.02em] text-txt">{p.human}</h3>
+      <p className="mt-2 line-clamp-3 font-body text-[13px] leading-[1.62] text-txt-2">{gen || p.text}</p>
     </div>
   );
 }
@@ -122,7 +122,7 @@ export function ProfilScreen() {
           {signName(CHART[0].lon)} · {signName(CHART[1].lon)} · {signName(ASC)}
         </span>
         {verify?.max_dev_arcsec != null && (
-          <span className="mt-0.5 inline-flex items-center gap-1.5 rounded-pill bg-mint/[0.07] px-3 py-[5px] font-body text-[10.5px] font-medium uppercase tracking-[0.14em] text-mint shadow-[inset_0_0_0_1px_rgba(32,240,208,0.28)]">
+          <span className="mt-0.5 inline-flex items-center gap-1.5 rounded-pill bg-mint/[0.07] px-3 py-[5px] font-body text-[11px] font-medium uppercase tracking-[0.14em] text-mint shadow-[inset_0_0_0_1px_rgba(32,240,208,0.28)]">
             <span className="h-[5px] w-[5px] rounded-full bg-mint shadow-[0_0_6px_rgba(32,240,208,0.8)]" />
             Daten geprüft · NOVAS
           </span>
@@ -162,7 +162,7 @@ export function ProfilScreen() {
             <span className="text-txt">{r.label}</span>
           </div>
         ))}
-        <p className="mt-2.5 font-body text-[10.5px] leading-relaxed text-txt-3">Nur für deine Deutungen gespeichert. Jederzeit löschbar.</p>
+        <p className="mt-2.5 font-body text-[11px] leading-relaxed text-txt-3">Nur für deine Deutungen gespeichert. Jederzeit löschbar.</p>
       </div>
       )}
 
@@ -170,7 +170,7 @@ export function ProfilScreen() {
       {!viewer && !saved && (
         <button
           onClick={() => setOnboardingOpen(true)}
-          className="mt-4 flex w-full items-center justify-center gap-2 btn-moon px-5 py-3.5 font-display text-[14px] font-semibold transition active:scale-[0.98]"
+          className="mt-4 flex w-full items-center justify-center gap-2 btn-moon px-5 py-3.5 font-display text-[15px] font-semibold transition active:scale-[0.98]"
         >
           <Sparkles className="h-4 w-4" />
           Erhalte dein Horoskop
@@ -190,7 +190,7 @@ export function ProfilScreen() {
                     "font-body",
                     i === 0
                       ? "text-[15px] leading-[1.58] text-txt"
-                      : "text-[13.5px] leading-[1.66] text-txt-2",
+                      : "text-[13px] leading-[1.66] text-txt-2",
                   )}
                 >
                   {para}
@@ -203,14 +203,14 @@ export function ProfilScreen() {
               <span className="font-body text-[13px]">Vela erstellt deine persönliche Deutung …</span>
             </div>
           ) : viewer ? (
-            <p className="font-body text-[13.5px] leading-[1.62] text-txt-2">Deine persönliche Deutung wird gerade von deiner Astrologin vorbereitet.</p>
+            <p className="font-body text-[13px] leading-[1.62] text-txt-2">Deine persönliche Deutung wird gerade von deiner Astrologin vorbereitet.</p>
           ) : (
-            <p className="font-body text-[13.5px] leading-[1.62] text-txt-2">Deine persönliche Deutung erstellt Vela aus deinem echten Geburtsbild — frag deine Astrologin nach deinem Zugang.</p>
+            <p className="font-body text-[13px] leading-[1.62] text-txt-2">Deine persönliche Deutung erstellt Vela aus deinem echten Geburtsbild — frag deine Astrologin nach deinem Zugang.</p>
           )}
           {verify?.max_dev_arcsec != null && (
             <div className="mt-4 flex items-center gap-1.5 border-t border-line-soft pt-3">
               <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-mint" />
-              <span className="font-body text-[10px] uppercase tracking-[0.12em] text-txt-3">
+              <span className="font-body text-[11px] uppercase tracking-[0.12em] text-txt-3">
                 Daten geprüft gegen NASA-NOVAS · Abweichung {verify.max_dev_arcsec}″
               </span>
             </div>
@@ -228,7 +228,7 @@ export function ProfilScreen() {
                 <span className="vela-glyph text-lg leading-none text-lilac">{b.glyph}</span>
                 <span className="mt-0.5 font-body text-[9.5px] font-medium uppercase tracking-[0.14em] text-txt-3">{b.label}</span>
                 <span className="font-display text-[13px] font-semibold text-txt">{signName(b.lon)}</span>
-                <span className="font-body text-[10px] text-txt-3">{SG[sgi(b.lon)]} {pad(deg(b.lon))}°</span>
+                <span className="font-body text-[11px] text-txt-3">{SG[sgi(b.lon)]} {pad(deg(b.lon))}°</span>
               </div>
             ) : (
               <Explainable key={b.key} sheet={{ kind: "planet", key: b.key }}>
@@ -236,7 +236,7 @@ export function ProfilScreen() {
                   <span className="vela-glyph text-lg leading-none text-lilac">{b.glyph}</span>
                   <span className="mt-0.5 font-body text-[9.5px] font-medium uppercase tracking-[0.14em] text-txt-3">{b.label}</span>
                   <span className="font-display text-[13px] font-semibold text-txt">{signName(b.lon)}</span>
-                  <span className="font-body text-[10px] text-txt-3">{SG[sgi(b.lon)]} {pad(deg(b.lon))}°</span>
+                  <span className="font-body text-[11px] text-txt-3">{SG[sgi(b.lon)]} {pad(deg(b.lon))}°</span>
                 </div>
               </Explainable>
             ),
@@ -259,13 +259,13 @@ export function ProfilScreen() {
               )}
             >
               <span className="font-body text-[13px] text-txt-3">{s}</span>
-              <span className="rounded-pill px-2.5 py-[3px] font-body text-[9px] font-medium uppercase tracking-[0.18em] text-txt-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.10)]">
+              <span className="rounded-pill px-2.5 py-[3px] font-body text-[9px] font-medium uppercase tracking-[0.18em] text-txt-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]">
                 bald
               </span>
             </div>
           ))}
         </div>
-        <p className="mt-2.5 px-1 font-body text-[10.5px] leading-relaxed text-txt-3">
+        <p className="mt-2.5 px-1 font-body text-[11px] leading-relaxed text-txt-3">
           Diese Bereiche kommen in einer der nächsten Versionen — noch gibt es hier nichts einzustellen.
         </p>
       </section>

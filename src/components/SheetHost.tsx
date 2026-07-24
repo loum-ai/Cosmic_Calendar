@@ -63,11 +63,11 @@ function Prose({ text, tone = "quiet" }: { text: string; tone?: "quiet" | "loud"
           className={
             tone === "loud"
               ? i === 0
-                ? "font-body text-[15.5px] font-medium leading-[1.58] text-txt"
-                : "font-body text-[14.5px] leading-[1.62] text-txt-2"
+                ? "font-body text-[15px] font-medium leading-[1.58] text-txt"
+                : "font-body text-[15px] leading-[1.62] text-txt-2"
               : i === 0
-                ? "font-body text-[14.5px] leading-[1.62] text-txt-2"
-                : "font-body text-[14px] leading-[1.62] text-txt-3"
+                ? "font-body text-[15px] leading-[1.62] text-txt-2"
+                : "font-body text-[15px] leading-[1.62] text-txt-3"
           }
         >
           {p}
@@ -91,7 +91,7 @@ function DeutungBox({ label, children }: { label: ReactNode; children: ReactNode
         style={{ background: "radial-gradient(120% 100% at 50% 0%, rgba(32,240,208,.13) 0%, transparent 68%)" }}
       />
       <div className="relative">
-        <div className="mb-2.5 flex items-center gap-1.5 font-body text-[10px] font-semibold uppercase tracking-[0.18em] text-mint">
+        <div className="mb-2.5 flex items-center gap-1.5 font-body text-[11px] font-semibold uppercase tracking-[0.18em] text-mint">
           {label}
         </div>
         {children}
@@ -198,7 +198,7 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
             Absätzen statt als Wand */}
         {general.map((sec) => (
           <div key={sec.label}>
-            <div className="mb-2.5 font-body text-[10.5px] font-medium uppercase tracking-[0.18em] text-txt-3">{sec.label}</div>
+            <div className="mb-2.5 font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3">{sec.label}</div>
             <Prose text={sec.body} />
           </div>
         ))}
@@ -211,7 +211,7 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
               <div key={sec.label} className="grid grid-cols-[auto_1fr] gap-x-3.5">
                 <div className="mt-1 h-full w-[2px] rounded-full bg-gradient-to-b from-lilac/70 to-violet/20" />
                 <div>
-                  <div className="mb-1.5 font-display text-[12.5px] font-semibold leading-snug tracking-[-0.01em] text-lilac">{sec.label}</div>
+                  <div className="mb-1.5 font-display text-[13px] font-semibold leading-snug tracking-[-0.01em] text-lilac">{sec.label}</div>
                   <Prose text={sec.body} />
                 </div>
               </div>
@@ -227,7 +227,7 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
               <div className="space-y-4">
                 {placements.map((sec) => (
                   <div key={sec.label}>
-                    <div className="mb-1.5 font-display text-[12px] font-semibold leading-snug tracking-[-0.01em] text-mint/90">{sec.label}</div>
+                    <div className="mb-1.5 font-display text-[13px] font-semibold leading-snug tracking-[-0.01em] text-mint/90">{sec.label}</div>
                     <Prose text={sec.body} tone="loud" />
                   </div>
                 ))}
@@ -258,14 +258,14 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
 
         <button
           onClick={talkToVela}
-          className="flex w-full items-center justify-center gap-2 rounded-pill bg-card px-4 py-3.5 font-display text-[13.5px] font-semibold text-lilac shadow-[inset_0_0_0_1px_rgba(120,150,255,0.32)] transition hover:bg-surface-2 active:scale-[0.99]"
+          className="flex w-full items-center justify-center gap-2 rounded-pill bg-card px-4 py-3.5 font-display text-[13px] font-semibold text-lilac shadow-[inset_0_0_0_1px_rgba(120,150,255,0.32)] transition hover:bg-surface-2 active:scale-[0.99]"
         >
           <Sparkles className="h-4 w-4" /> Mit Vela darüber sprechen
         </button>
 
         {content.relations && content.relations.length > 0 && (
           <div className="border-t border-line-soft pt-6">
-            <div className="mb-2 font-body text-[10.5px] font-medium uppercase tracking-[0.18em] text-txt-3">Verbindungen</div>
+            <div className="mb-2 font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3">Verbindungen</div>
             <div className="flex flex-col">
               {content.relations.map((r) => (
                 <button
@@ -277,8 +277,8 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
                     {r.glyph}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="font-body text-[13.5px] font-medium leading-snug text-txt">{r.label}</div>
-                    <p className="mt-1.5 font-body text-[12.5px] leading-[1.6] text-txt-2">{r.text}</p>
+                    <div className="font-body text-[13px] font-medium leading-snug text-txt">{r.label}</div>
+                    <p className="mt-1.5 font-body text-[13px] leading-[1.6] text-txt-2">{r.text}</p>
                   </div>
                   <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-txt-3 transition group-hover:text-lilac" />
                 </button>

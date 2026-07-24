@@ -100,9 +100,9 @@ function LoginCard() {
             {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
             {mode === "signin" ? "Anmelden" : "Konto anlegen"}
           </button>
-          {msg && <p className="font-body text-[12px] leading-relaxed text-txt-2">{msg}</p>}
+          {msg && <p className="font-body text-[13px] leading-relaxed text-txt-2">{msg}</p>}
           <button onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setMsg(null); }}
-            className="w-full text-center font-body text-[12px] text-lilac">
+            className="w-full text-center font-body text-[13px] text-lilac">
             {mode === "signin" ? "Noch kein Konto? Anlegen" : "Schon ein Konto? Anmelden"}
           </button>
         </div>
@@ -319,7 +319,7 @@ function Cockpit({ email }: { email: string }) {
           <div className="min-w-0">
             <div className="vela-label">Vela · Studio</div>
             <h1 className="mt-1.5 font-cinzel text-[26px] font-semibold leading-tight tracking-wide text-white sm:text-[32px]">Dein Dashboard</h1>
-            <p className="mt-2 max-w-[44ch] font-body text-[12.5px] leading-relaxed text-txt-3">Erstelle & verwalte die persönlichen Astro-Websites deiner Kundinnen.</p>
+            <p className="mt-2 max-w-[44ch] font-body text-[13px] leading-relaxed text-txt-3">Erstelle & verwalte die persönlichen Astro-Websites deiner Kundinnen.</p>
           </div>
           <button onClick={() => supabase.auth.signOut()} title={email} className="flex shrink-0 items-center gap-1.5 rounded-pill border border-line px-3 py-1.5 font-body text-[11px] text-txt-2">
             <LogOut className="h-3.5 w-3.5" /> Abmelden
@@ -343,24 +343,24 @@ function Cockpit({ email }: { email: string }) {
           </div>
           <div className="mt-4 space-y-3.5">
             <label className="block">
-              <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Name der Kundin</span>
+              <span className="mb-1 block font-body text-[11px] font-medium text-txt-2">Name der Kundin</span>
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder="z. B. Laura"
                 className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
             </label>
             <div className="flex gap-2.5">
               <label className="block flex-1">
-                <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Geburtsdatum</span>
+                <span className="mb-1 block font-body text-[11px] font-medium text-txt-2">Geburtsdatum</span>
                 <input value={date} onChange={(e) => setDate(e.target.value)} type="date"
                   className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
               </label>
               <label className="block w-[130px]">
-                <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Uhrzeit</span>
+                <span className="mb-1 block font-body text-[11px] font-medium text-txt-2">Uhrzeit</span>
                 <input value={time} onChange={(e) => setTime(e.target.value)} type="time"
                   className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
               </label>
             </div>
             <label className="relative block">
-              <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Geburtsort</span>
+              <span className="mb-1 block font-body text-[11px] font-medium text-txt-2">Geburtsort</span>
               <input value={placeQ} onChange={(e) => { setPlaceQ(e.target.value); setPlace(null); }} placeholder="z. B. Starnberg — dann aus der Liste wählen"
                 className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
               {places.length > 0 && (
@@ -374,13 +374,13 @@ function Cockpit({ email }: { email: string }) {
                 </div>
               )}
             </label>
-            {place && <div className="font-mono text-[10px] text-txt-3">✓ {place.lat.toFixed(2)}°, {place.lon.toFixed(2)}°</div>}
+            {place && <div className="font-mono text-[11px] text-txt-3">✓ {place.lat.toFixed(2)}°, {place.lon.toFixed(2)}°</div>}
             <button disabled={!canSubmit} onClick={createClient}
               className="flex w-full items-center justify-center gap-2 btn-moon px-5 py-3 font-display text-sm font-semibold disabled:opacity-40">
               {step ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
               {step || "Persönliche Website erstellen"}
             </button>
-            {err && <p className="font-body text-[12px] text-rose-300">{err}</p>}
+            {err && <p className="font-body text-[13px] text-rose-300">{err}</p>}
           </div>
         </section>
         )}
@@ -401,12 +401,12 @@ function Cockpit({ email }: { email: string }) {
         <section className="mt-8">
           <div className="mb-3 flex items-baseline gap-2.5">
             <h2 className="font-cinzel text-[20px] font-semibold tracking-wide text-white">Deine Kundinnen</h2>
-            <span className="rounded-pill border border-line bg-surface px-2 py-0.5 font-mono text-[10px] text-txt-3">{clients.length}</span>
+            <span className="rounded-pill border border-line bg-surface px-2 py-0.5 font-mono text-[11px] text-txt-3">{clients.length}</span>
           </div>
           {clients.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-line bg-surface p-8 text-center">
-              <p className="font-body text-[14px] text-txt-2">Noch keine Website.</p>
-              <p className="mt-1 font-body text-[12.5px] text-txt-3">Klick oben auf „Neue Kundin-Website erstellen" und lege die erste an.</p>
+              <p className="font-body text-[15px] text-txt-2">Noch keine Website.</p>
+              <p className="mt-1 font-body text-[13px] text-txt-3">Klick oben auf „Neue Kundin-Website erstellen" und lege die erste an.</p>
             </div>
           ) : (
             <div className="grid gap-2.5 sm:grid-cols-2">
@@ -414,7 +414,7 @@ function Cockpit({ email }: { email: string }) {
                 <button key={c.id} onClick={() => openReview(c)} className="group flex items-center justify-between gap-3 rounded-2xl border border-line bg-surface p-4 text-left transition hover:border-line-accent hover:bg-surface-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="truncate font-display text-[14px] font-semibold text-txt">{c.name}</span>
+                      <span className="truncate font-display text-[15px] font-semibold text-txt">{c.name}</span>
                       {c.status && (() => {
                         const live = c.status === "published";
                         const offline = !live && !!c.published_at;
@@ -423,7 +423,7 @@ function Cockpit({ email }: { email: string }) {
                         return <span className={`shrink-0 rounded-pill px-2 py-0.5 font-mono text-[9px] uppercase tracking-wide ${cls}`}>{label}</span>;
                       })()}
                     </div>
-                    <div className="mt-0.5 font-mono text-[10px] text-txt-3">{c.birth_date}</div>
+                    <div className="mt-0.5 font-mono text-[11px] text-txt-3">{c.birth_date}</div>
                   </div>
                   <span className="flex shrink-0 items-center gap-1 font-body text-[11px] text-lilac opacity-80 group-hover:opacity-100">öffnen <ChevronRight className="h-3.5 w-3.5" /></span>
                 </button>
@@ -463,30 +463,30 @@ function Cockpit({ email }: { email: string }) {
               {/* Stammdaten bearbeiten */}
               <div className="mt-4 border-t border-line pt-4">
                 <button onClick={() => (editing ? setEditing(false) : openEdit())}
-                  className="flex items-center gap-1.5 font-body text-[12px] text-txt-2 hover:text-txt">
+                  className="flex items-center gap-1.5 font-body text-[13px] text-txt-2 hover:text-txt">
                   <Pencil className="h-3.5 w-3.5" /> {editing ? "Bearbeiten abbrechen" : "Stammdaten bearbeiten"}
                 </button>
                 {editing && (
                   <div className="mt-3 space-y-3">
                     <label className="block">
-                      <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Name</span>
+                      <span className="mb-1 block font-body text-[11px] font-medium text-txt-2">Name</span>
                       <input value={eName} onChange={(e) => setEName(e.target.value)}
                         className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
                     </label>
                     <div className="flex gap-2.5">
                       <label className="block flex-1">
-                        <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Geburtsdatum</span>
+                        <span className="mb-1 block font-body text-[11px] font-medium text-txt-2">Geburtsdatum</span>
                         <input value={eDate} onChange={(e) => setEDate(e.target.value)} type="date"
                           className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
                       </label>
                       <label className="block w-[130px]">
-                        <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Uhrzeit</span>
+                        <span className="mb-1 block font-body text-[11px] font-medium text-txt-2">Uhrzeit</span>
                         <input value={eTime} onChange={(e) => setETime(e.target.value)} type="time"
                           className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
                       </label>
                     </div>
                     <label className="relative block">
-                      <span className="mb-1 block font-body text-[11.5px] font-medium text-txt-2">Geburtsort</span>
+                      <span className="mb-1 block font-body text-[11px] font-medium text-txt-2">Geburtsort</span>
                       <input value={ePlaceQ} onChange={(e) => { setEPlaceQ(e.target.value); setEPlace(null); }}
                         className="w-full rounded-xl border border-line bg-[#0c0c14] px-3.5 py-2.5 font-body text-sm text-txt outline-none focus:border-lilac" />
                       {ePlaces.length > 0 && (
@@ -503,7 +503,7 @@ function Cockpit({ email }: { email: string }) {
                       className="flex w-full items-center justify-center gap-2 btn-moon px-5 py-2.5 font-display text-[13px] font-semibold disabled:opacity-40">
                       {working ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}{working || "Stammdaten speichern"}
                     </button>
-                    {err && <p className="font-body text-[12px] text-rose-300">{err}</p>}
+                    {err && <p className="font-body text-[13px] text-rose-300">{err}</p>}
                   </div>
                 )}
               </div>
@@ -512,10 +512,10 @@ function Cockpit({ email }: { email: string }) {
                 <div className="mt-6 flex items-center gap-2 font-body text-[13px] text-txt-2"><Loader2 className="h-4 w-4 animate-spin" /> Entwurf laden …</div>
               ) : (
                 <>
-                  <p className="mt-1.5 font-body text-[12px] text-txt-3">{reviewData.status === "published" ? "Live — Änderungen werden sofort übernommen." : "Du kannst alles bearbeiten, bevor du freigibst."}</p>
+                  <p className="mt-1.5 font-body text-[13px] text-txt-3">{reviewData.status === "published" ? "Live — Änderungen werden sofort übernommen." : "Du kannst alles bearbeiten, bevor du freigibst."}</p>
 
                   <label className="mt-4 block">
-                    <span className="mb-1 block font-mono text-[10px] uppercase tracking-wide text-lilac">Gesamtbild</span>
+                    <span className="mb-1 block font-mono text-[11px] uppercase tracking-wide text-lilac">Gesamtbild</span>
                     <textarea value={editDraft.summary ?? ""} onChange={(e) => setSummary(e.target.value)} rows={4}
                       className="w-full rounded-xl border border-line bg-[#0c0c14] px-3 py-2.5 font-body text-[13px] leading-relaxed text-txt outline-none focus:border-lilac" />
                   </label>
@@ -523,11 +523,11 @@ function Cockpit({ email }: { email: string }) {
                   <div className="mt-4 space-y-3 border-t border-line pt-4">
                     {(editDraft.placements ?? []).map((pl: any, i: number) => (
                       <div key={i}>
-                        <div className="mb-1 font-mono text-[10px] uppercase tracking-wide text-lilac">{pl.key}</div>
+                        <div className="mb-1 font-mono text-[11px] uppercase tracking-wide text-lilac">{pl.key}</div>
                         <textarea value={pl.sign_text ?? ""} onChange={(e) => setPlacement(i, "sign_text", e.target.value)} rows={2}
-                          className="w-full rounded-lg border border-line bg-[#0c0c14] px-2.5 py-2 font-body text-[12.5px] leading-relaxed text-txt-2 outline-none focus:border-lilac" />
+                          className="w-full rounded-lg border border-line bg-[#0c0c14] px-2.5 py-2 font-body text-[13px] leading-relaxed text-txt-2 outline-none focus:border-lilac" />
                         <textarea value={pl.house_text ?? ""} onChange={(e) => setPlacement(i, "house_text", e.target.value)} rows={2}
-                          className="mt-1 w-full rounded-lg border border-line bg-[#0c0c14] px-2.5 py-2 font-body text-[12.5px] leading-relaxed text-txt-2 outline-none focus:border-lilac" />
+                          className="mt-1 w-full rounded-lg border border-line bg-[#0c0c14] px-2.5 py-2 font-body text-[13px] leading-relaxed text-txt-2 outline-none focus:border-lilac" />
                       </div>
                     ))}
                   </div>
@@ -551,7 +551,7 @@ function Cockpit({ email }: { email: string }) {
                   <div className="mt-3 flex items-center justify-between gap-3 border-t border-line pt-3">
                     {reviewData.status === "published" ? (
                       <button onClick={() => setActive(false)} disabled={publishing}
-                        className="flex items-center gap-1.5 font-body text-[12px] text-amber-300/90 hover:text-amber-200 disabled:opacity-40">
+                        className="flex items-center gap-1.5 font-body text-[13px] text-amber-300/90 hover:text-amber-200 disabled:opacity-40">
                         <Power className="h-3.5 w-3.5" /> Deaktivieren (Link offline)
                       </button>
                     ) : (
@@ -559,7 +559,7 @@ function Cockpit({ email }: { email: string }) {
                     )}
                     {!confirmDelete ? (
                       <button onClick={() => setConfirmDelete(true)}
-                        className="flex items-center gap-1.5 font-body text-[12px] text-rose-300/80 hover:text-rose-200">
+                        className="flex items-center gap-1.5 font-body text-[13px] text-rose-300/80 hover:text-rose-200">
                         <Trash2 className="h-3.5 w-3.5" /> Löschen
                       </button>
                     ) : (

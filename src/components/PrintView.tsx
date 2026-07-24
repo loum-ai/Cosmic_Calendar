@@ -75,7 +75,7 @@ export function PrintView({ include }: { include?: PrintInclude }) {
         <button onClick={() => setPrintOpen(false)} className="flex items-center gap-2 rounded-pill border border-white/15 px-3.5 py-2 font-body text-[13px] text-white/80">
           <X className="h-4 w-4" /> Schließen
         </button>
-        <span className="font-body text-[12px] text-white/55">Vorschau · „Drucken" → Ziel „Als PDF speichern"</span>
+        <span className="font-body text-[13px] text-white/55">Vorschau · „Drucken" → Ziel „Als PDF speichern"</span>
         <button onClick={() => window.print()} className="flex items-center gap-2 btn-moon px-4 py-2 font-display text-[13px] font-semibold">
           <Printer className="h-4 w-4" /> Drucken / PDF
         </button>
@@ -88,7 +88,7 @@ export function PrintView({ include }: { include?: PrintInclude }) {
           <div className="font-display text-[11px] font-bold uppercase tracking-[0.3em] text-[#7c5bbf]">Vela · Geburtshoroskop</div>
           <h1 className="mt-3 font-cinzel text-[40px] font-semibold leading-none text-[#1b1830]">{PROFILE.name}</h1>
           <p className="mt-3 font-body text-[13px] text-[#5b5670]">{PROFILE.birth}</p>
-          <p className="mt-1 font-body text-[12px] text-[#8b8699]">{PROFILE.memberSince}</p>
+          <p className="mt-1 font-body text-[13px] text-[#8b8699]">{PROFILE.memberSince}</p>
         </header>
 
         <div className="print-ink mx-auto mt-6 w-[112mm] max-w-full rounded-2xl bg-[#0c0a16] p-5">
@@ -167,8 +167,8 @@ export function PrintView({ include }: { include?: PrintInclude }) {
                   <div className="font-display text-[13px] font-semibold text-[#1b1830]">
                     <Glyph k={p.key} g={p.glyph} /> {p.name} · {signName(p.lon)} · {p.house}. Haus
                   </div>
-                  {t && <p className="mt-0.5 font-body text-[12.5px] leading-relaxed text-[#454059]">{t}</p>}
-                  {h && <p className="mt-0.5 font-body text-[12.5px] leading-relaxed text-[#454059]">{h}</p>}
+                  {t && <p className="mt-0.5 font-body text-[13px] leading-relaxed text-[#454059]">{t}</p>}
+                  {h && <p className="mt-0.5 font-body text-[13px] leading-relaxed text-[#454059]">{h}</p>}
                 </div>
               );
             })}
@@ -188,11 +188,11 @@ export function PrintView({ include }: { include?: PrintInclude }) {
                   <div className="font-display text-[13px] font-semibold text-[#1b1830]"><Glyph k={p.key} g={p.glyph} /> {p.name} · {signName(p.lon)} · {p.house}. Haus</div>
                   {t || h ? (
                     <>
-                      {t && <p className="mt-0.5 font-body text-[12.5px] leading-relaxed text-[#454059]">{t}</p>}
-                      {h && <p className="mt-0.5 font-body text-[12.5px] leading-relaxed text-[#454059]">{h}</p>}
+                      {t && <p className="mt-0.5 font-body text-[13px] leading-relaxed text-[#454059]">{t}</p>}
+                      {h && <p className="mt-0.5 font-body text-[13px] leading-relaxed text-[#454059]">{h}</p>}
                     </>
                   ) : (
-                    PINFO[p.key] && <p className="mt-0.5 font-body text-[12.5px] leading-relaxed text-[#454059]">{PINFO[p.key].what}</p>
+                    PINFO[p.key] && <p className="mt-0.5 font-body text-[13px] leading-relaxed text-[#454059]">{PINFO[p.key].what}</p>
                   )}
                 </div>
               );
@@ -207,12 +207,12 @@ export function PrintView({ include }: { include?: PrintInclude }) {
               {transits.map((t, i) => (
                 <div key={i} className="print-avoid">
                   <div className="font-display text-[13px] font-semibold text-[#1b1830]">{t.tGlyph} {t.tName} {t.type} {t.nName} <span className="font-mono text-[11px] font-normal text-[#8b8699]">· {t.orb.toFixed(1)}°</span></div>
-                  <p className="mt-0.5 font-body text-[12.5px] leading-relaxed text-[#454059]">{t.txt}</p>
+                  <p className="mt-0.5 font-body text-[13px] leading-relaxed text-[#454059]">{t.txt}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="font-body text-[12.5px] text-[#6c6781]">Gerade keine engen Transite — eine ruhige Phase.</p>
+            <p className="font-body text-[13px] text-[#6c6781]">Gerade keine engen Transite — eine ruhige Phase.</p>
           )}
         </Section>
 
@@ -222,13 +222,13 @@ export function PrintView({ include }: { include?: PrintInclude }) {
             <div className="space-y-1.5">
               {forecast.map((f, i) => (
                 <div key={i} className="flex items-baseline justify-between gap-3 border-b border-[#f0eef5] py-1.5">
-                  <span className="font-body text-[12.5px] text-[#2a2640]">{f.tGlyph} {f.tName} {f.type} {f.nName}</span>
+                  <span className="font-body text-[13px] text-[#2a2640]">{f.tGlyph} {f.tName} {f.type} {f.nName}</span>
                   <span className="font-mono text-[11px] text-[#7c5bbf]">{f.date.toLocaleDateString("de-DE", { month: "long", year: "numeric" })}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="font-body text-[12.5px] text-[#6c6781]">In den nächsten 12 Monaten bilden die langsamen Planeten keine exakten Aspekte zu deinem Bild — eine vergleichsweise ruhige Phase.</p>
+            <p className="font-body text-[13px] text-[#6c6781]">In den nächsten 12 Monaten bilden die langsamen Planeten keine exakten Aspekte zu deinem Bild — eine vergleichsweise ruhige Phase.</p>
           )}
         </Section>
 
@@ -239,7 +239,7 @@ export function PrintView({ include }: { include?: PrintInclude }) {
               <div className="mb-1.5 font-display text-[11px] font-bold uppercase tracking-[0.12em] text-[#7c5bbf]">Planeten</div>
               <div className="grid grid-cols-2 gap-y-1">
                 {CHART.map((p) => (
-                  <div key={p.key} className="font-body text-[11.5px] text-[#454059]"><Glyph k={p.key} g={p.glyph} /> {p.name}</div>
+                  <div key={p.key} className="font-body text-[11px] text-[#454059]"><Glyph k={p.key} g={p.glyph} /> {p.name}</div>
                 ))}
               </div>
             </div>
@@ -247,14 +247,14 @@ export function PrintView({ include }: { include?: PrintInclude }) {
               <div className="mb-1.5 font-display text-[11px] font-bold uppercase tracking-[0.12em] text-[#7c5bbf]">Aspekte</div>
               <div className="grid grid-cols-1 gap-y-1">
                 {ASPDEF.map((d) => (
-                  <div key={d.type} className="font-body text-[11.5px] text-[#454059]"><span className="font-glyph">{d.g}</span> {d.type} — {d.plain}</div>
+                  <div key={d.type} className="font-body text-[11px] text-[#454059]"><span className="font-glyph">{d.g}</span> {d.type} — {d.plain}</div>
                 ))}
               </div>
             </div>
           </div>
         </Section>
 
-        <footer className="mt-8 border-t border-[#eceaf2] pt-3 text-center font-body text-[10px] text-[#9b96a9]">
+        <footer className="mt-8 border-t border-[#eceaf2] pt-3 text-center font-body text-[11px] text-[#9b96a9]">
           Erstellt mit Vela · {created} · Dieses Horoskop ist zur Selbstreflexion gedacht und ersetzt keine medizinische, psychologische oder finanzielle Beratung.
         </footer>
       </div>
@@ -283,19 +283,19 @@ function Table({ head, children }: { head: string[]; children: React.ReactNode }
   return (
     <table className="w-full border-collapse text-left">
       <thead>
-        <tr>{head.map((h) => <th key={h} className="pb-1.5 font-display text-[10px] font-bold uppercase tracking-[0.08em] text-[#8b8699]">{h}</th>)}</tr>
+        <tr>{head.map((h) => <th key={h} className="pb-1.5 font-display text-[11px] font-bold uppercase tracking-[0.08em] text-[#8b8699]">{h}</th>)}</tr>
       </thead>
       <tbody>{children}</tbody>
     </table>
   );
 }
 function Td({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <td className={`py-1.5 pr-3 align-top font-body text-[12px] text-[#2a2640] ${className}`}>{children}</td>;
+  return <td className={`py-1.5 pr-3 align-top font-body text-[13px] text-[#2a2640] ${className}`}>{children}</td>;
 }
 function Row({ l, r, bold }: { l: string; r: string; bold?: boolean }) {
   return (
     <div className={`flex items-baseline justify-between gap-3 border-b border-[#f0eef5] py-1 ${bold ? "font-semibold" : ""}`}>
-      <span className="font-body text-[12px] text-[#454059]">{l}</span>
+      <span className="font-body text-[13px] text-[#454059]">{l}</span>
       <span className="font-mono text-[11px] text-[#1b1830]">{r}</span>
     </div>
   );
@@ -307,7 +307,7 @@ function BalanceBlock({ title, labels, values, total, colors }: { title: string;
       <div className="space-y-1.5">
         {labels.map((l, i) => (
           <div key={l} className="flex items-center gap-2">
-            <span className="w-24 font-body text-[12px] text-[#454059]">{l}</span>
+            <span className="w-24 font-body text-[13px] text-[#454059]">{l}</span>
             <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-[#f0eef5]">
               <div className="print-ink h-full rounded-full" style={{ width: `${total ? (values[i] / total) * 100 : 0}%`, background: colors[i] }} />
             </div>

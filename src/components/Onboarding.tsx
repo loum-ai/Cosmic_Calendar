@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 const FIELD =
   "w-full rounded-2xl border border-line bg-[rgba(255,255,255,0.04)] px-4 py-3 font-body text-[15px] text-txt outline-none transition placeholder:text-txt-3 focus:border-violet/55 focus:bg-[rgba(255,255,255,0.06)]";
-const LABEL = "mb-1.5 block font-mono text-[10px] uppercase tracking-[0.16em] text-violet/65";
+const LABEL = "mb-1.5 block font-mono text-[11px] uppercase tracking-[0.16em] text-violet/65";
 
 /**
  * "Eigenes Chart berechnen" — onboarding for any birth data. Geocodes the
@@ -125,7 +125,7 @@ export function Onboarding() {
               Eigenes Chart berechnen
             </DialogPrimitive.Title>
           </div>
-          <DialogPrimitive.Description className="mt-2 font-body text-[13.5px] leading-[1.6] text-txt-2">
+          <DialogPrimitive.Description className="mt-2 font-body text-[13px] leading-[1.6] text-txt-2">
             Gib die Geburtsdaten ein — Vela berechnet das echte Geburtsrad mit Häusern, Aspekten und Rückläufigkeit.
           </DialogPrimitive.Description>
 
@@ -172,7 +172,7 @@ export function Onboarding() {
                 <span className="font-body text-[13px] text-txt-2">Ich kenne meine Geburtszeit nicht</span>
               </button>
               {timeUnknown && (
-                <p className="mt-2.5 rounded-xl border border-line-soft bg-white/[0.03] px-3.5 py-2.5 font-body text-[12px] leading-relaxed text-txt-3">
+                <p className="mt-2.5 rounded-xl border border-line-soft bg-white/[0.03] px-3.5 py-2.5 font-body text-[13px] leading-relaxed text-txt-3">
                   Kein Problem — du kommst trotzdem rein. <span className="text-txt-2">Sonne, Planeten in ihren Zeichen und die Aspekte stimmen.</span> Was ohne Zeit nicht belastbar ist: Aszendent, die Häuser und der exakte Mondgrad. Du kannst die Zeit später jederzeit im Profil nachtragen.
                 </p>
               )}
@@ -208,7 +208,7 @@ export function Onboarding() {
                       )}
                     >
                       <MapPin className="h-3.5 w-3.5 shrink-0 text-txt-3" />
-                      <span className="font-body text-[13.5px] text-txt">{r.label}</span>
+                      <span className="font-body text-[13px] text-txt">{r.label}</span>
                     </button>
                   ))}
                 </div>

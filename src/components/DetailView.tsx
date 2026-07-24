@@ -66,7 +66,7 @@ export function DetailView() {
                       ))}
                     </div>
                   ) : (
-                    <p className="max-w-[60ch] font-body text-[16.5px] leading-[1.72] text-[rgba(255,255,255,0.86)]">
+                    <p className="max-w-[60ch] font-body text-[17px] leading-[1.72] text-[rgba(255,255,255,0.86)]">
                       {sec.accent ? personal || sec.body : sec.body}
                     </p>
                   )}
@@ -89,7 +89,7 @@ export function DetailView() {
                         {r.glyph}
                       </span>
                       <div>
-                        <div className="font-body text-[14px] text-txt">{r.label}</div>
+                        <div className="font-body text-[15px] text-txt">{r.label}</div>
                         <p className="mt-0.5 max-w-[52ch] font-body text-[13px] leading-relaxed text-txt-3">{r.text}</p>
                       </div>
                     </button>

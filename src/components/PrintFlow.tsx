@@ -82,7 +82,7 @@ export function PrintFlow() {
             <X className="h-4 w-4" />
           </button>
         </div>
-        <p className="mt-1.5 font-body text-[12.5px] text-txt-2">Deckblatt mit Chart-Rad + Datencheck sind immer dabei. Wähle die Kapitel:</p>
+        <p className="mt-1.5 font-body text-[13px] text-txt-2">Deckblatt mit Chart-Rad + Datencheck sind immer dabei. Wähle die Kapitel:</p>
 
         <div className="mt-4 space-y-1.5">
           {ALL_CHAPTERS.map((ch) => {
@@ -92,15 +92,15 @@ export function PrintFlow() {
                 <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition ${on ? "border-mint bg-mint/25 text-mint" : "border-line text-transparent"}`}>
                   <Check className="h-3.5 w-3.5" />
                 </span>
-                <span className="font-body text-[13.5px] text-txt">{ch.label}</span>
+                <span className="font-body text-[13px] text-txt">{ch.label}</span>
               </button>
             );
           })}
         </div>
 
         <div className="mt-3 flex gap-2">
-          <button onClick={() => setAll(true)} className="rounded-pill border border-line px-3 py-1.5 font-body text-[12px] text-txt-2 hover:bg-surface">Alle</button>
-          <button onClick={() => setAll(false)} className="rounded-pill border border-line px-3 py-1.5 font-body text-[12px] text-txt-2 hover:bg-surface">Keine</button>
+          <button onClick={() => setAll(true)} className="rounded-pill border border-line px-3 py-1.5 font-body text-[13px] text-txt-2 hover:bg-surface">Alle</button>
+          <button onClick={() => setAll(false)} className="rounded-pill border border-line px-3 py-1.5 font-body text-[13px] text-txt-2 hover:bg-surface">Keine</button>
         </div>
 
         <button
