@@ -118,7 +118,7 @@
     /* native controls (date/time pickers, dropdowns) render dark-themed —
        otherwise their text is dark-on-dark and the fields look empty */
     color-scheme: dark;
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-size: 16.5px;
     line-height: 1.65;
     font-variant-emoji: text; /* glyphs as text, never emoji */
@@ -182,7 +182,7 @@
   }
   /* H2 — section title (H3-Tier = Bricolage semibold, loum .t-h3) */
   .vela-title {
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-weight: 600;
     font-size: 24px;
     line-height: 1.2;
@@ -192,7 +192,7 @@
   /* THE signature: uppercase meta eyebrow (loum .t-meta — muted, nie Akzentfarbe) */
   .vela-label,
   .vela-eyebrow {
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-size: 12.5px;
     font-weight: 500;
     letter-spacing: 0.18em;
@@ -201,14 +201,14 @@
     opacity: 1;
   }
   .vela-sub {
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-weight: 400;
     font-size: 16px;
     line-height: 1.6;
     color: var(--text-secondary);
   }
   .vela-body {
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-weight: 400;
     font-size: 16.5px;
     line-height: 1.7;
@@ -216,14 +216,14 @@
   }
   /* data readout — quiet sans (no mono) */
   .vela-data {
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-size: 13px;
     letter-spacing: 0.01em;
     color: var(--accent-teal);
     font-variant-emoji: text;
   }
   .vela-data-dim {
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-size: 12px;
     letter-spacing: 0.02em;
     color: var(--text-muted);

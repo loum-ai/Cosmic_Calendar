@@ -67,9 +67,11 @@ export default {
         cinzel: ['"Cinzel"', "ui-serif", "Georgia", "serif"],
         deco: ['"Cinzel Decorative"', '"Cinzel"', "ui-serif", "serif"],
         serif: ['"Cinzel"', "ui-serif", "Georgia", "serif"],
-        display: ['"Bricolage Grotesque"', "ui-sans-serif", "system-ui", "sans-serif"],
-        body: ['"Bricolage Grotesque"', "ui-sans-serif", "system-ui", "sans-serif"],
-        mono: ['"Bricolage Grotesque"', "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ['"Bricolage Grotesque Variable"', '"Bricolage Grotesque"', "ui-sans-serif", "system-ui", "sans-serif"],
+        body: ['"Bricolage Grotesque Variable"', '"Bricolage Grotesque"', "ui-sans-serif", "system-ui", "sans-serif"],
+        // font-mono war auf Bricolage gemappt — also gar kein Monospace. Grad-
+        // und Orbis-Zahlen liefen in der UI-Schrift ohne Ziffernausrichtung.
+        mono: ["ui-monospace", "SFMono-Regular", '"SF Mono"', "Menlo", "Consolas", "monospace"],
         glyph: ['"Noto Sans Symbols"', '"Segoe UI Symbol"', "system-ui", "sans-serif"],
       },
       borderRadius: {
