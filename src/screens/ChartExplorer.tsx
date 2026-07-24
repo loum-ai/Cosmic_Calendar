@@ -15,9 +15,15 @@ import { useApp } from "@/store/useApp";
 const KIND_LABEL: Record<string, string> = { muster: "Aspektmuster", fokus: "Fokus", balance: "Balance", rhythmus: "Rhythmus" };
 const KIND_COL: Record<string, string> = { muster: "#c9bcff", fokus: "#ffce6e", balance: "#46e8c4", rhythmus: "#9db6ff" };
 
-/** A "Besondere Muster" card — tap to expand the deeper, chart-specific reading. */
+/** A "Besondere Muster" card — tap to expand the deeper, chart-specific reading.
+ *  „Für dich konkret" ist eine erzeugte Deutung zu genau dieser Konfiguration;
+ *  p.detail (die alte Schablone) steht nur noch, solange sie lädt. */
 function PatternCard({ p }: { p: Pattern }) {
   const [open, setOpen] = useState(false);
+  // erst beim Aufklappen erzeugen — sonst feuert eine Chart-Seite bis zu neun
+  // Anfragen auf einmal
+  const { text: gen, loading: genLoading } = useReading(p.viewKey, p.task, !IS_DEMO && open);
+  const konkret = gen || (genLoading ? "" : p.detail);
   return (
     <button
       type="button"
@@ -54,7 +60,15 @@ function PatternCard({ p }: { p: Pattern }) {
                 <div className="mb-1.5 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em]" style={{ color: KIND_COL[p.kind] }}>
                   <Sparkles className="h-3.5 w-3.5" /> Für dich konkret
                 </div>
-                <p className="font-body text-[16px] font-medium leading-relaxed text-white">{p.detail}</p>
+                {konkret ? (
+                  <p className="font-body text-[16px] font-medium leading-relaxed text-white">{konkret}</p>
+                ) : (
+                  <div className="space-y-2.5 py-1">
+                    {[100, 92, 76].map((w, i) => (
+                      <div key={i} className="h-3 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
+                    ))}
+                  </div>
+                )}
               </div>
             </motion.div>
           )}

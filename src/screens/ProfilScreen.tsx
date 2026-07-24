@@ -5,7 +5,8 @@ import { OrbImage } from "@/components/OrbImage";
 import { Explainable } from "@/components/Explainable";
 import { KlartextToggle } from "@/components/KlartextToggle";
 import { ASC, CHART, IS_DEMO, MC, PROFILE, SG, signName } from "@/lib/data";
-import { chartPatterns } from "@/lib/patterns";
+import { chartPatterns, type Pattern } from "@/lib/patterns";
+import { useReading } from "@/lib/genReadings";
 import { aiSummary, getVerification } from "@/lib/interpret";
 import { useApp, type SavedBirth, type ViewerBirth } from "@/store/useApp";
 import { cn } from "@/lib/utils";
@@ -45,6 +46,19 @@ function birthRows(saved: SavedBirth | null, viewer: ViewerBirth | null) {
 }
 
 const SETTINGS = ["Benachrichtigungen", "Darstellung", "Datenschutz", "Über Vela"];
+
+/** Signatur-Karte: Überschrift = das Muster, Text = die erzeugte Deutung dazu
+ *  (die Beobachtung p.text steht als Rückfallebene, solange sie lädt). */
+function SignaturCard({ p }: { p: Pattern }) {
+  const { text: gen } = useReading(p.viewKey, p.task, !IS_DEMO);
+  return (
+    <div className="rounded-card border border-[rgba(120,150,255,0.18)] bg-glasswash p-4">
+      <div className="mb-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-lilac">{p.glyphs.join(" ")} Signatur</div>
+      <h3 className="font-cinzel text-[17px] font-semibold leading-tight text-white">{p.human}</h3>
+      <p className="mt-1 line-clamp-3 font-body text-[12.5px] leading-relaxed text-txt-2">{gen || p.text}</p>
+    </div>
+  );
+}
 
 export function ProfilScreen() {
   const setOnboardingOpen = useApp((s) => s.setOnboardingOpen);
@@ -90,13 +104,7 @@ export function ProfilScreen() {
         if (!ps.length) return null;
         return (
           <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
-            {ps.map((p) => (
-              <div key={p.id} className="rounded-card border border-[rgba(120,150,255,0.18)] bg-glasswash p-4">
-                <div className="mb-1 font-mono text-[9.5px] font-bold uppercase tracking-[0.16em] text-lilac">{p.glyphs.join(" ")} Signatur</div>
-                <h3 className="font-cinzel text-[17px] font-semibold leading-tight text-white">{p.title}</h3>
-                <p className="mt-1 line-clamp-3 font-body text-[12.5px] leading-relaxed text-txt-2">{p.text}</p>
-              </div>
-            ))}
+            {ps.map((p) => <SignaturCard key={p.id} p={p} />)}
           </div>
         );
       })()}

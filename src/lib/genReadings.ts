@@ -75,7 +75,7 @@ export function useReading(viewKey: string, task: string, enabled = true) {
  *  mechanics that make a reading worth money instead of a textbook line:
  *  synthesis, the explained WHY, one everyday anchor, gift AND shadow,
  *  cross-references to tight aspects — in plain, warm German. */
-const CRAFT = `So deutest du (wichtig):
+export const CRAFT = `So deutest du (wichtig):
 - SYNTHESE: Verwebe alles zu EINER Aussage über den Menschen — nicht Planet, Zeichen und Haus einzeln erklären.
 - WARUM: Erkläre in einem Halbsatz, warum dieser Lebensbereich dazugehört (z. B. warum dieses Haus für dieses Thema steht) — setze nichts voraus.
 - ALLTAG: Nenne EINE konkrete Alltagssituation, in der sich das zeigt („Das merkst du, wenn …").
