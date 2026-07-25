@@ -214,10 +214,8 @@ function factsToPrompt(f: any): string {
     "Aufgabe: Schreibe (1) eine 'summary' (Gesamtbild, 3–4 Sätze), (2) für JEDEN Planeten UND",
     "JEDEN weiteren Punkt oben einen 'sign_text' und 'house_text', key exakt wie angegeben,",
     "und (3) zu JEDEM Aspekt einen 'text'. Deutsch, Du-Form, konkret.",
-    "Beim Aszendenten beschreibt 'sign_text' die Wirkung nach außen und 'house_text', wie sich",
-    "das im 1. Haus (Auftreten, Anfänge, erster Eindruck) zeigt. Bei den Mondknoten beschreibt",
-    "'sign_text' die Qualität des Zeichens auf diesem Weg und 'house_text' den Lebensbereich,",
-    "in dem sich das abspielt.",
+    "Antworte AUSSCHLIESSLICH mit einem JSON-Objekt dieser Form, ohne Text davor oder danach:",
+    '{"summary":"…","placements":[{"key":"sun","sign_text":"…","house_text":"…"}],"aspects":[{"a":"sun","b":"moon","text":"…"}]}',
   );
   return lines.join("\n");
 }
@@ -336,29 +334,36 @@ async function generate(facts: any, model: string, key: string, wissen: string) 
     console.error("interpret: alle Anläufe gescheitert", r.status, JSON.stringify(r.data).slice(0, 700));
     return { error: { status: r.status, detail: r.data } };
   }
-  const text = r.data?.candidates?.[0]?.content?.parts?.filter((p: any) => !p?.thought).map((p: any) => p.text ?? "").join("") ?? "";
-  try { return { interpretation: JSON.parse(text) }; } catch { return { error: { parse: text.slice(0, 400), finishReason: r.data?.candidates?.[0]?.finishReason } }; }
+  let text = (r.data?.candidates?.[0]?.content?.parts?.filter((p: any) => !p?.thought).map((p: any) => p.text ?? "").join("") ?? "").trim();
+  // Ohne Schema kann Gemini das JSON in einen Code-Block packen.
+  const zaun = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (zaun) text = zaun[1].trim();
+  try { return { interpretation: JSON.parse(text) }; } catch {
+    console.error("interpret: JSON nicht lesbar", r.data?.candidates?.[0]?.finishReason, text.slice(0, 300));
+    return { error: { parse: text.slice(0, 400), finishReason: r.data?.candidates?.[0]?.finishReason } };
+  }
 }
 
 async function generatePortrait(facts: any, coreModel: string, flashModel: string, key: string, wissen: string): Promise<string> {
   const sys = wissen ? `${SYSTEM_PORTRAIT}\n\nFACHWISSEN (zur Orientierung, nicht zitieren):\n${wissen}` : SYSTEM_PORTRAIT;
   const models = [...new Set([coreModel, flashModel])];
   for (const model of models) {
-    try {
-      const r = await fetch(`${BASE}/models/${model}:generateContent?key=${key}`, {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: sys }] },
-          contents: [{ role: "user", parts: [{ text: `${factsToText(facts)}\n\nAUFGABE: Schreibe das PORTRAIT dieses Menschen — ein tiefes, synthetisiertes Gesamtbild aus genau diesen Fakten.` }] }],
-          generationConfig: { temperature: 0.85, maxOutputTokens: BUDGET_PORTRAIT },
-        }),
-      });
-      const data = await r.json();
-      if (!r.ok) { console.error(`interpret/portrait: ${model} Status ${r.status}`, JSON.stringify(data).slice(0, 400)); continue; }
-      // `thought`-Parts gehören nicht in den Text des Kunden.
-      const text = (data?.candidates?.[0]?.content?.parts?.filter((p: any) => !p?.thought).map((p: any) => p.text ?? "").join("") ?? "").trim();
-      if (text) return trimToSentence(text);
-    } catch { /* try next model */ }
+    for (const budget of [BUDGET_PORTRAIT, 2048]) {
+      try {
+        const r = await fetch(`${BASE}/models/${model}:generateContent?key=${key}`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: sys }] },
+            contents: [{ role: "user", parts: [{ text: `${factsToText(facts)}\n\nAUFGABE: Schreibe das PORTRAIT dieses Menschen — ein tiefes, synthetisiertes Gesamtbild aus genau diesen Fakten.` }] }],
+            generationConfig: { temperature: 0.85, maxOutputTokens: budget },
+          }),
+        });
+        const data = await r.json();
+        if (!r.ok) { console.error(`interpret/portrait: ${model} @${budget} Status ${r.status}`, JSON.stringify(data).slice(0, 400)); continue; }
+        const text = (data?.candidates?.[0]?.content?.parts?.filter((p: any) => !p?.thought).map((p: any) => p.text ?? "").join("") ?? "").trim();
+        if (text) return trimToSentence(text);
+      } catch (e) { console.error(`interpret/portrait: ${model} Ausnahme`, String(e)); }
+    }
   }
   return "";
 }
