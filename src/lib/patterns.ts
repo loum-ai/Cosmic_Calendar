@@ -1,5 +1,6 @@
 import { CHART, ASC, SN, HOUSE, THEME, signName, houseOf, computeAspects } from "./data";
 import { craft } from "./genReadings";
+import { phaseIndex, phaseVersatz } from "./moonPhase";
 
 /**
  * Chart-level synthesis — the "special", whole-chart insights that sit above
@@ -65,6 +66,7 @@ const RULER: Record<string, string> = {
   Waage: "venus", Skorpion: "pluto", Schütze: "jupiter", Steinbock: "saturn", Wassermann: "uranus", Fische: "neptune",
 };
 
+/** Der Grundzug jeder Phase — Namen und Zuordnung stehen in `moonPhase.ts`. */
 const PHASES = [
   ["Neumond", "Aufbruch aus der Stille — du beginnst Dinge instinktiv und unbelastet."],
   ["zunehmende Sichel", "Du kämpfst dich aus alten Mustern heraus und willst Neues wagen."],
@@ -227,12 +229,18 @@ export function chartPatterns(): Pattern[] {
   const moon = CHART.find((p) => p.key === "moon");
   if (sun && moon) {
     const ang = norm(moon.lon - sun.lon);
-    const [pn, pt] = PHASES[Math.floor(ang / 45) % 8];
-    out.push({ id: "phase", kind: "rhythmus", title: `Geboren bei ${pn}`, human: PHASE_HUMAN[Math.floor(ang / 45) % 8], glyphs: ["☉", "☽"],
-      text: `Zwischen Sonne (${signName(sun.lon)}) und Mond (${signName(moon.lon)}) lagen bei deiner Geburt ${Math.round(ang)}° — ${pn}.`,
-      viewKey: `pattern:phase:${Math.floor(ang / 45) % 8}:v2`,
+    const pi = phaseIndex(ang);
+    const [pn, pt] = PHASES[pi];
+    const versatz = phaseVersatz(ang);
+    const naehe =
+      versatz !== null && Math.abs(versatz) < 10
+        ? ` — ${Math.abs(versatz).toFixed(1)}° ${versatz < 0 ? "vor" : "nach"} dem exakten ${pn}`
+        : "";
+    out.push({ id: "phase", kind: "rhythmus", title: `Geboren bei ${pn}`, human: PHASE_HUMAN[pi], glyphs: ["☉", "☽"],
+      text: `Zwischen Sonne (${signName(sun.lon)}) und Mond (${signName(moon.lon)}) lagen bei deiner Geburt ${Math.round(ang)}°${naehe}.`,
+      viewKey: `pattern:phase:${pi}:v3`,
       task: patternTask(
-        `Mondphase bei der Geburt: ${pn} (${Math.round(ang)}° zwischen Sonne und Mond).\nSonne: ${pos("sun")}\nMond: ${pos("moon")}\nGrundzug dieser Phase: ${pt}`,
+        `Mondphase bei der Geburt: ${pn} (${Math.round(ang)}° zwischen Sonne und Mond${naehe ? `,${naehe.replace(" — ", " ")}` : ""}).\nSonne: ${pos("sun")}\nMond: ${pos("moon")}\nGrundzug dieser Phase: ${pt}`,
         "Sag, was dieser Grundrhythmus für das Timing dieses Menschen bedeutet — wann er in Fahrt kommt, wann nicht, und woran er merkt, dass er gegen den eigenen Takt arbeitet. Kein Zwang, sondern ein Muster, das er nutzen kann.",
       ),
       detail: `Die Mondphase bei deiner Geburt beschreibt deinen Grundrhythmus — nicht als Zwang, sondern als dein natürliches Timing. Wenn du ihm folgst, statt dagegen zu arbeiten, läuft vieles leichter und stimmiger. ${pt}` });

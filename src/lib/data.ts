@@ -241,9 +241,13 @@ export function computeAspects(): Aspect[] {
   return out;
 }
 
-/** Plain-language summary of the chart, used as context for the Q&A. */
+/** Plain-language summary of the chart, used as context for the Q&A.
+ *  `p.house` ist maßgeblich — das ist das gerechnete Placidus-Haus. `houseOf()`
+ *  ist nur die Gleich-Haus-Notlösung. Vorher stand hier ausschließlich
+ *  `houseOf()`: der Chat bekam dadurch andere Häuser genannt als das Rad
+ *  daneben zeigte und widersprach der eigenen App. */
 export function chartFacts(): string {
-  const pl = CHART.map((p) => `${p.name} in ${signName(p.lon)} (Haus ${houseOf(p.lon)})`).join("; ");
+  const pl = CHART.map((p) => `${p.name} in ${signName(p.lon)} (Haus ${p.house ?? houseOf(p.lon)})`).join("; ");
   const asp = computeAspects().map((a) => `${a.A.name} ${a.def.type} ${a.B.name}`).join("; ");
   return `Aszendent ${signName(ASC)}. ${pl}. Verbindungen: ${asp}.`;
 }
