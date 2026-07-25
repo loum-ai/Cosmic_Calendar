@@ -1,10 +1,10 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, RotateCcw, X, Sparkles, Loader2 } from "lucide-react";
 import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { useReading } from "@/lib/genReadings";
 import { useApp } from "@/store/useApp";
-import { CHART, SN, SIGNWHAT, SIGNMEAN, signName } from "@/lib/data";
+import { CHART, HOUSE, signName } from "@/lib/data";
 import { computeTransits, skySummary, transitingBodies, SIGN_GLYPH, type TransitHit } from "@/lib/transits";
 import { PLANET_PHOTO, PLANET_GLOW } from "@/lib/planetPhotos";
 import { EASE } from "@/lib/tokens";
@@ -128,6 +128,44 @@ function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => vo
         </div>
       </div>
     </motion.div>
+  );
+}
+
+/**
+ * „Am Himmel" — eine Karte der aktuellen Planetenlage, aber IN DIESEM Chart.
+ *
+ * Vorher stand hier die Zeichen-Lexikonzeile („Schütze ist freiheitsliebend,
+ * optimistisch und sucht den Sinn"), die jeder Mensch mit demselben Datum
+ * wortgleich las und die mit seinem Geburtsbild nichts zu tun hatte. Jetzt
+ * wird gerechnet, durch WELCHES Haus dieses Charts der laufende Körper gerade
+ * zieht — und die Deutung dazu erzeugt. Der Cache-Schlüssel enthält Haus und
+ * Zeitraum, damit der Mond täglich und die Sonne monatlich neu gedeutet wird.
+ */
+function HimmelKarte({
+  glyph, titel, eyebrow, fakt, viewKey, task, fill, span,
+}: {
+  glyph: ReactNode; titel: string; eyebrow: string; fakt: string;
+  viewKey: string; task: string; fill: string; span?: boolean;
+}) {
+  const { text, loading } = useReading(viewKey, task);
+  return (
+    <div className={`relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass ${span ? "sm:col-span-2" : ""}`} style={{ background: fill }}>
+      <span className="vela-glyph mt-0.5 text-xl text-lilac">{glyph}</span>
+      <div className="min-w-0 flex-1">
+        <div className="font-cinzel text-[15px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">{titel}</div>
+        <div className="mt-1 font-body text-[11px] uppercase tracking-[0.18em] text-txt-3">{eyebrow}</div>
+        <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt-2">{fakt}</p>
+        {text ? (
+          <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt">{text}</p>
+        ) : loading ? (
+          <div className="mt-2.5 space-y-2">
+            {[96, 82].map((w, i) => (
+              <div key={i} className="h-2.5 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </div>
   );
 }
 
@@ -305,6 +343,10 @@ export function TransiteScreen() {
 
   const hits = useMemo(() => computeTransits(CHART, date), [date, chartVersion]);
   const sky = useMemo(() => skySummary(date), [date]);
+  // Cache-Zeitfenster: der Mond wechselt alle zwei bis drei Tage, die Sonne
+  // braucht einen Monat pro Haus — entsprechend wird neu gedeutet.
+  const tag = date.toISOString().slice(0, 10);
+  const monat = date.toISOString().slice(0, 7);
   const strongest = hits[0];
 
   return (
@@ -361,40 +403,48 @@ export function TransiteScreen() {
       <section className="mt-12">
         <SectionHead label="Am Himmel" title="Aktuelle Planetenlage" sub="Größere Bewegungen über allen" />
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass" style={{ background: cardFill(PLANET_GLOW.moon, 0.12) }}>
-            <span className="vela-glyph mt-0.5 text-xl text-lilac">{SIGN_GLYPH(sky.moonSign)}</span>
-            <div className="min-w-0 flex-1">
-              <div className="font-cinzel text-[15px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">Mond in {sky.moonSign}</div>
-              <div className="mt-1 font-body text-[9.5px] uppercase tracking-[0.18em] text-txt-3">Gefühlslage des Tages</div>
-              <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt-2">Der Mond läuft heute durch {sky.moonSign} — {SIGNWHAT[SN.indexOf(sky.moonSign)]}</p>
-              <p className="mt-1.5 font-body text-[13px] leading-[1.6] text-txt-3">So fühlt sich der Tag kollektiv an.</p>
-            </div>
-          </div>
-          <div className="relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass" style={{ background: cardFill(PLANET_GLOW.sun, 0.12) }}>
-            <span className="vela-glyph mt-0.5 text-xl text-lilac">{SIGN_GLYPH(sky.sunSign)}</span>
-            <div className="min-w-0 flex-1">
-              <div className="font-cinzel text-[15px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">Sonne in {sky.sunSign}</div>
-              <div className="mt-1 font-body text-[9.5px] uppercase tracking-[0.18em] text-txt-3">Jahreszeit-Thema</div>
-              <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt-2">Solange die Sonne durch {sky.sunSign} läuft, ist „{SIGNMEAN[SN.indexOf(sky.sunSign)].split(" · ")[1]}" das Grundthema dieser Wochen.</p>
-            </div>
-          </div>
-          <div className="relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass sm:col-span-2" style={{ background: CARD_FILL }}>
-            <span className="vela-glyph mt-0.5 text-xl text-lilac"><RotateCcw className="h-4 w-4" /></span>
-            <div className="min-w-0 flex-1">
-              <div className="font-cinzel text-[15px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">
-                {sky.retro.length ? `Rückläufig: ${sky.retro.map((r) => r.name).join(", ")}` : "Keine rückläufigen Planeten"}
+          <HimmelKarte
+            glyph={SIGN_GLYPH(sky.moonSign)}
+            titel={`Mond in ${sky.moonSign}`}
+            eyebrow="Gefühlslage des Tages"
+            fakt={`Der laufende Mond steht heute in deinem ${sky.moonHouse}. Haus — ${HOUSE[sky.moonHouse - 1]}.`}
+            viewKey={`sky:moon:${sky.moonSign}:h${sky.moonHouse}:${tag}`}
+            task={`Der laufende Mond steht heute in ${sky.moonSign} und damit im ${sky.moonHouse}. Haus dieses Geburtsbildes (${HOUSE[sky.moonHouse - 1]}).
+Sag in 2 kurzen Sätzen, was dieser Tag für DIESEN Menschen gefühlsmäßig bereithält — woran er es merkt, wo seine Aufmerksamkeit heute hinzieht. Der Mond wechselt alle zwei bis drei Tage: also eine Tagesfärbung, kein Lebensthema. Du-Form, konkret, keine Zeichen-Allgemeinplätze.`}
+            fill={cardFill(PLANET_GLOW.moon, 0.12)}
+          />
+          <HimmelKarte
+            glyph={SIGN_GLYPH(sky.sunSign)}
+            titel={`Sonne in ${sky.sunSign}`}
+            eyebrow="Thema dieser Wochen"
+            fakt={`Sie zieht gerade durch dein ${sky.sunHouse}. Haus — ${HOUSE[sky.sunHouse - 1]}.`}
+            viewKey={`sky:sun:${sky.sunSign}:h${sky.sunHouse}:${monat}`}
+            task={`Die laufende Sonne steht in ${sky.sunSign} und damit im ${sky.sunHouse}. Haus dieses Geburtsbildes (${HOUSE[sky.sunHouse - 1]}).
+Sag in 2 kurzen Sätzen, welcher Lebensbereich bei DIESEM Menschen in diesen vier Wochen im Licht steht und was das praktisch heißt. Die Sonne braucht rund einen Monat pro Haus — also ein Kapitel, kein Tag. Du-Form, konkret.`}
+            fill={cardFill(PLANET_GLOW.sun, 0.12)}
+          />
+          {sky.retro.length ? (
+            <HimmelKarte
+              span
+              glyph={<RotateCcw className="h-4 w-4" />}
+              titel={`Rückläufig: ${sky.retro.map((r) => r.name).join(", ")}`}
+              eyebrow="Phasen zum Innehalten & Überarbeiten"
+              fakt={sky.retro.map((r) => `${r.name} im ${r.house}. Haus (${HOUSE[r.house - 1]})`).join(" · ") + "."}
+              viewKey={`sky:retro:${sky.retro.map((r) => `${r.name}${r.house}`).join("-")}:${monat}`}
+              task={`Rückläufig sind gerade: ${sky.retro.map((r) => `${r.name} im ${r.house}. Haus dieses Geburtsbildes (${HOUSE[r.house - 1]})`).join("; ")}.
+Sag in 2–3 kurzen Sätzen, was das für DIESEN Menschen bedeutet: in welchem Lebensbereich gerade etwas nach innen geht, was sich dort lohnt zu überdenken statt neu anzufangen. Erkläre rückläufig in einem Halbsatz (scheinbare Rückwärtsbewegung von der Erde aus). Du-Form, nüchtern — keine Warnungen, keine Dramatik.`}
+              fill={CARD_FILL}
+            />
+          ) : (
+            <div className="relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass sm:col-span-2" style={{ background: CARD_FILL }}>
+              <span className="vela-glyph mt-0.5 text-xl text-lilac"><RotateCcw className="h-4 w-4" /></span>
+              <div className="min-w-0 flex-1">
+                <div className="font-cinzel text-[15px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">Keine rückläufigen Planeten</div>
+                <div className="mt-1 font-body text-[11px] uppercase tracking-[0.18em] text-txt-3">Alles läuft vorwärts</div>
+                <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt-2">Ein guter Moment für Dinge, die sonst gern verschoben werden: Verträge klären, Gespräche beginnen, Neues starten.</p>
               </div>
-              <div className="mt-1 font-body text-[9.5px] uppercase tracking-[0.18em] text-txt-3">Phasen zum Innehalten & Überarbeiten</div>
-              {sky.retro.length ? (
-                <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt-2">Diese Themen laufen gerade nach innen — gut zum Überdenken statt Vorpreschen.</p>
-              ) : (
-                <>
-                  <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt-2">Alle Planeten laufen vorwärts.</p>
-                  <p className="mt-1.5 font-body text-[13px] leading-[1.6] text-txt-3">Ein guter Moment für Dinge, die sonst gern verschoben werden: Verträge klären, Gespräche beginnen, Neues starten.</p>
-                </>
-              )}
             </div>
-          </div>
+          )}
         </div>
       </section>
 

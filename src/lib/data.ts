@@ -202,6 +202,23 @@ export function signName(lon: number): string {
   return SN[Math.floor((((lon % 360) + 360) % 360) / 30)];
 }
 
+/**
+ * In welches Haus DIESES Charts fällt ein beliebiger Grad — nach den echten
+ * Placidus-Spitzen, nicht nach Gleich-Haus. Gebraucht für den laufenden
+ * Himmel: „der Mond steht heute in deinem 7. Haus". Fällt auf houseOf()
+ * zurück, solange keine Spitzen vorliegen (Geburtszeit unbekannt).
+ */
+export function houseOfCusps(lon: number): number {
+  if (!CUSPS || CUSPS.length !== 12) return houseOf(lon);
+  const L = (((lon % 360) + 360) % 360);
+  for (let i = 0; i < 12; i++) {
+    const a = ((CUSPS[i] % 360) + 360) % 360;
+    const b = ((CUSPS[(i + 1) % 12] % 360) + 360) % 360;
+    if (a <= b ? L >= a && L < b : L >= a || L < b) return i + 1;
+  }
+  return houseOf(lon);
+}
+
 export function houseOf(lon: number): number {
   return Math.floor(((((lon - ASC) % 360) + 360) % 360) / 30) + 1;
 }

@@ -7,7 +7,7 @@
  * interpretation is reserved for the natal reading.
  */
 import { Origin, Horoscope } from "circular-natal-horoscope-js";
-import { THEME, signName, SG } from "./data";
+import { THEME, signName, SG, houseOfCusps } from "./data";
 import type { Planet } from "./data";
 
 const TBODIES: { key: string; name: string; glyph: string }[] = [
@@ -33,7 +33,13 @@ export interface TransitHit {
   title: string; txt: string;
 }
 
-export interface SkySummary { moonSign: string; sunSign: string; retro: { name: string; glyph: string }[] }
+/** Der laufende Himmel — und wo er in DIESEM Geburtsbild landet. Die
+ *  Haus-Angaben machen aus einer allgemeinen Himmelslage eine persönliche. */
+export interface SkySummary {
+  moonSign: string; moonHouse: number;
+  sunSign: string; sunHouse: number;
+  retro: { name: string; glyph: string; house: number }[];
+}
 
 const norm = (d: number) => ((d % 360) + 360) % 360;
 
@@ -106,8 +112,12 @@ export function skySummary(date: Date): SkySummary {
   trans.forEach((t) => (byKey[t.key] = t));
   return {
     moonSign: signName(byKey.moon.lon),
+    moonHouse: houseOfCusps(byKey.moon.lon),
     sunSign: signName(byKey.sun.lon),
-    retro: trans.filter((t) => t.retro && t.key !== "sun" && t.key !== "moon").map((t) => ({ name: t.name, glyph: t.glyph })),
+    sunHouse: houseOfCusps(byKey.sun.lon),
+    retro: trans
+      .filter((t) => t.retro && t.key !== "sun" && t.key !== "moon")
+      .map((t) => ({ name: t.name, glyph: t.glyph, house: houseOfCusps(t.lon) })),
   };
 }
 
