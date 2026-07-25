@@ -213,7 +213,10 @@ function factsToText(f: any): string {
 }
 
 function chartToFacts(name: string, data: any) {
-  const aspects = [...(data.aspects ?? [])].sort((a: any, b: any) => a.orb - b.orb).slice(0, 14);
+  // Die App zeigt JEDEN Aspekt innerhalb 6° Orbis. Bei 14 blieben gemessen
+  // 13 von 27 Verbindungen (Kunde Max) ohne Deutung und fielen auf die
+  // Schablone zurück. 30 deckt auch dicht besetzte Charts ab.
+  const aspects = [...(data.aspects ?? [])].sort((a: any, b: any) => a.orb - b.orb).slice(0, 30);
   return {
     profile_name: name,
     asc_sign: signOf(data.asc),

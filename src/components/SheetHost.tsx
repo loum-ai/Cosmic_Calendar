@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { X, Loader2, Sparkles, ChevronRight } from "lucide-react";
 import { useApp } from "@/store/useApp";
-import { resolveSheet, type SheetContent, type SheetDescriptor } from "@/lib/sheets";
+import { firstSentence, resolveSheet, type SheetContent, type SheetDescriptor, type SheetRelation } from "@/lib/sheets";
 import { Sheet, SheetContent as SheetShell } from "@/components/ui/sheet";
 import { GlyphBadge } from "@/components/GlyphBadge";
 import { subjectTask, useReading, storedReading } from "@/lib/genReadings";
@@ -97,6 +97,36 @@ function DeutungBox({ label, children }: { label: ReactNode; children: ReactNode
         {children}
       </div>
     </div>
+  );
+}
+
+/**
+ * Eine Zeile der „Verbindungen"-Liste.
+ *
+ * WARUM EIGENE KOMPONENTE: Der Cockpit-Lauf deutet nur die 14 engsten Aspekte.
+ * Gemessen an den echten Kundendaten fehlten dadurch 13 von 27 (ein Kunde),
+ * 6 von 20, 5 von 19 — für diese Zeilen stand die Schablone. Fehlt die
+ * gespeicherte Deutung, wird sie hier nachgeholt (derselbe Cache-Key wie das
+ * Aspekt-Sheet, also genau EINE Erzeugung pro Verbindung, danach sofort da).
+ */
+function RelationRow({ r, onOpen }: { r: SheetRelation; onOpen: () => void }) {
+  const st = subjectTask({ kind: "aspect", key: r.key });
+  const { text: gen } = useReading(st?.viewKey ?? "", st?.task ?? "", !!st && !IS_DEMO && r.source !== "ai");
+  const zeile = r.source === "ai" ? r.text : gen ? firstSentence(gen) : r.text;
+  return (
+    <button
+      onClick={onOpen}
+      className="group -mx-2.5 flex items-start gap-3 rounded-[14px] border-t border-line-soft px-2.5 py-3.5 text-left transition first:border-t-0 hover:bg-surface"
+    >
+      <span className="vela-glyph mt-[3px] text-base leading-none" style={{ color: r.color }}>
+        {r.glyph}
+      </span>
+      <div className="min-w-0 flex-1">
+        <div className="font-body text-[13px] font-medium leading-snug text-txt">{r.label}</div>
+        <p className="mt-1.5 font-body text-[13px] leading-[1.6] text-txt-2">{zeile}</p>
+      </div>
+      <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-txt-3 transition group-hover:text-lilac" />
+    </button>
   );
 }
 
@@ -268,20 +298,7 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
             <div className="mb-2 font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3">Verbindungen</div>
             <div className="flex flex-col">
               {content.relations.map((r) => (
-                <button
-                  key={r.key}
-                  onClick={() => openSheet({ kind: "aspect", key: r.key })}
-                  className="group -mx-2.5 flex items-start gap-3 rounded-[14px] border-t border-line-soft px-2.5 py-3.5 text-left transition first:border-t-0 hover:bg-surface"
-                >
-                  <span className="vela-glyph mt-[3px] text-base leading-none" style={{ color: r.color }}>
-                    {r.glyph}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="font-body text-[13px] font-medium leading-snug text-txt">{r.label}</div>
-                    <p className="mt-1.5 font-body text-[13px] leading-[1.6] text-txt-2">{r.text}</p>
-                  </div>
-                  <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-txt-3 transition group-hover:text-lilac" />
-                </button>
+                <RelationRow key={r.key} r={r} onOpen={() => openSheet({ kind: "aspect", key: r.key })} />
               ))}
             </div>
           </div>
