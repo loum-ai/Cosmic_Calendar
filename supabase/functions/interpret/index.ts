@@ -138,9 +138,22 @@ const SCHEMA = {
  * raus. Gegen Abbrüche hilft hier das großzügige Budget plus der Rückschnitt
  * unten; das reicht, weil dieser Lauf ohnehin selten und einmalig ist.
  */
-function budget(_mdl: string, _denken: number) {
-  return { maxOutputTokens: 16384 };
-}
+/**
+ * ZWEITER ANLAUF, 25.07. — die Zahlen zurück auf das, was NACHWEISLICH lief.
+ *
+ * Nach dem Entfernen von `thinkingConfig` schlug Marcos Deutung erneut fehl.
+ * Die Logs: HTTP 200 in 1,3–3,2 s. Eine echte Erzeugung dauert 10–30 s — das
+ * war die Zeit für einen abgelehnten Aufruf plus Notfall-Schablone. Gemeinsam
+ * hatten beide Versuche `maxOutputTokens: 16384`; am 24.07., als alle vier
+ * Kunden sauber durchliefen, standen dort 8192 (strukturiert) und 4096
+ * (Portrait).
+ *
+ * Lehre, zum zweiten Mal am selben Tag: an einer laufenden Konfiguration nur
+ * ändern, was man auch prüfen kann. Diese Umgebung erreicht Gemini nicht, also
+ * gelten hier die Werte, die in der Praxis belegt sind.
+ */
+const BUDGET_STRUKTUR = 8192;
+const BUDGET_PORTRAIT = 4096;
 
 /** Bricht der Text mitten im Satz ab, lieber auf den letzten ganzen Satz
  *  zurückschneiden als einen halben ausliefern. */
@@ -319,12 +332,22 @@ async function generate(facts: any, model: string, key: string, wissen: string) 
     });
     return { ok: r.ok, status: r.status, data: await r.json() };
   };
-  const voll = { temperature: 0.55, ...budget(model, 0), responseMimeType: "application/json", responseJsonSchema: SCHEMA };
-  let r = await versuch(voll);
-  // Zweiter Anlauf ohne Schema — manche Modelle stolpern über
-  // responseJsonSchema, das Format steht auch so im Auftrag.
-  if (!r.ok) r = await versuch({ temperature: 0.55, maxOutputTokens: 16384, responseMimeType: "application/json" });
-  if (!r.ok) return { error: { status: r.status, detail: r.data } };
+  // Drei Anläufe, jeder unterscheidet sich vom vorigen — sonst scheitern alle
+  // am selben Grund, wie am 25.07. geschehen.
+  const stufen = [
+    { temperature: 0.55, maxOutputTokens: BUDGET_STRUKTUR, responseMimeType: "application/json", responseJsonSchema: SCHEMA },
+    { temperature: 0.55, maxOutputTokens: BUDGET_STRUKTUR, responseMimeType: "application/json" },
+    { temperature: 0.55, maxOutputTokens: 4096 },
+  ];
+  let r = await versuch(stufen[0]);
+  for (let i = 1; i < stufen.length && !r.ok; i++) {
+    console.error(`interpret: Anlauf ${i} nötig, Status ${r.status}`, JSON.stringify(r.data).slice(0, 400));
+    r = await versuch(stufen[i]);
+  }
+  if (!r.ok) {
+    console.error("interpret: alle Anläufe gescheitert", r.status, JSON.stringify(r.data).slice(0, 700));
+    return { error: { status: r.status, detail: r.data } };
+  }
   const text = r.data?.candidates?.[0]?.content?.parts?.filter((p: any) => !p?.thought).map((p: any) => p.text ?? "").join("") ?? "";
   try { return { interpretation: JSON.parse(text) }; } catch { return { error: { parse: text.slice(0, 400), finishReason: r.data?.candidates?.[0]?.finishReason } }; }
 }
@@ -339,11 +362,11 @@ async function generatePortrait(facts: any, coreModel: string, flashModel: strin
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: sys }] },
           contents: [{ role: "user", parts: [{ text: `${factsToText(facts)}\n\nAUFGABE: Schreibe das PORTRAIT dieses Menschen — ein tiefes, synthetisiertes Gesamtbild aus genau diesen Fakten.` }] }],
-          generationConfig: { temperature: 0.85, ...budget(model, 2048) },
+          generationConfig: { temperature: 0.85, maxOutputTokens: BUDGET_PORTRAIT },
         }),
       });
       const data = await r.json();
-      if (!r.ok) continue;
+      if (!r.ok) { console.error(`interpret/portrait: ${model} Status ${r.status}`, JSON.stringify(data).slice(0, 400)); continue; }
       // `thought`-Parts gehören nicht in den Text des Kunden.
       const text = (data?.candidates?.[0]?.content?.parts?.filter((p: any) => !p?.thought).map((p: any) => p.text ?? "").join("") ?? "").trim();
       if (text) return trimToSentence(text);
