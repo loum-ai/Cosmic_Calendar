@@ -125,32 +125,20 @@ const SCHEMA = {
 };
 
 /**
- * Ausgabe-Budget.
+ * Ausgabe-Budget — zweimal am 25.07. falsch gewählt, hier die Chronik.
  *
- * VORFALL 2026-07-25: Hier stand zusätzlich ein `thinkingConfig`. Elf Minuten
- * nach dem Deploy wurde der erste neue Kunde (Marco) gedeutet — BEIDE
- * Gemini-Aufrufe schlugen fehl, die Notfall-Schablone übernahm, und er bekam
- * generische Texte ohne Portrait. Die vier älteren Kunden waren mit derselben
- * Funktion ohne `thinkingConfig` sauber durchgelaufen.
+ * 1) Ein `thinkingConfig` kam dazu. Elf Minuten später wurde der erste neue
+ *    Kunde (Marco) gedeutet: beide Gemini-Aufrufe scheiterten, die
+ *    Notfall-Schablone übernahm, kein Portrait.
+ * 2) Das Feld raus, aber `maxOutputTokens` blieb auf 16384 — der zweite Lauf
+ *    scheiterte genauso. Die Logs zeigten HTTP 200 in 1,3–3,2 s; eine echte
+ *    Erzeugung dauert 10–30 s. Das war die Zeit für einen abgelehnten Aufruf
+ *    plus Schablone. Auch der Rückfall-Anlauf schleppte die 16384 mit und
+ *    scheiterte deshalb identisch.
  *
- * Lehre: `maxOutputTokens` anzuheben ist eine reine Zahl und war nie das
- * Risiko — ein zusätzliches Feld in `generationConfig` ist eins. Das Feld ist
- * raus. Gegen Abbrüche hilft hier das großzügige Budget plus der Rückschnitt
- * unten; das reicht, weil dieser Lauf ohnehin selten und einmalig ist.
- */
-/**
- * ZWEITER ANLAUF, 25.07. — die Zahlen zurück auf das, was NACHWEISLICH lief.
- *
- * Nach dem Entfernen von `thinkingConfig` schlug Marcos Deutung erneut fehl.
- * Die Logs: HTTP 200 in 1,3–3,2 s. Eine echte Erzeugung dauert 10–30 s — das
- * war die Zeit für einen abgelehnten Aufruf plus Notfall-Schablone. Gemeinsam
- * hatten beide Versuche `maxOutputTokens: 16384`; am 24.07., als alle vier
- * Kunden sauber durchliefen, standen dort 8192 (strukturiert) und 4096
- * (Portrait).
- *
- * Lehre, zum zweiten Mal am selben Tag: an einer laufenden Konfiguration nur
- * ändern, was man auch prüfen kann. Diese Umgebung erreicht Gemini nicht, also
- * gelten hier die Werte, die in der Praxis belegt sind.
+ * Jetzt gelten die Werte, die am 24.07. bei allen vier Kunden durchliefen.
+ * Lehre: an einer laufenden Konfiguration nur ändern, was in dieser Umgebung
+ * auch prüfbar ist — Gemini ist von hier nicht erreichbar.
  */
 const BUDGET_STRUKTUR = 8192;
 const BUDGET_PORTRAIT = 4096;
