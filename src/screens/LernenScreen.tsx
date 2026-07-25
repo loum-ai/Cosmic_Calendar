@@ -29,7 +29,7 @@ const CATS = [
    Aktiver / gehoverter Zustand = dieselbe Hairline in iris.               */
 const INK = "linear-gradient(180deg,#16161F 0%,#12121D 100%)";
 const INK_HERO = "linear-gradient(180deg,#201D2C 0%,#1B1926 55%,#17141F 100%)";
-const HAIR = "inset 0 0 0 1px rgba(255,255,255,0.14)";
+const HAIR = "inset 0 0 0 1px rgba(255,255,255,0.13)";
 const HAIR_IRIS = "inset 0 0 0 1px rgba(120,150,255,0.42)";
 
 const EYEBROW = "font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3";
@@ -76,8 +76,8 @@ export function LernenScreen() {
           selbst (iris-Hairline im Hover + Chevron). */}
       <Explainable sheet={{ kind: "asptype", key: featuredIdx }} glow={false}>
         <article
-          className="group relative mt-7 overflow-hidden rounded-[24px] p-6"
-          style={{ background: INK_HERO, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14), inset 0 1px 0 rgba(255,255,255,0.05)" }}
+          className="group relative mt-7 overflow-hidden rounded-[20px] p-6"
+          style={{ background: INK_HERO, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.13), inset 0 1px 0 rgba(255,255,255,0.05)" }}
         >
           <span aria-hidden className="pointer-events-none absolute -right-4 -top-10 font-glyph text-[140px] leading-none opacity-[0.09]" style={{ color: featured.c }}>{featured.g}</span>
           <span aria-hidden className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full" style={{ background: `radial-gradient(circle, ${featured.c}26 0%, transparent 70%)` }} />
@@ -121,7 +121,7 @@ export function LernenScreen() {
           beim eigenen Sonnenzeichen; das Rad unten dreht durch alle zwölf. */}
       <button
         onClick={() => setPortal(true)}
-        className="group relative mt-7 flex w-full items-center gap-4 overflow-hidden rounded-[18px] p-5 text-left transition-shadow duration-200 hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.42)]"
+        className="group relative mt-7 flex w-full items-center gap-4 overflow-hidden rounded-[16px] p-5 text-left transition-shadow duration-200 hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.42)]"
         style={{ background: INK, boxShadow: HAIR }}
       >
         <span aria-hidden className="pointer-events-none absolute -right-3 -top-9 font-glyph text-[120px] leading-none text-lilac opacity-[0.1]">{SG[sunSign]}</span>
@@ -141,7 +141,7 @@ export function LernenScreen() {
         {items.map((it) => (
           <Explainable key={it.title} sheet={it.sheet} glow={false}>
             <div
-              className="group relative flex items-center gap-3.5 overflow-hidden rounded-[18px] p-4 transition-shadow duration-200 hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.42)]"
+              className="group relative flex items-center gap-3.5 overflow-hidden rounded-[16px] p-4 transition-shadow duration-200 hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.42)]"
               style={{ background: INK, boxShadow: HAIR }}
             >
               <span aria-hidden className="pointer-events-none absolute -left-10 -top-12 h-32 w-32 rounded-full" style={{ background: "radial-gradient(circle, rgba(120,150,255,0.13) 0%, transparent 70%)" }} />

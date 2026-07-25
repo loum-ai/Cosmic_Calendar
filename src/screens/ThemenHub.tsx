@@ -18,6 +18,7 @@ import { supabase, AI_MODEL_CORE } from "@/lib/supabase";
 import type { BirthInput } from "@/lib/compute";
 import { Reveal } from "@/components/Reveal";
 import { useApp, DEMO_BIRTH } from "@/store/useApp";
+import { cardSurface } from "@/components/VelaCard";
 import { ChartExplorer } from "@/screens/ChartExplorer";
 
 /** The theme reading is generated in FIVE focused, parallel, individually
@@ -93,10 +94,11 @@ ${COMMON_RULES}`,
  *  kommt von INNEN: ein radialer Glow in der Farbe des Themas/Planeten.
  *  `tone` ist ein 6-stelliges Hex (#RRGGBB) oder ein "r,g,b"-Tripel. */
 function inkSurface(tone?: string, strength = 0.12) {
-  const a = (x: number) => (tone?.startsWith("#") ? `${tone}${Math.round(x * 255).toString(16).padStart(2, "0")}` : `rgba(${tone ?? "120,150,255"},${x})`);
   return {
-    background: `radial-gradient(82% 60% at 50% 112%, ${a(strength)} 0%, transparent 68%), linear-gradient(180deg,#16161F 0%,#12121D 100%)`,
-    boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14), inset 0 1px 0 rgba(255,255,255,.05)",
+    // EINE Definition der Kartenfläche — siehe components/VelaCard.tsx.
+    // Vorher stand die Ink-Fläche hier ein zweites Mal, mit leicht anderen
+    // Werten als in ChartExplorer und SheetHost.
+    ...cardSurface(tone, "lead", strength),
     transition: "transform .25s cubic-bezier(.22,1,.36,1), filter .2s ease",
   };
 }
@@ -267,7 +269,7 @@ export function ThemenHub() {
         {/* Kurz gesagt — schließbar, solide Hero-Fläche */}
         {kurz && (
           <Reveal>
-            <div className="relative mb-7 rounded-[16px] px-[15px] py-[13px]" style={{ background: "linear-gradient(180deg,#201D2C 0%,#1B1926 55%,#17141F 100%)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14), inset 0 1px 0 rgba(255,255,255,.05)" }}>
+            <div className="relative mb-7 rounded-[16px] px-[15px] py-[13px]" style={{ background: "linear-gradient(180deg,#201D2C 0%,#1B1926 55%,#17141F 100%)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.13), inset 0 1px 0 rgba(255,255,255,.05)" }}>
               <button onClick={() => setKurz(false)} aria-label="Schließen" className="absolute right-2 top-2 p-1 text-txt-3 transition hover:text-txt">
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -987,7 +989,7 @@ function KapitelLeiste() {
             className={`shrink-0 whitespace-nowrap rounded-pill px-3.5 py-1.5 font-body text-[12px] font-medium transition ${
               aktiv === k.id
                 ? "text-txt shadow-[inset_0_0_0_1px_rgba(120,150,255,0.5)]"
-                : "text-txt-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.10)] hover:text-txt-2"
+                : "text-txt-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] hover:text-txt-2"
             }`}
           >
             {k.kurz}
@@ -1025,8 +1027,8 @@ function WasLaeuft({ onOpen }: { onOpen: () => void }) {
         <button
           key={`${t.tKey}_${t.nKey}_${t.type}`}
           onClick={onOpen}
-          className="flex items-start gap-3.5 rounded-[16px] p-4 text-left shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)] transition hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.4)]"
-          style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)" }}
+          className="flex items-start gap-3.5 p-4 text-left transition hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.4)]"
+          style={cardSurface(undefined, "row")}
         >
           <span className="vela-glyph mt-0.5 text-[17px] leading-none text-lilac">{t.tGlyph}</span>
           <div className="min-w-0 flex-1">

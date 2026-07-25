@@ -75,14 +75,20 @@ export default {
         glyph: ['"Noto Sans Symbols"', '"Segoe UI Symbol"', "system-ui", "sans-serif"],
       },
       borderRadius: {
-        card: "18px",
+        // Plan-Schritt B: die drei Karten-Radien des Systems. `card` ist die
+        // mittlere Größe („row") — vorher 18px, ein Wert, den es sonst
+        // nirgends gab, und der 11 Karten aus der Reihe tanzen ließ.
+        card: "16px",
         sheet: "24px",
         pill: "999px",
       },
       boxShadow: {
         // loum card chemistry: die EINZIGE Kante ist die 1px-Inset-Hairline —
         // kein äußerer Drop-Shadow (Figma reading-rest)
-        glass: "inset 0 0 0 1px rgba(255,255,255,0.07)",
+        // EINE Kantenstärke für alle Karten (Plan-Schritt B). Vorher 0.07 —
+        // Karten mit `shadow-glass` hatten eine sichtbar schwächere Kante als
+        // die mit inline-Inset, das las sich wie zwei Kartensorten.
+        glass: "inset 0 0 0 1px rgba(255,255,255,0.13)",
         // moon-CTA-Schatten — weicher iris-Schatten (Figma event-card CTA)
         glow: "0 8px 20px rgba(120,150,255,0.25)",
         // hover lift — hellere Hairline statt Drop-Shadow

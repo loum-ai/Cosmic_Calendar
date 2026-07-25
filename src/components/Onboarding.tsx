@@ -110,7 +110,7 @@ export function Onboarding() {
             // mobile: bottom sheet
             "inset-x-0 bottom-0 max-h-[88vh] w-full max-w-[480px] rounded-t-[28px] border-t px-6 pb-10 pt-3 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
             // desktop: centred panel
-            "lg:inset-auto lg:left-1/2 lg:top-1/2 lg:max-h-[86vh] lg:w-[440px] lg:-translate-x-1/2 lg:-translate-y-1/2 lg:rounded-[28px] lg:border lg:px-7 lg:pb-8 lg:pt-7 lg:data-[state=closed]:slide-out-to-bottom-0 lg:data-[state=open]:slide-in-from-bottom-0 lg:data-[state=open]:zoom-in-95",
+            "lg:inset-auto lg:left-1/2 lg:top-1/2 lg:max-h-[86vh] lg:w-[440px] lg:-translate-x-1/2 lg:-translate-y-1/2 lg:rounded-[20px] lg:border lg:px-7 lg:pb-8 lg:pt-7 lg:data-[state=closed]:slide-out-to-bottom-0 lg:data-[state=open]:slide-in-from-bottom-0 lg:data-[state=open]:zoom-in-95",
           )}
         >
           <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/20 lg:hidden" />

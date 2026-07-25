@@ -281,7 +281,7 @@ function StrongestCard({ tr, onOpen }: { tr: TransitHit; onOpen: () => void }) {
   return (
     <button
       onClick={onOpen}
-      className="group relative mt-9 block w-full overflow-hidden rounded-[18px] px-4 pb-[15px] pt-4 text-left"
+      className="group relative mt-9 block w-full overflow-hidden rounded-[16px] px-4 pb-[15px] pt-4 text-left"
       style={{ background: "linear-gradient(180deg,#201D2C 0%,#1B1926 52%,#17141F 100%)", boxShadow: `inset 0 0 0 1px ${rgb}4d` }}
     >
       {/* laufender Planet als echtes Foto — oben rechts angeschnitten */}

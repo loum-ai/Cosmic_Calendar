@@ -150,3 +150,43 @@ export function askSuggestions(tab: TabKey, limit = 3): AskSuggestion[] {
 export function followUps(gestellt: string, limit = 2): AskSuggestion[] {
   return allSuggestions().filter((s) => s.q !== gestellt).slice(0, limit);
 }
+
+/**
+ * BELEGE (Plan-Schritt C3) — worauf sich eine Antwort stützt.
+ *
+ * Das ist der Punkt, an dem Vela The Pattern schlagen kann: dort ist die
+ * Astrologie komplett versteckt, hier lässt sie sich aufklappen. Bei den
+ * Vorschlagsfragen steht die Herkunft fest; bei frei getippten Fragen wird sie
+ * aus der Antwort gelesen — welche Planeten, Zeichen und Häuser wirklich
+ * vorkommen. Nur was IM Text steht, wird auch angezeigt: kein Beleg, den die
+ * Deutung gar nicht verwendet hat.
+ */
+export interface Beleg {
+  label: string;
+  sheet: { kind: "planet" | "house" | "sign"; key: string | number };
+}
+
+export function belege(antwort: string, limit = 4): Beleg[] {
+  if (!antwort) return [];
+  const out: Beleg[] = [];
+  const gesehen = new Set<string>();
+  const push = (label: string, sheet: Beleg["sheet"]) => {
+    const k = `${sheet.kind}:${sheet.key}`;
+    if (gesehen.has(k)) return;
+    gesehen.add(k);
+    out.push({ label, sheet });
+  };
+
+  // Planeten und Punkte: nur die, die dieses Chart wirklich hat
+  for (const p of CHART) {
+    if (!new RegExp(`\\b${p.name}\\b`).test(antwort)) continue;
+    const h = p.house ?? houseOf(p.lon);
+    push(`${p.name} in ${signName(p.lon)}, ${h}. Haus`, { kind: "planet", key: p.key });
+  }
+  // Häuser („im 7. Haus", „7. Haus")
+  for (const m of antwort.matchAll(/\b(\d{1,2})\.\s*Haus\b/g)) {
+    const h = Number(m[1]);
+    if (h >= 1 && h <= 12) push(`${h}. Haus — ${HOUSE[h - 1]}`, { kind: "house", key: h });
+  }
+  return out.slice(0, limit);
+}

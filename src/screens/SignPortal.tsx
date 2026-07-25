@@ -48,7 +48,7 @@ function InfluenceRow({ row, open, onToggle }: { row: Row; open: boolean; onTogg
       style={{
         padding: open ? "14px 16px 15px" : "12px 16px",
         background: open ? "linear-gradient(180deg,#1B1926 0%,#151420 100%)" : "linear-gradient(180deg,#16161F 0%,#12121D 100%)",
-        boxShadow: open ? "inset 0 0 0 1px rgba(120,150,255,.32)" : "inset 0 0 0 1px rgba(255,255,255,0.14)",
+        boxShadow: open ? "inset 0 0 0 1px rgba(120,150,255,.32)" : "inset 0 0 0 1px rgba(255,255,255,0.13)",
       }}
     >
       <div className="flex items-center gap-3">
@@ -101,7 +101,7 @@ function ZodiacArc({ active, onSelect }: { active: number; onSelect: (i: number)
     <div className="relative h-[112px] overflow-hidden" style={{ maskImage: mask, WebkitMaskImage: mask }}>
       <div aria-hidden className="absolute left-1/2 top-[10px] z-[1] h-[62px] w-[62px] -translate-x-1/2 rounded-full" style={{ boxShadow: "inset 0 0 0 1px rgba(255,255,255,.35)", background: "rgba(255,255,255,.04)" }} />
       <div className="absolute left-1/2" style={{ top: 14, width: R * 2, height: R * 2, marginLeft: -R, transform: `rotate(${-active * 30}deg)`, transition: "transform .7s cubic-bezier(.22,1,.36,1)" }}>
-        <div aria-hidden className="absolute rounded-full" style={{ inset: 27, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14)" }} />
+        <div aria-hidden className="absolute rounded-full" style={{ inset: 27, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.13)" }} />
         {SN.map((n, i) => {
           const a = ((i * 30 - 90) * Math.PI) / 180;
           const x = R + Math.cos(a) * (R - 27);
@@ -159,7 +159,7 @@ export function SignPortal({ initial, onClose }: { initial: number; onClose: () 
         <div className="absolute inset-x-0 bottom-0 h-[56%]" style={{ background: "linear-gradient(180deg, rgba(0,0,4,0) 0%, rgba(0,0,4,.55) 50%, rgba(0,0,4,.94) 100%)" }} />
       </div>
 
-      <button onClick={onClose} aria-label="Schließen" className="fixed right-5 top-[max(20px,env(safe-area-inset-top))] z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06] text-white/70 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)] backdrop-blur-md active:scale-90">
+      <button onClick={onClose} aria-label="Schließen" className="fixed right-5 top-[max(20px,env(safe-area-inset-top))] z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06] text-white/70 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] backdrop-blur-md active:scale-90">
         <X className="h-5 w-5" />
       </button>
 
@@ -184,7 +184,7 @@ export function SignPortal({ initial, onClose }: { initial: number; onClose: () 
           {rows.length ? (
             rows.map((row, i) => <InfluenceRow key={row.title} row={row} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} />)
           ) : (
-            <div className="rounded-[14px] px-4 py-3 font-body text-[13px] leading-[1.6] text-[rgba(238,245,248,0.6)]" style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14)" }}>
+            <div className="rounded-[14px] px-4 py-3 font-body text-[13px] leading-[1.6] text-[rgba(238,245,248,0.6)]" style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.13)" }}>
               Kein Planet steht bei dir in {SN[sign]} — dieser Bereich ist kein Dauerthema. Er meldet sich, wenn Transite ihn berühren.
             </div>
           )}

@@ -83,7 +83,7 @@
     --text-muted: rgba(238, 245, 248, 0.55);       /* mist 55% */
     --surface-card: linear-gradient(180deg, #16161F 0%, #12121D 100%);
     --surface-hero: #1B1926;
-    --card-hairline: rgba(255, 255, 255, 0.16); /* cinematic/glass-Iteration: 12% statt 7% */
+    --card-hairline: rgba(255, 255, 255, 0.13); /* Plan-Schritt B: EINE Kantenstärke für alle Karten */
     --shadow-card: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
     /* VELA cinematic layer — fg-Ramp auf mist-Basis (claude.ai/design vela-theme.css) */
     --fg: #F8F7F2;
@@ -377,10 +377,12 @@
     content: none;
   }
   /* secondary surface — solide Karte mit dezenter iris-Tönung von innen */
+  /* Plan-Schritt B: 16px = die „row"-Größe des Kartensystems. Vorher 18px —
+     dadurch rendern 5 Karten einen Radius, den es sonst nirgends gibt. */
   .vela-card-soft {
     position: relative;
     overflow: hidden;
-    border-radius: 18px;
+    border-radius: 16px;
     background:
       radial-gradient(80% 60% at 50% 110%, rgba(120, 150, 255, 0.10) 0%, transparent 70%),
       linear-gradient(180deg, #16161F 0%, #12121D 100%);

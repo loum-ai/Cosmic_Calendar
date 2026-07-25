@@ -12,6 +12,7 @@ import { aiSummary, aiAspect, aiSign } from "@/lib/interpret";
 import { chartPatterns, type Pattern } from "@/lib/patterns";
 import { PLANET_PHOTO, PLANET_GLOW, PLANET_SCALE } from "@/lib/planetPhotos";
 import { useApp } from "@/store/useApp";
+import { cardSurface } from "@/components/VelaCard";
 
 const KIND_LABEL: Record<string, string> = { muster: "Aspektmuster", fokus: "Fokus", balance: "Balance", rhythmus: "Rhythmus" };
 const KIND_COL: Record<string, string> = { muster: "#c9bcff", fokus: "#ffce6e", balance: "#46e8c4", rhythmus: "#9db6ff" };
@@ -62,16 +63,13 @@ function PatternCard({ p, lead = false }: { p: Pattern; lead?: boolean }) {
       type="button"
       onClick={() => setOpen((o) => !o)}
       aria-expanded={open}
-      className={`relative w-full overflow-hidden rounded-[18px] text-left transition duration-300 ${lead ? "p-6" : "px-5 py-[18px]"} ${
+      className={`relative w-full overflow-hidden rounded-[16px] text-left transition duration-300 ${lead ? "p-6" : "px-5 py-[18px]"} ${
         open
           ? "shadow-[inset_0_0_0_1px_rgba(120,150,255,0.34)]"
-          : "shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)] hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.34)]"
+          : "shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.34)]"
       }`}
-      style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)" }}
+      style={{ background: cardSurface(KIND_COL[p.kind], lead ? "lead" : "row").background }}
     >
-      {/* Tiefe kommt von INNEN: radialer Glow in der Musterfarbe, kein Drop-Shadow */}
-      <span aria-hidden className="pointer-events-none absolute -right-14 -top-20 h-64 w-64 rounded-full" style={{ background: `radial-gradient(circle, ${KIND_COL[p.kind]}22 0%, ${KIND_COL[p.kind]}09 42%, transparent 70%)` }} />
-      <span aria-hidden className="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(120,150,255,0.09)_0%,transparent_68%)]" />
       <span className={`pointer-events-none absolute -right-2 -top-4 font-glyph leading-none opacity-[0.07] ${lead ? "text-[68px]" : "text-[44px]"}`} style={{ color: KIND_COL[p.kind] }}>{p.glyphs[0] ?? "✦"}</span>
       <div className="relative">
         <div className="mb-3 flex items-center gap-2.5">
@@ -270,7 +268,7 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
         <Reveal>
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(330px,380px)] lg:gap-8">
           {/* solide Ink-Fläche, einzige Kante = Inset-Hairline; Tiefe von innen */}
-          <section className="relative overflow-hidden rounded-[30px] bg-stage p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)] lg:p-10">
+          <section className="relative overflow-hidden rounded-[20px] bg-stage p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] lg:p-10">
             {/* glowing aura behind the wheel — the glass centrepiece breathes */}
             <div className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(120,150,255,0.28),rgba(120,150,255,0.06)_45%,transparent_66%)] blur-2xl animate-breath" />
             <div className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[rgba(120,150,255,0.12)] blur-3xl" />
@@ -309,7 +307,7 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
           <section>
             <button
               onClick={() => select({ kind: "aspect", key: tightest.key })}
-              className="relative w-full overflow-hidden rounded-[26px] bg-stage p-7 text-left shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)] transition duration-300 hover:shadow-[inset_0_0_0_1px_rgba(151,181,255,0.45)] lg:p-10"
+              className="relative w-full overflow-hidden rounded-[20px] bg-stage p-7 text-left shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] transition duration-300 hover:shadow-[inset_0_0_0_1px_rgba(151,181,255,0.45)] lg:p-10"
             >
               {/* innerer Glow im Aspektton — Tiefe ohne Drop-Shadow */}
               <span aria-hidden className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full" style={{ background: `radial-gradient(circle, ${tightest.def.c}26 0%, ${tightest.def.c}0a 44%, transparent 70%)` }} />
@@ -362,7 +360,7 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
               <button
                 key={b.key}
                 onClick={() => select({ kind: "planet", key: b.key })}
-                className="group relative overflow-hidden rounded-[18px] p-5 text-left shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)] transition duration-300 hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.38)]"
+                className="group relative overflow-hidden rounded-[16px] p-5 text-left shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] transition duration-300 hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.38)]"
                 style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)" }}
               >
                 {/* Tiefe von innen: tonaler Glow in der Planetenfarbe */}
@@ -501,7 +499,7 @@ function AspectGroup({ title, tone, accent, items, sel, onPick }: { title: strin
   const [more, setMore] = useState(false);
   const list = more ? items : items.slice(0, 5);
   return (
-    <div className="relative overflow-hidden rounded-card p-5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]" style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)" }}>
+    <div className="relative overflow-hidden rounded-card p-5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)]" style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)" }}>
       {/* innerer Ton der Gruppe (Fluss = mystic, Spannung = violett) */}
       <span aria-hidden className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full" style={{ background: `radial-gradient(circle, ${accent}1c 0%, ${accent}08 44%, transparent 70%)` }} />
       <div className="relative mb-4 flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
@@ -562,7 +560,7 @@ function PlanetCard({ p, on, onPick }: { p: (typeof CHART)[number]; on: boolean;
   return (
     <button
       onClick={() => onPick({ kind: "planet", key: p.key })}
-      className="group relative aspect-[4/5] overflow-hidden rounded-[18px] text-left transition"
+      className="group relative aspect-[4/5] overflow-hidden rounded-[16px] text-left transition"
       style={{
         background: "linear-gradient(180deg,#191728 0%,#141221 58%,#100E1A 100%)",
         boxShadow: `inset 0 0 0 1px rgba(${glow},${on ? 0.42 : 0.16})${on ? `, 0 0 26px -8px rgba(${glow},.55)` : ""}`,
@@ -618,7 +616,7 @@ function PlanetCard({ p, on, onPick }: { p: (typeof CHART)[number]; on: boolean;
 
 function Bars({ title, labels, values, total, colors }: { title: string; labels: string[]; values: number[]; total: number; colors: string[] }) {
   return (
-    <div className="relative overflow-hidden rounded-card p-5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]" style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)" }}>
+    <div className="relative overflow-hidden rounded-card p-5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)]" style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)" }}>
       <span aria-hidden className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(120,150,255,0.12)_0%,transparent_68%)]" />
       <div className="vela-label relative mb-3.5">{title}</div>
       <div className="relative space-y-2.5">

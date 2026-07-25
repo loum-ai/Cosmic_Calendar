@@ -7,6 +7,7 @@ import { GlyphBadge } from "@/components/GlyphBadge";
 import { subjectTask, useReading, storedReading } from "@/lib/genReadings";
 import { IS_DEMO } from "@/lib/data";
 import { PLANET_PHOTO, PLANET_GLOW, PLANET_SCALE } from "@/lib/planetPhotos";
+import { cardSurface } from "@/components/VelaCard";
 
 function useIsDesktop() {
   const [d, setD] = useState(false);
@@ -84,12 +85,7 @@ function Prose({ text, tone = "quiet" }: { text: string; tone?: "quiet" | "loud"
  */
 function DeutungBox({ label, children }: { label: ReactNode; children: ReactNode }) {
   return (
-    <div className="relative overflow-hidden rounded-[20px] bg-glasswash p-[18px] shadow-[inset_0_0_0_1px_rgba(32,240,208,0.22)]">
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-[120px]"
-        style={{ background: "radial-gradient(120% 100% at 50% 0%, rgba(32,240,208,.13) 0%, transparent 68%)" }}
-      />
+    <div className="relative overflow-hidden p-[18px]" style={{ ...cardSurface("#20F0D0", "lead", 0.15), boxShadow: "inset 0 0 0 1px rgba(32,240,208,0.22)" }}>
       <div className="relative">
         <div className="mb-2.5 flex items-center gap-1.5 font-body text-[11px] font-semibold uppercase tracking-[0.18em] text-mint">
           {label}
