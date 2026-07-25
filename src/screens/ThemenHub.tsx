@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { GenerativeLoader } from "@/components/GenerativeLoader";
 import { ChartWheel } from "@/components/ChartWheel";
-import { ArrowLeft, ChevronRight, CircleDot, Hexagon, Info, Sparkles, X } from "lucide-react";
+import { ArrowLeft, ChevronRight, Hexagon, Info, Sparkles, X } from "lucide-react";
 import { THEMES, themeByKey, type LifeTheme } from "@/lib/themes";
 import { ASC, CHART, PROFILE, signName, houseOf, HOUSE, IS_DEMO } from "@/lib/data";
 import { computeTransits } from "@/lib/transits";
@@ -291,6 +291,12 @@ export function ThemenHub() {
           </section>
         </Reveal>
 
+        <KapitelLeiste />
+
+        {/* ── KAPITEL 1 · Wer du bist ── */}
+        <section id="kap-wer" className="scroll-mt-16">
+        <KapitelKopf i={0} />
+
         {/* Auf einen Blick — Kachel-Grid (Konzept ChartWeiter) */}
         <Reveal>
           <section className="mb-9">
@@ -387,6 +393,12 @@ export function ThemenHub() {
           </section>
         ) : null}
 
+        </section>
+
+        {/* ── KAPITEL 2 · Was in dir wirkt ── */}
+        <section id="kap-wirkt" className="mt-16 scroll-mt-16">
+        <KapitelKopf i={1} />
+
         {/* DAS GANZE GEBURTSRAD — steht jetzt HIER, nicht mehr hinter einem
             Link. Vorher lagen Signatur, besondere Muster, die großen Drei,
             alle Aspekte, die Planetenkarten mit ihren Bildern und die
@@ -394,14 +406,13 @@ export function ThemenHub() {
             nicht gefunden. Es ist derselbe Code wie die eigenständige Seite
             (die über das Menü erreichbar bleibt), nur ohne zweites Rad und
             ohne eigenen Kopf. */}
-        <section className="mt-14">
-          <div className="mb-1.5 flex items-center gap-1.5">
-            <span className="vela-label flex items-center gap-1.5"><CircleDot className="h-3.5 w-3.5" strokeWidth={1.7} /> Dein ganzes Geburtsrad</span>
-          </div>
-          <p className="mb-6 max-w-[46ch] font-body text-[15px] leading-relaxed text-txt-2">
-            Alle Planeten, Aspekte und Häuser deines Bildes — jedes Element antippbar.
-          </p>
-          <ChartExplorer embedded />
+        <ChartExplorer embedded />
+        </section>
+
+        {/* ── KAPITEL 3 · Was gerade läuft ── */}
+        <section id="kap-jetzt" className="mt-16 scroll-mt-16">
+        <KapitelKopf i={2} />
+        <WasLaeuft onOpen={() => setTab("transite")} />
         </section>
       </div>
     </div>
@@ -928,6 +939,106 @@ function HDView({ birth }: { birth: BirthInput }) {
           Berechnet aus dem Geburtsbild — Personality (Geburt) + Design (88° Sonnenbogen vorher), gemappt aufs 64-Tore-Rad. Verifiziert gegen das offizielle Chart. Frag Vela unten alles zu deinem Design.
         </p>
       </div>
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   DREI KAPITEL (Plan „Nutzerführung", Schritt A)
+
+   Die Home trug alles hintereinander weg — nach dem Einbau des ganzen
+   Geburtsrads gemessene 9.504 px. Nicht zu viel Inhalt, zu wenig Fächer: The
+   Pattern wirkt aufgeräumter, weil es drei benannte Abschnitte hat, nicht weil
+   die Karten hübscher sind. Also drei Kapitel mit einer mitlaufenden Leiste —
+   ohne einen einzigen Inhalt zu verstecken.
+
+   Das Rad bleibt DAVOR: Lauras kanonische Regel sagt, es ist das erste
+   Inhaltselement und immer sichtbar.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+const KAPITEL = [
+  { id: "kap-wer", kurz: "Wer du bist", titel: "Wer du bist", sub: "Dein Bild als Ganzes — und die Linsen, durch die du es lesen kannst." },
+  { id: "kap-wirkt", kurz: "Was wirkt", titel: "Was in dir wirkt", sub: "Alle Planeten, Aspekte und Häuser deines Bildes — jedes Element antippbar." },
+  { id: "kap-jetzt", kurz: "Gerade jetzt", titel: "Was gerade läuft", sub: "Wo der laufende Himmel dein Geburtsbild berührt." },
+];
+
+/** Mitlaufende Kapitel-Leiste. Klebt unter dem Kopf, markiert das Kapitel, in
+ *  dem man gerade liest. */
+function KapitelLeiste() {
+  const [aktiv, setAktiv] = useState(KAPITEL[0].id);
+  useEffect(() => {
+    const beobachter = new IntersectionObserver(
+      (eintraege) => {
+        const sichtbar = eintraege.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (sichtbar) setAktiv(sichtbar.target.id);
+      },
+      { rootMargin: "-25% 0px -60% 0px", threshold: [0, 0.2, 0.6] },
+    );
+    KAPITEL.forEach((k) => { const el = document.getElementById(k.id); if (el) beobachter.observe(el); });
+    return () => beobachter.disconnect();
+  }, []);
+  return (
+    <div className="sticky top-0 z-30 -mx-6 mb-8 px-6 py-2.5 backdrop-blur-xl lg:-mx-10 lg:px-10" style={{ background: "linear-gradient(180deg, rgba(17,16,25,0.94) 0%, rgba(17,16,25,0.82) 70%, transparent 100%)" }}>
+      <div className="flex gap-1.5 overflow-x-auto">
+        {KAPITEL.map((k) => (
+          <button
+            key={k.id}
+            onClick={() => document.getElementById(k.id)?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            className={`shrink-0 whitespace-nowrap rounded-pill px-3.5 py-1.5 font-body text-[12px] font-medium transition ${
+              aktiv === k.id
+                ? "text-txt shadow-[inset_0_0_0_1px_rgba(120,150,255,0.5)]"
+                : "text-txt-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.10)] hover:text-txt-2"
+            }`}
+          >
+            {k.kurz}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Kapitel-Kopf: Nummer, Titel, ein Satz Orientierung. */
+function KapitelKopf({ i }: { i: number }) {
+  const k = KAPITEL[i];
+  return (
+    <div className="mb-6">
+      <div className="vela-label mb-1.5">{String(i + 1).padStart(2, "0")} · {k.titel}</div>
+      <p className="max-w-[48ch] font-body text-[15px] leading-relaxed text-txt-2">{k.sub}</p>
+    </div>
+  );
+}
+
+/** „deinen Mond" statt „dein Mond" — Sonne, Venus und Lilith sind weiblich,
+ *  alles andere männlich. Ohne das stand da „berührt dein Mond". */
+const WEIBLICH = new Set(["Sonne", "Venus", "Lilith"]);
+const deinAkk = (name: string) => `${WEIBLICH.has(name) ? "deine" : "deinen"} ${name}`;
+
+/** „Was gerade läuft" — die drei stärksten laufenden Berührungen, aus dem
+ *  echten Chart gerechnet. Tippen führt in die Transite-Ansicht. */
+function WasLaeuft({ onOpen }: { onOpen: () => void }) {
+  const hits = useMemo(() => computeTransits(CHART, new Date()).slice(0, 3), []);
+  if (!hits.length) return <p className="font-body text-[15px] text-txt-3">Gerade berührt kein laufender Planet einen Punkt deines Bildes eng genug, um davon zu sprechen.</p>;
+  return (
+    <div className="flex flex-col gap-2">
+      {hits.map((t) => (
+        <button
+          key={`${t.tKey}_${t.nKey}_${t.type}`}
+          onClick={onOpen}
+          className="flex items-start gap-3.5 rounded-[16px] p-4 text-left shadow-[inset_0_0_0_1px_rgba(255,255,255,0.12)] transition hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.4)]"
+          style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)" }}
+        >
+          <span className="vela-glyph mt-0.5 text-[17px] leading-none text-lilac">{t.tGlyph}</span>
+          <div className="min-w-0 flex-1">
+            <div className="font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3">
+              {t.orb < 1.5 ? "sehr eng" : t.orb < 3.5 ? "eng" : "weit"} · {t.orb.toFixed(1)}°
+            </div>
+            <div className="mt-1 font-cinzel text-[16px] font-normal uppercase leading-snug tracking-[0.02em] text-txt">{t.title}</div>
+            <div className="mt-1 font-body text-[13px] text-txt-2">Der laufende {t.tName} berührt {deinAkk(t.nName)}.</div>
+          </div>
+          <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-txt-3" />
+        </button>
+      ))}
     </div>
   );
 }

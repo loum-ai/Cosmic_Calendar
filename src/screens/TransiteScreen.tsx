@@ -109,7 +109,7 @@ function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => vo
 
       <div className="relative w-full max-w-[640px]">
         <div className="font-body text-[11px] font-medium uppercase tracking-[0.18em]" style={{ color: c }}>
-          Transit · {IMPACT_LABEL[tr.impact]} · {tr.orb.toFixed(1)}° Orbis
+          Transit · {IMPACT_LABEL[tr.impact]} · {tr.orb < 1.5 ? "sehr eng" : tr.orb < 3.5 ? "eng" : "weit"} · {tr.orb.toFixed(1)}°
         </div>
         <h2 className="mt-4 font-cinzel font-normal uppercase leading-[1.08] tracking-[0.01em] text-txt" style={{ fontSize: "clamp(28px,7.4vw,48px)" }}>{tr.title}</h2>
         <div className="mt-4 flex flex-wrap gap-2">
