@@ -71,17 +71,67 @@ export function useReading(viewKey: string, task: string, enabled = true) {
   return { text, loading: !!loading };
 }
 
+/**
+ * Formel-Verbot. Gemessen an den 203 gecachten Deutungen (2026-07): „Das merkst
+ * du …" stand in 21,7 %, „Gleichzeitig …" in 26,1 %, „im Alltag" in 33,5 %,
+ * eine „nicht X, sondern Y"-Konstruktion in 50,7 %. Ursache war der alte
+ * CRAFT-Block, der jedem Auftrag DIESELBE Rhetorik vorschrieb — dadurch klang
+ * jede Karte gleich gebaut, egal welcher Planet darüberstand. Diese Formeln
+ * sind jetzt ausdrücklich verboten; die Bausteine dahinter (Alltagsbeleg, beide
+ * Seiten) bleiben Pflicht, nur eben jedes Mal anders gesagt.
+ */
+const VERBOTENE_FORMELN = `FORMEL-VERBOT (wichtig, sonst klingt jede Karte gleich):
+- NIE „Das merkst du, wenn …" / „Das zeigt sich im Alltag, wenn …" / „Du kennst das, wenn …". Zeig die Situation einfach, ohne sie anzukündigen.
+- NIE einen Satz mit „Gleichzeitig" beginnen. Setz die zweite Seite anders daneben.
+- HÖCHSTENS EINMAL im ganzen Text eine „nicht X, sondern Y"-Konstruktion.
+- NIE die Wendungen „im selben Atemzug", „deine Gabe ist", „die Falle ist", „der reife Umgang", „genau hier liegt".
+- Beginne NICHT mit „Dein/Deine <Planet> in <Zeichen> im <n>. Haus …" — die Stellung steht bereits über deinem Text.`;
+
+/** Sechs verschiedene Einstiege. Welcher genommen wird, entscheidet der
+ *  viewKey — gleicher View also immer gleiche Variante (der Cache bleibt
+ *  stabil), aber Sonne, Mond und Saturn beginnen garantiert verschieden. */
+const EINSTIEGE = [
+  "EINSTIEG: Fang mitten in einer Situation an — was dieser Mensch konkret tut, wenn diese Kraft anspringt.",
+  "EINSTIEG: Fang beim Widerspruch an — zwei Dinge, die bei diesem Menschen beide wahr sind und sich beißen.",
+  "EINSTIEG: Fang bei dem an, was andere an diesem Menschen sehen — und was sie dabei regelmäßig übersehen.",
+  "EINSTIEG: Fang beim Bedürfnis darunter an — wonach dieser Mensch hier eigentlich sucht.",
+  "EINSTIEG: Fang beim Preis an — was diese Kraft kostet, wenn sie ungebremst läuft.",
+  "EINSTIEG: Fang mit einem Satz an, den dieser Mensch vermutlich selbst über sich sagt.",
+];
+
+/** Fünf verschiedene Alltagsbelege — damit nicht jede Karte im Büro spielt. */
+const BELEGE = [
+  "BELEG: Verankere es in einer Situation aus der Arbeit oder dem, was dieser Mensch den ganzen Tag tut.",
+  "BELEG: Verankere es in einer Situation mit nahen Menschen — Familie, Freundschaft, Partnerschaft.",
+  "BELEG: Verankere es in einer Entscheidung, die dieser Mensch immer wieder zu treffen hat.",
+  "BELEG: Verankere es in einer Reaktion unter Druck — Streit, Zeitnot, Kritik.",
+  "BELEG: Verankere es in etwas, das dieser Mensch aufschiebt, vermeidet oder heimlich zu viel tut.",
+];
+
+/** Deterministischer Index aus dem viewKey. */
+function pick<T>(seed: string, list: T[]): T {
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++) h = Math.imul(h ^ seed.charCodeAt(i), 16777619) >>> 0;
+  return list[h % list.length];
+}
+
 /** The interpretive craft applied to EVERY single-factor reading — the
  *  mechanics that make a reading worth money instead of a textbook line:
  *  synthesis, the explained WHY, one everyday anchor, gift AND shadow,
- *  cross-references to tight aspects — in plain, warm German. */
-export const CRAFT = `So deutest du (wichtig):
+ *  cross-references to tight aspects — in plain, warm German. Einstieg und
+ *  Alltagsbeleg rotieren über den viewKey, damit sich die Karten einer Seite
+ *  nicht gegenseitig nachplappern. */
+export function craft(seed: string): string {
+  return `So deutest du (wichtig):
 - SYNTHESE: Verwebe alles zu EINER Aussage über den Menschen — nicht Planet, Zeichen und Haus einzeln erklären.
 - WARUM: Erkläre in einem Halbsatz, warum dieser Lebensbereich dazugehört (z. B. warum dieses Haus für dieses Thema steht) — setze nichts voraus.
-- ALLTAG: Nenne EINE konkrete Alltagssituation, in der sich das zeigt („Das merkst du, wenn …").
-- BEIDE SEITEN: Benenne die Gabe UND die Schattenseite im selben Atemzug — ehrlich, aber ermutigend.
+- BEIDE SEITEN: Benenne die Stärke UND ihren Schatten — ehrlich, aber ermutigend.
 - ZUSAMMENSPIEL: Wenn ein enger Aspekt aus den FAKTEN diese Kraft deutlich färbt, nenne ihn kurz und sag, was er verändert.
-Sprache: kurze Sätze. Warmes, leicht verständliches Deutsch, Du-Form. Keine Fachbegriffe ohne sofortige Übersetzung. Kein Satz, der in jedes Horoskop passen könnte. KOMPAKT: Schreibe dicht — jeder Satz trägt neue Information, keine Füllsätze, nichts doppelt. Lieber ein starker Satz als drei mittelmäßige. TONFÄRBUNG: Sachlich-geerdet, wie ein kluger Berufs- und Lebensberater, der Astrologie als präzises Werkzeug nutzt — nicht wie ein Mystiker. Alltagssprache statt Seelen-Vokabular: VERMEIDE Wörter wie „Seele", „heilig", „Bestimmung", „Schicksal", „Energien", „Universum", „spirituell", „Erwachen", „Dunkelheit", „verborgene Kräfte", „Transformation". Sprich stattdessen von Bedürfnissen, Mustern, Stärken, konkretem Verhalten und Situationen. Tiefe ja — aber am Alltag belegt, nie raunend. Warm und klar, ohne Pathos.`;
+${pick(seed, EINSTIEGE)}
+${pick(seed + "#b", BELEGE)}
+${VERBOTENE_FORMELN}
+Sprache: kurze Sätze. Warmes, leicht verständliches Deutsch, Du-Form. Keine Fachbegriffe ohne sofortige Übersetzung. Kein Satz, der in jedes Horoskop passen könnte. KOMPAKT: Schreibe dicht — jeder Satz trägt neue Information, keine Füllsätze, nichts doppelt. Lieber ein starker Satz als drei mittelmäßige. Schreib den Text zu Ende — kein angefangener letzter Satz. TONFÄRBUNG: Sachlich-geerdet, wie ein kluger Berufs- und Lebensberater, der Astrologie als präzises Werkzeug nutzt — nicht wie ein Mystiker. Alltagssprache statt Seelen-Vokabular: VERMEIDE Wörter wie „Seele", „heilig", „Bestimmung", „Schicksal", „Energien", „Universum", „spirituell", „Erwachen", „Dunkelheit", „verborgene Kräfte", „Transformation". Sprich stattdessen von Bedürfnissen, Mustern, Stärken, konkretem Verhalten und Situationen. Tiefe ja — aber am Alltag belegt, nie raunend. Warm und klar, ohne Pathos.`;
+}
 
 const dignityHint = (p: { dignity?: string | null } | undefined): string => {
   const d = p && (p as { dignity?: string | null }).dignity;
@@ -95,34 +145,37 @@ export function subjectTask(d: SheetDescriptor | null): { viewKey: string; task:
   if (!d) return null;
   if (d.kind === "planet") {
     if (d.key === "asc") {
+      const viewKey = "asc:v5";
       return {
-        viewKey: "asc:v4",
+        viewKey,
         task: `Deute den Aszendenten in ${signName(ASC)} für diese Person — EIN Absatz, 4–5 kurze Sätze.
 Der Aszendent ist das Zeichen, das bei der Geburt am Osthorizont aufstieg — deshalb steht er für den ersten Eindruck und das Auftreten. Sag, wie diese Person auf andere wirkt, bevor sie ein Wort sagt, und was hinter dieser Fassade oft übersehen wird.
-${CRAFT}`,
+${craft(viewKey)}`,
       };
     }
     const p = CHART.find((x) => x.key === d.key);
     if (!p) return null;
     const h = p.house ?? 1;
+    const viewKey = `planet:${d.key}:v5`;
     return {
-      viewKey: `planet:${d.key}:v4`,
+      viewKey,
       task: `Deute ${p.name} in ${signName(p.lon)} im ${h}. Haus (${HOUSE[h - 1]})${p.retro ? " — rückläufig: diese Kraft wirkt zuerst nach innen, die Person macht sie erst mit sich selbst aus —" : ""} für diese Person. EIN Absatz, 4–5 kurze Sätze.${dignityHint(p as { dignity?: string | null })}
 Zusätzlich ein Satz zur Reifung: Wirkt diese Kraft von Anfang an, oder wächst sie erst über die Jahre ins Volle?
-${CRAFT}`,
+${craft(viewKey)}`,
     };
   }
   if (d.kind === "node") {
     const n = NODES.find((x) => x.key === d.key);
     if (!n) return null;
     const isNorth = d.key === "node_n";
+    const viewKey = `node:${d.key}:v5`;
     return {
-      viewKey: `node:${d.key}:v4`,
+      viewKey,
       task: `Deute den ${n.name} in ${signName(n.lon)}${n.house ? `, ${n.house}. Haus (${HOUSE[n.house - 1]})` : ""} für diese Person — EIN Absatz, 3–4 kurze Sätze.
 ${isNorth
   ? "Der Nordknoten ist die gewählte Wachstumsrichtung — wohin sich dieses Leben entwickeln WILL. Es fühlt sich anfangs ungewohnt an, ist aber die Richtung, in der alles leichter wird. Eine wählbare Entwicklung, kein festgelegtes Los."
   : "Der Südknoten ist das Vertraute und Mitgebrachte — Gaben, die schon da sind, aber auch die Komfortzone, in der man sich versteckt. Was davon darf diese Person würdigen und trotzdem langsam loslassen?"}
-${CRAFT}`,
+${craft(viewKey)}`,
     };
   }
   if (d.kind === "house") {
@@ -132,22 +185,24 @@ ${CRAFT}`,
     const besetzt = inside.length
       ? `In diesem Haus stehen: ${inside.map((p) => `${p.name} in ${signName(p.lon)}`).join(", ")}.`
       : "In diesem Haus steht kein Planet. Deute es deshalb über den Herrscher seines Zeichens und über die Planeten, die aus anderen Häusern per Aspekt hierher wirken — und sag ehrlich, dass dieser Bereich eher leise mitläuft, statt ein Dauerthema zu sein. Das ist kein Mangel.";
+    const viewKey = `house:${h}:v2`;
     return {
-      viewKey: `house:${h}:v1`,
+      viewKey,
       task: `Deute das ${h}. Haus (${HOUSE[h - 1]}) für DIESEN Menschen — EIN Absatz, 4–5 kurze Sätze.
 ${besetzt}
 Erkläre in einem Halbsatz, warum dieses Haus für genau diesen Lebensbereich steht (die Logik des Horoskop-Kreises), und sag dann, wie dieser Bereich bei DIESEM Menschen konkret aussieht — nicht, was das Haus allgemein bedeutet.
-${CRAFT}`,
+${craft(viewKey)}`,
     };
   }
   if (d.kind === "aspect") {
     const a = computeAspects().find((x) => x.key === d.key);
     if (!a) return null;
+    const viewKey = `aspect:${d.key}:v5`;
     return {
-      viewKey: `aspect:${d.key}:v4`,
+      viewKey,
       task: `Deute den Aspekt ${a.A.name} ${a.def.type} ${a.B.name} (Orbis ${a.orb.toFixed(1)}° — ${a.orb < 2 ? "sehr eng, eine der prägendsten Verbindungen dieses Charts" : "spürbar im Alltag"}) für diese Person. EIN Absatz, 4–5 kurze Sätze.
-Sag, welche zwei Kräfte hier verbunden sind (in Alltagssprache), wie sich dieses Zusammenspiel von INNEN anfühlt, und woran die Person es in einer typischen Situation erkennt. Gabe und Falle dieser Verbindung im selben Atemzug — und was der reife Umgang damit ist.
-${CRAFT}`,
+Sag, welche zwei Kräfte hier verbunden sind (in Alltagssprache), wie sich dieses Zusammenspiel von INNEN anfühlt, und woran die Person es in einer typischen Situation erkennt. Stärke und Falle dieser Verbindung gehören beide hinein — und was ein erwachsener Umgang damit ist.
+${craft(viewKey)}`,
     };
   }
   return null;

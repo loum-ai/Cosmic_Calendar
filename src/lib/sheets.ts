@@ -56,6 +56,10 @@ export interface SheetRelation {
   color: string;
   glyph: string;
   text: string;
+  /** "ai" = `text` ist die echte Deutung dieses Charts. Fehlt die Angabe, ist
+   *  `text` nur die aus dem Chart gerechnete Beobachtung — dann holt die
+   *  Oberfläche die Deutung nach, statt die Schablone stehen zu lassen. */
+  source?: "ai";
 }
 
 export interface SheetContent {
@@ -70,7 +74,7 @@ const MINT = "#20F0D0";
 const lc = (s: string) => (s ? s.charAt(0).toLowerCase() + s.slice(1) : s);
 
 /** Erster vollständiger Satz eines Textes — als Vorschauzeile. */
-function firstSentence(t: string): string {
+export function firstSentence(t: string): string {
   const m = t.trim().match(/^[\s\S]*?[.!?](?=\s|$)/);
   return (m ? m[0] : t.trim()).trim();
 }
@@ -94,9 +98,13 @@ const compact = (secs: (SheetSection | null)[]): SheetSection[] => secs.filter((
  *  immer noch aus DIESEM Chart folgt (welche zwei Kräfte, was sie tun, wie eng).
  *  Nie wieder ein „tippe für deine Deutung"-Platzhalter — der stand vorher
  *  unter jedem einzelnen Planeten-Sheet. */
-function relText(a: Aspect): string {
+function relText(a: Aspect): { text: string; source?: "ai" } {
   const real = aiAspect(a.A.key, a.B.key) || (IS_DEMO ? ASPECT_TEXT[a.key] : "");
-  if (real) return firstSentence(real);
+  if (real) return { text: firstSentence(real), source: "ai" };
+  // Keine gespeicherte Deutung: die reine BEOBACHTUNG aus diesem Chart, kein
+  // gedeuteter Satz. Der Cockpit-Lauf deckt nur die 14 engsten Aspekte ab —
+  // gemessen fehlten dadurch bei einem Kunden 13 von 27. Die Oberfläche holt
+  // die Deutung dafür nach (siehe SheetRelation.source).
   const tA = THEME[a.A.key] ?? a.A.name;
   const tB = THEME[a.B.key] ? lc(THEME[a.B.key]) : a.B.name;
   const naehe =
@@ -105,7 +113,7 @@ function relText(a: Aspect): string {
       : a.orb < 3.5
         ? "eng genug, um im Alltag deutlich spürbar zu sein"
         : "weiter gefasst — wirkt eher als Grundton denn als Paukenschlag";
-  return `${tA} und ${tB} ${a.def.verb}. ${a.orb.toFixed(1)}° Orbis, ${naehe}.`;
+  return { text: `${tA} trifft ${tB} — ${a.def.type} mit ${a.orb.toFixed(1)}° Orbis, ${naehe}.` };
 }
 
 export function resolveSheet(d: SheetDescriptor): SheetContent | null {
@@ -155,7 +163,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
           label: `${a.def.type} zu ${other.name} · ${a.orb.toFixed(1)}°`,
           color: a.def.c,
           glyph: a.def.g,
-          text: relText(a),
+          ...relText(a),
         };
       }),
     };
@@ -239,7 +247,7 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       color: a.def.c,
       sections: [
         { label: "Was ist das?", body: a.def.plain, source: "general" },
-        { label: "Bei dir", body: aiAspect(a.A.key, a.B.key) || (IS_DEMO && ASPECT_TEXT[a.key]) || relText(a), accent: MINT },
+        { label: "Bei dir", body: aiAspect(a.A.key, a.B.key) || (IS_DEMO && ASPECT_TEXT[a.key]) || relText(a).text, accent: MINT },
         { label: "Genauigkeit", body: `${a.orb.toFixed(1)}° Orbis — je enger, desto stärker wirkt die Verbindung.`, source: "general" },
       ],
     };

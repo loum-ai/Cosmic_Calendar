@@ -18,13 +18,14 @@ import { supabase, AI_MODEL_CORE } from "@/lib/supabase";
 import type { BirthInput } from "@/lib/compute";
 import { Reveal } from "@/components/Reveal";
 import { useApp, DEMO_BIRTH } from "@/store/useApp";
+import { ChartExplorer } from "@/screens/ChartExplorer";
 
 /** The theme reading is generated in FIVE focused, parallel, individually
  *  cached calls: a short flowing intro + four accordion sections. One call per
  *  section keeps each text tight (no wall of text, no repetition) and lets the
  *  page load progressively. The mechanism is identical for EVERY life theme
  *  (PRINZIPIEN §1 — no theme is privileged); the lens does the specialising. */
-const COMMON_RULES = `Sprich mit „du", warm, klar, ehrlich. Kein Satz darf in jedes Horoskop passen — jeder Satz folgt aus DIESEN Fakten. Erwähne nur die Stellungen, die für genau diesen Abschnitt nötig sind — keine allgemeine Chart-Zusammenfassung, keine Wiederholungen. Fachbegriffe sofort übersetzen. Da das Geschlecht der Person nicht aus den Fakten hervorgeht: formuliere geschlechtsneutral (z. B. „in der Osteopathie arbeiten" statt „als Osteopathin", „eine schützende Rolle" statt „als Beschützerin"). Kein Markdown, keine Sternchen, keine Überschriften — nur Fließtext und ggf. nummerierte Zeilen. Absätze durch Leerzeilen trennen. KOMPAKT: Schreibe dicht — jeder Satz trägt neue Information, keine Füllsätze, nichts doppelt in anderen Worten. Lieber ein starker Satz als drei mittelmäßige. TONFÄRBUNG: Sachlich-geerdet, wie ein kluger Berufs- und Lebensberater, der Astrologie als präzises Werkzeug nutzt — nicht wie ein Mystiker. Alltagssprache statt Seelen-Vokabular: VERMEIDE Wörter wie „Seele", „heilig", „Bestimmung", „Schicksal", „Energien", „Universum", „spirituell", „Erwachen", „Dunkelheit", „verborgene Kräfte", „Transformation". Sprich stattdessen von Bedürfnissen, Mustern, Stärken, konkretem Verhalten und Situationen. Tiefe ja — aber am Alltag belegt, nie raunend. Warm und klar, ohne Pathos.`;
+const COMMON_RULES = `Sprich mit „du", warm, klar, ehrlich. Kein Satz darf in jedes Horoskop passen — jeder Satz folgt aus DIESEN Fakten. Erwähne nur die Stellungen, die für genau diesen Abschnitt nötig sind — keine allgemeine Chart-Zusammenfassung, keine Wiederholungen. Fachbegriffe sofort übersetzen. Da das Geschlecht der Person nicht aus den Fakten hervorgeht: formuliere geschlechtsneutral (z. B. „in der Osteopathie arbeiten" statt „als Osteopathin", „eine schützende Rolle" statt „als Beschützerin"). Kein Markdown, keine Sternchen, keine Überschriften — nur Fließtext und ggf. nummerierte Zeilen. Absätze durch Leerzeilen trennen. FORMEL-VERBOT (gemessen an den bisherigen Deutungen — sonst klingt jeder Abschnitt gleich gebaut): NIE „Das merkst du, wenn …" oder „Das zeigt sich im Alltag, wenn …" — zeig die Situation, ohne sie anzukündigen. NIE einen Satz mit „Gleichzeitig" beginnen. HÖCHSTENS EINMAL pro Abschnitt eine „nicht X, sondern Y"-Konstruktion. NIE „im selben Atemzug", „deine Gabe ist", „die Falle ist", „genau hier liegt". Variiere den Satzbau: nicht drei Sätze hintereinander gleich anfangen. ABSCHLUSS: Schreib den Text zu Ende — der letzte Satz muss vollständig sein, niemals mitten im Satz aufhören. KOMPAKT: Schreibe dicht — jeder Satz trägt neue Information, keine Füllsätze, nichts doppelt in anderen Worten. Lieber ein starker Satz als drei mittelmäßige. TONFÄRBUNG: Sachlich-geerdet, wie ein kluger Berufs- und Lebensberater, der Astrologie als präzises Werkzeug nutzt — nicht wie ein Mystiker. Alltagssprache statt Seelen-Vokabular: VERMEIDE Wörter wie „Seele", „heilig", „Bestimmung", „Schicksal", „Energien", „Universum", „spirituell", „Erwachen", „Dunkelheit", „verborgene Kräfte", „Transformation". Sprich stattdessen von Bedürfnissen, Mustern, Stärken, konkretem Verhalten und Situationen. Tiefe ja — aber am Alltag belegt, nie raunend. Warm und klar, ohne Pathos.`;
 
 function introTask(t: LifeTheme): string {
   return `Schreibe NUR den EINSTIEG einer Deutung zum Lebensthema „${t.label}" (${t.teaser}) für DIESEN Menschen — genau 2 kurze Absätze (je 2–3 Sätze), ohne Überschrift.
@@ -287,7 +288,6 @@ export function ThemenHub() {
               <ChartWheel />
             </div>
             <span className="relative font-body text-[11px] uppercase tracking-[1.6px] text-txt-3">Alles ist antippbar — Punkte, Linien, Zeichen</span>
-            <button onClick={() => setHomeView("chart")} className="relative font-body text-[13px] text-lilac transition hover:translate-x-0.5">Ganzes Rad im Detail →</button>
           </section>
         </Reveal>
 
@@ -387,23 +387,22 @@ export function ThemenHub() {
           </section>
         ) : null}
 
-        {/* the full chart, one tap away (Human Design lives in the bento above) */}
-        <Reveal i={THEMES.length + 1}>
-          <button
-            onClick={() => setHomeView("chart")}
-            className="vela-card-soft mt-4 flex w-full items-center justify-between gap-4 p-5 text-left hover:-translate-y-0.5"
-            style={inkSurface()}
-          >
-            <div className="flex items-center gap-3.5">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-surface text-lilac" style={{ boxShadow: "inset 0 0 0 1px rgba(255,255,255,.12)" }}><CircleDot className="h-5 w-5" strokeWidth={1.7} /></span>
-              <div>
-                <div className="font-cinzel text-[19px] font-normal uppercase tracking-[0.02em] text-txt">Ganzes Geburtsrad</div>
-                <div className="mt-1 font-body text-[13px] text-txt-3">Alle Planeten, Häuser & Aspekte — zum Erkunden.</div>
-              </div>
-            </div>
-            <ChevronRight className="h-5 w-5 shrink-0 text-txt-3" />
-          </button>
-        </Reveal>
+        {/* DAS GANZE GEBURTSRAD — steht jetzt HIER, nicht mehr hinter einem
+            Link. Vorher lagen Signatur, besondere Muster, die großen Drei,
+            alle Aspekte, die Planetenkarten mit ihren Bildern und die
+            Verteilung hinter „Ganzes Rad im Detail →" und wurden schlicht
+            nicht gefunden. Es ist derselbe Code wie die eigenständige Seite
+            (die über das Menü erreichbar bleibt), nur ohne zweites Rad und
+            ohne eigenen Kopf. */}
+        <section className="mt-14">
+          <div className="mb-1.5 flex items-center gap-1.5">
+            <span className="vela-label flex items-center gap-1.5"><CircleDot className="h-3.5 w-3.5" strokeWidth={1.7} /> Dein ganzes Geburtsrad</span>
+          </div>
+          <p className="mb-6 max-w-[46ch] font-body text-[15px] leading-relaxed text-txt-2">
+            Alle Planeten, Aspekte und Häuser deines Bildes — jedes Element antippbar.
+          </p>
+          <ChartExplorer embedded />
+        </section>
       </div>
     </div>
   );
@@ -437,7 +436,7 @@ function ThemeReading({ themeKey }: { themeKey: string }) {
     const fire = (part: string, task: string, apply: (txt: string) => void, ctxOverride?: string) => {
       retry(
         () => supabase.functions.invoke("generate", {
-          body: { chart_hash: chartHash(), cacheKey: `theme:${t.key}:v8:${part}:${h}`, context: ctxOverride ?? ctx, task, long: true, model: AI_MODEL_CORE },
+          body: { chart_hash: chartHash(), cacheKey: `theme:${t.key}:v9:${part}:${h}`, context: ctxOverride ?? ctx, task, long: true, model: AI_MODEL_CORE },
         }),
         (r) => !!r.data?.text,
         { tries: 4, delayMs: 1800 },

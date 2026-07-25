@@ -96,16 +96,17 @@ HARTE REGELN:
 - SYNTHETISIERE über das GANZE Chart. Verbinde Sonne, Mond, Aszendent, die prägenden Aspekte und die Mondknoten zu EINEM Bild — nicht Planet für Planet.
 - Finde den ROTEN FADEN: das eine Grundthema, das sich durch dieses Leben zieht.
 - Benenne die zentrale Spannung PRÄZISE am Chart (z. B. „dein Sonne-Saturn-Quadrat"), nicht vage.
-- HALTE DAS PARADOX: benenne die Abwehr UND die Gabe im selben Atemzug. Saturn ist nicht „Disziplin", sondern die Angst, die über die Jahre zur Reife wird.
+- HALTE DAS PARADOX: benenne die Abwehr UND die Gabe zusammen. Saturn ist nicht „Disziplin", sondern die Angst, die über die Jahre zur Reife wird.
 - TIMING & LEBENSVERLAUF: was reift früh, was erst spät; wohin sich dieses Leben entwickelt. Saturn reift über Jahre; Uranus/Neptun/Pluto sind große, langsame Lebensthemen.
 - MONDKNOTEN als gewählte Bestimmung, nicht als Schicksal: Nordknoten = gewählte Wachstumsrichtung, Südknoten = das Vertraute zum Loslassen.
 - TON: möglichkeits-orientiert, ehrlich UND warm. Kein Kitsch, keine Floskeln.
 - VERBOTEN sind generische Sätze, die auf jeden zutreffen. Jeder Satz muss aus DIESEN Fakten folgen.
+- FORMEL-VERBOT: nie „Das merkst du, wenn …", nie ein Satzanfang mit „Gleichzeitig", nie „im selben Atemzug", „deine Gabe ist", „die Falle ist", „genau hier liegt".
 - Kein Aufzählen von Positionen. Ein fließender Text.
 
 Keine Vorhersagen zu Tod, schwerer Krankheit oder Schwangerschaft.
 Aufbau (verwoben, ohne Zwischenüberschriften): ein Einstieg, der sofort etwas Wahres sagt · die tragenden Kräfte als Geschichte, mit gehaltenem Paradox · die zentrale Spannung, exakt benannt · Richtung & Timing (mit den Mondknoten) · ein Schlusssatz, der bleibt und Mut macht.
-5–7 dichte Absätze, durch Leerzeilen getrennt.`;
+5–7 dichte Absätze, durch Leerzeilen getrennt. Schreibe IMMER bis zum Satzende — brich niemals mitten im Satz ab.`;
 
 const SCHEMA = {
   type: "object",
@@ -122,6 +123,28 @@ const SCHEMA = {
   },
   required: ["summary", "placements"],
 };
+
+/**
+ * Denk- und Ausgabe-Budget. Bei Gemini zählen die Denk-Tokens GEGEN
+ * `maxOutputTokens` — beides teilt sich EIN Budget. Mit 8192 bzw. 4096 fraß
+ * das Nachdenken einen Teil auf und der Text brach mitten im Satz ab
+ * (gemessen: das gespeicherte Portrait endete auf „…verwandelt sich diese
+ * anfäng"). Deshalb: knappes Denk-Budget, großzügiges Gesamtbudget.
+ * Pro-Modelle akzeptieren kein Budget 0 — 128 ist dort das Minimum.
+ */
+function budget(mdl: string, denken: number) {
+  const pro = /pro/i.test(mdl);
+  return { maxOutputTokens: 16384, thinkingConfig: { thinkingBudget: pro ? Math.max(128, denken) : denken } };
+}
+
+/** Bricht der Text mitten im Satz ab, lieber auf den letzten ganzen Satz
+ *  zurückschneiden als einen halben ausliefern. */
+function trimToSentence(t: string): string {
+  if (/[.!?…»"“)\]]$/.test(t)) return t;
+  const m = t.match(/^[\s\S]*[.!?…»"“](?=\s|$)/);
+  const cut = m ? m[0].trim() : "";
+  return cut.length >= t.length * 0.5 ? cut : t;
+}
 
 async function embed(text: string, key: string): Promise<number[] | null> {
   try {
@@ -213,7 +236,10 @@ function factsToText(f: any): string {
 }
 
 function chartToFacts(name: string, data: any) {
-  const aspects = [...(data.aspects ?? [])].sort((a: any, b: any) => a.orb - b.orb).slice(0, 14);
+  // Die App zeigt JEDEN Aspekt innerhalb 6° Orbis. Bei 14 blieben gemessen
+  // 13 von 27 Verbindungen (Kunde Max) ohne Deutung und fielen auf die
+  // Schablone zurück. 30 deckt auch dicht besetzte Charts ab.
+  const aspects = [...(data.aspects ?? [])].sort((a: any, b: any) => a.orb - b.orb).slice(0, 30);
   return {
     profile_name: name,
     asc_sign: signOf(data.asc),
@@ -277,13 +303,13 @@ async function generate(facts: any, model: string, key: string, wissen: string) 
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: sys }] },
       contents: [{ role: "user", parts: [{ text: factsToPrompt(facts) }] }],
-      generationConfig: { temperature: 0.55, maxOutputTokens: 8192, responseMimeType: "application/json", responseJsonSchema: SCHEMA },
+      generationConfig: { temperature: 0.55, ...budget(model, 0), responseMimeType: "application/json", responseJsonSchema: SCHEMA },
     }),
   });
   const data = await r.json();
   if (!r.ok) return { error: { status: r.status, detail: data } };
-  const text = data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") ?? "";
-  try { return { interpretation: JSON.parse(text) }; } catch { return { error: { parse: text.slice(0, 400) } }; }
+  const text = data?.candidates?.[0]?.content?.parts?.filter((p: any) => !p?.thought).map((p: any) => p.text ?? "").join("") ?? "";
+  try { return { interpretation: JSON.parse(text) }; } catch { return { error: { parse: text.slice(0, 400), finishReason: data?.candidates?.[0]?.finishReason } }; }
 }
 
 async function generatePortrait(facts: any, coreModel: string, flashModel: string, key: string, wissen: string): Promise<string> {
@@ -296,13 +322,14 @@ async function generatePortrait(facts: any, coreModel: string, flashModel: strin
         body: JSON.stringify({
           systemInstruction: { parts: [{ text: sys }] },
           contents: [{ role: "user", parts: [{ text: `${factsToText(facts)}\n\nAUFGABE: Schreibe das PORTRAIT dieses Menschen — ein tiefes, synthetisiertes Gesamtbild aus genau diesen Fakten.` }] }],
-          generationConfig: { temperature: 0.85, maxOutputTokens: 4096 },
+          generationConfig: { temperature: 0.85, ...budget(model, 2048) },
         }),
       });
       const data = await r.json();
       if (!r.ok) continue;
-      const text = (data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") ?? "").trim();
-      if (text) return text;
+      // `thought`-Parts gehören nicht in den Text des Kunden.
+      const text = (data?.candidates?.[0]?.content?.parts?.filter((p: any) => !p?.thought).map((p: any) => p.text ?? "").join("") ?? "").trim();
+      if (text) return trimToSentence(text);
     } catch { /* try next model */ }
   }
   return "";

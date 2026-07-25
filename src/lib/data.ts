@@ -202,6 +202,23 @@ export function signName(lon: number): string {
   return SN[Math.floor((((lon % 360) + 360) % 360) / 30)];
 }
 
+/**
+ * In welches Haus DIESES Charts fällt ein beliebiger Grad — nach den echten
+ * Placidus-Spitzen, nicht nach Gleich-Haus. Gebraucht für den laufenden
+ * Himmel: „der Mond steht heute in deinem 7. Haus". Fällt auf houseOf()
+ * zurück, solange keine Spitzen vorliegen (Geburtszeit unbekannt).
+ */
+export function houseOfCusps(lon: number): number {
+  if (!CUSPS || CUSPS.length !== 12) return houseOf(lon);
+  const L = (((lon % 360) + 360) % 360);
+  for (let i = 0; i < 12; i++) {
+    const a = ((CUSPS[i] % 360) + 360) % 360;
+    const b = ((CUSPS[(i + 1) % 12] % 360) + 360) % 360;
+    if (a <= b ? L >= a && L < b : L >= a || L < b) return i + 1;
+  }
+  return houseOf(lon);
+}
+
 export function houseOf(lon: number): number {
   return Math.floor(((((lon - ASC) % 360) + 360) % 360) / 30) + 1;
 }
@@ -224,9 +241,13 @@ export function computeAspects(): Aspect[] {
   return out;
 }
 
-/** Plain-language summary of the chart, used as context for the Q&A. */
+/** Plain-language summary of the chart, used as context for the Q&A.
+ *  `p.house` ist maßgeblich — das ist das gerechnete Placidus-Haus. `houseOf()`
+ *  ist nur die Gleich-Haus-Notlösung. Vorher stand hier ausschließlich
+ *  `houseOf()`: der Chat bekam dadurch andere Häuser genannt als das Rad
+ *  daneben zeigte und widersprach der eigenen App. */
 export function chartFacts(): string {
-  const pl = CHART.map((p) => `${p.name} in ${signName(p.lon)} (Haus ${houseOf(p.lon)})`).join("; ");
+  const pl = CHART.map((p) => `${p.name} in ${signName(p.lon)} (Haus ${p.house ?? houseOf(p.lon)})`).join("; ");
   const asp = computeAspects().map((a) => `${a.A.name} ${a.def.type} ${a.B.name}`).join("; ");
   return `Aszendent ${signName(ASC)}. ${pl}. Verbindungen: ${asp}.`;
 }

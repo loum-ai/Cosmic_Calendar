@@ -31,8 +31,18 @@ export function possessive(name: string): string {
   return /[sßxzS]$/.test(n) ? `${n}'` : `${n}s`;
 }
 
-/** `key` = der Planet, der das Thema trägt — die Karte zeigt darüber sein Foto. */
-export interface Touchpoint { key: string; glyph: string; title: string; text: string }
+/**
+ * Ein Berührungspunkt zwischen zwei Charts.
+ *  key   — der Planet, der das Thema trägt (die Karte zeigt sein Foto)
+ *  fakt  — die nackte Beobachtung: „Deine Mars Trigon Darius' Sonne (1.7°)"
+ *  text  — Schablone, nur noch Rückfallebene solange die Deutung lädt
+ *  Die Rohwerte stehen dabei, damit der Deutungs-Auftrag präzise wird.
+ */
+export interface Touchpoint {
+  key: string; glyph: string; title: string;
+  fakt: string; text: string;
+  aName: string; bName: string; type: string; orb: number; harmon: number;
+}
 export interface SynResult {
   hits: CrossHit[];
   resonance: number;
@@ -74,7 +84,12 @@ export function synastry(a: Planet[], b: Planet[], partnerName: string): SynResu
     const h = sig.find((x) => !used.has(x) && pred(x));
     if (!h) return null;
     used.add(h);
-    return { key, glyph, title, text: `Deine ${h.aName} ${h.type} ${possessive(partnerName)} ${h.bName} (${h.orb}°) — ${flow(h)}.` };
+    const fakt = `Deine ${h.aName} ${h.type} ${possessive(partnerName)} ${h.bName} (${h.orb}°)`;
+    return {
+      key, glyph, title, fakt,
+      text: `${fakt} — ${flow(h)}.`,
+      aName: h.aName, bName: h.bName, type: h.type, orb: h.orb, harmon: h.harmon,
+    };
   };
 
   const touchpoints = [
