@@ -666,6 +666,39 @@
 }
 
 /* range slider — gradient track + glowing thumb (real, consequential sliders) */
+/* ── Datums- und Zeitfelder auf iOS ───────────────────────────────────────
+   Safari auf dem iPhone gibt input[type=date] und [type=time] eine feste
+   Eigenbreite aus dem Datumsformat plus einen Picker-Button. Die ist breiter
+   als eine Telefon-Spalte: das Feld schob sich aus dem Bild, sein Wertebereich
+   wurde abgeschnitten und es sah leer aus. `width:100%` allein hilft nicht,
+   weil die UA-Breite aus dem Shadow-DOM kommt.
+
+   -webkit-appearance:none nimmt die UA-Bemaßung weg, min-width:0 erlaubt das
+   Schrumpfen, und der Wertebereich wird links ausgerichtet statt zentriert.
+   Der native Picker öffnet weiterhin beim Antippen.
+   Gilt global — dieselben Felder stehen in Onboarding, Cockpit und Synastrie. */
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+input[type="date"]::-webkit-date-and-time-value,
+input[type="time"]::-webkit-date-and-time-value,
+input[type="datetime-local"]::-webkit-date-and-time-value {
+  text-align: left;
+  min-width: 0;
+  margin: 0;
+}
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;

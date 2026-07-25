@@ -4,13 +4,15 @@ import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { OrbImage } from "@/components/OrbImage";
 import { ChartWheel } from "@/components/ChartWheel";
 import { Reveal } from "@/components/Reveal";
+import { useReading } from "@/lib/genReadings";
 import { PLANET_PHOTO, PLANET_GLOW, PLANET_SCALE } from "@/lib/planetPhotos";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useApp } from "@/store/useApp";
 import { CHART, type Planet } from "@/lib/data";
 import { computeChart } from "@/lib/compute";
-import { synastry } from "@/lib/synastry";
+import { synastry, type Touchpoint } from "@/lib/synastry";
+import { shortHash } from "@/lib/factsContext";
 import { searchPlace, type Place } from "@/lib/geocode";
 
 const CATEGORIES = [
@@ -73,6 +75,76 @@ function ZweiBilder({ accent, glyph, partner }: { accent: string; glyph: string;
         </span>
       </div>
     </div>
+  );
+}
+
+
+/**
+ * Ein Berührungspunkt. Die Beobachtung („Deine Mars Trigon Darius' Sonne")
+ * ist gerechnet; die DEUTUNG darunter kommt aus dem Deutungs-Dienst und ist
+ * für genau diese zwei Charts und diese Beziehungsart erzeugt. Vorher stand
+ * hier eine von drei Schablonen („Fließt leicht zusammen — ein müheloses
+ * Verstehen"), die jedes Paar mit demselben Aspekt wortgleich las.
+ *
+ * Cache-Schlüssel: der Deutungs-Dienst stellt das Chart des Nutzers voran,
+ * hier kommt der Fingerabdruck des Gegenübers dazu — jedes Paar bekommt also
+ * seine eigene Deutung, und ein zweiter Aufruf ist sofort da.
+ */
+function TouchpointCard({ t, m, partner }: { t: Touchpoint; m: { label: string; color: string; glyph: string }; partner: Person }) {
+  const hash = useMemo(
+    () => shortHash(partner.planets.map((p) => `${p.key}${Math.round(p.lon * 10)}`).join("")),
+    [partner],
+  );
+  const { text, loading } = useReading(
+    `syn:${hash}:${partner.cat}:${t.key}:v1`,
+    `Synastrie — zwei Geburtsbilder im Vergleich. Das Chart in den FAKTEN gehört der Person, die liest; das Gegenüber heißt ${partner.name}. Die beiden sind: ${m.label}.
+
+Der Kontakt, um den es hier geht: ${t.fakt}. ${t.harmon > 0 ? "Ein fließender Aspekt." : t.harmon < 0 ? "Ein spannungsreicher Aspekt." : "Eine Konjunktion — die beiden Kräfte verschmelzen."} Überschrift der Karte: „${t.title}".
+
+Deute DIESEN einen Kontakt für die Beziehung der beiden — 3–4 kurze Sätze, Du-Form, an die lesende Person gerichtet. Sag, wie sich das zwischen ihnen im Alltag zeigt und woran sie es wiedererkennt. Benenne beides: was daran trägt und was es kosten kann. Beziehe den Beziehungstyp (${m.label}) mit ein — dieselbe Verbindung bedeutet zwischen Partnern etwas anderes als zwischen Kolleginnen. Kein Satz, der auf jedes Paar passen würde. Keine Fachbegriffe ohne sofortige Übersetzung, kein Pathos.`,
+  );
+  const photo = PLANET_PHOTO[t.key];
+  return (
+    <article className={cn(TILE, "flex items-start gap-4 p-4")} style={{ background: INK, isolation: "isolate" }}>
+      {/* Der Planet, der dieses Thema trägt — angeschnitten in der Ecke, aber
+          INNERHALB der Kartenfläche. Mit negativem Versatz lief das Foto auf
+          iOS über die Kante hinaus: overflow-hidden klippt dort nicht
+          zuverlässig, wenn das Kind mix-blend-mode trägt. */}
+      {photo ? (
+        <span aria-hidden className="pointer-events-none absolute right-0 top-0 h-28 w-28 overflow-hidden">
+          <span className="absolute inset-0 rounded-full"
+            style={{ background: `radial-gradient(circle, rgba(${PLANET_GLOW[t.key] ?? "120,150,255"},0.26) 0%, transparent 68%)`, mixBlendMode: "screen" }} />
+          <img src={photo} alt="" className="absolute inset-0 h-full w-full object-cover"
+            style={{ mixBlendMode: "screen", opacity: 0.34, transform: `scale(${1 + (PLANET_SCALE[t.key] ?? 0.6) * 0.2})` }} />
+        </span>
+      ) : (
+        <span aria-hidden className="pointer-events-none absolute left-0 top-0 h-32 w-32 rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(120,150,255,0.14) 0%, transparent 70%)" }} />
+      )}
+      {/* Glyphen-Paar: das Thema (links) trifft auf die Beziehungsart (rechts). */}
+      <span aria-hidden className="relative mt-0.5 flex shrink-0 items-center">
+        <span className="vela-glyph flex h-9 w-9 items-center justify-center rounded-full text-[15px] text-lilac"
+          style={{ background: "#191826", boxShadow: "inset 0 0 0 1px rgba(120,150,255,0.38)" }}>{t.glyph}</span>
+        <span className="vela-glyph -ml-2.5 flex h-9 w-9 items-center justify-center rounded-full text-[15px]"
+          style={{ background: "#14131E", boxShadow: `inset 0 0 0 1px ${m.color}55`, color: m.color }}>{m.glyph}</span>
+      </span>
+      {/* rechts Luft lassen, solange dort das Planetenfoto liegt */}
+      <div className={cn("relative min-w-0 flex-1", photo && "pr-16")}>
+        <h3 className={CARD_TITLE}>{t.title}</h3>
+        <p className="mt-1.5 font-body text-[11px] uppercase tracking-[0.14em] text-txt-3">{t.fakt}</p>
+        {text ? (
+          <p className="mt-2.5 font-body text-[13px] leading-[1.62] text-txt">{text}</p>
+        ) : loading ? (
+          <div className="mt-3 space-y-2">
+            {[96, 88, 70].map((w, i) => (
+              <div key={i} className="h-2.5 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
+            ))}
+          </div>
+        ) : (
+          <p className="mt-2.5 font-body text-[13px] leading-[1.62] text-txt-2 first-letter:uppercase">{t.text.split(" — ").slice(1).join(" — ")}</p>
+        )}
+      </div>
+    </article>
   );
 }
 
@@ -257,45 +329,9 @@ export function SynastrieScreen() {
             <>
               <SectionHead title="Wie ihr verbunden seid" sub="Die stärksten Berührungspunkte — berechnet aus euren Charts" />
               <div className="grid grid-cols-1 gap-2.5 lg:grid-cols-2">
-                {syn.touchpoints.map((t) => {
-                  const m = catMeta(current.cat);
-                  /* Der Satz kommt als eine Zeile: „Fakt — Deutung". Erste
-                     Hälfte ist die Lede, der Rest wird ruhiger gesetzt. */
-                  const [lede, ...rest] = t.text.split(" — ");
-                  return (
-                    <article key={t.title} className={cn(TILE, "flex items-start gap-4 p-4")} style={{ background: INK }}>
-                      {/* Der Planet, der dieses Thema trägt, liegt angeschnitten
-                          in der Ecke — dieselbe Bildsprache wie im Rad und in
-                          den Sheets, nur leiser. */}
-                      {PLANET_PHOTO[t.key] ? (
-                        <span aria-hidden className="pointer-events-none absolute -right-8 -top-10 h-36 w-36">
-                          <span className="absolute inset-0 rounded-full"
-                            style={{ background: `radial-gradient(circle, rgba(${PLANET_GLOW[t.key] ?? "120,150,255"},0.26) 0%, transparent 68%)`, mixBlendMode: "screen" }} />
-                          <img src={PLANET_PHOTO[t.key]} alt="" className="absolute inset-0 h-full w-full object-cover"
-                            style={{ mixBlendMode: "screen", opacity: 0.34, transform: `scale(${1 + (PLANET_SCALE[t.key] ?? 0.6) * 0.2})` }} />
-                        </span>
-                      ) : (
-                        <span aria-hidden className="pointer-events-none absolute -left-12 -top-14 h-40 w-40 rounded-full"
-                          style={{ background: "radial-gradient(circle, rgba(120,150,255,0.14) 0%, transparent 70%)" }} />
-                      )}
-                      {/* Glyphen-Paar als Badge: das Thema (links) trifft auf
-                          die Beziehungsart (rechts) — zwei Charts, ein Kontakt. */}
-                      <span aria-hidden className="relative mt-0.5 flex shrink-0 items-center">
-                        <span className="vela-glyph flex h-9 w-9 items-center justify-center rounded-full text-[15px] text-lilac"
-                          style={{ background: "#191826", boxShadow: "inset 0 0 0 1px rgba(120,150,255,0.38)" }}>{t.glyph}</span>
-                        <span className="vela-glyph -ml-2.5 flex h-9 w-9 items-center justify-center rounded-full text-[15px]"
-                          style={{ background: "#14131E", boxShadow: `inset 0 0 0 1px ${m.color}55`, color: m.color }}>{m.glyph}</span>
-                      </span>
-                      <div className="relative min-w-0 flex-1">
-                        <h3 className={CARD_TITLE}>{t.title}</h3>
-                        <p className="mt-2 font-body text-[13px] leading-relaxed text-txt">{lede}</p>
-                        {rest.length > 0 && (
-                          <p className="mt-1.5 font-body text-[13px] leading-relaxed text-txt-2 first-letter:uppercase">{rest.join(" — ")}</p>
-                        )}
-                      </div>
-                    </article>
-                  );
-                })}
+                {syn.touchpoints.map((t) => (
+                  <TouchpointCard key={t.title} t={t} m={catMeta(current.cat)} partner={current} />
+                ))}
               </div>
             </>
           ) : (
