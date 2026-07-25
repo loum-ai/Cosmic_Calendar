@@ -113,7 +113,9 @@ function relText(a: Aspect): { text: string; source?: "ai" } {
       : a.orb < 3.5
         ? "eng genug, um im Alltag deutlich spürbar zu sein"
         : "weiter gefasst — wirkt eher als Grundton denn als Paukenschlag";
-  return { text: `${tA} trifft ${tB} — ${a.def.type} mit ${a.orb.toFixed(1)}° Orbis, ${naehe}.` };
+  // Kein „Orbis" im Fließtext — die Gradzahl steht im Label darüber, hier
+  // zählt die Aussage: wie eng, und was das heißt.
+  return { text: `${tA} trifft ${tB} — ${naehe}.` };
 }
 
 export function resolveSheet(d: SheetDescriptor): SheetContent | null {
@@ -248,7 +250,16 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       sections: [
         { label: "Was ist das?", body: a.def.plain, source: "general" },
         { label: "Bei dir", body: aiAspect(a.A.key, a.B.key) || (IS_DEMO && ASPECT_TEXT[a.key]) || relText(a).text, accent: MINT },
-        { label: "Genauigkeit", body: `${a.orb.toFixed(1)}° Orbis — je enger, desto stärker wirkt die Verbindung.`, source: "general" },
+        {
+          label: "Wie eng",
+          body:
+            a.orb < 1.5
+              ? `Sehr eng (${a.orb.toFixed(1)}°). Je kleiner dieser Abstand, desto deutlicher wirkt eine Verbindung — das hier ist eine der prägendsten deines Bildes.`
+              : a.orb < 3.5
+                ? `Eng (${a.orb.toFixed(1)}°). Je kleiner dieser Abstand, desto deutlicher wirkt eine Verbindung — diese spürst du im Alltag.`
+                : `Weiter gefasst (${a.orb.toFixed(1)}°). Je kleiner dieser Abstand, desto deutlicher wirkt eine Verbindung — diese wirkt eher als Grundton.`,
+          source: "general",
+        },
       ],
     };
   }

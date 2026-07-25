@@ -31,7 +31,7 @@ interface Person { name: string; cat: string; planets: Planet[] }
 const INK = "linear-gradient(180deg,#16161F 0%,#12121D 100%)";
 const INK_HERO = "linear-gradient(180deg,#201D2C 0%,#1B1926 55%,#17141F 100%)";
 const TILE =
-  "relative overflow-hidden rounded-[18px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]";
+  "relative overflow-hidden rounded-[16px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)]";
 
 /* Eyebrow: uppercase, weit gesperrt, klein, gedämpft — nie Akzentfarbe. */
 const EYEBROW = "font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3";
@@ -206,7 +206,7 @@ export function SynastrieScreen() {
                   background: INK,
                   boxShadow: active
                     ? `inset 0 0 0 1px ${m.color}70`
-                    : "inset 0 0 0 1px rgba(255,255,255,0.14)",
+                    : "inset 0 0 0 1px rgba(255,255,255,0.13)",
                 }}>
                 <span className="vela-glyph text-sm" style={{ color: m.color }}>{m.glyph}</span>
                 <span className={cn("font-body text-xs", active ? "text-txt" : "text-txt-2")}>{p.name}</span>
@@ -258,7 +258,7 @@ export function SynastrieScreen() {
               <input className={inputCls} placeholder="z. B. Berlin — dann aus der Liste wählen" value={placeQ} onChange={(e) => { setPlaceQ(e.target.value); setPlace(null); }} />
               {places.length > 0 && (
                 <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-xl"
-                  style={{ background: INK, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14), 0 18px 40px -20px rgba(0,0,4,0.85)" }}>
+                  style={{ background: INK, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.13), 0 18px 40px -20px rgba(0,0,4,0.85)" }}>
                   {places.map((p, i) => (
                     <button key={i} onClick={() => { setPlace(p); setPlaceQ(p.label); setPlaces([]); }} className="block w-full px-3.5 py-2.5 text-left font-body text-[13px] text-txt-2 transition-colors hover:bg-surface hover:text-txt">{p.label}</button>
                   ))}
@@ -280,7 +280,7 @@ export function SynastrieScreen() {
                       background: on
                         ? `radial-gradient(120% 140% at 50% -30%, ${c.color}24 0%, transparent 62%), ${INK}`
                         : INK,
-                      boxShadow: on ? `inset 0 0 0 1px ${c.color}70` : "inset 0 0 0 1px rgba(255,255,255,0.14)",
+                      boxShadow: on ? `inset 0 0 0 1px ${c.color}70` : "inset 0 0 0 1px rgba(255,255,255,0.13)",
                       color: on ? c.color : "var(--text-secondary)",
                     }}>
                     <span className="vela-glyph">{c.glyph}</span>{c.label}
@@ -299,8 +299,8 @@ export function SynastrieScreen() {
         <section className="mt-7">
           {/* Resonanz — der eine Display-Moment des Screens: solide Hero-Ink,
               Tiefe von innen, Zahl in Cinzel mit dem „lit word"-Halo. */}
-          <div className="relative overflow-hidden rounded-[24px] px-5 py-8 text-center"
-            style={{ background: INK_HERO, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14), inset 0 1px 0 rgba(255,255,255,0.05)" }}>
+          <div className="relative overflow-hidden rounded-[20px] px-5 py-8 text-center"
+            style={{ background: INK_HERO, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.13), inset 0 1px 0 rgba(255,255,255,0.05)" }}>
             <span aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 -translate-y-1/3 rounded-full"
               style={{ background: "radial-gradient(circle, rgba(120,150,255,0.20) 0%, rgba(120,150,255,0.06) 46%, transparent 70%)" }} />
             <div className="relative">

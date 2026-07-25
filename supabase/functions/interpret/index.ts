@@ -125,16 +125,21 @@ const SCHEMA = {
 };
 
 /**
- * Denk- und Ausgabe-Budget. Bei Gemini zählen die Denk-Tokens GEGEN
- * `maxOutputTokens` — beides teilt sich EIN Budget. Mit 8192 bzw. 4096 fraß
- * das Nachdenken einen Teil auf und der Text brach mitten im Satz ab
- * (gemessen: das gespeicherte Portrait endete auf „…verwandelt sich diese
- * anfäng"). Deshalb: knappes Denk-Budget, großzügiges Gesamtbudget.
- * Pro-Modelle akzeptieren kein Budget 0 — 128 ist dort das Minimum.
+ * Ausgabe-Budget.
+ *
+ * VORFALL 2026-07-25: Hier stand zusätzlich ein `thinkingConfig`. Elf Minuten
+ * nach dem Deploy wurde der erste neue Kunde (Marco) gedeutet — BEIDE
+ * Gemini-Aufrufe schlugen fehl, die Notfall-Schablone übernahm, und er bekam
+ * generische Texte ohne Portrait. Die vier älteren Kunden waren mit derselben
+ * Funktion ohne `thinkingConfig` sauber durchgelaufen.
+ *
+ * Lehre: `maxOutputTokens` anzuheben ist eine reine Zahl und war nie das
+ * Risiko — ein zusätzliches Feld in `generationConfig` ist eins. Das Feld ist
+ * raus. Gegen Abbrüche hilft hier das großzügige Budget plus der Rückschnitt
+ * unten; das reicht, weil dieser Lauf ohnehin selten und einmalig ist.
  */
-function budget(mdl: string, denken: number) {
-  const pro = /pro/i.test(mdl);
-  return { maxOutputTokens: 16384, thinkingConfig: { thinkingBudget: pro ? Math.max(128, denken) : denken } };
+function budget(_mdl: string, _denken: number) {
+  return { maxOutputTokens: 16384 };
 }
 
 /** Bricht der Text mitten im Satz ab, lieber auf den letzten ganzen Satz
@@ -296,20 +301,32 @@ function composeFallback(f: any) {
   return { summary, placements, aspects };
 }
 
+/**
+ * Die strukturierte Ebene. Zwei Anläufe, bevor die Notfall-Schablone greift —
+ * ein einzelner 429/503/400 darf einen Kunden nicht in generische Texte
+ * kippen lassen (genau das ist Marco am 25.07. passiert).
+ */
 async function generate(facts: any, model: string, key: string, wissen: string) {
   const sys = wissen ? `${SYSTEM}\n\nFACHWISSEN (zur Orientierung, nicht zitieren):\n${wissen}` : SYSTEM;
-  const r = await fetch(`${BASE}/models/${model}:generateContent?key=${key}`, {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: sys }] },
-      contents: [{ role: "user", parts: [{ text: factsToPrompt(facts) }] }],
-      generationConfig: { temperature: 0.55, ...budget(model, 0), responseMimeType: "application/json", responseJsonSchema: SCHEMA },
-    }),
-  });
-  const data = await r.json();
-  if (!r.ok) return { error: { status: r.status, detail: data } };
-  const text = data?.candidates?.[0]?.content?.parts?.filter((p: any) => !p?.thought).map((p: any) => p.text ?? "").join("") ?? "";
-  try { return { interpretation: JSON.parse(text) }; } catch { return { error: { parse: text.slice(0, 400), finishReason: data?.candidates?.[0]?.finishReason } }; }
+  const versuch = async (cfg: Record<string, unknown>) => {
+    const r = await fetch(`${BASE}/models/${model}:generateContent?key=${key}`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: sys }] },
+        contents: [{ role: "user", parts: [{ text: factsToPrompt(facts) }] }],
+        generationConfig: cfg,
+      }),
+    });
+    return { ok: r.ok, status: r.status, data: await r.json() };
+  };
+  const voll = { temperature: 0.55, ...budget(model, 0), responseMimeType: "application/json", responseJsonSchema: SCHEMA };
+  let r = await versuch(voll);
+  // Zweiter Anlauf ohne Schema — manche Modelle stolpern über
+  // responseJsonSchema, das Format steht auch so im Auftrag.
+  if (!r.ok) r = await versuch({ temperature: 0.55, maxOutputTokens: 16384, responseMimeType: "application/json" });
+  if (!r.ok) return { error: { status: r.status, detail: r.data } };
+  const text = r.data?.candidates?.[0]?.content?.parts?.filter((p: any) => !p?.thought).map((p: any) => p.text ?? "").join("") ?? "";
+  try { return { interpretation: JSON.parse(text) }; } catch { return { error: { parse: text.slice(0, 400), finishReason: r.data?.candidates?.[0]?.finishReason } }; }
 }
 
 async function generatePortrait(facts: any, coreModel: string, flashModel: string, key: string, wissen: string): Promise<string> {
@@ -363,6 +380,22 @@ Deno.serve(async (req) => {
       const interpretation: any = usedFallback ? composeFallback(facts) : res.interpretation;
       const usedModel = usedFallback ? "basis-komposition" : mdl;
       interpretation.portrait = key ? await generatePortrait(facts, coreMdl, mdl, key, wissen) : "";
+
+      // SCHUTZ (nach dem Vorfall vom 25.07.): Eine fehlgeschlagene Erzeugung
+      // darf eine vorhandene, echte Deutung NICHT durch die Notfall-Schablone
+      // ersetzen. Vorher wurde erst gelöscht und dann eingefügt — wer schon
+      // eine gute Deutung hatte, verlor sie bei jedem misslungenen Neulauf.
+      if (usedFallback) {
+        const { data: alt } = await svc
+          .from("interpretations").select("id, model").eq("client_id", client_id).eq("kind", "natal").maybeSingle();
+        if (alt && alt.model !== "basis-komposition") {
+          return json({
+            error: "generation_failed",
+            hinweis: "Die Erzeugung ist fehlgeschlagen. Die vorhandene Deutung bleibt unangetastet — bitte erneut versuchen.",
+            ai_error: res.error ?? null,
+          }, 502);
+        }
+      }
 
       const status = publish === false ? "draft" : "published";
       const row = {

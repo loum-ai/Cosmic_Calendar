@@ -109,7 +109,7 @@ function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => vo
 
       <div className="relative w-full max-w-[640px]">
         <div className="font-body text-[11px] font-medium uppercase tracking-[0.18em]" style={{ color: c }}>
-          Transit · {IMPACT_LABEL[tr.impact]} · {tr.orb.toFixed(1)}° Orbis
+          Transit · {IMPACT_LABEL[tr.impact]} · {tr.orb < 1.5 ? "sehr eng" : tr.orb < 3.5 ? "eng" : "weit"} · {tr.orb.toFixed(1)}°
         </div>
         <h2 className="mt-4 font-cinzel font-normal uppercase leading-[1.08] tracking-[0.01em] text-txt" style={{ fontSize: "clamp(28px,7.4vw,48px)" }}>{tr.title}</h2>
         <div className="mt-4 flex flex-wrap gap-2">
@@ -281,7 +281,7 @@ function StrongestCard({ tr, onOpen }: { tr: TransitHit; onOpen: () => void }) {
   return (
     <button
       onClick={onOpen}
-      className="group relative mt-9 block w-full overflow-hidden rounded-[18px] px-4 pb-[15px] pt-4 text-left"
+      className="group relative mt-9 block w-full overflow-hidden rounded-[16px] px-4 pb-[15px] pt-4 text-left"
       style={{ background: "linear-gradient(180deg,#201D2C 0%,#1B1926 52%,#17141F 100%)", boxShadow: `inset 0 0 0 1px ${rgb}4d` }}
     >
       {/* laufender Planet als echtes Foto — oben rechts angeschnitten */}

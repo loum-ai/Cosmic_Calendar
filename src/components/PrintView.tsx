@@ -130,7 +130,7 @@ export function PrintView({ include }: { include?: PrintInclude }) {
 
         {/* ── ASPECTS ── */}
         <Section show={inc.aspects} n="03" title="Aspekte" sub={`${aspects.length} Verbindungen, nach Stärke`}>
-          <Table head={["Verbindung", "Aspekt", "Orbis"]}>
+          <Table head={["Verbindung", "Aspekt", "Genauigkeit"]}>
             {aspects.map((a) => (
               <tr key={a.key} className="border-t border-[#eceaf2]">
                 <Td><Glyph k={a.A.key} g={a.A.glyph} /> {a.A.name} – <Glyph k={a.B.key} g={a.B.glyph} /> {a.B.name}</Td>

@@ -259,7 +259,7 @@ export function ProfilScreen() {
               )}
             >
               <span className="font-body text-[13px] text-txt-3">{s}</span>
-              <span className="rounded-pill px-2.5 py-[3px] font-body text-[9px] font-medium uppercase tracking-[0.18em] text-txt-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]">
+              <span className="rounded-pill px-2.5 py-[3px] font-body text-[9px] font-medium uppercase tracking-[0.18em] text-txt-3 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)]">
                 bald
               </span>
             </div>

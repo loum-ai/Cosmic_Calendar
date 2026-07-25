@@ -109,10 +109,15 @@ export interface AppState {
   q: string;
   setQ: (v: string) => void;
   answer: string;
+  /** Gesprächsverlauf dieser Sitzung — vorher war der Chat nach dem Schließen
+   *  weg. Die Antworten liegen serverseitig unter `q:<hash>` im Cache, das
+   *  Zurückblättern kostet also keine neue Erzeugung. */
+  verlauf: { frage: string; antwort: string }[];
   demo: boolean; // true when the answer came from the local offline oracle
   loading: boolean;
   ask: (question?: string) => Promise<void>;
   clearAnswer: () => void;
+  clearVerlauf: () => void;
 
   // help modal
   showHelp: boolean;
@@ -210,9 +215,11 @@ export const useApp = create<AppState>((set, get) => ({
   q: "",
   setQ: (v) => set({ q: v }),
   answer: "",
+  verlauf: [],
   demo: false,
   loading: false,
   clearAnswer: () => set({ answer: "", demo: false }),
+  clearVerlauf: () => set({ verlauf: [], answer: "", demo: false }),
   ask: async (question) => {
     const q = (question ?? get().q).trim();
     if (!q || get().loading) return;
@@ -229,10 +236,11 @@ export const useApp = create<AppState>((set, get) => ({
         },
       });
       if (error || !data?.text) throw new Error("no answer");
-      set({ answer: data.text, demo: false, loading: false });
+      set((st) => ({ answer: data.text, demo: false, loading: false, verlauf: [...st.verlauf, { frage: q, antwort: data.text }] }));
     } catch {
       // last resort (function unreachable) — offline, chart-grounded fallback
-      set({ answer: localOracle(q), demo: true, loading: false });
+      const notfall = localOracle(q);
+      set((st) => ({ answer: notfall, demo: true, loading: false, verlauf: [...st.verlauf, { frage: q, antwort: notfall }] }));
     }
   },
 
