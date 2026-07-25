@@ -18,6 +18,7 @@ import { supabase, AI_MODEL_CORE } from "@/lib/supabase";
 import type { BirthInput } from "@/lib/compute";
 import { Reveal } from "@/components/Reveal";
 import { useApp, DEMO_BIRTH } from "@/store/useApp";
+import { ChartExplorer } from "@/screens/ChartExplorer";
 
 /** The theme reading is generated in FIVE focused, parallel, individually
  *  cached calls: a short flowing intro + four accordion sections. One call per
@@ -287,7 +288,6 @@ export function ThemenHub() {
               <ChartWheel />
             </div>
             <span className="relative font-body text-[11px] uppercase tracking-[1.6px] text-txt-3">Alles ist antippbar — Punkte, Linien, Zeichen</span>
-            <button onClick={() => setHomeView("chart")} className="relative font-body text-[13px] text-lilac transition hover:translate-x-0.5">Ganzes Rad im Detail →</button>
           </section>
         </Reveal>
 
@@ -387,23 +387,22 @@ export function ThemenHub() {
           </section>
         ) : null}
 
-        {/* the full chart, one tap away (Human Design lives in the bento above) */}
-        <Reveal i={THEMES.length + 1}>
-          <button
-            onClick={() => setHomeView("chart")}
-            className="vela-card-soft mt-4 flex w-full items-center justify-between gap-4 p-5 text-left hover:-translate-y-0.5"
-            style={inkSurface()}
-          >
-            <div className="flex items-center gap-3.5">
-              <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-surface text-lilac" style={{ boxShadow: "inset 0 0 0 1px rgba(255,255,255,.12)" }}><CircleDot className="h-5 w-5" strokeWidth={1.7} /></span>
-              <div>
-                <div className="font-cinzel text-[19px] font-normal uppercase tracking-[0.02em] text-txt">Ganzes Geburtsrad</div>
-                <div className="mt-1 font-body text-[13px] text-txt-3">Alle Planeten, Häuser & Aspekte — zum Erkunden.</div>
-              </div>
-            </div>
-            <ChevronRight className="h-5 w-5 shrink-0 text-txt-3" />
-          </button>
-        </Reveal>
+        {/* DAS GANZE GEBURTSRAD — steht jetzt HIER, nicht mehr hinter einem
+            Link. Vorher lagen Signatur, besondere Muster, die großen Drei,
+            alle Aspekte, die Planetenkarten mit ihren Bildern und die
+            Verteilung hinter „Ganzes Rad im Detail →" und wurden schlicht
+            nicht gefunden. Es ist derselbe Code wie die eigenständige Seite
+            (die über das Menü erreichbar bleibt), nur ohne zweites Rad und
+            ohne eigenen Kopf. */}
+        <section className="mt-14">
+          <div className="mb-1.5 flex items-center gap-1.5">
+            <span className="vela-label flex items-center gap-1.5"><CircleDot className="h-3.5 w-3.5" strokeWidth={1.7} /> Dein ganzes Geburtsrad</span>
+          </div>
+          <p className="mb-6 max-w-[46ch] font-body text-[15px] leading-relaxed text-txt-2">
+            Alle Planeten, Aspekte und Häuser deines Bildes — jedes Element antippbar.
+          </p>
+          <ChartExplorer embedded />
+        </section>
       </div>
     </div>
   );

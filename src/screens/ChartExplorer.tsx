@@ -162,7 +162,15 @@ const selKey = (d: SheetDescriptor | null) => (d ? `${d.kind}:${d.key}` : "overv
 const isDesktop = () => typeof window !== "undefined" && window.matchMedia("(min-width:1024px)").matches;
 
 /** Chart explorer — the natal chart as a browsable, scrolling page. */
-export function ChartExplorer() {
+/**
+ * `embedded` — dieselben Abschnitte, aber ohne eigenen Kopf, ohne Zurück-Pfeil
+ * und ohne zweites Rad. Damit läuft der ganze Chart-Inhalt direkt auf der Home
+ * mit, statt hinter „Ganzes Rad im Detail →" zu verschwinden: Signatur,
+ * besondere Muster, die großen Drei, Aspekte, die Planeten mit ihren Bildern,
+ * Verteilung und die Deutung. Die eigenständige Seite bleibt erhalten (Menü,
+ * Deeplinks) und nutzt exakt denselben Code.
+ */
+export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
   useApp((s) => s.aiVersion); // re-render when a reading lands
   const openInfo = useApp((s) => s.openInfo);
   const setPrintOpen = useApp((s) => s.setPrintOpen);
@@ -170,8 +178,9 @@ export function ChartExplorer() {
   const setHomeView = useApp((s) => s.setHomeView);
   const [sel, setSel] = useState<SheetDescriptor | null>(null);
   const [morePat, setMorePat] = useState(false);
-  // land at the top (the chart wheel) when entering the full-chart view
-  useEffect(() => { window.scrollTo({ top: 0 }); }, []);
+  // land at the top (the chart wheel) when entering the full-chart view —
+  // eingebettet auf der Home wäre ein Sprung nach oben störend
+  useEffect(() => { if (!embedded) window.scrollTo({ top: 0 }); }, [embedded]);
 
   // selecting drives the desktop side-panel; on mobile it opens the native sheet
   const select = (d: SheetDescriptor) => {
@@ -231,8 +240,9 @@ export function ChartExplorer() {
   }, []);
 
   return (
-    <div className="animate-slideUp px-6 pb-28 pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] lg:px-10 lg:pt-10">
-      <div className="mx-auto w-full max-w-[1180px]">
+    <div className={embedded ? "" : "animate-slideUp px-6 pb-28 pt-[calc(env(safe-area-inset-top,0px)+2.5rem)] lg:px-10 lg:pt-10"}>
+      <div className={embedded ? "w-full" : "mx-auto w-full max-w-[1180px]"}>
+        {!embedded && (<>
         <button onClick={() => setHomeView("hub")} className="mb-7 flex items-center gap-2 font-body text-[15px] text-txt-2 transition hover:text-txt">
           <ArrowLeft className="h-4 w-4" /> Themen
         </button>
@@ -291,6 +301,7 @@ export function ChartExplorer() {
           </aside>
         </div>
         </Reveal>
+        </>)}
 
         {/* ── HERO: the chart's single most defining note (computed) ── */}
         {tightest && (
