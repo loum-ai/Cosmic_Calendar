@@ -67,7 +67,7 @@ function HouseGrid() {
             <div className="flex items-center gap-3 border-b border-line-soft py-3">
               <div
                 className={cn(
-                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg font-mono text-[12px]",
+                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-lg font-mono text-[13px]",
                   occ ? "bg-violet/20 text-lilac" : "text-txt-3",
                 )}
               >
@@ -144,7 +144,7 @@ export function HeuteScreen() {
         <div className="min-w-0">
           <div className="vela-label">{greeting}</div>
           <h1 className="mt-1.5 font-display text-[1.6rem] font-bold leading-tight text-txt">Hallo {firstName}</h1>
-          <p className="mt-1 font-mono text-[12px] text-txt-2">{dateShort}</p>
+          <p className="mt-1 font-mono text-[13px] text-txt-2">{dateShort}</p>
         </div>
         <Dialog open={showHelp} onOpenChange={setShowHelp}>
           <DialogTrigger asChild>
@@ -211,7 +211,7 @@ export function HeuteScreen() {
           </div>
 
           {/* Klartext-Begriffe — tap any dotted term for a plain explanation */}
-          <p className="mt-5 max-w-[44ch] font-body text-[12px] leading-relaxed text-txt-3">
+          <p className="mt-5 max-w-[44ch] font-body text-[13px] leading-relaxed text-txt-3">
             Neu hier? Tippe unterstrichene Begriffe wie <Term k="mondknoten">Mondknoten</Term>,{" "}
             <Term k="aszendent">Aszendent</Term> oder <Term k="haus">Haus</Term> — du bekommst sie sofort in Klartext.
           </p>

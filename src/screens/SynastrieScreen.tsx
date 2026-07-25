@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Plus } from "lucide-react";
 import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { OrbImage } from "@/components/OrbImage";
+import { ChartWheel } from "@/components/ChartWheel";
+import { Reveal } from "@/components/Reveal";
+import { PLANET_PHOTO, PLANET_GLOW, PLANET_SCALE } from "@/lib/planetPhotos";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useApp } from "@/store/useApp";
@@ -26,15 +29,52 @@ interface Person { name: string; cat: string; planets: Planet[] }
 const INK = "linear-gradient(180deg,#16161F 0%,#12121D 100%)";
 const INK_HERO = "linear-gradient(180deg,#201D2C 0%,#1B1926 55%,#17141F 100%)";
 const TILE =
-  "relative overflow-hidden rounded-[18px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08)]";
+  "relative overflow-hidden rounded-[18px] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.14)]";
 
 /* Eyebrow: uppercase, weit gesperrt, klein, gedämpft — nie Akzentfarbe. */
-const EYEBROW = "font-body text-[10.5px] font-medium uppercase tracking-[0.18em] text-txt-3";
+const EYEBROW = "font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3";
 /* Karten-Titel: Cinzel Regular, FLACH, VERSALIEN — nie kursiv, nie bold. */
-const CARD_TITLE = "font-cinzel text-[14.5px] font-normal uppercase leading-tight tracking-[0.01em] text-txt";
+const CARD_TITLE = "font-cinzel text-[15px] font-normal uppercase leading-tight tracking-[0.01em] text-txt";
 
 const inputCls =
   "w-full rounded-xl border border-line bg-[#12121D] px-3.5 py-2.5 font-body text-sm text-txt outline-none transition-colors focus:border-lilac";
+
+/**
+ * Der Kopf des Screens ist die These: DEIN Geburtsbild trifft auf ein zweites.
+ * Links das echte Rad (keine Attrappe), rechts der noch leere Ring in der
+ * Farbe der gewählten Beziehungsart — er füllt sich, sobald das Gegenüber
+ * gerechnet ist. So sieht man vor dem ersten Tippen, worum es hier geht.
+ */
+function ZweiBilder({ accent, glyph, partner }: { accent: string; glyph: string; partner?: Person | null }) {
+  return (
+    <div className="relative mt-5 flex items-center justify-center py-2">
+      <span
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{ background: `radial-gradient(circle, rgba(120,150,255,0.16) 0%, ${accent}14 42%, transparent 70%)`, mixBlendMode: "screen" }}
+      />
+      <div className="relative w-[124px] shrink-0 opacity-90">
+        <ChartWheel />
+      </div>
+      <div
+        className="relative -ml-7 flex h-[124px] w-[124px] shrink-0 items-center justify-center rounded-full"
+        style={{
+          background: INK,
+          boxShadow: `inset 0 0 0 1px ${accent}${partner ? "66" : "33"}`,
+        }}
+      >
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-3 rounded-full"
+          style={{ boxShadow: `inset 0 0 0 1px ${accent}22` }}
+        />
+        <span className="vela-glyph text-[30px]" style={{ color: accent, filter: `drop-shadow(0 0 14px ${accent}66)` }}>
+          {glyph}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 export function SynastrieScreen() {
   const setComposerOpen = useApp((s) => s.setComposerOpen);
@@ -94,7 +134,7 @@ export function SynastrieScreen() {
                   background: INK,
                   boxShadow: active
                     ? `inset 0 0 0 1px ${m.color}70`
-                    : "inset 0 0 0 1px rgba(255,255,255,0.08)",
+                    : "inset 0 0 0 1px rgba(255,255,255,0.14)",
                 }}>
                 <span className="vela-glyph text-sm" style={{ color: m.color }}>{m.glyph}</span>
                 <span className={cn("font-body text-xs", active ? "text-txt" : "text-txt-2")}>{p.name}</span>
@@ -112,29 +152,41 @@ export function SynastrieScreen() {
       {/* add form */}
       {(adding || people.length === 0) && (
         <div className="mt-6 border-t border-line pt-2">
+          <Reveal>
+            <ZweiBilder accent={catMeta(cat).color} glyph={catMeta(cat).glyph} />
+          </Reveal>
+          <Reveal i={1}>
           <SectionHead title="Wen möchtest du vergleichen?" sub="Für ein echtes Vergleichsbild brauchen wir Datum, Uhrzeit und (für die Achsen) den Ort." />
+          </Reveal>
           <div className="flex flex-col gap-3.5">
             <label className="block">
               <span className={cn(EYEBROW, "mb-1.5 block")}>Name</span>
               <input className={inputCls} placeholder="z. B. Jonas" value={name} onChange={(e) => setName(e.target.value)} />
             </label>
-            <div className="flex gap-2.5">
-              <label className="block flex-1">
+            {/* Auf dem Telefon stehen Datum und Uhrzeit UNTEREINANDER, erst ab
+                Tablet nebeneinander. Grund: iOS gibt date/time-Feldern eine
+                große Eigenbreite. In der alten Flex-Zeile (flex-1 + feste
+                130px) konnte das Kind wegen `min-width:auto` nicht schrumpfen —
+                die Uhrzeit wurde aus dem Bild geschoben und wirkte leer, weil
+                ihr Wertebereich abgeschnitten war. Volle Breite kann per
+                Konstruktion nicht überlaufen. */}
+            <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-2.5">
+              <label className="block min-w-0">
                 <span className={cn(EYEBROW, "mb-1.5 block")}>Geburtsdatum</span>
-                <input className={cn(inputCls, "w-full")} type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                <input className={cn(inputCls, "w-full min-w-0")} type="date" value={date} onChange={(e) => setDate(e.target.value)} />
               </label>
-              <label className="block w-[130px]">
+              <label className="block min-w-0">
                 <span className={cn(EYEBROW, "mb-1.5 block")}>Uhrzeit</span>
-                <input className={cn(inputCls, "w-full")} type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+                <input className={cn(inputCls, "w-full min-w-0")} type="time" value={time} onChange={(e) => setTime(e.target.value)} />
               </label>
             </div>
-            {!time && <p className="-mt-1.5 font-body text-[11.5px] leading-relaxed text-txt-3">Uhrzeit unbekannt? Lass es leer — wir rechnen mit 12:00 (Mond &amp; Häuser dann ungefähr).</p>}
+            {!time && <p className="-mt-1.5 font-body text-[11px] leading-relaxed text-txt-3">Uhrzeit unbekannt? Lass es leer — wir rechnen mit 12:00 (Mond &amp; Häuser dann ungefähr).</p>}
             <label className="relative block">
               <span className={cn(EYEBROW, "mb-1.5 block")}>Geburtsort <span className="normal-case tracking-normal text-txt-3">· optional</span></span>
               <input className={inputCls} placeholder="z. B. Berlin — dann aus der Liste wählen" value={placeQ} onChange={(e) => { setPlaceQ(e.target.value); setPlace(null); }} />
               {places.length > 0 && (
                 <div className="absolute z-10 mt-1 w-full overflow-hidden rounded-xl"
-                  style={{ background: INK, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.10), 0 18px 40px -20px rgba(0,0,4,0.85)" }}>
+                  style={{ background: INK, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14), 0 18px 40px -20px rgba(0,0,4,0.85)" }}>
                   {places.map((p, i) => (
                     <button key={i} onClick={() => { setPlace(p); setPlaceQ(p.label); setPlaces([]); }} className="block w-full px-3.5 py-2.5 text-left font-body text-[13px] text-txt-2 transition-colors hover:bg-surface hover:text-txt">{p.label}</button>
                   ))}
@@ -145,20 +197,27 @@ export function SynastrieScreen() {
           <div className="mt-5">
             <div className={cn(EYEBROW, "mb-2.5")}>Beziehung</div>
             <div className="flex flex-wrap gap-2">
-              {CATEGORIES.map((c) => (
-                <button key={c.key} onClick={() => setCat(c.key)}
-                  className="flex items-center gap-1.5 rounded-pill px-3.5 py-2 font-body text-[11.5px] transition active:scale-95"
-                  style={{
-                    background: INK,
-                    boxShadow: cat === c.key ? `inset 0 0 0 1px ${c.color}70` : "inset 0 0 0 1px rgba(255,255,255,0.08)",
-                    color: cat === c.key ? c.color : "var(--text-secondary)",
-                  }}>
-                  <span className="vela-glyph">{c.glyph}</span>{c.label}
-                </button>
-              ))}
+              {CATEGORIES.map((c) => {
+                const on = cat === c.key;
+                return (
+                  <button key={c.key} onClick={() => setCat(c.key)} aria-pressed={on}
+                    className="flex items-center gap-1.5 rounded-pill px-3.5 py-2 font-body text-[11px] transition active:scale-95"
+                    style={{
+                      // Karten-Chemie auch im Kleinen: die Auswahl leuchtet von
+                      // INNEN in ihrer Farbe, statt nur eine Kante zu färben.
+                      background: on
+                        ? `radial-gradient(120% 140% at 50% -30%, ${c.color}24 0%, transparent 62%), ${INK}`
+                        : INK,
+                      boxShadow: on ? `inset 0 0 0 1px ${c.color}70` : "inset 0 0 0 1px rgba(255,255,255,0.14)",
+                      color: on ? c.color : "var(--text-secondary)",
+                    }}>
+                    <span className="vela-glyph">{c.glyph}</span>{c.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
-          {err && <p className="mt-3 font-body text-[12px] text-aspect-opp">{err}</p>}
+          {err && <p className="mt-3 font-body text-[13px] text-aspect-opp">{err}</p>}
           <Button variant="cta" className="mt-5 w-full" disabled={!canSave} onClick={save}>Verbindung berechnen</Button>
         </div>
       )}
@@ -169,7 +228,7 @@ export function SynastrieScreen() {
           {/* Resonanz — der eine Display-Moment des Screens: solide Hero-Ink,
               Tiefe von innen, Zahl in Cinzel mit dem „lit word"-Halo. */}
           <div className="relative overflow-hidden rounded-[24px] px-5 py-8 text-center"
-            style={{ background: INK_HERO, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.09), inset 0 1px 0 rgba(255,255,255,0.05)" }}>
+            style={{ background: INK_HERO, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14), inset 0 1px 0 rgba(255,255,255,0.05)" }}>
             <span aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 -translate-y-1/3 rounded-full"
               style={{ background: "radial-gradient(circle, rgba(120,150,255,0.20) 0%, rgba(120,150,255,0.06) 46%, transparent 70%)" }} />
             <div className="relative">
@@ -181,12 +240,12 @@ export function SynastrieScreen() {
               <div className="mt-1 font-cinzel text-[58px] font-normal leading-none tracking-[-0.01em] vela-iris-text">{syn.resonance}%</div>
 
               {/* die Zahl ist belegt — hier steht, woraus sie stammt */}
-              <p className="mx-auto mt-4 max-w-[38ch] font-body text-[12.5px] leading-relaxed text-txt-2">
+              <p className="mx-auto mt-4 max-w-[38ch] font-body text-[13px] leading-relaxed text-txt-2">
                 Anteil harmonischer Verbindungen aus <b className="font-semibold text-txt">{syn.total}</b> Aspekten zwischen euren persönlichen Planeten.
               </p>
               <div className="mt-3.5 flex items-center justify-center gap-2">
-                <span className="rounded-pill px-3 py-1 font-body text-[11.5px] text-mint" style={{ boxShadow: "inset 0 0 0 1px rgba(32,240,208,0.30)" }}>{syn.harmonious} harmonisch</span>
-                <span className="rounded-pill px-3 py-1 font-body text-[11.5px] text-aspect-opp" style={{ boxShadow: "inset 0 0 0 1px rgba(255,143,176,0.30)" }}>{syn.challenging} fordernd</span>
+                <span className="rounded-pill px-3 py-1 font-body text-[11px] text-mint" style={{ boxShadow: "inset 0 0 0 1px rgba(32,240,208,0.30)" }}>{syn.harmonious} harmonisch</span>
+                <span className="rounded-pill px-3 py-1 font-body text-[11px] text-aspect-opp" style={{ boxShadow: "inset 0 0 0 1px rgba(255,143,176,0.30)" }}>{syn.challenging} fordernd</span>
               </div>
 
               <div className="mx-auto mt-5 h-px w-16 bg-line" />
@@ -205,21 +264,33 @@ export function SynastrieScreen() {
                   const [lede, ...rest] = t.text.split(" — ");
                   return (
                     <article key={t.title} className={cn(TILE, "flex items-start gap-4 p-4")} style={{ background: INK }}>
-                      <span aria-hidden className="pointer-events-none absolute -left-12 -top-14 h-40 w-40 rounded-full"
-                        style={{ background: "radial-gradient(circle, rgba(120,150,255,0.14) 0%, transparent 70%)" }} />
+                      {/* Der Planet, der dieses Thema trägt, liegt angeschnitten
+                          in der Ecke — dieselbe Bildsprache wie im Rad und in
+                          den Sheets, nur leiser. */}
+                      {PLANET_PHOTO[t.key] ? (
+                        <span aria-hidden className="pointer-events-none absolute -right-8 -top-10 h-36 w-36">
+                          <span className="absolute inset-0 rounded-full"
+                            style={{ background: `radial-gradient(circle, rgba(${PLANET_GLOW[t.key] ?? "120,150,255"},0.26) 0%, transparent 68%)`, mixBlendMode: "screen" }} />
+                          <img src={PLANET_PHOTO[t.key]} alt="" className="absolute inset-0 h-full w-full object-cover"
+                            style={{ mixBlendMode: "screen", opacity: 0.34, transform: `scale(${1 + (PLANET_SCALE[t.key] ?? 0.6) * 0.2})` }} />
+                        </span>
+                      ) : (
+                        <span aria-hidden className="pointer-events-none absolute -left-12 -top-14 h-40 w-40 rounded-full"
+                          style={{ background: "radial-gradient(circle, rgba(120,150,255,0.14) 0%, transparent 70%)" }} />
+                      )}
                       {/* Glyphen-Paar als Badge: das Thema (links) trifft auf
                           die Beziehungsart (rechts) — zwei Charts, ein Kontakt. */}
                       <span aria-hidden className="relative mt-0.5 flex shrink-0 items-center">
                         <span className="vela-glyph flex h-9 w-9 items-center justify-center rounded-full text-[15px] text-lilac"
                           style={{ background: "#191826", boxShadow: "inset 0 0 0 1px rgba(120,150,255,0.38)" }}>{t.glyph}</span>
-                        <span className="vela-glyph -ml-2.5 flex h-9 w-9 items-center justify-center rounded-full text-[14px]"
+                        <span className="vela-glyph -ml-2.5 flex h-9 w-9 items-center justify-center rounded-full text-[15px]"
                           style={{ background: "#14131E", boxShadow: `inset 0 0 0 1px ${m.color}55`, color: m.color }}>{m.glyph}</span>
                       </span>
                       <div className="relative min-w-0 flex-1">
                         <h3 className={CARD_TITLE}>{t.title}</h3>
                         <p className="mt-2 font-body text-[13px] leading-relaxed text-txt">{lede}</p>
                         {rest.length > 0 && (
-                          <p className="mt-1.5 font-body text-[12.5px] leading-relaxed text-txt-2 first-letter:uppercase">{rest.join(" — ")}</p>
+                          <p className="mt-1.5 font-body text-[13px] leading-relaxed text-txt-2 first-letter:uppercase">{rest.join(" — ")}</p>
                         )}
                       </div>
                     </article>

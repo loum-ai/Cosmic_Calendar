@@ -95,7 +95,7 @@ function inkSurface(tone?: string, strength = 0.12) {
   const a = (x: number) => (tone?.startsWith("#") ? `${tone}${Math.round(x * 255).toString(16).padStart(2, "0")}` : `rgba(${tone ?? "120,150,255"},${x})`);
   return {
     background: `radial-gradient(82% 60% at 50% 112%, ${a(strength)} 0%, transparent 68%), linear-gradient(180deg,#16161F 0%,#12121D 100%)`,
-    boxShadow: "inset 0 0 0 1px rgba(255,255,255,.09), inset 0 1px 0 rgba(255,255,255,.05)",
+    boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14), inset 0 1px 0 rgba(255,255,255,.05)",
     transition: "transform .25s cubic-bezier(.22,1,.36,1), filter .2s ease",
   };
 }
@@ -203,7 +203,7 @@ export function ThemenHub() {
       // haben sonst die Überschrift verdeckt (gesehen auf Max' Klienten-Link).
       <div className="flex min-h-dvh flex-col items-center justify-center px-6 pb-[calc(env(safe-area-inset-bottom,0px)+11rem)] pt-16 lg:px-10">
         <div className="w-full max-w-[640px]">
-          <div className="vela-wordmark mb-4 text-[12px]">Vela <span className="ml-2 font-body text-[9px] normal-case tracking-normal text-txt-3">Stand {__BUILD_ID__}</span></div>
+          <div className="vela-wordmark mb-4 text-[13px]">Vela <span className="ml-2 font-body text-[9px] normal-case tracking-normal text-txt-3">Stand {__BUILD_ID__}</span></div>
           {/* KANONISCHE REGEL: das Chart ist IMMER sichtbar — auch hier */}
           <div className="pointer-events-none mx-auto mb-7 w-full max-w-[220px] drop-shadow-[0_0_28px_rgba(120,150,255,0.22)]">
             <ChartWheel />
@@ -230,7 +230,7 @@ export function ThemenHub() {
                   </span>
                   <span className="min-w-0">
                     <span className="block font-cinzel text-[18px] font-normal uppercase leading-tight tracking-[0.03em] text-txt">{th.label}</span>
-                    <span className="mt-1 block truncate font-body text-[12.5px] text-txt-3">{th.teaser}</span>
+                    <span className="mt-1 block truncate font-body text-[13px] text-txt-3">{th.teaser}</span>
                   </span>
                 </button>
               </Reveal>
@@ -238,7 +238,7 @@ export function ThemenHub() {
           </div>
           <button
             onClick={() => finishEntry()}
-            className="mx-auto mt-8 block font-body text-[14px] text-lilac transition hover:translate-x-0.5"
+            className="mx-auto mt-8 block font-body text-[15px] text-lilac transition hover:translate-x-0.5"
           >
             Überspringen — direkt zu meinem Blueprint →
           </button>
@@ -257,7 +257,7 @@ export function ThemenHub() {
               <div className="vela-wordmark text-[11px]">Vela <span className="ml-2 font-body text-[9px] normal-case tracking-normal text-txt-3">Stand {__BUILD_ID__}</span></div>
               <div className="v-eyebrow mt-5">Geburts-Chart</div>
               <h1 className="mt-1.5 font-cinzel text-[27px] font-normal uppercase leading-tight tracking-[0.06em] text-txt lg:text-[34px]">{first}</h1>
-              <div className="mt-1.5 font-body text-[11.5px] text-txt-3">{PROFILE.birth}</div>
+              <div className="mt-1.5 font-body text-[11px] text-txt-3">{PROFILE.birth}</div>
             </div>
             <IridescentOrb size={44} className="mt-2" />
           </div>
@@ -266,7 +266,7 @@ export function ThemenHub() {
         {/* Kurz gesagt — schließbar, solide Hero-Fläche */}
         {kurz && (
           <Reveal>
-            <div className="relative mb-7 rounded-[16px] px-[15px] py-[13px]" style={{ background: "linear-gradient(180deg,#201D2C 0%,#1B1926 55%,#17141F 100%)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,.09), inset 0 1px 0 rgba(255,255,255,.05)" }}>
+            <div className="relative mb-7 rounded-[16px] px-[15px] py-[13px]" style={{ background: "linear-gradient(180deg,#201D2C 0%,#1B1926 55%,#17141F 100%)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14), inset 0 1px 0 rgba(255,255,255,.05)" }}>
               <button onClick={() => setKurz(false)} aria-label="Schließen" className="absolute right-2 top-2 p-1 text-txt-3 transition hover:text-txt">
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -286,8 +286,8 @@ export function ThemenHub() {
             <div className="relative w-full max-w-[336px]">
               <ChartWheel />
             </div>
-            <span className="relative font-body text-[10.5px] uppercase tracking-[1.6px] text-txt-3">Alles ist antippbar — Punkte, Linien, Zeichen</span>
-            <button onClick={() => setHomeView("chart")} className="relative font-body text-[13.5px] text-lilac transition hover:translate-x-0.5">Ganzes Rad im Detail →</button>
+            <span className="relative font-body text-[11px] uppercase tracking-[1.6px] text-txt-3">Alles ist antippbar — Punkte, Linien, Zeichen</span>
+            <button onClick={() => setHomeView("chart")} className="relative font-body text-[13px] text-lilac transition hover:translate-x-0.5">Ganzes Rad im Detail →</button>
           </section>
         </Reveal>
 
@@ -311,7 +311,7 @@ export function ThemenHub() {
             Referenzen stützen gleichmäßiges Karten-Scrolling). */}
         <div className="mb-4">
           <div className="vela-label mb-1.5 flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> Lebensthemen</div>
-          <p className="max-w-[46ch] font-body text-[14.5px] leading-relaxed text-txt-2">
+          <p className="max-w-[46ch] font-body text-[15px] leading-relaxed text-txt-2">
             {viewer ? "Wähle ein Lebensthema, das dich gerade bewegt — dein Geburtsbild, gelesen durch diese Linse." : "Wähle ein Lebensthema — dein Geburtsbild, gelesen durch diese Linse. Kein Fachchinesisch, nur was es für dich bedeutet."}
           </p>
         </div>
@@ -334,7 +334,7 @@ export function ThemenHub() {
                   <ChevronRight className="mt-2 h-5 w-5 text-txt-3 transition-transform group-hover:translate-x-0.5" />
                 </div>
                 <div className="relative mt-5 font-cinzel text-[21px] font-normal uppercase leading-tight tracking-[0.02em] text-txt">{t.label}</div>
-                <div className="relative mt-2 font-body text-[14px] leading-relaxed text-txt-3">{t.teaser}</div>
+                <div className="relative mt-2 font-body text-[15px] leading-relaxed text-txt-3">{t.teaser}</div>
               </button>
             </Reveal>
           ))}
@@ -366,7 +366,7 @@ export function ThemenHub() {
             <div className="vela-card-soft p-6 lg:p-8" style={inkSurface(undefined, 0.1)}>
               {portraitParas.map((p, i) => (
                 <Reveal key={i} i={i}>
-                  <p className={i === 0 ? "font-body text-[18.5px] leading-[1.62] text-txt" : "mt-5 font-body text-[16.5px] leading-[1.78] text-txt-2"}>{p}</p>
+                  <p className={i === 0 ? "font-body text-[18.5px] leading-[1.62] text-txt" : "mt-5 font-body text-[17px] leading-[1.78] text-txt-2"}>{p}</p>
                 </Reveal>
               ))}
             </div>
@@ -494,7 +494,7 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
   return (
     <div className="animate-slideUp px-6 pb-40 pt-[calc(env(safe-area-inset-top,0px)+2rem)] lg:px-10 lg:pt-10">
       <div className="mx-auto w-full max-w-[720px]">
-        <button onClick={closeTheme} className="mb-7 flex items-center gap-2 font-body text-[14px] text-txt-2 transition hover:text-txt">
+        <button onClick={closeTheme} className="mb-7 flex items-center gap-2 font-body text-[15px] text-txt-2 transition hover:text-txt">
           <ArrowLeft className="h-4 w-4" /> Themen
         </button>
 
@@ -515,7 +515,7 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
             <div className="min-w-0">
               <div className="v-eyebrow">Lebensthema</div>
               <h1 className="mt-1.5 font-cinzel text-[30px] font-normal uppercase leading-[1.08] tracking-[0.035em] text-txt lg:text-[40px]">{t.label}</h1>
-              <p className="mt-2 font-body text-[14.5px] leading-relaxed text-txt-3">{t.teaser}</p>
+              <p className="mt-2 font-body text-[15px] leading-relaxed text-txt-3">{t.teaser}</p>
             </div>
           </div>
           <div className="vela-rule mt-7" />
@@ -541,7 +541,7 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
                   // als eigener Block lesbar, nicht als Anfang einer Wand.
                   <p className="border-l-2 pl-4 font-body text-[17.5px] leading-[1.62] text-txt lg:pl-5 lg:text-[18.5px]" style={{ borderColor: `${t.accent}59` }}>{p}</p>
                 ) : (
-                  <p className="mt-5 font-body text-[16px] leading-[1.8] text-txt-2">{p}</p>
+                  <p className="mt-5 font-body text-[17px] leading-[1.8] text-txt-2">{p}</p>
                 )}
               </Reveal>
             ))}
@@ -561,7 +561,7 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
                       {kompass.text.replace(/\*\*/g, "").split(/\n+/).map((l) => l.replace(/^[–-]\s*/, "").trim()).filter(Boolean).slice(0, 4).map((l, i) => (
                         <div key={i} className="flex gap-3.5">
                           <span className="mt-[10px] h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: t.accent }} />
-                          <p className="font-body text-[16px] leading-[1.7] text-txt-2">{l}</p>
+                          <p className="font-body text-[17px] leading-[1.7] text-txt-2">{l}</p>
                         </div>
                       ))}
                     </div>
@@ -603,7 +603,7 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
 
         {/* Weiterfragen — tap a personal follow-up question, Vela answers in the composer */}
         <div className="vela-card-soft mt-10 p-5" style={inkSurface(undefined, 0.1)}>
-          <p className="font-body text-[14px] leading-relaxed text-txt-2">
+          <p className="font-body text-[15px] leading-relaxed text-txt-2">
             {fragen.length ? "Frag weiter — das liegt dir vielleicht gerade auf der Zunge:" : "Frag Vela unten alles zu diesem Thema — sie liest es aus deinem Chart."}
           </p>
           {fragen.length > 0 && (
@@ -647,8 +647,8 @@ function Kachel({ glyph, label, value, sub, lit, onClick }: { glyph: string; lab
     >
       <span className={`font-glyph text-[15px] leading-none ${lit ? "text-lilac" : "text-txt-3"}`}>{glyph}</span>
       <span className="font-body text-[9px] uppercase tracking-[1.6px] text-txt-3">{label}</span>
-      <span className="-mt-0.5 font-body text-[13.5px] font-medium text-txt">{value}</span>
-      {sub && <span className="-mt-1 font-body text-[10.5px] text-txt-3">{sub}</span>}
+      <span className="-mt-0.5 font-body text-[13px] font-medium text-txt">{value}</span>
+      {sub && <span className="-mt-1 font-body text-[11px] text-txt-3">{sub}</span>}
     </button>
   );
 }
@@ -698,7 +698,7 @@ function ForceCard({ it, accent, onOpen }: { it: { key: string; name: string; gl
             <span className="font-glyph text-[26px] leading-none" style={{ color: `rgba(${glow},.95)` }}>{it.glyph}</span>
             <span className="min-w-0">
               <span className="block font-cinzel text-[22px] font-normal uppercase leading-tight tracking-[0.03em] text-txt">{it.name}</span>
-              <span className="mt-1 block font-body text-[12.5px] text-txt-3">{it.pos}</span>
+              <span className="mt-1 block font-body text-[13px] text-txt-3">{it.pos}</span>
             </span>
           </span>
         </span>
@@ -707,14 +707,14 @@ function ForceCard({ it, accent, onOpen }: { it: { key: string; name: string; gl
           <span className="font-glyph text-[22px]" style={{ color: accent }}>{it.glyph}</span>
           <div className="min-w-0">
             <div className="font-cinzel text-[21px] font-normal uppercase leading-tight tracking-[0.03em] text-txt">{it.name}</div>
-            <div className="mt-1 block font-body text-[12.5px] text-txt-3">{it.pos}</div>
+            <div className="mt-1 block font-body text-[13px] text-txt-3">{it.pos}</div>
           </div>
         </div>
       )}
       {bodyParas.length ? (
         <div className={photo ? "relative" : "relative mt-4"}>
           {bodyParas.map((p, i) => (
-            <p key={i} className={`font-body text-[15.5px] leading-[1.72] text-txt-2 ${i > 0 ? "mt-3.5" : ""}`}>{p}</p>
+            <p key={i} className={`font-body text-[15px] leading-[1.72] text-txt-2 ${i > 0 ? "mt-3.5" : ""}`}>{p}</p>
           ))}
         </div>
       ) : loading ? (
@@ -781,7 +781,7 @@ function ThemeSection({ title, body, loading, accent, defaultOpen }: { title: st
                       >
                         {num[1]}
                       </span>
-                      <p className="font-body text-[16px] leading-[1.7] text-txt-2">{num[2]}</p>
+                      <p className="font-body text-[17px] leading-[1.7] text-txt-2">{num[2]}</p>
                     </div>
                   );
                 }
@@ -789,13 +789,13 @@ function ThemeSection({ title, body, loading, accent, defaultOpen }: { title: st
                 // theme accent so long sections scan instead of souping.
                 const lead = p.match(/^([^—.!?\n]{2,44}?)\s+—\s+(.*)$/s);
                 return lead ? (
-                  <p key={i} className="font-body text-[16px] leading-[1.7] text-txt-2">
+                  <p key={i} className="font-body text-[17px] leading-[1.7] text-txt-2">
                     <span className="font-display text-[15px] font-semibold" style={{ color: accent }}>{lead[1]}</span>
                     <span className="text-txt-3"> — </span>
                     {lead[2]}
                   </p>
                 ) : (
-                  <p key={i} className="font-body text-[16px] leading-[1.7] text-txt-2">{p}</p>
+                  <p key={i} className="font-body text-[17px] leading-[1.7] text-txt-2">{p}</p>
                 );
               })}
             </div>
@@ -845,7 +845,7 @@ function HDView({ birth }: { birth: BirthInput }) {
   return (
     <div className="animate-slideUp px-6 pb-40 pt-[calc(env(safe-area-inset-top,0px)+2rem)] lg:px-10 lg:pt-10">
       <div className="mx-auto w-full max-w-[720px]">
-        <button onClick={closeTheme} className="mb-7 flex items-center gap-2 font-body text-[14px] text-txt-2 transition hover:text-txt">
+        <button onClick={closeTheme} className="mb-7 flex items-center gap-2 font-body text-[15px] text-txt-2 transition hover:text-txt">
           <ArrowLeft className="h-4 w-4" /> Themen
         </button>
 
@@ -863,7 +863,7 @@ function HDView({ birth }: { birth: BirthInput }) {
             <div className="min-w-0">
               <div className="v-eyebrow">Blueprint</div>
               <h1 className="mt-1.5 font-cinzel text-[30px] font-normal uppercase leading-[1.08] tracking-[0.035em] text-txt lg:text-[40px]">Human Design</h1>
-              <p className="mt-2 font-body text-[14.5px] text-txt-3">{first} · {hd.type}</p>
+              <p className="mt-2 font-body text-[15px] text-txt-3">{first} · {hd.type}</p>
             </div>
           </div>
           <div className="vela-rule mt-7" />
@@ -892,11 +892,11 @@ function HDView({ birth }: { birth: BirthInput }) {
                       transition={{ duration: 0.26, ease: [0.22, 1, 0.36, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="mt-3 border-t border-line-soft pt-3 font-body text-[13.5px] leading-relaxed text-txt-2">{f.info}</p>
+                      <p className="mt-3 border-t border-line-soft pt-3 font-body text-[13px] leading-relaxed text-txt-2">{f.info}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
-                {open !== i && <span className="mt-2.5 inline-block font-body text-[11.5px] text-lilac/70">Was heißt das? →</span>}
+                {open !== i && <span className="mt-2.5 inline-block font-body text-[11px] text-lilac/70">Was heißt das? →</span>}
               </button>
             </Reveal>
           ))}
@@ -925,7 +925,7 @@ function HDView({ birth }: { birth: BirthInput }) {
           </div>
         </div>
 
-        <p className="vela-card-soft mt-8 block p-5 font-body text-[13.5px] leading-relaxed text-txt-3" style={inkSurface(undefined, 0.08)}>
+        <p className="vela-card-soft mt-8 block p-5 font-body text-[13px] leading-relaxed text-txt-3" style={inkSurface(undefined, 0.08)}>
           Berechnet aus dem Geburtsbild — Personality (Geburt) + Design (88° Sonnenbogen vorher), gemappt aufs 64-Tore-Rad. Verifiziert gegen das offizielle Chart. Frag Vela unten alles zu deinem Design.
         </p>
       </div>

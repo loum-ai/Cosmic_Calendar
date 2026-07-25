@@ -14,7 +14,7 @@
   --f-display: "Cinzel", ui-serif, Georgia, serif; /* @kind font */
   --f-display-deco: "Cinzel Decorative", "Cinzel", ui-serif, serif; /* @kind font */
   --f-sans:  var(--f-ui); /* retired — DM Sans ist raus (v6); Alt-Markup fällt auf die UI-Face */
-  --f-ui:    "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; /* @kind font */
+  --f-ui:    "Bricolage Grotesque Variable", "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif; /* @kind font */
   --f-mono:  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace; /* @kind font */
 
   /* shadcn aliases */

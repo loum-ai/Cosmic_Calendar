@@ -48,7 +48,7 @@ function InfluenceRow({ row, open, onToggle }: { row: Row; open: boolean; onTogg
       style={{
         padding: open ? "14px 16px 15px" : "12px 16px",
         background: open ? "linear-gradient(180deg,#1B1926 0%,#151420 100%)" : "linear-gradient(180deg,#16161F 0%,#12121D 100%)",
-        boxShadow: open ? "inset 0 0 0 1px rgba(120,150,255,.32)" : "inset 0 0 0 1px rgba(255,255,255,.07)",
+        boxShadow: open ? "inset 0 0 0 1px rgba(120,150,255,.32)" : "inset 0 0 0 1px rgba(255,255,255,0.14)",
       }}
     >
       <div className="flex items-center gap-3">
@@ -63,7 +63,7 @@ function InfluenceRow({ row, open, onToggle }: { row: Row; open: boolean; onTogg
           {row.glyph}
         </span>
         <div className="min-w-0 flex-1">
-          <div className="font-body text-[14px] font-medium text-txt">{row.title}</div>
+          <div className="font-body text-[15px] font-medium text-txt">{row.title}</div>
           <div className="mt-[3px] font-body text-[9.5px] uppercase tracking-[1.8px] transition-colors" style={{ color: open ? "rgba(151,181,255,.75)" : "rgba(255,255,255,.38)" }}>
             {row.meta}
           </div>
@@ -83,7 +83,7 @@ function InfluenceRow({ row, open, onToggle }: { row: Row; open: boolean; onTogg
           )}
           <button
             onClick={(e) => { e.stopPropagation(); openInfo(row.sheet); }}
-            className="mt-2.5 font-body text-[12px] text-[#97B5FF]"
+            className="mt-2.5 font-body text-[13px] text-[#97B5FF]"
           >
             Ganzes Sheet öffnen →
           </button>
@@ -101,7 +101,7 @@ function ZodiacArc({ active, onSelect }: { active: number; onSelect: (i: number)
     <div className="relative h-[112px] overflow-hidden" style={{ maskImage: mask, WebkitMaskImage: mask }}>
       <div aria-hidden className="absolute left-1/2 top-[10px] z-[1] h-[62px] w-[62px] -translate-x-1/2 rounded-full" style={{ boxShadow: "inset 0 0 0 1px rgba(255,255,255,.35)", background: "rgba(255,255,255,.04)" }} />
       <div className="absolute left-1/2" style={{ top: 14, width: R * 2, height: R * 2, marginLeft: -R, transform: `rotate(${-active * 30}deg)`, transition: "transform .7s cubic-bezier(.22,1,.36,1)" }}>
-        <div aria-hidden className="absolute rounded-full" style={{ inset: 27, boxShadow: "inset 0 0 0 1px rgba(255,255,255,.08)" }} />
+        <div aria-hidden className="absolute rounded-full" style={{ inset: 27, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14)" }} />
         {SN.map((n, i) => {
           const a = ((i * 30 - 90) * Math.PI) / 180;
           const x = R + Math.cos(a) * (R - 27);
@@ -164,27 +164,27 @@ export function SignPortal({ initial, onClose }: { initial: number; onClose: () 
       </button>
 
       <div className="relative z-10 mx-auto flex min-h-full w-full max-w-[560px] flex-col pb-[calc(env(safe-area-inset-bottom,0px)+150px)]">
-        <div className="mt-[calc(env(safe-area-inset-top,0px)+22px)] text-center font-body text-[10px] uppercase tracking-[4px] text-white/50">{DATES[sign]}</div>
+        <div className="mt-[calc(env(safe-area-inset-top,0px)+22px)] text-center font-body text-[11px] uppercase tracking-[4px] text-white/50">{DATES[sign]}</div>
         <div className="min-h-[24vh] flex-1" />
 
         <div key={"t" + sign} className="vela-fadeup px-8 text-center">
           <h1 className="font-cinzel text-[38px] font-normal uppercase leading-none text-white" style={{ letterSpacing: ".16em", paddingLeft: ".16em", textShadow: "0 0 32px rgba(120,100,220,.45)" }}>
             {EN[sign]}
           </h1>
-          <div className="mt-2.5 font-body text-[10px] uppercase tracking-[4.5px] text-white/[0.78]">{META[sign]}</div>
-          <p className="mt-2.5 font-body text-[10px] uppercase leading-loose tracking-[2.6px] text-white/[0.48]">{TRAITS[sign]}</p>
+          <div className="mt-2.5 font-body text-[11px] uppercase tracking-[4.5px] text-white/[0.78]">{META[sign]}</div>
+          <p className="mt-2.5 font-body text-[11px] uppercase leading-loose tracking-[2.6px] text-white/[0.48]">{TRAITS[sign]}</p>
         </div>
 
         <div key={"a" + sign} className="vela-fadeup flex flex-col gap-2 px-5 pb-1 pt-4">
           <div className="flex items-baseline justify-between px-1">
             {/* Label "Einfluss" statt "Bei dir" (Laura, 2026-07-23) */}
-            <span className="font-body text-[10px] uppercase tracking-[2px] text-white/[0.65]">Einfluss</span>
+            <span className="font-body text-[11px] uppercase tracking-[2px] text-white/[0.65]">Einfluss</span>
             <span className="font-body text-[11px] text-white/40">aus deinem Chart</span>
           </div>
           {rows.length ? (
             rows.map((row, i) => <InfluenceRow key={row.title} row={row} open={open === i} onToggle={() => setOpen(open === i ? -1 : i)} />)
           ) : (
-            <div className="rounded-[14px] px-4 py-3 font-body text-[13px] leading-[1.6] text-[rgba(238,245,248,0.6)]" style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,.07)" }}>
+            <div className="rounded-[14px] px-4 py-3 font-body text-[13px] leading-[1.6] text-[rgba(238,245,248,0.6)]" style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)", boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14)" }}>
               Kein Planet steht bei dir in {SN[sign]} — dieser Bereich ist kein Dauerthema. Er meldet sich, wenn Transite ihn berühren.
             </div>
           )}

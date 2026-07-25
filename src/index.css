@@ -83,8 +83,8 @@
     --text-muted: rgba(238, 245, 248, 0.55);       /* mist 55% */
     --surface-card: linear-gradient(180deg, #16161F 0%, #12121D 100%);
     --surface-hero: #1B1926;
-    --card-hairline: rgba(255, 255, 255, 0.12); /* cinematic/glass-Iteration: 12% statt 7% */
-    --shadow-card: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+    --card-hairline: rgba(255, 255, 255, 0.16); /* cinematic/glass-Iteration: 12% statt 7% */
+    --shadow-card: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
     /* VELA cinematic layer — fg-Ramp auf mist-Basis (claude.ai/design vela-theme.css) */
     --fg: #F8F7F2;
     --fg-soft: rgba(238, 245, 248, 0.80);
@@ -118,7 +118,7 @@
     /* native controls (date/time pickers, dropdowns) render dark-themed —
        otherwise their text is dark-on-dark and the fields look empty */
     color-scheme: dark;
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-size: 16.5px;
     line-height: 1.65;
     font-variant-emoji: text; /* glyphs as text, never emoji */
@@ -182,7 +182,7 @@
   }
   /* H2 — section title (H3-Tier = Bricolage semibold, loum .t-h3) */
   .vela-title {
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-weight: 600;
     font-size: 24px;
     line-height: 1.2;
@@ -192,7 +192,7 @@
   /* THE signature: uppercase meta eyebrow (loum .t-meta — muted, nie Akzentfarbe) */
   .vela-label,
   .vela-eyebrow {
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-size: 12.5px;
     font-weight: 500;
     letter-spacing: 0.18em;
@@ -201,14 +201,14 @@
     opacity: 1;
   }
   .vela-sub {
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-weight: 400;
     font-size: 16px;
     line-height: 1.6;
     color: var(--text-secondary);
   }
   .vela-body {
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-weight: 400;
     font-size: 16.5px;
     line-height: 1.7;
@@ -216,14 +216,14 @@
   }
   /* data readout — quiet sans (no mono) */
   .vela-data {
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-size: 13px;
     letter-spacing: 0.01em;
     color: var(--accent-teal);
     font-variant-emoji: text;
   }
   .vela-data-dim {
-    font-family: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
     font-size: 12px;
     letter-spacing: 0.02em;
     color: var(--text-muted);
@@ -268,7 +268,7 @@
     border: 0;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.16),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.16),
       0 16px 40px -24px rgba(0, 0, 4, 0.7);
     transition:
       box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
@@ -293,7 +293,7 @@
     border: 0;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.16),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.16),
       0 16px 40px -24px rgba(0, 0, 4, 0.7);
     transition: box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   }
@@ -369,7 +369,7 @@
     background: linear-gradient(180deg, #201D2C 0%, #1B1926 60%, #17141F 100%);
     border: 0;
     box-shadow:
-      inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.16),
       inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
     color: #F8F7F2;
   }
@@ -434,7 +434,7 @@
   }
   .vela-askbar:hover {
     border-color: rgba(120, 150, 255, 0.4);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.10);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
   }
 
   /* ── PURE-CSS IRIDESCENT ORB (soft-light film, hard specular) ─────── */
@@ -497,7 +497,7 @@
 .v-section,
 .vela-label,
 .vela-eyebrow {
-  color: rgba(120, 150, 255, 0.92);
+  color: rgba(120, 150, 255, 0.68);
 }
 
 /* iconGlow 3px: Glyphen/Icons in Glass-Flächen bekommen einen feinen Halo */
@@ -532,7 +532,7 @@
   background: linear-gradient(180deg, rgba(30, 28, 44, 0.82) 0%, rgba(16, 15, 24, 0.94) 100%);
   -webkit-backdrop-filter: blur(24px) saturate(1.2);
   backdrop-filter: blur(24px) saturate(1.2);
-  box-shadow: var(--shadow-sheet), inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-sheet), inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.14);
   border-radius: 28px 28px 0 0;
 }
 

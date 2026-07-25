@@ -1,13 +1,39 @@
 /* ============================================================
- * loum · WEBFONTS — QUINTESSENCE v6 (2026-07-07)
- * Zwei Display-Cuts + eine UI-Face (alle via Google Fonts @import):
- *   Cinzel (Regular)      → BASIS-Display: Display/H1/H2 + Pull-Quote-
+ * loum · WEBFONTS — QUINTESSENCE v6
+ * Zwei Display-Cuts + eine UI-Face:
+ *   Cinzel (400/500/600)  → BASIS-Display: Display/H1/H2 + Pull-Quote-
  *                           Grundzeilen. FLACH, gedämpft, KEIN Glow.
- *   Cinzel Decorative     → das „lit word“ (.highlight) + card-names.
+ *   Cinzel Decorative     → das „lit word" (.highlight) + card-names.
  *                           DAS Glow-Wort — nur hier trägt Text den Halo.
  *   Bricolage Grotesque   → alles andere (body, lede, UI, labels, meta)
- * Inter + DM Sans sind RAUS (user 2026-07-07); self-hosted TTFs entfernt.
+ *   Noto Sans Symbols     → die astrologischen Glyphen (Sonne, Mond, …)
+ * Inter + DM Sans sind RAUS (user 2026-07-07).
+ *
+ * SELF-HOSTED über @fontsource (2026-07-25). Vorher kamen alle vier per
+ * @import vom Google-Fonts-CDN. Zwei Gründe für den Wechsel:
+ *
+ *   1. Es war nicht verlässlich. Blockt irgendetwas den CDN — Netzwerk-
+ *      Policy, Firmen-Proxy, Adblocker, Privacy-Erweiterung — fällt die
+ *      Seite still auf Georgia und system-ui zurück. Kein Fehler, keine
+ *      Meldung, nur plötzlich falsche Schriften.
+ *   2. DSGVO. Der Google-Fonts-CDN überträgt die IP der Besucherin an
+ *      Google (LG München I, 3 O 17493/20). Bei einer Seite, die Kundinnen
+ *      über einen persönlichen Link aufrufen, ist das nicht tragbar.
+ *
+ * Self-hosted heißt außerdem: kein zusätzlicher DNS-/TLS-Roundtrip vor dem
+ * ersten Textbild — die Dateien liegen im selben Build.
  * ============================================================ */
 
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cinzel+Decorative:wght@400;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap");
+/* Cinzel — Display. Nur die drei Schnitte, die das System nutzt. */
+@import "@fontsource/cinzel/400.css";
+@import "@fontsource/cinzel/500.css";
+@import "@fontsource/cinzel/600.css";
+
+/* Cinzel Decorative — ausschließlich das „lit word". */
+@import "@fontsource/cinzel-decorative/400.css";
+
+/* Bricolage Grotesque — variabel (opsz + wght in EINER Datei). */
+@import "@fontsource-variable/bricolage-grotesque/index.css";
+
+/* Noto Sans Symbols — die Tierkreis- und Planetenglyphen. */
+@import "@fontsource/noto-sans-symbols/400.css";

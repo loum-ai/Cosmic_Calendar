@@ -29,12 +29,12 @@ const CATS = [
    Aktiver / gehoverter Zustand = dieselbe Hairline in iris.               */
 const INK = "linear-gradient(180deg,#16161F 0%,#12121D 100%)";
 const INK_HERO = "linear-gradient(180deg,#201D2C 0%,#1B1926 55%,#17141F 100%)";
-const HAIR = "inset 0 0 0 1px rgba(255,255,255,0.08)";
+const HAIR = "inset 0 0 0 1px rgba(255,255,255,0.14)";
 const HAIR_IRIS = "inset 0 0 0 1px rgba(120,150,255,0.42)";
 
-const EYEBROW = "font-body text-[10.5px] font-medium uppercase tracking-[0.18em] text-txt-3";
+const EYEBROW = "font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3";
 /* Karten-Titel: Cinzel Regular, FLACH, VERSALIEN — nie kursiv, nie bold. */
-const CARD_TITLE = "font-cinzel text-[13.5px] font-normal uppercase leading-tight tracking-[0.02em] text-txt";
+const CARD_TITLE = "font-cinzel text-[13px] font-normal uppercase leading-tight tracking-[0.02em] text-txt";
 
 function itemsFor(cat: string): LearnItem[] {
   switch (cat) {
@@ -77,7 +77,7 @@ export function LernenScreen() {
       <Explainable sheet={{ kind: "asptype", key: featuredIdx }} glow={false}>
         <article
           className="group relative mt-7 overflow-hidden rounded-[24px] p-6"
-          style={{ background: INK_HERO, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.09), inset 0 1px 0 rgba(255,255,255,0.05)" }}
+          style={{ background: INK_HERO, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.14), inset 0 1px 0 rgba(255,255,255,0.05)" }}
         >
           <span aria-hidden className="pointer-events-none absolute -right-4 -top-10 font-glyph text-[140px] leading-none opacity-[0.09]" style={{ color: featured.c }}>{featured.g}</span>
           <span aria-hidden className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full" style={{ background: `radial-gradient(circle, ${featured.c}26 0%, transparent 70%)` }} />
@@ -87,8 +87,8 @@ export function LernenScreen() {
               {featured.type}
             </h2>
             <div className={cn(EYEBROW, "mt-2")} style={{ color: featured.c, opacity: 0.85 }}>{featured.nat}</div>
-            <p className="mt-4 max-w-[46ch] font-body text-[14.5px] leading-relaxed text-txt-2">{featured.plain}</p>
-            <span className="mt-4 inline-flex items-center gap-1 font-body text-[12px] text-lilac">
+            <p className="mt-4 max-w-[46ch] font-body text-[15px] leading-relaxed text-txt-2">{featured.plain}</p>
+            <span className="mt-4 inline-flex items-center gap-1 font-body text-[13px] text-lilac">
               Mehr dazu <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
             </span>
           </div>
@@ -131,7 +131,7 @@ export function LernenScreen() {
         </span>
         <span className="relative min-w-0 flex-1">
           <span className="block font-cinzel text-[18px] font-normal uppercase leading-tight tracking-[0.01em] text-txt">Zeichen-Portal</span>
-          <span className="mt-1 block font-body text-[12.5px] leading-relaxed text-txt-3">Alle zwölf Zeichen als Bühne — mit deinem Einfluss darin.</span>
+          <span className="mt-1 block font-body text-[13px] leading-relaxed text-txt-3">Alle zwölf Zeichen als Bühne — mit deinem Einfluss darin.</span>
         </span>
         <ChevronRight className="relative h-5 w-5 shrink-0 text-txt-3 transition-transform group-hover:translate-x-0.5" />
       </button>
@@ -148,7 +148,7 @@ export function LernenScreen() {
               <GlyphBadge glyph={it.glyph} size={38} className="relative" />
               <div className="relative min-w-0 flex-1">
                 <div className={CARD_TITLE}>{it.title}</div>
-                <div className="mt-1 font-body text-[12px] leading-snug text-txt-2">{it.sub}</div>
+                <div className="mt-1 font-body text-[13px] leading-snug text-txt-2">{it.sub}</div>
               </div>
               <ChevronRight className="relative h-4 w-4 shrink-0 text-txt-3 transition-transform group-hover:translate-x-0.5" />
             </div>

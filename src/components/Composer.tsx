@@ -82,7 +82,7 @@ export function Composer() {
                     setQ(ex);
                     void ask(ex);
                   }}
-                  className="shrink-0 whitespace-nowrap rounded-pill border border-white/[0.12] bg-white/[0.06] px-3.5 py-2 font-body text-[12.5px] text-ink-soft/85 backdrop-blur-md transition hover:border-[rgba(120,150,255,0.4)] active:scale-95"
+                  className="shrink-0 whitespace-nowrap rounded-pill border border-white/[0.12] bg-white/[0.06] px-3.5 py-2 font-body text-[13px] text-ink-soft/85 backdrop-blur-md transition hover:border-[rgba(120,150,255,0.4)] active:scale-95"
                 >
                   {ex}
                 </button>
@@ -102,7 +102,7 @@ export function Composer() {
           onFocus={() => setOpen(true)}
           onKeyDown={(e) => e.key === "Enter" && ask()}
           placeholder="Frag dein Horoskop …"
-          className="min-w-0 flex-1 bg-transparent font-body text-[14px] text-ink-soft outline-none placeholder:text-ink-soft/45"
+          className="min-w-0 flex-1 bg-transparent font-body text-[15px] text-ink-soft outline-none placeholder:text-ink-soft/45"
         />
         {(open || q) && (
           <button

@@ -85,7 +85,7 @@
   --surface-card-top: #16161F; /* @kind color */
   --surface-card-bot: #12121D; /* @kind color */
   --surface-hero:     #1B1926; /* hero-card base (r32) · @kind color */
-  --card-hairline:    rgba(255,255,255,0.07); /* die EINZIGE Kante — inset 1px (Figma) · @kind color */
+  --card-hairline:    rgba(255,255,255,0.16); /* die EINZIGE Kante — inset 1px (Figma) · @kind color */
 
   --text-primary:   #F8F7F2;         /* bone — unverändert */
   --text-secondary: #FBFAFF;

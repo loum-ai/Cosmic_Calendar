@@ -51,7 +51,7 @@ export function GenerativeLoader({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
             transition={{ duration: 0.5 }}
-            className="font-body text-[14.5px] leading-snug text-txt-2"
+            className="font-body text-[15px] leading-snug text-txt-2"
           >
             {messages[mi]}
           </motion.p>

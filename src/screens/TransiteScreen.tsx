@@ -108,7 +108,7 @@ function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => vo
       />
 
       <div className="relative w-full max-w-[640px]">
-        <div className="font-body text-[10.5px] font-medium uppercase tracking-[0.18em]" style={{ color: c }}>
+        <div className="font-body text-[11px] font-medium uppercase tracking-[0.18em]" style={{ color: c }}>
           Transit · {IMPACT_LABEL[tr.impact]} · {tr.orb.toFixed(1)}° Orbis
         </div>
         <h2 className="mt-4 font-cinzel font-normal uppercase leading-[1.08] tracking-[0.01em] text-txt" style={{ fontSize: "clamp(28px,7.4vw,48px)" }}>{tr.title}</h2>
@@ -117,7 +117,7 @@ function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => vo
           <span className="rounded-pill border border-line bg-surface px-3 py-1 font-body text-[11px] text-txt-2">dein {tr.nName}</span>
         </div>
         <div className="mt-7 max-w-[58ch]">
-          <div className="mb-3 flex items-center gap-1.5 font-body text-[10px] font-medium uppercase tracking-[0.18em] text-mint"><Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich</div>
+          <div className="mb-3 flex items-center gap-1.5 font-body text-[11px] font-medium uppercase tracking-[0.18em] text-mint"><Sparkles className="h-3.5 w-3.5" /> Vela deutet · für dich</div>
           {text ? (
             <Prose text={text} />
           ) : loading ? (
@@ -138,7 +138,7 @@ function TimeScrubber({ value, onChange, date }: { value: number; onChange: (v: 
     <div className="flex w-full flex-col gap-2">
       <div className="flex items-baseline justify-between">
         <span className="v-eyebrow">Zeit-Regler</span>
-        <span className={`font-body text-[12.5px] font-medium ${value === 0 ? "text-txt" : "text-lilac"}`}>
+        <span className={`font-body text-[13px] font-medium ${value === 0 ? "text-txt" : "text-lilac"}`}>
           {label}
           {value !== 0 && <span className="font-normal text-txt-3"> · {value > 0 ? "+" : ""}{value} Tage</span>}
         </span>
@@ -212,7 +212,7 @@ function TransitFull({ hits }: { hits: TransitHit[] }) {
         <TransitStage key={i} tr={tr} onPrev={() => go(-1)} onNext={() => go(1)} />
       </AnimatePresence>
 
-      <div className="pointer-events-none absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+5.2rem)] z-10 text-center font-body text-[10px] uppercase tracking-[0.18em] text-txt-3">‹ wische für mehr ›</div>
+      <div className="pointer-events-none absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+5.2rem)] z-10 text-center font-body text-[11px] uppercase tracking-[0.18em] text-txt-3">‹ wische für mehr ›</div>
       <div className="absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+1.6rem)] z-20 flex items-center justify-center gap-4 px-6">
         <button onClick={() => go(-1)} className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-surface-2 text-txt-2 backdrop-blur active:scale-90">
           <ChevronLeft className="h-5 w-5" />
@@ -277,7 +277,7 @@ function StrongestCard({ tr, onOpen }: { tr: TransitHit; onOpen: () => void }) {
       </span>
       <span className="v-h2 relative mt-3 block text-[17px]">{tr.title}</span>
       {text || !loading ? (
-        <p className="relative mt-1.5 line-clamp-4 font-body text-[12.5px] leading-[1.55] text-[rgba(238,245,248,0.66)]">{text || tr.txt}</p>
+        <p className="relative mt-1.5 line-clamp-4 font-body text-[13px] leading-[1.55] text-[rgba(238,245,248,0.66)]">{text || tr.txt}</p>
       ) : (
         <span className="relative mt-2.5 block space-y-2">
           {[100, 92, 68].map((w, i) => (
@@ -285,7 +285,7 @@ function StrongestCard({ tr, onOpen }: { tr: TransitHit; onOpen: () => void }) {
           ))}
         </span>
       )}
-      <span className="relative mt-3 inline-flex items-center gap-1 font-body text-[12px] text-lilac">
+      <span className="relative mt-3 inline-flex items-center gap-1 font-body text-[13px] text-lilac">
         Ganze Geschichte <ChevronRight className="h-3.5 w-3.5" />
       </span>
     </button>
@@ -316,7 +316,7 @@ export function TransiteScreen() {
         <div className="w-full max-w-[420px]">
           <TimeScrubber value={offset} onChange={(v) => setOffset(() => v)} date={date} />
         </div>
-        <span className="text-center font-body text-[10px] uppercase tracking-[0.18em] text-txt-3">Zieh am Regler — die Planeten wandern sichtbar</span>
+        <span className="text-center font-body text-[11px] uppercase tracking-[0.18em] text-txt-3">Zieh am Regler — die Planeten wandern sichtbar</span>
       </div>
 
       {strongest ? (
@@ -339,8 +339,8 @@ export function TransiteScreen() {
                 >
                   <span className="vela-glyph text-2xl text-lilac">{tr.tGlyph}</span>
                   <span className="min-w-0 flex-1">
-                    <span className="block font-body text-[14.5px] font-semibold leading-snug text-txt">{tr.title}</span>
-                    <span className="mt-1 block font-body text-[10px] uppercase tracking-[0.16em]" style={{ color: IMPACT_COLOR[tr.impact] }}>
+                    <span className="block font-body text-[15px] font-semibold leading-snug text-txt">{tr.title}</span>
+                    <span className="mt-1 block font-body text-[11px] uppercase tracking-[0.16em]" style={{ color: IMPACT_COLOR[tr.impact] }}>
                       {IMPACT_LABEL[tr.impact]} · {tr.orb.toFixed(1)}°{tr.tRetro ? " · rückläufig" : ""}
                     </span>
                   </span>
@@ -352,7 +352,7 @@ export function TransiteScreen() {
         </>
       ) : (
         <div className="mt-9 rounded-card p-5 shadow-glass" style={{ background: CARD_FILL }}>
-          <p className="font-body text-[14px] leading-[1.62] text-txt">An diesem Tag bilden die laufenden Planeten keine engen Aspekte zu deinem Geburtsbild.</p>
+          <p className="font-body text-[15px] leading-[1.62] text-txt">An diesem Tag bilden die laufenden Planeten keine engen Aspekte zu deinem Geburtsbild.</p>
           <p className="mt-2 font-body text-[13px] leading-[1.65] text-txt-2">Eine ruhige Phase — nichts drängt von außen.</p>
         </div>
       )}
@@ -364,33 +364,33 @@ export function TransiteScreen() {
           <div className="relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass" style={{ background: cardFill(PLANET_GLOW.moon, 0.12) }}>
             <span className="vela-glyph mt-0.5 text-xl text-lilac">{SIGN_GLYPH(sky.moonSign)}</span>
             <div className="min-w-0 flex-1">
-              <div className="font-cinzel text-[14px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">Mond in {sky.moonSign}</div>
+              <div className="font-cinzel text-[15px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">Mond in {sky.moonSign}</div>
               <div className="mt-1 font-body text-[9.5px] uppercase tracking-[0.18em] text-txt-3">Gefühlslage des Tages</div>
-              <p className="mt-2 font-body text-[12.5px] leading-[1.62] text-txt-2">Der Mond läuft heute durch {sky.moonSign} — {SIGNWHAT[SN.indexOf(sky.moonSign)]}</p>
-              <p className="mt-1.5 font-body text-[12px] leading-[1.6] text-txt-3">So fühlt sich der Tag kollektiv an.</p>
+              <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt-2">Der Mond läuft heute durch {sky.moonSign} — {SIGNWHAT[SN.indexOf(sky.moonSign)]}</p>
+              <p className="mt-1.5 font-body text-[13px] leading-[1.6] text-txt-3">So fühlt sich der Tag kollektiv an.</p>
             </div>
           </div>
           <div className="relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass" style={{ background: cardFill(PLANET_GLOW.sun, 0.12) }}>
             <span className="vela-glyph mt-0.5 text-xl text-lilac">{SIGN_GLYPH(sky.sunSign)}</span>
             <div className="min-w-0 flex-1">
-              <div className="font-cinzel text-[14px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">Sonne in {sky.sunSign}</div>
+              <div className="font-cinzel text-[15px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">Sonne in {sky.sunSign}</div>
               <div className="mt-1 font-body text-[9.5px] uppercase tracking-[0.18em] text-txt-3">Jahreszeit-Thema</div>
-              <p className="mt-2 font-body text-[12.5px] leading-[1.62] text-txt-2">Solange die Sonne durch {sky.sunSign} läuft, ist „{SIGNMEAN[SN.indexOf(sky.sunSign)].split(" · ")[1]}" das Grundthema dieser Wochen.</p>
+              <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt-2">Solange die Sonne durch {sky.sunSign} läuft, ist „{SIGNMEAN[SN.indexOf(sky.sunSign)].split(" · ")[1]}" das Grundthema dieser Wochen.</p>
             </div>
           </div>
           <div className="relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass sm:col-span-2" style={{ background: CARD_FILL }}>
             <span className="vela-glyph mt-0.5 text-xl text-lilac"><RotateCcw className="h-4 w-4" /></span>
             <div className="min-w-0 flex-1">
-              <div className="font-cinzel text-[14px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">
+              <div className="font-cinzel text-[15px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">
                 {sky.retro.length ? `Rückläufig: ${sky.retro.map((r) => r.name).join(", ")}` : "Keine rückläufigen Planeten"}
               </div>
               <div className="mt-1 font-body text-[9.5px] uppercase tracking-[0.18em] text-txt-3">Phasen zum Innehalten & Überarbeiten</div>
               {sky.retro.length ? (
-                <p className="mt-2 font-body text-[12.5px] leading-[1.62] text-txt-2">Diese Themen laufen gerade nach innen — gut zum Überdenken statt Vorpreschen.</p>
+                <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt-2">Diese Themen laufen gerade nach innen — gut zum Überdenken statt Vorpreschen.</p>
               ) : (
                 <>
-                  <p className="mt-2 font-body text-[12.5px] leading-[1.62] text-txt-2">Alle Planeten laufen vorwärts.</p>
-                  <p className="mt-1.5 font-body text-[12px] leading-[1.6] text-txt-3">Ein guter Moment für Dinge, die sonst gern verschoben werden: Verträge klären, Gespräche beginnen, Neues starten.</p>
+                  <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt-2">Alle Planeten laufen vorwärts.</p>
+                  <p className="mt-1.5 font-body text-[13px] leading-[1.6] text-txt-3">Ein guter Moment für Dinge, die sonst gern verschoben werden: Verträge klären, Gespräche beginnen, Neues starten.</p>
                 </>
               )}
             </div>

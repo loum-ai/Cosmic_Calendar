@@ -94,7 +94,7 @@ export function TabBar() {
                     />
                     <span
                       className={cn(
-                        "relative font-body text-[14px] font-medium tracking-wide",
+                        "relative font-body text-[15px] font-medium tracking-wide",
                         active ? "text-[#97B5FF]" : "text-[rgba(226,236,242,0.82)]",
                       )}
                     >
