@@ -71,22 +71,25 @@ function trimToSentence(t: string): string {
 }
 
 /**
- * Denk-Budget und Ausgabe-Budget.
+ * Ausgabe-Budget.
  *
- * WARUM SO: Bei Gemini zählen die Denk-Tokens GEGEN `maxOutputTokens` — beides
- * teilt sich EIN Budget. Mit den alten 2048 fraß das Nachdenken fast alles auf;
- * übrig blieben ~120 sichtbare Tokens, und der Text brach mitten im Wort ab
- * (gemessen: 25 von 203 gecachten Deutungen ohne Satzende). Deshalb: knappes
- * Denk-Budget für die kurzen Tap-Deutungen, großzügiges Gesamt-Budget überall.
- * Pro-Modelle akzeptieren kein Budget 0 — 128 ist dort das Minimum.
+ * WARUM GROSSZÜGIG: Bei Gemini zählen die Denk-Tokens GEGEN `maxOutputTokens`
+ * — beides teilt sich EIN Budget. Mit den alten 2048 fraß das Nachdenken fast
+ * alles auf; übrig blieben ~120 sichtbare Tokens, und der Text brach mitten im
+ * Wort ab (gemessen: 25 von 203 gecachten Deutungen ohne Satzende). Ein hohes
+ * Gesamtbudget löst das, ohne dass das Modell es ausschöpfen muss.
+ *
+ * WARUM KEIN `thinkingConfig`: Genau dieses Feld hat am 25.07. in `interpret`
+ * die Erzeugung für einen neuen Kunden komplett kippen lassen (beide Aufrufe
+ * fehlgeschlagen → Notfall-Schablone). Ein zusätzliches Feld in
+ * `generationConfig` ist ein Risiko, eine höhere Zahl nicht. Hier lief zwar ein
+ * Rückfall-Pfad ohne das Feld, aber ein Risiko ohne Nutzen bleibt ein Risiko.
  */
-function genConfig(long: boolean, mdl: string) {
-  const pro = /pro/i.test(mdl);
+function genConfig(long: boolean, _mdl: string) {
   return {
     temperature: long ? 0.8 : 0.75,
     topP: 0.95,
-    maxOutputTokens: long ? 16384 : 4096,
-    thinkingConfig: { thinkingBudget: long ? (pro ? 4096 : 2048) : pro ? 128 : 0 },
+    maxOutputTokens: long ? 16384 : 8192,
   };
 }
 
@@ -140,10 +143,11 @@ Deno.serve(async (req) => {
 
     const cfg = genConfig(!!long, mdl);
     let res = await gen(cfg);
-    // Modelle ohne Denk-Steuerung lehnen `thinkingConfig` ab — dann ohne.
-    if (!res.ok && res.status === 400 && /thinking/i.test(JSON.stringify(res.data))) {
-      const { thinkingConfig: _drop, ...plain } = cfg;
-      res = await gen(plain);
+    // Lehnt das Modell die Konfiguration ab (400), noch einmal nackt versuchen:
+    // nur Temperatur und Budget, keine weiteren Felder. Lieber ein Aufruf mehr
+    // als eine Schablone beim Kunden.
+    if (!res.ok && res.status === 400) {
+      res = await gen({ temperature: cfg.temperature, maxOutputTokens: cfg.maxOutputTokens });
     }
     if (!res.ok) return json({ error: "gemini_error", detail: res.data }, 502);
 
@@ -173,5 +177,5 @@ Deno.serve(async (req) => {
 });
 
 function json(obj: unknown, status = 200) {
-  return new Response(JSON.stringify(obj), { status, headers: { ...CORS, "Content-Type": "application/json" } });
+  return new Response(JSON.stringify(obj, null, 2), { status, headers: { ...CORS, "Content-Type": "application/json" } });
 }
