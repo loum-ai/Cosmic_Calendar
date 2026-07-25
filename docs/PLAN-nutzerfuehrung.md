@@ -1,6 +1,18 @@
 # Plan: Nutzerführung, Karten und Chat
 
-Stand 25.07.2026 · **Plan, nichts davon ist umgesetzt oder deployt.**
+Stand 25.07.2026 · **Alle fünf Schritte sind umgesetzt** (PR #103).
+
+| Schritt | Stand | wo |
+|---|---|---|
+| D · Jargon in die zweite Reihe | ✔ | `sheets.ts`, `TransiteScreen`, `PrintView` |
+| C1+C2 · Chat aus dem Chart, Antwort als Karte | ✔ | `askSuggestions.ts`, `Composer.tsx` |
+| A · Home in drei Kapitel | ✔ | `ThemenHub.tsx` |
+| C3 · Belege unter jeder Antwort | ✔ | `belege()` in `askSuggestions.ts` |
+| C4 · Chat-Verlauf | ✔ | `verlauf` in `useApp.ts` |
+| B · eine Kartensorte statt sechs | ✔ | `VelaCard.tsx` + Sweep über alle Screens |
+
+Gemessen nach Schritt B, am gerenderten DOM: **3 Radien statt 11, eine
+Kantenstärke statt vier, kein äußerer Schatten auf einer einzigen Karte.**
 
 Ausgangspunkt: „Auch der Chat sollte so aussehen wie bei The Pattern (aber mit
 unserem Design) und The Pattern hat auch irgendwie eine aufgeräumtere
