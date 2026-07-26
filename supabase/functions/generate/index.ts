@@ -87,9 +87,14 @@ function trimToSentence(t: string): string {
  */
 function genConfig(long: boolean, _mdl: string) {
   return {
+    // 8192 ist der Wert, der am 24.07. bei allen vier Kunden durchlief. 16384
+    // stand hier bis zum 25.07. und ließ die Erzeugung für einen neuen Kunden
+    // komplett scheitern — inklusive beider Rückfall-Anläufe, weil die alle
+    // dieselbe zu hohe Zahl mitschleppten. Ohne `thinkingConfig` reichen 8192
+    // für jeden Text dieser App bei Weitem.
     temperature: long ? 0.8 : 0.75,
     topP: 0.95,
-    maxOutputTokens: long ? 16384 : 8192,
+    maxOutputTokens: 8192,
   };
 }
 
