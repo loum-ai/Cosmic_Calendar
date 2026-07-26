@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { create } from "zustand";
 import { supabase, AI_MODEL_CORE } from "./supabase";
+import { kontingentAus, kontingentText, fehlerKoerper } from "./kontingent";
 import { chartContext, chartHash } from "./factsContext";
 import { ASC, CHART, NODES, HOUSE, signName, houseOf, computeAspects } from "./data";
 import { aiSign, aiHouse, aiAspect } from "./interpret";
@@ -35,26 +36,35 @@ export function storedReading(d: SheetDescriptor | null): string | null {
 interface ReadingsState {
   cache: Record<string, string>;
   loading: Record<string, boolean>;
+  /** Warum keine Deutung da ist — z. B. „Kontingent aufgebraucht". Leer = unbekannt. */
+  hinweis: Record<string, string>;
   request: (viewKey: string, context: string, task: string) => void;
 }
 
 export const useReadings = create<ReadingsState>((set, get) => ({
   cache: {},
   loading: {},
+  hinweis: {},
   request: async (viewKey, context, task) => {
     if (!viewKey || !task) return;
     const full = chartHash() + "|" + viewKey;
     const s = get();
     if (s.cache[full] || s.loading[full]) return;
-    set((st) => ({ loading: { ...st.loading, [full]: true } }));
+    set((st) => ({ loading: { ...st.loading, [full]: true }, hinweis: { ...st.hinweis, [full]: "" } }));
     try {
       const { data, error } = await supabase.functions.invoke("generate", {
         body: { chart_hash: chartHash(), cacheKey: viewKey, context, task, model: AI_MODEL_CORE },
       });
-      if (error || !data?.text) throw new Error("no text");
+      if (error || !data?.text) {
+        // Den Grund NICHT verschlucken: ist das Tageskontingent erschöpft, soll
+        // die Oberfläche das sagen, statt eine Schablone einzublenden.
+        const k = kontingentAus(await fehlerKoerper(error));
+        throw Object.assign(new Error("no text"), { hinweis: kontingentText(k) });
+      }
       set((st) => ({ cache: { ...st.cache, [full]: data.text }, loading: { ...st.loading, [full]: false } }));
-    } catch {
-      set((st) => ({ loading: { ...st.loading, [full]: false } }));
+    } catch (e) {
+      const hinweis = (e as { hinweis?: string })?.hinweis ?? "";
+      set((st) => ({ loading: { ...st.loading, [full]: false }, hinweis: { ...st.hinweis, [full]: hinweis } }));
     }
   },
 }));
@@ -64,11 +74,12 @@ export function useReading(viewKey: string, task: string, enabled = true) {
   const full = chartHash() + "|" + viewKey;
   const text = useReadings((s) => s.cache[full]);
   const loading = useReadings((s) => s.loading[full]);
+  const hinweis = useReadings((s) => s.hinweis[full]);
   const request = useReadings((s) => s.request);
   useEffect(() => {
     if (enabled && viewKey && task) request(viewKey, chartContext(), task);
   }, [full, enabled, viewKey, task, request]);
-  return { text, loading: !!loading };
+  return { text, loading: !!loading, hinweis: hinweis ?? "" };
 }
 
 /**

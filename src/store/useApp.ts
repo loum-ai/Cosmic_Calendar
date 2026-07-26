@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { SheetDescriptor } from "@/lib/sheets";
 import { localOracle } from "@/lib/oracle";
 import { faktenAntwort } from "@/lib/factAnswers";
+import { kontingentAus, kontingentText, fehlerKoerper } from "@/lib/kontingent";
 import { computeChart, type BirthInput } from "@/lib/compute";
 import { applyChart, signName, PROFILE } from "@/lib/data";
 import { ensureInterpretation, clearInterpretation } from "@/lib/interpret";
@@ -251,14 +252,17 @@ export const useApp = create<AppState>((set, get) => ({
           model: AI_MODEL,
         },
       });
-      if (error || !data?.text) throw new Error("no answer");
+      if (error || !data?.text) throw error ?? new Error("no answer");
       set((st) => ({ answer: data.text, demo: false, loading: false, verlauf: [...st.verlauf, { frage: q, antwort: data.text }] }));
-    } catch {
-      // Modell nicht erreichbar. Der Notfall antwortet NUR, wenn die Frage
-      // wirklich zu einem Thema im Bild passt — sonst wird gesagt, dass keine
-      // Antwort da ist. Eine erfundene Antwort ist schlimmer als keine.
+    } catch (e) {
+      // Modell nicht erreichbar. Ist das Tageskontingent erschöpft, wird genau
+      // das gesagt — mit Wartezeit. Sonst antwortet der Notfall nur, wenn die
+      // Frage wirklich zu einem Thema im Bild passt. Eine erfundene Antwort
+      // ist schlimmer als keine.
+      const k = kontingentAus(await fehlerKoerper(e));
       const notfall =
-        localOracle(q) ??
+        kontingentText(k) ||
+        localOracle(q) ||
         "Dazu komme ich gerade nicht an eine Deutung heran — die Verbindung zum Modell steht nicht. " +
           "Ich rate lieber nicht: versuch es gleich noch einmal, oder tippe den Punkt im Rad an, um den es dir geht.";
       set((st) => ({ answer: notfall, demo: true, loading: false, verlauf: [...st.verlauf, { frage: q, antwort: notfall }] }));

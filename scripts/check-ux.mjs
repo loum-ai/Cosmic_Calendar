@@ -18,7 +18,7 @@
  *      Zeichen-Portal falsch — dort lag der Burger exakt auf dem X.
  *
  * Lauf (Dev-Server oder Preview muss laufen):
- *   npm run check:ux                       # gegen http://127.0.0.1:5173
+ *   npm run check:ux                       # gegen http://localhost:5173
  *   node scripts/check-ux.mjs http://…     # gegen eine andere Adresse
  */
 import path from "node:path";
@@ -28,7 +28,9 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const { chromium } = require(path.join(process.cwd(), "node_modules/playwright-core"));
 
-const BASE = process.argv[2] || "http://127.0.0.1:5173";
+// `localhost`, nicht 127.0.0.1: Vite bindet je nach Start nur auf ::1, dann
+// läuft der Check ins Leere, obwohl der Server da ist.
+const BASE = process.argv[2] || "http://localhost:5173";
 /** Jeder Lauf legt ab, was er gesehen hat — sonst glaubt man dem grünen Haken zu schnell. */
 const SHOTS = process.argv[3] || "screenshots/check";
 fs.mkdirSync(SHOTS, { recursive: true });

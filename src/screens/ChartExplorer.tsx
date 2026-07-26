@@ -58,7 +58,7 @@ function PatternCard({ p, lead = false }: { p: Pattern; lead?: boolean }) {
   const [open, setOpen] = useState(false);
   // erst beim Aufklappen erzeugen — sonst feuert eine Chart-Seite bis zu neun
   // Anfragen auf einmal
-  const { text: gen, loading: genLoading } = useReading(p.viewKey, p.task, !IS_DEMO && open);
+  const { text: gen, loading: genLoading, hinweis } = useReading(p.viewKey, p.task, !IS_DEMO && open);
   const konkret = gen ?? "";
   const wartet = genLoading || (open && !gen);
   return (
@@ -112,11 +112,11 @@ function PatternCard({ p, lead = false }: { p: Pattern; lead?: boolean }) {
                     ))}
                   </div>
                 ) : (
-                  // Kein Rückfalltext: lieber sagen, dass die Deutung fehlt, als
+                  // Kein Rückfalltext: lieber sagen, WARUM nichts da ist, als
                   // einen Absatz zeigen, der bei jedem Menschen gleich lautet.
                   <p className="font-body text-[14px] leading-relaxed text-txt-3">
-                    Die Deutung zu diesem Muster ist gerade nicht abrufbar. Die Beobachtung darüber stimmt trotzdem —
-                    sie ist aus dem Chart gerechnet.
+                    {hinweis || "Die Deutung zu diesem Muster ist gerade nicht abrufbar."} Die Beobachtung darüber
+                    stimmt trotzdem — sie ist aus dem Chart gerechnet.
                   </p>
                 )}
               </div>

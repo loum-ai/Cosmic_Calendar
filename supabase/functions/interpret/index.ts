@@ -136,12 +136,27 @@ const SCHEMA = {
  *    plus Schablone. Auch der Rückfall-Anlauf schleppte die 16384 mit und
  *    scheiterte deshalb identisch.
  *
- * Jetzt gelten die Werte, die am 24.07. bei allen vier Kunden durchliefen.
- * Lehre: an einer laufenden Konfiguration nur ändern, was in dieser Umgebung
- * auch prüfbar ist — Gemini ist von hier nicht erreichbar.
+ * 3) NACHTRAG 26.07., gemessen statt vermutet: Beide Diagnosen oben waren
+ *    falsch. Marcos Läufe scheiterten an der Abrechnung — erst 429
+ *    (Tageskontingent 250 für gemini-3.1-pro), dann "prepayment credits are
+ *    depleted". Ein abgelehnter Aufruf kommt in 1–3 s zurück, genau die
+ *    Laufzeiten, die als Beleg für die Budget-Theorie gedient hatten.
+ *
+ *    Nach dem Aufladen zeigte sich der ECHTE Budget-Fehler, und er lief in die
+ *    andere Richtung: `finishReason: MAX_TOKENS`. Das Modell hatte bereits
+ *    einen persönlichen Text begonnen ("Marco, dein Horoskop zeigt eine starke
+ *    Betonung des Erd-Elements …") und wurde mittendrin abgeschnitten. Bei
+ *    gemini-3.1-pro zählen die Denk-Tokens gegen dasselbe Budget; 8192 reichen
+ *    für Denken + strukturiertes JSON nicht. Das Absenken von 16384 auf 8192
+ *    war also die falsche Konsequenz aus einer falschen Ursache.
+ *
+ * Lehre: erst den Fehlertext lesen, dann an Zahlen drehen. `ai_error` trägt
+ * bei einem abgeschnittenen 200 kein `detail.error.message`, sondern
+ * `parse` + `finishReason` — wer nur auf die Fehlermeldung schaut, sieht "kein
+ * Fehler" und dreht am falschen Rad.
  */
-const BUDGET_STRUKTUR = 8192;
-const BUDGET_PORTRAIT = 4096;
+const BUDGET_STRUKTUR = 24576;
+const BUDGET_PORTRAIT = 8192;
 
 /** Bricht der Text mitten im Satz ab, lieber auf den letzten ganzen Satz
  *  zurückschneiden als einen halben ausliefern. */
@@ -318,30 +333,39 @@ async function generate(facts: any, model: string, key: string, wissen: string) 
     });
     return { ok: r.ok, status: r.status, data: await r.json() };
   };
-  // Drei Anläufe, jeder unterscheidet sich vom vorigen — sonst scheitern alle
-  // am selben Grund, wie am 25.07. geschehen.
+  // Drei Anläufe mit steigendem Budget. Wichtig: ein Anlauf gilt auch dann als
+  // gescheitert, wenn HTTP 200 kam, der Text aber abgeschnitten und damit kein
+  // gültiges JSON ist (finishReason MAX_TOKENS). Vorher wurde nur auf !r.ok
+  // geprüft — ein abgeschnittener Erfolg löste keinen Neuversuch aus und fiel
+  // still in die Schablone.
   const stufen = [
     { temperature: 0.55, maxOutputTokens: BUDGET_STRUKTUR, responseMimeType: "application/json", responseJsonSchema: SCHEMA },
-    { temperature: 0.55, maxOutputTokens: BUDGET_STRUKTUR, responseMimeType: "application/json" },
-    { temperature: 0.55, maxOutputTokens: 4096 },
+    { temperature: 0.55, maxOutputTokens: BUDGET_STRUKTUR * 2, responseMimeType: "application/json" },
+    { temperature: 0.55, maxOutputTokens: BUDGET_STRUKTUR * 3 },
   ];
-  let r = await versuch(stufen[0]);
-  for (let i = 1; i < stufen.length && !r.ok; i++) {
-    console.error(`interpret: Anlauf ${i} nötig, Status ${r.status}`, JSON.stringify(r.data).slice(0, 400));
-    r = await versuch(stufen[i]);
+
+  let letzterFehler: Record<string, unknown> = { detail: "kein Anlauf ausgeführt" };
+  for (let i = 0; i < stufen.length; i++) {
+    const r = await versuch(stufen[i]);
+    if (!r.ok) {
+      console.error(`interpret: Anlauf ${i} abgelehnt, Status ${r.status}`, JSON.stringify(r.data).slice(0, 400));
+      letzterFehler = { status: r.status, detail: r.data };
+      continue;
+    }
+    let text = (r.data?.candidates?.[0]?.content?.parts?.filter((p: any) => !p?.thought).map((p: any) => p.text ?? "").join("") ?? "").trim();
+    // Ohne Schema kann Gemini das JSON in einen Code-Block packen.
+    const zaun = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (zaun) text = zaun[1].trim();
+    try {
+      return { interpretation: JSON.parse(text) };
+    } catch {
+      const grund = r.data?.candidates?.[0]?.finishReason;
+      console.error(`interpret: Anlauf ${i} unlesbar (${grund}), Budget ${stufen[i].maxOutputTokens}`, text.slice(0, 300));
+      letzterFehler = { parse: text.slice(0, 400), finishReason: grund, budget: stufen[i].maxOutputTokens };
+    }
   }
-  if (!r.ok) {
-    console.error("interpret: alle Anläufe gescheitert", r.status, JSON.stringify(r.data).slice(0, 700));
-    return { error: { status: r.status, detail: r.data } };
-  }
-  let text = (r.data?.candidates?.[0]?.content?.parts?.filter((p: any) => !p?.thought).map((p: any) => p.text ?? "").join("") ?? "").trim();
-  // Ohne Schema kann Gemini das JSON in einen Code-Block packen.
-  const zaun = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if (zaun) text = zaun[1].trim();
-  try { return { interpretation: JSON.parse(text) }; } catch {
-    console.error("interpret: JSON nicht lesbar", r.data?.candidates?.[0]?.finishReason, text.slice(0, 300));
-    return { error: { parse: text.slice(0, 400), finishReason: r.data?.candidates?.[0]?.finishReason } };
-  }
+  console.error("interpret: alle Anläufe gescheitert", JSON.stringify(letzterFehler).slice(0, 700));
+  return { error: letzterFehler };
 }
 
 async function generatePortrait(facts: any, coreModel: string, flashModel: string, key: string, wissen: string): Promise<string> {
