@@ -155,6 +155,16 @@ const SCHEMA = {
  * `parse` + `finishReason` — wer nur auf die Fehlermeldung schaut, sieht "kein
  * Fehler" und dreht am falschen Rad.
  */
+/**
+ * 24576 ist GESCHÄTZT, nicht gemessen: das Dreifache des Werts, der
+ * nachweislich abgeschnitten hat. Wie viele Denk-Tokens gemini-3.1-pro
+ * tatsächlich braucht, weiß hier niemand — deshalb loggt `generate()` jetzt
+ * `usageMetadata` mit. Sobald ein Lauf durchkommt, steht die echte Zahl in den
+ * Edge-Logs und diese Konstante wird durch eine Messung ersetzt.
+ *
+ * Bis dahin trägt die Leiter darunter das Risiko: sie verdoppelt das Budget
+ * bei jedem Anlauf, auch wenn der vorige mit HTTP 200 abgeschnitten wurde.
+ */
 const BUDGET_STRUKTUR = 24576;
 const BUDGET_PORTRAIT = 8192;
 
@@ -357,11 +367,22 @@ async function generate(facts: any, model: string, key: string, wissen: string) 
     const zaun = text.match(/```(?:json)?\s*([\s\S]*?)```/);
     if (zaun) text = zaun[1].trim();
     try {
-      return { interpretation: JSON.parse(text) };
+      const gelesen = JSON.parse(text);
+      // Auch der Erfolg wird vermessen — sonst bleibt das Budget für immer
+      // eine Schätzung, die nur zufällig gereicht hat.
+      console.log(`interpret: Anlauf ${i} gelungen, Budget ${stufen[i].maxOutputTokens}, Verbrauch ${JSON.stringify(r.data?.usageMetadata ?? null)}`);
+      return { interpretation: gelesen };
     } catch {
       const grund = r.data?.candidates?.[0]?.finishReason;
-      console.error(`interpret: Anlauf ${i} unlesbar (${grund}), Budget ${stufen[i].maxOutputTokens}`, text.slice(0, 300));
-      letzterFehler = { parse: text.slice(0, 400), finishReason: grund, budget: stufen[i].maxOutputTokens };
+      // usageMetadata mitschreiben: promptTokenCount, candidatesTokenCount und
+      // vor allem thoughtsTokenCount. Das ist die Zahl, aus der sich ein
+      // belegtes Budget ableiten lässt, statt eines geschätzten.
+      const verbrauch = r.data?.usageMetadata ?? null;
+      console.error(
+        `interpret: Anlauf ${i} unlesbar (${grund}), Budget ${stufen[i].maxOutputTokens}, Verbrauch ${JSON.stringify(verbrauch)}`,
+        text.slice(0, 300),
+      );
+      letzterFehler = { parse: text.slice(0, 400), finishReason: grund, budget: stufen[i].maxOutputTokens, verbrauch };
     }
   }
   console.error("interpret: alle Anläufe gescheitert", JSON.stringify(letzterFehler).slice(0, 700));
