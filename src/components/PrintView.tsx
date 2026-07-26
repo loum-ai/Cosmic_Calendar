@@ -4,6 +4,7 @@ import { useApp } from "@/store/useApp";
 import { CHART, NODES, ASC, MC, CUSPS, PROFILE, SN, HOUSE, ASPDEF, PINFO, signName, computeAspects } from "@/lib/data";
 import { getVerification, aiSummary, aiPortrait, aiSign, aiHouse } from "@/lib/interpret";
 import { computeTransits, skySummary, yearAhead } from "@/lib/transits";
+import { LAYER } from "@/lib/layers";
 
 const ELEM = ["Feuer", "Erde", "Luft", "Wasser"] as const;
 const MODE = ["kardinal", "fix", "veränderlich"] as const;
@@ -69,7 +70,7 @@ export function PrintView({ include }: { include?: PrintInclude }) {
   ];
 
   return (
-    <div className="fixed inset-0 z-[120] overflow-y-auto bg-[#2b2740]">
+    <div style={{ zIndex: LAYER.print }} className="fixed inset-0 overflow-y-auto bg-[#2b2740]">
       {/* toolbar */}
       <div className="no-print sticky top-0 z-10 flex items-center justify-between border-b border-white/10 bg-[#15131f]/90 px-4 py-3 backdrop-blur-xl">
         <button onClick={() => setPrintOpen(false)} className="flex items-center gap-2 rounded-pill border border-white/15 px-3.5 py-2 font-body text-[13px] text-white/80">

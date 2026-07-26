@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useApp, type TabKey } from "@/store/useApp";
+import { LAYER } from "@/lib/layers";
 import { cn } from "@/lib/utils";
 import { Sparkles, Orbit, Heart, BookOpen, User, Menu, X } from "lucide-react";
 
@@ -20,6 +21,7 @@ const TABS: { key: TabKey; label: string; Icon: typeof Sparkles }[] = [
 export function TabBar() {
   const tab = useApp((s) => s.tab);
   const setTab = useApp((s) => s.setTab);
+  const sheet = useApp((s) => s.sheet);
   const [open, setOpen] = useState(false);
 
   const go = (key: TabKey) => {
@@ -27,13 +29,19 @@ export function TabBar() {
     setOpen(false);
   };
 
+  // Immer nur EIN Ausgang: solange ein Sheet offen ist, verschwindet der
+  // Burger. Vorher lag er auf derselben Ebene wie das Sheet und stand oben
+  // rechts genau dort, wo dessen Schließen-Knopf sitzt.
+  if (sheet) return null;
+
   return (
     <>
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? "Menü schließen" : "Menü öffnen"}
         aria-expanded={open}
-        className="fixed right-4 top-4 z-[60] flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.10] bg-[rgba(13,26,34,0.55)] text-ink shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.10)] [backdrop-filter:blur(20px)_saturate(130%)] transition-colors hover:bg-[rgba(18,34,44,0.7)]"
+        style={{ zIndex: LAYER.chrome }}
+        className="fixed right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full border border-white/[0.10] bg-[rgba(13,26,34,0.55)] text-ink shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.10)] [backdrop-filter:blur(20px)_saturate(130%)] transition-colors hover:bg-[rgba(18,34,44,0.7)]"
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.span
@@ -67,8 +75,8 @@ export function TabBar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.96 }}
               transition={{ type: "spring", stiffness: 480, damping: 34 }}
-              style={{ transformOrigin: "top right" }}
-              className="fixed right-4 top-[68px] z-[60] flex w-[224px] flex-col gap-1 rounded-[22px] border border-white/[0.10] bg-[rgba(13,26,34,0.72)] p-2 shadow-[0_28px_60px_-20px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.10)] [backdrop-filter:blur(28px)_saturate(140%)]"
+              style={{ transformOrigin: "top right", zIndex: LAYER.chrome }}
+              className="fixed right-4 top-[68px] flex w-[224px] flex-col gap-1 rounded-[22px] border border-white/[0.10] bg-[rgba(13,26,34,0.72)] p-2 shadow-[0_28px_60px_-20px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.10)] [backdrop-filter:blur(28px)_saturate(140%)]"
             >
               {TABS.map(({ key, label, Icon }) => {
                 const active = tab === key;

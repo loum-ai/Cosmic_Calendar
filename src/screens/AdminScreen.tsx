@@ -3,6 +3,7 @@ import { Loader2, Copy, ExternalLink, Sparkles, LogOut, Check, ShieldCheck, X, C
 import { supabase, AI_MODEL_CORE } from "@/lib/supabase";
 import { searchPlace, type Place } from "@/lib/geocode";
 import { retry } from "@/lib/retry";
+import { LAYER } from "@/lib/layers";
 
 /** Invoke interpret, retrying while Gemini is overloaded (503 → fallback).
  *  ok = a real AI reading came back (not the basis-komposition fallback). */
@@ -434,7 +435,7 @@ function Cockpit({ email }: { email: string }) {
 
         {/* review & publish modal */}
         {review && (
-          <div className="fixed inset-0 z-[90] flex items-center justify-center bg-[rgba(4,4,10,0.74)] p-4 backdrop-blur-md" onClick={() => setReview(null)}>
+          <div style={{ zIndex: LAYER.admin }} className="fixed inset-0 flex items-center justify-center bg-[rgba(4,4,10,0.74)] p-4 backdrop-blur-md" onClick={() => setReview(null)}>
             <div onClick={(e) => e.stopPropagation()} className="max-h-[88vh] w-full max-w-[560px] overflow-y-auto rounded-card border border-[rgba(120,150,255,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
               <div className="flex items-start justify-between">
                 <div>

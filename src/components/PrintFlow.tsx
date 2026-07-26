@@ -8,6 +8,7 @@ import { computeTransits } from "@/lib/transits";
 import { aiSummary, aiSign } from "@/lib/interpret";
 import { useReadings } from "@/lib/genReadings";
 import { chartHash } from "@/lib/factsContext";
+import { LAYER } from "@/lib/layers";
 
 const ALL_ON: PrintInclude = { planets: true, houses: true, aspects: true, balance: true, reading: true, points: true, transits: true, forecast: true, glossary: true };
 
@@ -71,7 +72,7 @@ export function PrintFlow() {
   }
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[rgba(4,4,10,0.74)] p-4 backdrop-blur-md lg:pl-[120px]">
+    <div style={{ zIndex: LAYER.print }} className="fixed inset-0 flex items-center justify-center bg-[rgba(4,4,10,0.74)] p-4 backdrop-blur-md lg:pl-[120px]">
       <div className="max-h-[88vh] w-full max-w-[440px] overflow-y-auto rounded-card border border-[rgba(120,150,255,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
         <div className="flex items-start justify-between">
           <div>

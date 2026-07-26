@@ -5,6 +5,7 @@ import { useApp, type SavedBirth } from "@/store/useApp";
 import { searchPlace, type Place } from "@/lib/geocode";
 import { SkyRitual } from "@/components/SkyRitual";
 import { cn } from "@/lib/utils";
+import { LAYER } from "@/lib/layers";
 
 const FIELD =
   "w-full rounded-2xl border border-line bg-[rgba(255,255,255,0.04)] px-4 py-3 font-body text-[15px] text-txt outline-none transition placeholder:text-txt-3 focus:border-violet/55 focus:bg-[rgba(255,255,255,0.06)]";
@@ -103,10 +104,11 @@ export function Onboarding() {
   return (
     <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-[80] bg-[rgba(4,4,10,0.55)] backdrop-blur-[2px] duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <DialogPrimitive.Overlay style={{ zIndex: LAYER.onboarding }} className="fixed inset-0 bg-[rgba(4,4,10,0.55)] backdrop-blur-[2px] duration-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
         <DialogPrimitive.Content
+          style={{ zIndex: LAYER.onboardingHint }}
           className={cn(
-            "fixed z-[81] mx-auto overflow-y-auto border-line bg-[rgba(16,14,26,0.985)] shadow-[0_-30px_70px_-20px_rgba(0,0,0,0.85)] duration-300 ease-out",
+            "fixed mx-auto overflow-y-auto border-line bg-[rgba(16,14,26,0.985)] shadow-[0_-30px_70px_-20px_rgba(0,0,0,0.85)] duration-300 ease-out",
             // mobile: bottom sheet
             "inset-x-0 bottom-0 max-h-[88vh] w-full max-w-[480px] rounded-t-[28px] border-t px-6 pb-10 pt-3 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
             // desktop: centred panel

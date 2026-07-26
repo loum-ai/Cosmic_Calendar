@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUp, ChevronDown, Loader2, Sparkles, X } from "lucide-react";
 import { useApp } from "@/store/useApp";
+import { LAYER } from "@/lib/layers";
 import { EASE } from "@/lib/tokens";
 import { GenerativeLoader } from "@/components/GenerativeLoader";
 import { askSuggestions, belege, followUps, type AskSuggestion } from "@/lib/askSuggestions";
@@ -49,7 +50,8 @@ export function Composer() {
   };
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[41] mx-auto w-[min(440px,calc(100%-24px))] pb-[max(env(safe-area-inset-bottom),14px)] lg:left-0 lg:right-0 lg:mx-auto lg:w-auto lg:max-w-[640px] lg:px-6 lg:pb-6">
+    <div style={{ zIndex: LAYER.composer }}
+      className="pointer-events-none fixed inset-x-0 bottom-0 mx-auto w-[min(440px,calc(100%-24px))] pb-[max(env(safe-area-inset-bottom),14px)] lg:left-0 lg:right-0 lg:mx-auto lg:w-auto lg:max-w-[640px] lg:px-6 lg:pb-6">
       <AnimatePresence>
         {expanded && (
           <motion.div

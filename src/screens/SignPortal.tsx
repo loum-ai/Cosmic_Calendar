@@ -1,16 +1,18 @@
 import { useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDown, X } from "lucide-react";
 import { ConstellationFigure } from "@/components/ConstellationFigure";
 import { ASC, CHART, HOUSE, NODES, SG, SN, houseOf, IS_DEMO } from "@/lib/data";
 import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
 import { subjectTask, useReading, storedReading } from "@/lib/genReadings";
 import { useApp } from "@/store/useApp";
+import { LAYER } from "@/lib/layers";
 
 /**
  * Sign Portal (HiFi-Konzept "VELA - Sign Portal HiFi"): volle Poster-Bühne
  * pro Tierkreiszeichen, unten der drehbare Tierkreis-Bogen. "Einfluss" zeigt
  * die ECHTEN Stände dieses Charts im Zeichen — jede Zeile öffnet das
- * bestehende Erklär-Sheet (Portal liegt auf z-60, Sheets auf z-70/88).
+ * bestehende Erklär-Sheet (Ebenen: LAYER.portal, Sheets darüber).
  * Artwork-Slot: die echte Strichfigur des Sternbilds (ConstellationFigure,
  * aus den geprüften Katalogdaten in lib/constellations.ts) — kein Glyph,
  * kein Poster-Bild.
@@ -150,15 +152,19 @@ export function SignPortal({ initial, onClose }: { initial: number; onClose: () 
     return r;
   }, [sign]);
 
-  return (
-    <div className="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-[#000004]">
-      {/* Bühne: die echte Strichfigur des Sternbilds + Horizont-Scrim */}
-      <div key={sign} className="vela-fadeup pointer-events-none fixed inset-0">
-        <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(90% 55% at 50% 30%, rgba(120,150,255,.16), transparent 70%)" }} />
-        <div className="absolute left-1/2 top-[26%] -translate-x-1/2 -translate-y-1/2" style={{ width: "min(80vw,340px)" }}>
-          <ConstellationFigure sign={sign} showNames className="h-auto w-full" />
-        </div>
-        <div aria-hidden className="absolute inset-x-0 bottom-0 h-[56%]" style={{ background: "linear-gradient(180deg, rgba(0,0,4,0) 0%, rgba(0,0,4,.55) 50%, rgba(0,0,4,.94) 100%)" }} />
+  // An document.body gehängt — sonst bleibt das Portal im Stapelkontext des
+  // Screen-Wrappers gefangen (der hat einen Transform) und kommt nie über den
+  // Burger auf LAYER.chrome. Genau daran war das X hier unerreichbar; die
+  // Sheets hatten das Problem nie, weil Radix sie ebenfalls an den Body hängt.
+  return createPortal(
+    <div style={{ zIndex: LAYER.portal }}
+      className="fixed inset-0 flex flex-col overflow-y-auto bg-[#000004]">
+      {/* Bühnenlicht — die Sternkarte selbst steht im Textfluss weiter unten.
+          Absolut platziert kollidierte sie mit dem Zeichennamen, sobald sich
+          die Höhe des Portals änderte. */}
+      <div key={sign} aria-hidden className="vela-fadeup pointer-events-none fixed inset-0">
+        <div className="absolute inset-0" style={{ background: "radial-gradient(90% 55% at 50% 30%, rgba(120,150,255,.16), transparent 70%)" }} />
+        <div className="absolute inset-x-0 bottom-0 h-[56%]" style={{ background: "linear-gradient(180deg, rgba(0,0,4,0) 0%, rgba(0,0,4,.55) 50%, rgba(0,0,4,.94) 100%)" }} />
       </div>
 
       <button onClick={onClose} aria-label="Schließen" className="fixed right-5 top-[max(20px,env(safe-area-inset-top))] z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06] text-white/70 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] backdrop-blur-md active:scale-90">
@@ -167,7 +173,11 @@ export function SignPortal({ initial, onClose }: { initial: number; onClose: () 
 
       <div className="relative z-10 mx-auto flex min-h-full w-full max-w-[560px] flex-col pb-[calc(env(safe-area-inset-bottom,0px)+150px)]">
         <div className="mt-[calc(env(safe-area-inset-top,0px)+22px)] text-center font-body text-[11px] uppercase tracking-[4px] text-white/50">{DATES[sign]}</div>
-        <div className="min-h-[24vh] flex-1" />
+
+        {/* Die echte Strichfigur — im Fluss, damit sie den Namen nie überdeckt. */}
+        <div key={"c" + sign} className="vela-fadeup mx-auto mt-2 w-[min(76vw,320px)] flex-1">
+          <ConstellationFigure sign={sign} showNames className="h-auto w-full" />
+        </div>
 
         <div key={"t" + sign} className="vela-fadeup px-8 text-center">
           <h1 className="font-cinzel text-[38px] font-normal uppercase leading-none text-white" style={{ letterSpacing: ".16em", paddingLeft: ".16em", textShadow: "0 0 32px rgba(120,100,220,.45)" }}>
@@ -196,6 +206,7 @@ export function SignPortal({ initial, onClose }: { initial: number; onClose: () 
           <ZodiacArc active={sign} onSelect={select} />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

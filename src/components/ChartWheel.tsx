@@ -193,7 +193,7 @@ export function ChartWheel({ onPick, highlight }: { onPick?: (d: SheetDescriptor
         const col = colOf(n.key);
         const on = highlight === n.key;
         return (
-          <g key={n.key} style={{ cursor: "pointer" }} onClick={pickNearest}>
+          <g key={n.key} data-point={`node:${n.key}`} style={{ cursor: "pointer" }} onClick={pickNearest}>
             <circle cx={x} cy={y} r={19} fill="#000" fillOpacity={0} style={{ pointerEvents: "all" }} />
             <circle cx={x} cy={y} r={on ? 13 : 11} fill={DOT} stroke={col} strokeWidth={on ? 2 : 1.4} style={{ pointerEvents: "none", filter: on ? `drop-shadow(0 0 6px ${col})` : undefined }} />
             <text x={x} y={y} fill={col} fontSize={11} textAnchor="middle" dominantBaseline="central" fontFamily='"Noto Sans Symbols","Segoe UI Symbol",system-ui,sans-serif'>
@@ -210,7 +210,7 @@ export function ChartWheel({ onPick, highlight }: { onPick?: (d: SheetDescriptor
         const col = colOf(p.key);
         const on = highlight === p.key;
         return (
-          <g key={p.key} style={{ cursor: "pointer" }} onClick={pickNearest}>
+          <g key={p.key} data-point={`planet:${p.key}`} style={{ cursor: "pointer" }} onClick={pickNearest}>
             <circle cx={x} cy={y} r={20} fill="#000" fillOpacity={0} style={{ pointerEvents: "all" }} />
             <circle cx={x} cy={y} r={on ? 14 : 12} fill={DOT} stroke={col} strokeWidth={on ? 2.4 : 1.6} style={{ pointerEvents: "none", filter: `drop-shadow(0 0 ${on ? 7 : 2.5}px ${col})` }} />
             <text x={x} y={y} fill={on ? INK : col} fontSize={13} fontWeight={600} textAnchor="middle" dominantBaseline="central" pointerEvents="none" fontFamily='"Noto Sans Symbols","Segoe UI Symbol",system-ui,sans-serif'>

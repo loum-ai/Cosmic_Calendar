@@ -5,6 +5,7 @@ import { resolveSheet } from "@/lib/sheets";
 import { subjectTask, useReading, storedReading } from "@/lib/genReadings";
 import { IS_DEMO } from "@/lib/data";
 import { EASE } from "@/lib/tokens";
+import { LAYER } from "@/lib/layers";
 
 /**
  * Full-page detail view for a position (planet / node). Replaces the cramped
@@ -32,7 +33,8 @@ export function DetailView() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 40 }}
           transition={{ duration: 0.32, ease: EASE.smooth }}
-          className="fixed inset-0 z-[88] overflow-y-auto bg-[#111019]"
+          style={{ zIndex: LAYER.detail }}
+          className="fixed inset-0 overflow-y-auto bg-[#111019]"
         >
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_46%_24%_at_50%_-6%,rgba(116,96,200,0.09),transparent_55%)]" />
 

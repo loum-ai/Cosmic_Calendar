@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, X } from "lucide-react";
 import { useApp, type TabKey } from "@/store/useApp";
 import { EASE } from "@/lib/tokens";
+import { LAYER } from "@/lib/layers";
 
 interface Slide {
   eyebrow: string;
@@ -65,7 +66,8 @@ export function TutorialOverlay() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="fixed inset-0 z-[95] flex flex-col"
+        style={{ zIndex: LAYER.coach }}
+        className="fixed inset-0 flex flex-col"
       >
         {/* Scrim statt Deckfläche (Regel §7): oben frei fürs Rad, unten solid für Text */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[rgba(17,16,25,0.30)] via-[rgba(17,16,25,0.72)] via-45% to-[#111019]" />

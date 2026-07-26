@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChartWheel } from "@/components/ChartWheel";
+import { LAYER } from "@/lib/layers";
 
 const MON = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
 
@@ -31,7 +32,7 @@ export function SkyRitual({ name, date, time, place, timeUnknown, onDone }: { na
   }, [y]);
 
   return (
-    <div className="fixed inset-0 z-[92] flex flex-col overflow-y-auto bg-[#0B0A12]">
+    <div style={{ zIndex: LAYER.ritual }} className="fixed inset-0 flex flex-col overflow-y-auto bg-[#0B0A12]">
       <div aria-hidden className="pointer-events-none fixed inset-x-0 bottom-0 h-[380px]" style={{ background: "radial-gradient(120% 90% at 50% 118%, rgba(120,150,255,.45) 0%, rgba(120,157,255,.18) 42%, transparent 72%)" }} />
       <div className="relative z-10 mx-auto flex min-h-full w-full max-w-[560px] flex-col items-center px-7 pb-8 pt-[calc(env(safe-area-inset-top,0px)+26px)]">
         {/* Journey Map III: das Ritual ist ein Angebot, kein Zwang */}

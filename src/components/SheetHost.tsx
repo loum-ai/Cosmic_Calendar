@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { X, Loader2, Sparkles, ChevronRight } from "lucide-react";
 import { useApp } from "@/store/useApp";
+import { LAYER } from "@/lib/layers";
 import { firstSentence, resolveSheet, type SheetContent, type SheetDescriptor, type SheetRelation } from "@/lib/sheets";
 import { Sheet, SheetContent as SheetShell } from "@/components/ui/sheet";
 import { GlyphBadge } from "@/components/GlyphBadge";
@@ -323,7 +324,7 @@ export function SheetHost() {
     const left = Math.min(Math.max(16, ax + 14), vw - W - 16);
     const top = Math.min(Math.max(16, ay - 20), vh * 0.5);
     return (
-      <div className="fixed inset-0 z-[70]" onClick={closeSheet}>
+      <div style={{ zIndex: LAYER.sheetScrim }} className="fixed inset-0" onClick={closeSheet}>
         <div
           onClick={(e) => e.stopPropagation()}
           style={{ position: "fixed", left, top, width: W }}

@@ -8,6 +8,7 @@ import { CHART, HOUSE, signName } from "@/lib/data";
 import { computeTransits, skySummary, transitingBodies, SIGN_GLYPH, type TransitHit } from "@/lib/transits";
 import { PLANET_PHOTO, PLANET_GLOW } from "@/lib/planetPhotos";
 import { EASE } from "@/lib/tokens";
+import { LAYER } from "@/lib/layers";
 
 const IMPACT_COLOR: Record<string, string> = { "+": "#20F0D0", "-": "#ff8fb0", "~": "#c9b6ff" };
 /** dieselben drei Töne als rgb-Tripel — für Inset-Hairlines und Innen-Glows */
@@ -241,7 +242,7 @@ function TransitFull({ hits }: { hits: TransitHit[] }) {
   const go = (d: number) => setFull((((i + d) % n) + n) % n);
 
   return (
-    <motion.div key="tfull" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[95] overflow-hidden bg-stage">
+    <motion.div key="tfull" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ zIndex: LAYER.coach }} className="fixed inset-0 overflow-hidden bg-stage">
       <button onClick={() => setFull(null)} className="absolute right-5 top-[calc(env(safe-area-inset-top,0px)+1.1rem)] z-20 flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface-2 text-txt-2 backdrop-blur active:scale-90">
         <X className="h-5 w-5" />
       </button>
