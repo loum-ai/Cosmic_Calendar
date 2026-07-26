@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+<defs>
+<radialGradient id="halo"><stop offset="0%" stop-color="#bcd2ff" stop-opacity="0.55"/><stop offset="45%" stop-color="#8fa8e8" stop-opacity="0.18"/><stop offset="100%" stop-color="#8fa8e8" stop-opacity="0"/></radialGradient>
+<filter id="coreGlow" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="0.9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="softBlur" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="0.8"/></filter>
+<filter id="lineGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.6"/></filter>
+</defs>
+<rect width="1000" height="1000" fill="#2e2c50"/>
+<circle cx="810.8" cy="725.7" r="0.75" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="736.3" cy="549.4" r="0.93" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="613.1" cy="950.9" r="0.75" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="207.2" cy="373.7" r="0.74" fill="#cdd6f4" opacity="0.5"/>
+<path d="M 419.0 123.5 L 444.6 395.4 M 450.4 397.4 L 646.6 179.5 M 444.5 410.6 L 432.2 525.0 M 436.6 540.5 L 698.6 877.7 M 427.1 541.3 L 299.6 772.7" stroke="#9db8f5" stroke-width="4.2" fill="none" stroke-linecap="round" opacity="0.35" filter="url(#lineGlow)"/>
+<path d="M 419.0 123.5 L 444.6 395.4 M 450.4 397.4 L 646.6 179.5 M 444.5 410.6 L 432.2 525.0 M 436.6 540.5 L 698.6 877.7 M 427.1 541.3 L 299.6 772.7" stroke="#dfe9ff" stroke-width="1.7" fill="none" stroke-linecap="round" opacity="0.9"/>
+<circle cx="704.3" cy="885.0" r="14.6" fill="url(#halo)"/>
+<circle cx="704.3" cy="885.0" r="4.30" fill="#ffffff" filter="url(#coreGlow)"/>
+<path d="M 693.1 885.0 L 715.5 885.0 M 704.3 873.8 L 704.3 896.2" stroke="#eaf2ff" stroke-width="0.90" stroke-linecap="round" opacity="0.75" filter="url(#softBlur)"/>
+<circle cx="651.5" cy="174.0" r="8.2" fill="url(#halo)"/>
+<circle cx="651.5" cy="174.0" r="2.40" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="445.3" cy="403.0" r="8.9" fill="url(#halo)"/>
+<circle cx="445.3" cy="403.0" r="2.61" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="431.2" cy="533.7" r="12.5" fill="url(#halo)"/>
+<circle cx="431.2" cy="533.7" r="3.69" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="418.2" cy="115.0" r="12.1" fill="url(#halo)"/>
+<circle cx="418.2" cy="115.0" r="3.55" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="295.7" cy="779.9" r="10.9" fill="url(#halo)"/>
+<circle cx="295.7" cy="779.9" r="3.21" fill="#ffffff" filter="url(#coreGlow)"/>
+</svg>

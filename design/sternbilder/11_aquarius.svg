@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+<defs>
+<radialGradient id="halo"><stop offset="0%" stop-color="#bcd2ff" stop-opacity="0.55"/><stop offset="45%" stop-color="#8fa8e8" stop-opacity="0.18"/><stop offset="100%" stop-color="#8fa8e8" stop-opacity="0"/></radialGradient>
+<filter id="coreGlow" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="0.9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="softBlur" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="0.8"/></filter>
+<filter id="lineGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.6"/></filter>
+</defs>
+<rect width="1000" height="1000" fill="#2e2c50"/>
+<circle cx="937.2" cy="285.7" r="0.74" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="890.4" cy="399.8" r="1.02" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="860.7" cy="481.4" r="0.90" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="772.5" cy="525.7" r="0.99" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="634.4" cy="446.4" r="0.92" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="629.1" cy="238.3" r="0.76" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="506.5" cy="326.5" r="0.90" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="410.7" cy="722.9" r="0.75" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="394.3" cy="253.5" r="0.88" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="330.5" cy="368.1" r="0.78" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="304.4" cy="666.7" r="0.92" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="197.3" cy="770.1" r="1.00" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="180.5" cy="744.4" r="0.91" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="145.0" cy="408.4" r="1.10" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="133.1" cy="443.3" r="0.83" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="128.7" cy="473.4" r="1.02" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="123.7" cy="482.4" r="0.80" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="126.2" cy="561.5" r="0.72" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="110.3" cy="594.8" r="0.73" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="101.0" cy="711.0" r="1.04" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="66.8" cy="718.7" r="0.91" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="24.6" cy="582.4" r="0.81" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="20.5" cy="657.4" r="0.87" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="10.6" cy="589.9" r="0.99" fill="#cdd6f4" opacity="0.5"/>
+<path d="M 658.6 394.9 L 502.7 294.3 M 484.3 291.4 L 421.3 307.8 M 405.8 304.7 L 383.3 287.6 M 366.9 282.6 L 351.1 283.6 M 338.4 291.5 L 260.1 429.5 M 247.0 439.9 L 146.7 468.8 M 138.0 479.3 L 115.9 690.4 M 490.6 298.3 L 439.7 433.0 M 439.9 448.6 L 484.1 558.3 M 430.4 446.2 L 372.6 494.9 M 360.7 503.7 L 280.1 555.5 M 269.0 567.6 L 253.4 597.5 M 243.9 614.4 L 186.0 710.2 M 876.8 490.4 L 676.6 404.5" stroke="#9db8f5" stroke-width="4.2" fill="none" stroke-linecap="round" opacity="0.35" filter="url(#lineGlow)"/>
+<path d="M 658.6 394.9 L 502.7 294.3 M 484.3 291.4 L 421.3 307.8 M 405.8 304.7 L 383.3 287.6 M 366.9 282.6 L 351.1 283.6 M 338.4 291.5 L 260.1 429.5 M 247.0 439.9 L 146.7 468.8 M 138.0 479.3 L 115.9 690.4 M 490.6 298.3 L 439.7 433.0 M 439.9 448.6 L 484.1 558.3 M 430.4 446.2 L 372.6 494.9 M 360.7 503.7 L 280.1 555.5 M 269.0 567.6 L 253.4 597.5 M 243.9 614.4 L 186.0 710.2 M 876.8 490.4 L 676.6 404.5" stroke="#dfe9ff" stroke-width="1.7" fill="none" stroke-linecap="round" opacity="0.9"/>
+<circle cx="885.0" cy="493.9" r="13.4" fill="url(#halo)"/>
+<circle cx="885.0" cy="493.9" r="3.93" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="667.2" cy="400.4" r="17.8" fill="url(#halo)"/>
+<circle cx="667.2" cy="400.4" r="5.25" fill="#ffffff" filter="url(#coreGlow)"/>
+<path d="M 653.6 400.4 L 680.9 400.4 M 667.2 386.8 L 667.2 414.1" stroke="#eaf2ff" stroke-width="0.90" stroke-linecap="round" opacity="0.75" filter="url(#softBlur)"/>
+<circle cx="494.2" cy="288.8" r="17.6" fill="url(#halo)"/>
+<circle cx="494.2" cy="288.8" r="5.17" fill="#ffffff" filter="url(#coreGlow)"/>
+<path d="M 480.7 288.8 L 507.6 288.8 M 494.2 275.3 L 494.2 302.2" stroke="#eaf2ff" stroke-width="0.90" stroke-linecap="round" opacity="0.75" filter="url(#softBlur)"/>
+<circle cx="487.2" cy="565.9" r="10.8" fill="url(#halo)"/>
+<circle cx="487.2" cy="565.9" r="3.16" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="436.7" cy="440.8" r="11.4" fill="url(#halo)"/>
+<circle cx="436.7" cy="440.8" r="3.34" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="412.8" cy="310.0" r="13.0" fill="url(#halo)"/>
+<circle cx="412.8" cy="310.0" r="3.81" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="376.0" cy="282.0" r="14.0" fill="url(#halo)"/>
+<circle cx="376.0" cy="282.0" r="4.12" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="366.9" cy="499.7" r="8.2" fill="url(#halo)"/>
+<circle cx="366.9" cy="499.7" r="2.40" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="342.6" cy="284.1" r="12.0" fill="url(#halo)"/>
+<circle cx="342.6" cy="284.1" r="3.54" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="272.9" cy="560.1" r="12.0" fill="url(#halo)"/>
+<circle cx="272.9" cy="560.1" r="3.53" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="255.7" cy="437.4" r="13.6" fill="url(#halo)"/>
+<circle cx="255.7" cy="437.4" r="4.00" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="248.9" cy="606.1" r="16.0" fill="url(#halo)"/>
+<circle cx="248.9" cy="606.1" r="4.69" fill="#ffffff" filter="url(#coreGlow)"/>
+<path d="M 236.7 606.1 L 261.1 606.1 M 248.9 593.9 L 248.9 618.4" stroke="#eaf2ff" stroke-width="0.90" stroke-linecap="round" opacity="0.75" filter="url(#softBlur)"/>
+<circle cx="181.3" cy="718.0" r="13.9" fill="url(#halo)"/>
+<circle cx="181.3" cy="718.0" r="4.08" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="138.8" cy="471.1" r="11.0" fill="url(#halo)"/>
+<circle cx="138.8" cy="471.1" r="3.24" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="115.0" cy="699.0" r="12.4" fill="url(#halo)"/>
+<circle cx="115.0" cy="699.0" r="3.66" fill="#ffffff" filter="url(#coreGlow)"/>
+</svg>

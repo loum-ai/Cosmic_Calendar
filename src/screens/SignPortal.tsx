@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { ChevronDown, X } from "lucide-react";
+import { ConstellationFigure } from "@/components/ConstellationFigure";
 import { ASC, CHART, HOUSE, NODES, SG, SN, houseOf, IS_DEMO } from "@/lib/data";
 import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
 import { subjectTask, useReading, storedReading } from "@/lib/genReadings";
@@ -10,8 +11,9 @@ import { useApp } from "@/store/useApp";
  * pro Tierkreiszeichen, unten der drehbare Tierkreis-Bogen. "Einfluss" zeigt
  * die ECHTEN Stände dieses Charts im Zeichen — jede Zeile öffnet das
  * bestehende Erklär-Sheet (Portal liegt auf z-60, Sheets auf z-70/88).
- * Artwork-Slots: aktuell Glyph-Variante; PNG-Poster pro Zeichen können später
- * in src/assets/ gelegt und hier eingehängt werden.
+ * Artwork-Slot: die echte Strichfigur des Sternbilds (ConstellationFigure,
+ * aus den geprüften Katalogdaten in lib/constellations.ts) — kein Glyph,
+ * kein Poster-Bild.
  */
 const EN = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
 const DATES = ["Mär 21 – Apr 19", "Apr 20 – Mai 20", "Mai 21 – Jun 20", "Jun 21 – Jul 22", "Jul 23 – Aug 22", "Aug 23 – Sep 22", "Sep 23 – Okt 22", "Okt 23 – Nov 21", "Nov 22 – Dez 21", "Dez 22 – Jan 19", "Jan 20 – Feb 18", "Feb 19 – Mär 20"];
@@ -150,13 +152,13 @@ export function SignPortal({ initial, onClose }: { initial: number; onClose: () 
 
   return (
     <div className="fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-[#000004]">
-      {/* Bühne: Glyph-Variante (Artwork-Slot) + Horizont-Scrim */}
-      <div key={sign} aria-hidden className="vela-fadeup pointer-events-none fixed inset-0">
-        <div className="absolute inset-0" style={{ background: "radial-gradient(90% 55% at 50% 30%, rgba(120,150,255,.16), transparent 70%)" }} />
-        <span className="vela-glyph absolute left-1/2 top-[26%] -translate-x-1/2 -translate-y-1/2 leading-none" style={{ fontSize: "min(44vw,170px)", color: "rgba(200,182,255,.5)", filter: "drop-shadow(0 0 34px rgba(120,150,255,.55))" }}>
-          {SG[sign]}
-        </span>
-        <div className="absolute inset-x-0 bottom-0 h-[56%]" style={{ background: "linear-gradient(180deg, rgba(0,0,4,0) 0%, rgba(0,0,4,.55) 50%, rgba(0,0,4,.94) 100%)" }} />
+      {/* Bühne: die echte Strichfigur des Sternbilds + Horizont-Scrim */}
+      <div key={sign} className="vela-fadeup pointer-events-none fixed inset-0">
+        <div aria-hidden className="absolute inset-0" style={{ background: "radial-gradient(90% 55% at 50% 30%, rgba(120,150,255,.16), transparent 70%)" }} />
+        <div className="absolute left-1/2 top-[26%] -translate-x-1/2 -translate-y-1/2" style={{ width: "min(80vw,340px)" }}>
+          <ConstellationFigure sign={sign} showNames className="h-auto w-full" />
+        </div>
+        <div aria-hidden className="absolute inset-x-0 bottom-0 h-[56%]" style={{ background: "linear-gradient(180deg, rgba(0,0,4,0) 0%, rgba(0,0,4,.55) 50%, rgba(0,0,4,.94) 100%)" }} />
       </div>
 
       <button onClick={onClose} aria-label="Schließen" className="fixed right-5 top-[max(20px,env(safe-area-inset-top))] z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.06] text-white/70 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] backdrop-blur-md active:scale-90">

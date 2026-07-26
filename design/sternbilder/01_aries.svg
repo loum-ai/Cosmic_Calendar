@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+<defs>
+<radialGradient id="halo"><stop offset="0%" stop-color="#bcd2ff" stop-opacity="0.55"/><stop offset="45%" stop-color="#8fa8e8" stop-opacity="0.18"/><stop offset="100%" stop-color="#8fa8e8" stop-opacity="0"/></radialGradient>
+<filter id="coreGlow" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="0.9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="softBlur" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="0.8"/></filter>
+<filter id="lineGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.6"/></filter>
+</defs>
+<rect width="1000" height="1000" fill="#2e2c50"/>
+<circle cx="832.6" cy="837.2" r="0.77" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="816.9" cy="489.5" r="0.88" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="698.3" cy="548.4" r="0.79" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="657.9" cy="350.5" r="0.81" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="203.9" cy="231.7" r="0.93" fill="#cdd6f4" opacity="0.5"/>
+<circle cx="151.3" cy="135.2" r="0.98" fill="#cdd6f4" opacity="0.5"/>
+<path d="M 123.4 256.7 L 678.8 494.9 M 698.2 507.1 L 858.9 649.2 M 869.0 666.6 L 883.3 738.3" stroke="#9db8f5" stroke-width="4.2" fill="none" stroke-linecap="round" opacity="0.35" filter="url(#lineGlow)"/>
+<path d="M 123.4 256.7 L 678.8 494.9 M 698.2 507.1 L 858.9 649.2 M 869.0 666.6 L 883.3 738.3" stroke="#dfe9ff" stroke-width="1.7" fill="none" stroke-linecap="round" opacity="0.9"/>
+<circle cx="885.0" cy="746.9" r="12.9" fill="url(#halo)"/>
+<circle cx="885.0" cy="746.9" r="3.78" fill="#ffffff" filter="url(#coreGlow)"/>
+<circle cx="866.9" cy="656.2" r="19.2" fill="url(#halo)"/>
+<circle cx="866.9" cy="656.2" r="5.64" fill="#ffffff" filter="url(#coreGlow)"/>
+<path d="M 852.2 656.2 L 881.5 656.2 M 866.9 641.5 L 866.9 670.9" stroke="#eaf2ff" stroke-width="0.90" stroke-linecap="round" opacity="0.75" filter="url(#softBlur)"/>
+<circle cx="689.5" cy="499.4" r="22.4" fill="url(#halo)"/>
+<circle cx="689.5" cy="499.4" r="6.58" fill="#ffffff" filter="url(#coreGlow)"/>
+<path d="M 672.4 499.4 L 706.6 499.4 M 689.5 482.3 L 689.5 516.6" stroke="#eaf2ff" stroke-width="1.05" stroke-linecap="round" opacity="0.75" filter="url(#softBlur)"/>
+<circle cx="115.0" cy="253.1" r="14.2" fill="url(#halo)"/>
+<circle cx="115.0" cy="253.1" r="4.18" fill="#ffffff" filter="url(#coreGlow)"/>
+</svg>
