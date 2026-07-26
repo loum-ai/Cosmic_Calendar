@@ -28,14 +28,22 @@ Deno.serve(async (req) => {
     if (!client) return json({ error: "not_found" }, 404);
 
     const { data: chart } = await svc.from("charts").select("data, verification, house_system, zodiac").eq("client_id", client.id).maybeSingle();
-    const { data: interp } = await svc
+    const { data: interpRow } = await svc
       .from("interpretations")
-      .select("draft, edited, status, published_at")
+      .select("draft, edited, status, published_at, model")
       .eq("client_id", client.id)
       .eq("status", "published")
       .order("published_at", { ascending: false })
       .limit(1)
       .maybeSingle();
+
+    // Eine Deutung aus der Notfall-Schablone ist KEINE Deutung.
+    // `basis-komposition` heißt: kein Modell hat das geschrieben, das ist der
+    // Baukasten aus vorgefertigten Sätzen mit eingesetzten Namen — für jeden
+    // Menschen derselbe Text. Solche Zeilen kann es in der Tabelle geben (aus
+    // gescheiterten Läufen); ausgeliefert werden dürfen sie nie. Der Kunde
+    // sieht dann die ehrliche "noch nicht verfügbar"-Seite.
+    const interp = interpRow && interpRow.model !== "basis-komposition" ? interpRow : null;
 
     return json({
       ok: true,

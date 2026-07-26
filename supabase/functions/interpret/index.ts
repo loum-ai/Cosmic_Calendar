@@ -413,7 +413,14 @@ Deno.serve(async (req) => {
         }
       }
 
-      const status = publish === false ? "draft" : "published";
+      // Eine Schablone wird NIE veröffentlicht — auch dann nicht, wenn der
+      // Kunde noch gar keine Deutung hatte. Genau so ist Marco am 25.07. zu
+      // einem Baukasten-Text gekommen, der dann live stand: die Erzeugung
+      // scheiterte an den Token-Budgets, der Notfall sprang ein, und weil
+      // keine ältere Deutung existierte, ging er als "published" durch.
+      // Sie wird als Entwurf abgelegt, damit im Cockpit sichtbar bleibt, was
+      // schiefging — aber der Klienten-Link liefert sie nicht aus.
+      const status = publish === false || usedFallback ? "draft" : "published";
       const row = {
         client_id, kind: "natal", status, model: usedModel, temperature: 0.55,
         facts, draft: interpretation, published_at: status === "published" ? new Date().toISOString() : null,
