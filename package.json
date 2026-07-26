@@ -12,7 +12,9 @@
     "smoke": "node scripts/smoke-chart.cjs",
     "check:mond": "node --experimental-strip-types scripts/check-mondphase.mjs",
     "check:layers": "node scripts/check-layers.mjs",
-    "check": "npm run lint && npm run check:layers && npm run check:ux",
+    "check:antworten": "node scripts/check-antworten.mjs",
+    "check:schablonen": "node scripts/check-schablonen.mjs",
+    "check": "npm run lint && npm run check:layers && npm run check:antworten && npm run check:schablonen && npm run check:ux",
     "check:ux": "node scripts/check-ux.mjs"
   },
   "dependencies": {

@@ -154,3 +154,123 @@ export const SIGN_GLYPH = (sign: string) => {
   const i = SN.indexOf(sign);
   return i >= 0 ? SG[i] : "";
 };
+
+/**
+ * Wie lange hält ein Transit — als Zeitraum, nicht als Stimmungsbild.
+ *
+ * Warum das hier steht und nicht im Sprachmodell: „Wie lange hält dieser
+ * Transit?" ist keine Deutungsfrage, sondern eine Rechenfrage. Die Antwort
+ * steht in der Ephemeride. Vorher fiel genau diese Frage durch den
+ * Notfall-Zweig und wurde mit einem Text über die Sonne beantwortet.
+ *
+ * Verfahren: die Fenstergrenzen per Verdopplung und Halbierung suchen, nicht
+ * Tag für Tag — jede Abfrage kostet ein volles Horoskop (~30 ms), die
+ * tageweise Variante brauchte 37 Sekunden und fror die Oberfläche ein.
+ * Reicht das Fenster über den geprüften Zeitraum hinaus, wird das gemeldet
+ * statt gerundet.
+ */
+export interface TransitWindow {
+  von: Date;
+  bis: Date;
+  exakt: Date | null;
+  /** Fenster reicht über den geprüften Zeitraum hinaus — bei Pluto & Co. normal. */
+  offenVorn: boolean;
+  offenHinten: boolean;
+  tage: number;
+}
+
+/** Wie weit wird überhaupt gesucht. Alles darüber wird als "länger als" gemeldet. */
+export const MAX_TAGE = 400;
+
+/** Ein Horoskop pro Tag, nicht pro Abfrage — die Suche fragt Tage mehrfach. */
+const tagCache = new Map<string, ReturnType<typeof transitingBodies>>();
+function bodiesAt(date: Date) {
+  const key = date.toISOString().slice(0, 10);
+  let v = tagCache.get(key);
+  if (!v) { v = transitingBodies(date); tagCache.set(key, v); }
+  return v;
+}
+
+function orbAt(natalLon: number, tKey: string, angle: number, date: Date): number {
+  const t = bodiesAt(date).find((b) => b.key === tKey);
+  if (!t) return 99;
+  let diff = Math.abs(t.lon - norm(natalLon));
+  if (diff > 180) diff = 360 - diff;
+  return Math.abs(diff - angle);
+}
+
+export function transitWindow(
+  natalLon: number,
+  tKey: string,
+  aspectType: string,
+  around: Date = new Date(),
+): TransitWindow | null {
+  const a = ASPECTS.find((x) => x.type === aspectType);
+  if (!a) return null;
+
+  const tag = (d: number) => {
+    const x = new Date(around);
+    x.setUTCDate(x.getUTCDate() + d);
+    return x;
+  };
+  const drin = (d: number) => orbAt(natalLon, tKey, a.angle, tag(d)) <= a.orb;
+  if (!drin(0)) return null;
+
+  /**
+   * Die Grenze suchen, ohne jeden Tag anzufassen: erst die Schrittweite
+   * verdoppeln, bis der Aspekt aus dem Orbis fällt, dann zwischen dem letzten
+   * Treffer und dem ersten Fehlschlag halbieren. Rund 17 Abfragen je Richtung
+   * statt bis zu 400 — die tageweise Variante brauchte 37 Sekunden und hat
+   * die Oberfläche eingefroren.
+   */
+  function grenze(richtung: 1 | -1): { tage: number; offen: boolean } {
+    let letzterTreffer = 0;
+    let schritt = 1;
+    while (schritt <= MAX_TAGE && drin(richtung * schritt)) {
+      letzterTreffer = schritt;
+      schritt *= 2;
+    }
+    if (letzterTreffer >= MAX_TAGE) return { tage: MAX_TAGE, offen: true };
+    let lo = letzterTreffer;
+    let hi = Math.min(schritt, MAX_TAGE + 1);
+    if (hi > MAX_TAGE && drin(richtung * MAX_TAGE)) return { tage: MAX_TAGE, offen: true };
+    while (hi - lo > 1) {
+      const mid = Math.floor((lo + hi) / 2);
+      if (drin(richtung * mid)) lo = mid; else hi = mid;
+    }
+    return { tage: lo, offen: false };
+  }
+
+  const vor = grenze(-1);
+  const nach = grenze(1);
+
+  /**
+   * Der exakte Moment — NUR bei kurzen Fenstern.
+   *
+   * Die Suche geht davon aus, dass der Orbis zur Mitte hin genau ein Minimum
+   * hat. Bei den langsamen Planeten stimmt das nicht: durch die
+   * Rückläufigkeit läuft derselbe Aspekt oft dreimal exakt. Eine einzelne
+   * Zahl wäre dort schlicht falsch, also wird keine genannt.
+   */
+  let exakt: Date | null = null;
+  const spanne = vor.tage + nach.tage;
+  if (!vor.offen && !nach.offen && spanne <= 90) {
+    let lo = -vor.tage;
+    let hi = nach.tage;
+    for (let i = 0; i < 20 && hi - lo > 1; i++) {
+      const m1 = Math.floor(lo + (hi - lo) / 3);
+      const m2 = Math.ceil(hi - (hi - lo) / 3);
+      if (orbAt(natalLon, tKey, a.angle, tag(m1)) <= orbAt(natalLon, tKey, a.angle, tag(m2))) hi = m2; else lo = m1;
+    }
+    exakt = tag(orbAt(natalLon, tKey, a.angle, tag(lo)) <= orbAt(natalLon, tKey, a.angle, tag(hi)) ? lo : hi);
+  }
+
+  return {
+    von: tag(-vor.tage),
+    bis: tag(nach.tage),
+    exakt,
+    offenVorn: vor.offen,
+    offenHinten: nach.offen,
+    tage: vor.tage + nach.tage + 1,
+  };
+}

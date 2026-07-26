@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { SheetDescriptor } from "@/lib/sheets";
 import { localOracle } from "@/lib/oracle";
+import { faktenAntwort } from "@/lib/factAnswers";
 import { computeChart, type BirthInput } from "@/lib/compute";
 import { applyChart, signName, PROFILE } from "@/lib/data";
 import { ensureInterpretation, clearInterpretation } from "@/lib/interpret";
@@ -224,6 +225,21 @@ export const useApp = create<AppState>((set, get) => ({
     const q = (question ?? get().q).trim();
     if (!q || get().loading) return;
     set({ loading: true, answer: "", demo: false, q });
+
+    // Rechenfragen werden gerechnet. "Wie lange hält dieser Transit?" hat eine
+    // Antwort mit Datum — die gehört nicht an ein Sprachmodell, das sie
+    // bestenfalls errät. Greift keine Regel, läuft alles wie gehabt weiter.
+    //
+    // Einen Tick abwarten, bevor gerechnet wird: die Suche nach dem Fenster
+    // kostet knapp eine Sekunde am Stück. Ohne das Zugeständnis an den
+    // Browser bliebe der Ladezustand ungezeichnet und die Eingabe wirkte tot.
+    await new Promise((r) => setTimeout(r, 0));
+    const fakt = faktenAntwort(q);
+    if (fakt) {
+      set((st) => ({ answer: fakt, demo: false, loading: false, verlauf: [...st.verlauf, { frage: q, antwort: fakt }] }));
+      return;
+    }
+
     try {
       // grounded generation from the chart facts (cached per chart + question)
       const { data, error } = await supabase.functions.invoke("generate", {
@@ -238,8 +254,13 @@ export const useApp = create<AppState>((set, get) => ({
       if (error || !data?.text) throw new Error("no answer");
       set((st) => ({ answer: data.text, demo: false, loading: false, verlauf: [...st.verlauf, { frage: q, antwort: data.text }] }));
     } catch {
-      // last resort (function unreachable) — offline, chart-grounded fallback
-      const notfall = localOracle(q);
+      // Modell nicht erreichbar. Der Notfall antwortet NUR, wenn die Frage
+      // wirklich zu einem Thema im Bild passt — sonst wird gesagt, dass keine
+      // Antwort da ist. Eine erfundene Antwort ist schlimmer als keine.
+      const notfall =
+        localOracle(q) ??
+        "Dazu komme ich gerade nicht an eine Deutung heran — die Verbindung zum Modell steht nicht. " +
+          "Ich rate lieber nicht: versuch es gleich noch einmal, oder tippe den Punkt im Rad an, um den es dir geht.";
       set((st) => ({ answer: notfall, demo: true, loading: false, verlauf: [...st.verlauf, { frage: q, antwort: notfall }] }));
     }
   },

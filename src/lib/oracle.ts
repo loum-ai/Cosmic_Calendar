@@ -15,8 +15,14 @@ function answerFor(key: string): string {
   return `${info.what} Bei dir steht ${p.name} in ${signName(p.lon)}: ${p.txt}`;
 }
 
-/** Deterministic, chart-grounded answer for the offline/demo Q&A. */
-export function localOracle(question: string): string {
+/**
+ * Notfall-Antwort ohne Backend — aber NUR, wenn die Frage wirklich zu einem
+ * Thema passt. Vorher endete jede unerkannte Frage im Default `answerFor("sun")`:
+ * Laura fragte „Wie lange hält dieser Transit?" und bekam einen Text über ihre
+ * Sonne, ausgezeichnet als „Vela deutet · aus deinem Chart". Lieber gar keine
+ * Antwort als eine erfundene — deshalb jetzt `null`, wenn nichts greift.
+ */
+export function localOracle(question: string): string | null {
   const q = question.toLowerCase();
 
   if (/(lieb|beziehung|herz|partner|verlieb)/.test(q)) return answerFor("venus");
@@ -31,9 +37,11 @@ export function localOracle(question: string): string {
     if (tri) {
       return `Dein eingebautes Talent: ${tri.A.name} und ${tri.B.name} fließen mühelos zusammen (${tri.def.type}). ${tri.A.txt}`;
     }
-    return answerFor("sun");
   }
 
-  // "Was macht mich aus?", "Mein Thema?", default → the core self.
-  return answerFor("sun");
+  // Nur wer ausdrücklich nach dem Kern fragt, bekommt den Kern.
+  if (/(wesen|kern|wer bin ich|was macht mich aus|mein thema|persönlichkeit)/.test(q)) return answerFor("sun");
+
+  // Sonst: nichts. Die aufrufende Stelle sagt das ehrlich.
+  return null;
 }
