@@ -121,25 +121,39 @@ for (const geburt of GEBURTEN) {
   }
 }
 
-const schablonen = [...funde.values()].filter((v) => new Set(v.map((x) => x.geburt)).size > 1);
+/**
+ * Die Grenze, die zählt: spricht der Text die Person an?
+ *
+ * „Die Sonne steht für den innersten Antrieb" ist eine Lexikon-Definition —
+ * für jeden gleich und zu Recht, das ist Wissen. „Die Sonne IST DEIN
+ * innerster Antrieb" behauptet, über DICH zu reden, und ist für alle
+ * identisch. Das ist die Schablone: persönliche Ansprache ohne persönlichen
+ * Inhalt. Nur die fällt durch.
+ */
+const SPRICHT_AN = /\b(du|dir|dich|dein|deine|deinen|deinem|deiner|deines)\b/i;
 
-console.log(`Geprüft: ${GEBURTEN.length} Geburtsbilder, ${funde.size} verschiedene Textskelette.\n`);
+const wiederholt = [...funde.values()].filter((v) => new Set(v.map((x) => x.geburt)).size > 1);
+const schablonen = wiederholt.filter((v) => SPRICHT_AN.test(v[0].text));
+const lexikon = wiederholt.filter((v) => !SPRICHT_AN.test(v[0].text));
+
+console.log(`Geprüft: ${GEBURTEN.length} Geburtsbilder, ${funde.size} verschiedene Textskelette.`);
+console.log(`Davon für mehrere Menschen gleich: ${wiederholt.length} — als Lexikon vertretbar: ${lexikon.length}, als Deutung ausgegeben: ${schablonen.length}.\n`);
 
 if (schablonen.length) {
   console.log(`${schablonen.length} Schablone${schablonen.length === 1 ? "" : "n"} — derselbe Satz für verschiedene Menschen:\n`);
-  for (const gruppe of schablonen.slice(0, 12)) {
+  for (const gruppe of (process.env.ALLE ? schablonen : schablonen.slice(0, 12))) {
     const bilder = [...new Set(gruppe.map((g) => g.geburt))];
     console.log(`  ✗ ${gruppe[0].feld} · ${gruppe[0].id}`);
     console.log(`    trifft ${bilder.length} Bilder: ${bilder.join(", ")}`);
     console.log(`    „${gruppe[0].text.slice(0, 100)}…"\n`);
   }
-  if (schablonen.length > 12) console.log(`  … und ${schablonen.length - 12} weitere.\n`);
+  if (!process.env.ALLE && schablonen.length > 12) console.log(`  … und ${schablonen.length - 12} weitere.\n`);
 }
 
 rmSync(tmp, { recursive: true, force: true });
 
 if (schablonen.length) {
-  console.log("Regel: Ein Text, der für zwei verschiedene Geburtsbilder gleich lautet, ist keine Deutung.");
+  console.log("Regel: Ein Text, der \u201edu\u201c sagt und für zwei verschiedene Menschen gleich lautet, ist keine Deutung.");
   process.exit(1);
 }
-console.log("Keine Schablonen — jeder Deutungstext folgt aus seinem Bild.");
+console.log("Keine Schablonen — jeder Text, der die Person anspricht, folgt aus ihrem Bild.");

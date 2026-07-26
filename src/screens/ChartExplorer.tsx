@@ -50,14 +50,17 @@ function Prose({ text, className = "", lede = "text-[17px]", rest = "text-[15px]
 }
 
 /** A "Besondere Muster" card — tap to expand the deeper, chart-specific reading.
- *  „Für dich konkret" ist eine erzeugte Deutung zu genau dieser Konfiguration;
- *  p.detail (die alte Schablone) steht nur noch, solange sie lädt. */
+ *  „Für dich konkret" ist eine erzeugte Deutung zu genau dieser Konfiguration.
+ *  Es gibt KEINEN Rückfalltext mehr: der alte `p.detail` war für jeden Menschen
+ *  derselbe Absatz mit getauschten Namen. Fehlt die Deutung, sagt die Karte das —
+ *  eine erfundene Deutung ist schlimmer als keine (check:schablonen). */
 function PatternCard({ p, lead = false }: { p: Pattern; lead?: boolean }) {
   const [open, setOpen] = useState(false);
   // erst beim Aufklappen erzeugen — sonst feuert eine Chart-Seite bis zu neun
   // Anfragen auf einmal
   const { text: gen, loading: genLoading } = useReading(p.viewKey, p.task, !IS_DEMO && open);
-  const konkret = gen || (genLoading ? "" : p.detail);
+  const konkret = gen ?? "";
+  const wartet = genLoading || (open && !gen);
   return (
     <button
       type="button"
@@ -102,12 +105,19 @@ function PatternCard({ p, lead = false }: { p: Pattern; lead?: boolean }) {
                 </div>
                 {konkret ? (
                   <Prose text={konkret} lede="text-[17px] text-txt" rest="text-[15px]" />
-                ) : (
+                ) : wartet ? (
                   <div className="space-y-2.5 py-1">
                     {[100, 92, 76].map((w, i) => (
                       <div key={i} className="h-3 animate-pulse rounded-full bg-white/[0.06]" style={{ width: `${w}%` }} />
                     ))}
                   </div>
+                ) : (
+                  // Kein Rückfalltext: lieber sagen, dass die Deutung fehlt, als
+                  // einen Absatz zeigen, der bei jedem Menschen gleich lautet.
+                  <p className="font-body text-[14px] leading-relaxed text-txt-3">
+                    Die Deutung zu diesem Muster ist gerade nicht abrufbar. Die Beobachtung darüber stimmt trotzdem —
+                    sie ist aus dem Chart gerechnet.
+                  </p>
                 )}
               </div>
             </motion.div>

@@ -107,14 +107,20 @@ export const HOUSEWHAT = ["Wie du wirkst und auftrittst — dein erster Eindruck
 // Das PRINZIP hinter jedem Haus — die Logik des Horoskop-Kreises. Damit ein
 // Mensch VERSTEHT, warum ein Haus seinen Lebensbereich bedeutet (das erklärt
 // astro.com nie). Wird in den „Warum"-Abschnitten der Tap-Sheets gezeigt.
+/**
+ * Warum ein Haus für sein Thema steht — die Herleitung aus dem Kreis.
+ * Das ist Lexikon: für alle gleich, weil es Wissen ist. Deshalb steht hier
+ * bewusst keine Anrede — ein Satz, der „du“ sagt und trotzdem bei jedem
+ * Menschen gleich lautet, ist eine Schablone (siehe check:schablonen).
+ */
 export const HOUSEWHY = [
-  "Es beginnt im Osten, wo zur Geburt die Sonne aufging — der Punkt des Anfangs. Deshalb steht das 1. Haus für deinen Start und dein Auftreten.",
-  "Direkt nach dem Ich kommt, was das Ich hat und braucht. Deshalb geht es im 2. Haus um Besitz, Geld und deine Werte.",
+  "Es beginnt im Osten, wo zur Geburt die Sonne aufging — der Punkt des Anfangs. Deshalb steht das 1. Haus für den Start und das Auftreten.",
+  "Direkt nach dem Ich kommt, was das Ich hat und braucht. Deshalb geht es im 2. Haus um Besitz, Geld und Werte.",
   "Der nahe Umkreis — Geschwister, Nachbarn, kurze Wege. Deshalb steht das 3. Haus für Reden, Lernen und den Alltag.",
   "Der tiefste Punkt des Kreises, die Wurzel ganz unten. Deshalb geht es im 4. Haus um Zuhause, Familie und Herkunft.",
-  "Was aus dir herausströmt und Freude macht. Deshalb steht das 5. Haus für Kreativität, Spiel, Liebe und Kinder.",
-  "Der Alltag, der dich trägt und den Körper fordert. Deshalb geht es im 6. Haus um Arbeit, Routine und Gesundheit.",
-  "Genau gegenüber dem Ich steht das Du. Deshalb steht das 7. Haus für Partnerschaft und das enge Gegenüber.",
+  "Was nach außen strömt und Freude macht. Deshalb steht das 5. Haus für Kreativität, Spiel, Liebe und Kinder.",
+  "Der Alltag, der trägt und den Körper fordert. Deshalb geht es im 6. Haus um Arbeit, Routine und Gesundheit.",
+  "Dem Ich gegenüber liegt das Andere. Deshalb steht das 7. Haus für Partnerschaft und das enge Gegenüber.",
   "Wo zwei sich verbinden, geht es um Geteiltes und Tiefe. Deshalb steht das 8. Haus für Bindung, Wandel und Krise.",
   "Über die Begegnung hinaus weitet sich der Blick in die Ferne. Deshalb geht es im 9. Haus um Sinn, Glauben und Horizont.",
   "Der höchste Punkt am Himmel, für alle sichtbar (die Himmelsmitte). Deshalb steht das 10. Haus für Beruf, Rolle und Ansehen.",
@@ -148,22 +154,27 @@ export const ASPDEF: AspectDef[] = [
   { a: 180, type: "Opposition", g: "☍", c: "#ff8fb0", w: 1.1, nat: "Balance", verb: "ziehen in Gegenrichtung und suchen Balance", plain: "Zwei Pole, die nach Balance suchen." },
 ];
 
+/**
+ * Das Planeten-Lexikon: was ein Planet BEDEUTET, unabhängig vom Menschen.
+ * Dritte Person, keine Anrede — siehe HOUSEWHY. Was über EINEN Menschen
+ * gesagt wird, kommt aus seiner Deutung, nie von hier.
+ */
 export const PINFO: Record<string, { role: string; what: string }> = {
-  sun: { role: "dein Kern", what: "Die Sonne ist dein innerster Antrieb — wer du im Grunde bist und was dich lebendig macht." },
-  moon: { role: "dein Gefühl", what: "Der Mond ist deine Gefühlswelt — was du brauchst, um dich sicher und geborgen zu fühlen." },
-  mercury: { role: "dein Denken", what: "Merkur steht fürs Denken und Reden — wie du verstehst und dich mitteilst." },
-  venus: { role: "deine Liebe", what: "Venus zeigt, was du schön findest und wie du liebst, genießt und dich verbindest." },
-  mars: { role: "dein Antrieb", what: "Mars ist dein Antrieb und dein Mut — wie du handelst und dich durchsetzt." },
-  jupiter: { role: "dein Wachstum", what: "Jupiter steht für Wachstum, Vertrauen und Sinn — wo du dich weitest." },
-  saturn: { role: "deine Struktur", what: "Saturn ist Disziplin und Reife — wo du lernst, dranbleibst und stabil wirst." },
-  uranus: { role: "dein Eigensinn", what: "Uranus ist die Kraft der Erneuerung — Originalität, Freiheit, plötzliche Wendung. Wo du anders bist und es sein darfst." },
-  neptune: { role: "deine Sehnsucht", what: "Neptun steht für Vorstellungskraft, Sinnsuche und Auflösung fester Grenzen — das, was sich den Sinnen entzieht und in Bildern spricht." },
-  pluto: { role: "deine Wandlung", what: "Pluto ist tiefgreifende Wandlung, Tiefe und Macht — was losgelassen wird, damit Neues entstehen kann." },
-  asc: { role: "dein Auftreten", what: "Der Aszendent ist, wie du auf andere wirkst — dein erster Eindruck nach außen." },
-  chiron: { role: "deine Wunde & Gabe", what: "Chiron ist die verletzliche Stelle, an der du Schmerz kennst — und gerade dadurch andere heilen und verstehen kannst." },
-  lilith: { role: "dein Wildes", what: "Lilith (der schwarze Mond) steht für das Ungezähmte und Tabuisierte in dir — wo du dich nicht anpassen willst." },
-  node_n: { role: "deine Richtung", what: "Der aufsteigende Mondknoten zeigt, wohin du dich entwickelst — dein Wachstumsweg in diesem Leben." },
-  node_s: { role: "dein Vertrautes", what: "Der absteigende Mondknoten ist das Vertraute, das dir leichtfällt — und das du nach und nach loslassen darfst." },
+  sun: { role: "dein Kern", what: "Die Sonne steht für den innersten Antrieb — den Kern, aus dem heraus ein Mensch handelt, und das, was ihn lebendig macht." },
+  moon: { role: "dein Gefühl", what: "Der Mond steht für das Gefühlsleben — für das, was jemand braucht, um sich sicher und geborgen zu fühlen." },
+  mercury: { role: "dein Denken", what: "Merkur steht fürs Denken und Reden — für die Art zu verstehen und sich mitzuteilen." },
+  venus: { role: "deine Liebe", what: "Venus steht für Geschmack und Zuneigung — dafür, was als schön empfunden wird und wie jemand liebt, genießt und sich verbindet." },
+  mars: { role: "dein Antrieb", what: "Mars steht für Antrieb und Mut — für die Art zu handeln und sich durchzusetzen." },
+  jupiter: { role: "dein Wachstum", what: "Jupiter steht für Wachstum, Vertrauen und Sinn — für die Richtung, in die sich ein Leben weitet." },
+  saturn: { role: "deine Struktur", what: "Saturn steht für Disziplin und Reife — für den Bereich, in dem gelernt, drangeblieben und Stabilität aufgebaut wird." },
+  uranus: { role: "dein Eigensinn", what: "Uranus steht für Erneuerung — Originalität, Freiheit, plötzliche Wendung. Der Bereich, in dem jemand anders ist und es sein darf." },
+  neptune: { role: "deine Sehnsucht", what: "Neptun steht für Vorstellungskraft, Sinnsuche und das Auflösen fester Grenzen — das, was sich den Sinnen entzieht und in Bildern spricht." },
+  pluto: { role: "deine Wandlung", what: "Pluto steht für tiefgreifende Wandlung, Tiefe und Macht — für das, was losgelassen wird, damit Neues entstehen kann." },
+  asc: { role: "dein Auftreten", what: "Der Aszendent ist die Wirkung nach außen — der erste Eindruck, bevor ein Wort gesagt ist." },
+  chiron: { role: "deine Wunde & Gabe", what: "Chiron steht für die verletzliche Stelle, an der jemand Schmerz kennt — und gerade dadurch andere verstehen und heilen kann." },
+  lilith: { role: "dein Wildes", what: "Lilith (der schwarze Mond) steht für das Ungezähmte und Tabuisierte — den Bereich, in dem sich jemand nicht anpassen will." },
+  node_n: { role: "deine Richtung", what: "Der aufsteigende Mondknoten zeigt die Entwicklungsrichtung — den Wachstumsweg in diesem Leben." },
+  node_s: { role: "dein Vertrautes", what: "Der absteigende Mondknoten steht für das Vertraute, das leichtfällt — und das nach und nach losgelassen werden darf." },
 };
 
 export interface Transit {

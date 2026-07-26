@@ -93,6 +93,17 @@ function placement(label: string, text: string | null | undefined | false): Shee
 
 const compact = (secs: (SheetSection | null)[]): SheetSection[] => secs.filter((s): s is SheetSection => !!s);
 
+/**
+ * Die reine BEOBACHTUNG aus dem Chart — was dort steht, ohne Deutung und
+ * ohne Anrede. Bewusst nüchtern: ein Satz, der „du" sagt und trotzdem bei
+ * jedem Menschen gleich gebaut ist, ist eine Schablone (check:schablonen).
+ * Gedeutet wird ausschließlich in `placement()`, also nur mit echtem Text.
+ */
+function beobachtung(text: string): SheetSection | null {
+  return text ? { label: "Im Bild", body: text, source: "general" } : null;
+}
+
+
 /** Vorschauzeile für eine Verbindung (die „Verbindungen"-Liste unter einer
  *  Stellung). Nimmt die ECHTE Deutung, wenn es sie gibt; sonst einen Satz, der
  *  immer noch aus DIESEM Chart folgt (welche zwei Kräfte, was sie tun, wie eng).
@@ -156,7 +167,8 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
         placement(`Wie — ${p.name} in ${signName(p.lon)}`, aiSign(p.key) || (IS_DEMO && READINGS[p.key]?.sign)),
         { label: `Warum — das ${h}. Haus`, body: HOUSEWHY[h - 1], source: "general" },
         placement(`Wo — ${h}. Haus · ${HOUSE[h - 1]}`, aiHouse(p.key) || (IS_DEMO && READINGS[p.key]?.house)),
-        { label: "Bei dir", body: p.txt || `${THEME[p.key] ?? p.name} drückt sich bei dir über ${signName(p.lon)} im ${h}. Haus aus — dem Bereich „${HOUSE[h - 1]}". ${asp.length ? `${p.name} ist dabei mit ${asp.length === 1 ? "einer weiteren Kraft" : `${asp.length} weiteren Kräften`} deines Bildes verbunden — was hier passiert, färbt also auch andere Lebensbereiche mit. Die Verbindungen stehen unten.` : `${p.name} steht dabei ohne enge Verbindungen — diese Kraft wirkt bei dir eigenständig und unvermischt.`}`, accent: MINT },
+        beobachtung(`${p.name} in ${signName(p.lon)}, ${h}. Haus („${HOUSE[h - 1]}"), ${asp.length} ${asp.length === 1 ? "Verbindung" : "Verbindungen"} zu anderen Kräften.`),
+        placement("Bei dir", p.txt),
       ]),
       relations: asp.map((a) => {
         const other = a.A.key === p.key ? a.B : a.A;
@@ -185,11 +197,8 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       const h = n.house ?? houseOf(n.lon);
       const area = HOUSE[h - 1];
       const trait = SIGNWHAT[idx] ?? "";
-      const body =
-        n.key === "node_n"
-          ? `Dein Wachstumsweg führt nach ${signName(n.lon)} im ${h}. Haus — dem Bereich „${area}". ${trait} Genau diese Qualitäten dort zu entwickeln, fühlt sich anfangs ungewohnt an, ist aber deine Richtung.`
-          : `Vertraut und mühelos: ${signName(n.lon)} im ${h}. Haus — „${area}". ${trait} Das ist dein bekanntes Terrain; du darfst es nach und nach loslassen, statt dich darin zu verstecken.`;
-      sections.push({ label: "Bei dir", body, accent: MINT });
+      const b = beobachtung(`${n.name} in ${signName(n.lon)}, ${h}. Haus („${area}").${trait ? ` ${trait}` : ""}`);
+      if (b) sections.push(b);
     }
     return { title: n.name, glyph: n.glyph, color: "#9bc0ff", sections };
   }
@@ -204,17 +213,15 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       title: `Haus ${h} — ${HOUSE[h - 1]}`,
       glyph: String(h),
       color: "#c4a6ff",
-      sections: [
+      sections: compact([
         { label: "Was ist das?", body: HOUSEWHAT[h - 1], source: "general" },
         { label: "Warum dieses Haus?", body: HOUSEWHY[h - 1], source: "general" },
-        {
-          label: "Bei dir",
-          body: ps.length
-            ? `${ps.map((p) => `${p.name} in ${signName(p.lon)}`).join(", ")} ${ps.length > 1 ? "stehen" : "steht"} in diesem Haus — „${HOUSE[h - 1]}" ist bei dir also kein Nebenschauplatz, sondern läuft direkt über ${lc(THEME[ps[0].key] ?? ps[0].name)}${ps.length > 1 ? ` und ${lc(THEME[ps[1].key] ?? ps[1].name)}` : ""}. Tippe die Planeten an, um zu sehen, wie genau.`
-            : `Hier steht bei dir kein Planet — der Bereich „${HOUSE[h - 1]}" läuft eher leise im Hintergrund mit, statt ein Dauerthema zu sein. Gedeutet wird er trotzdem: über Planeten, die von anderen Häusern aus Verbindungen hierher knüpfen. Frag unten im Chat nach deinem ${h}. Haus, wenn du es genauer wissen willst.`,
-          accent: MINT,
-        },
-      ],
+        beobachtung(
+          ps.length
+            ? `In diesem Haus: ${ps.map((p) => `${p.name} in ${signName(p.lon)}`).join(", ")}.`
+            : `In diesem Haus steht kein Planet.`,
+        ),
+      ]),
     };
   }
 
@@ -227,16 +234,14 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       title: `${s} — ${SIGNMEAN[i].split(" · ")[0]}`,
       glyph: SG[i],
       color: "#c4a6ff",
-      sections: [
+      sections: compact([
         { label: "Was ist das?", body: SIGNWHAT[i], source: "general" },
-        {
-          label: "Bei dir",
-          body: ps.length
-            ? `${ps.map((p) => p.name).join(", ")} ${ps.length > 1 ? "stehen" : "steht"} bei dir in ${s}. Sichtbar wird diese Färbung vor allem ${ps.map((p) => { const ph = p.house ?? houseOf(p.lon); return `im ${ph}. Haus (${HOUSE[ph - 1]})`; }).join(" und ")} — dort gibt ${s} bei dir den Ton an.`
-            : `Kein Planet von dir steht in ${s}. Die Qualität dieses Zeichens — ${lc(SIGNWHAT[i])} — lebst du eher über Menschen und Situationen, die sie dir spiegeln, als unmittelbar aus dir selbst heraus.`,
-          accent: MINT,
-        },
-      ],
+        beobachtung(
+          ps.length
+            ? `In ${s}: ${ps.map((p) => { const ph = p.house ?? houseOf(p.lon); return `${p.name} (${ph}. Haus)`; }).join(", ")}.`
+            : `In ${s} steht kein Planet dieses Bildes.`,
+        ),
+      ]),
     };
   }
 

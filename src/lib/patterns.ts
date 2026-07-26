@@ -11,7 +11,8 @@ import { phaseIndex, phaseVersatz } from "./moonPhase";
  * WICHTIG (2026-07): `text` ist die BEOBACHTUNG — welche Konfiguration liegt
  * vor, aus welchen Kräften, in welchem Zeichen/Haus. Die ist aus dem Chart
  * gerechnet und darum echt. Die DEUTUNG dazu („Für dich konkret") wird über
- * `task` erzeugt; `detail` ist nur noch die Rückfallebene, solange sie lädt
+ * `task` erzeugt. Einen Rückfalltext gibt es NICHT mehr — er war für jeden
+ * Menschen derselbe Absatz mit getauschten Namen (siehe check:schablonen)
  * oder nicht kommt. Vorher stand dort eine Schablone, die jeder Mensch mit
  * derselben Konfiguration wortgleich las.
  */
@@ -24,8 +25,6 @@ export interface Pattern {
   human: string;
   /** die Beobachtung: was steht da, aus dem Chart gerechnet */
   text: string;
-  /** Rückfalltext für „Für dich konkret", wenn keine Deutung vorliegt */
-  detail: string;
   /** Cache-Key der erzeugten Deutung zu diesem Muster */
   viewKey: string;
   /** Auftrag an die Deutungs-Funktion */
@@ -115,8 +114,7 @@ export function chartPatterns(): Pattern[] {
             task: patternTask(
               `Großes Trigon (drei Kräfte im 120°-Dreieck, alle im Element ${ELEM[eli]} — ${ELEM_TRAIT[eli]}):\n- ${pos(a)}\n- ${pos(b)}\n- ${pos(c)}`,
               "Sag, was dieses eingebaute Talent im Alltag konkret kann, warum es so selbstverständlich ist, dass es leicht übersehen wird — und wo genau dieser Mensch es bewusst einsetzen könnte, statt es zu vergeuden. Nenne auch die Kehrseite: mühelos heißt oft ungefordert.",
-            ),
-            detail: `Alle drei verbinden sich im Element ${ELEM[eli]} — ${ELEM_TRAIT[eli]} fließen hier wie von selbst. Weil dir das so leichtfällt, nimmst du es kaum als Stärke wahr. Setz es bewusst ein: Genau hier kannst du vorangehen und anderen etwas geben, wo sie sich abmühen.` });
+            ) });
         }
         // T-Quadrat: opposition pair + apex square to both
         const trio = [[a, b, c], [b, c, a], [a, c, b]] as const;
@@ -129,8 +127,7 @@ export function chartPatterns(): Pattern[] {
               task: patternTask(
                 `T-Quadrat (zwei Kräfte in Opposition, eine dritte im Quadrat zu beiden):\n- Pol A: ${pos(x)}\n- Pol B: ${pos(y)}\n- Scheitelpunkt (der Hebel): ${pos(apex)}`,
                 `Sag, wie sich diese Spannung im Alltag anfühlt und woran dieser Mensch sie wiedererkennt. Erkläre, warum ${nm(apex)} der Hebel ist — was er dort konkret tun kann, damit der Druck zwischen den beiden Polen in Bewegung umschlägt. Benenne beides: was es kostet, wenn er es nicht tut, und welche Ausdauer daraus wächst, wenn er es tut.`,
-              ),
-              detail: `${nm(apex)} ist dein Hebel: Sobald du dort aktiv wirst und Verantwortung übernimmst, löst sich der Druck zwischen ${nm(x)} und ${nm(y)} in Bewegung auf. Unbewusst kehrt die Spannung als wiederkehrendes Thema zurück — bewusst genutzt wird sie zu Ausdauer und Durchsetzungskraft, die dich weit trägt.` });
+              ) });
           }
         }
       }
@@ -151,8 +148,7 @@ export function chartPatterns(): Pattern[] {
               task: patternTask(
                 `Großes Kreuz (zwei Oppositionen, alle Enden im Quadrat zueinander):\n- ${pos(a)}\n- ${pos(b)}\n- ${pos(c)}\n- ${pos(d)}`,
                 "Sag, wie sich diese Dauerbalance im Alltag anfühlt und woran dieser Mensch merkt, dass er alle vier gleichzeitig bedienen will. Gib einen konkreten Umgang damit. Benenne ehrlich die Last UND die Standfestigkeit, die daraus wächst.",
-              ),
-              detail: `Vier gleichwertige Kräfte verlangen ständig deine Balance — das kann sich zeitweise nach Dauerlast anfühlen. Die Kunst ist, die Pole reihum zu bedienen statt alle gleichzeitig. Wer das lernt, entwickelt eine Standfestigkeit und Ausdauer, um die viele ihn beneiden.` });
+              ) });
           }
         }
     }
@@ -168,8 +164,7 @@ export function chartPatterns(): Pattern[] {
         task: patternTask(
           `Stellium in ${sign} (${ks.length} Kräfte in einem Zeichen):\n${ks.map((k) => `- ${pos(k)}`).join("\n")}`,
           `Sag, wie sich diese Bündelung im Alltag zeigt — woran dieser Mensch sie an sich selbst bemerkt. Nutze dafür AUCH die Häuser oben: wenn die Kräfte in verschiedenen Häusern stehen, sag, welche Lebensbereiche dadurch zusammenhängen. Benenne die Kompetenz, die daraus wächst, und die Einseitigkeit, die droht — und was ihn ausgleicht.`,
-        ),
-        detail: `Mit ${ks.length} Kräften in ${sign} bündelt sich ein Großteil deiner Energie auf einem Gebiet. Das macht dich dort außergewöhnlich intensiv und kompetent — kann aber auch einseitig werden. Nimm die übrigen Lebensbereiche bewusst mit, damit dieses Thema dich trägt, statt dich zu verschlucken.` });
+        ) });
 
   // ── element / modality dominance + lack ──
   const e = [0, 0, 0, 0], m = [0, 0, 0];
@@ -184,8 +179,7 @@ export function chartPatterns(): Pattern[] {
     task: patternTask(
       `Element-Verteilung der Kräfte im Geburtsbild: ${verteilung}.\nStärkstes Element: ${ELEM[eMax]} (${ELEM_TRAIT[eMax]}).${fehlt ? `\nUnbesetzt: ${ELEM[lack]} (${ELEM_TRAIT[lack]}).` : ""}`,
       `Sag, wie sich dieses Übergewicht im Verhalten dieses Menschen zeigt — an einer konkreten Alltagssituation.${fehlt ? ` Sag dann, was das unbesetzte Element ${ELEM[lack]} für ihn bedeutet: nicht als Defizit, sondern als etwas, das er sich über andere Menschen und Situationen erschließt.` : " Sag, wie die schwächer besetzten Elemente trotzdem mitspielen."}`,
-    ),
-    detail: `Konkret heißt das: ${ELEM_TRAIT[eMax]} sind deine natürliche Sprache.` + (fehlt ? ` Das fehlende Element ${ELEM[lack]} — ${ELEM_TRAIT[lack]} — ist dein Wachstumsfeld; Menschen und Situationen, die es verkörpern, fordern und bereichern dich besonders.` : ` Dein Bild ist dabei gut durchmischt, sodass die anderen Elemente ausgleichend mitwirken.`) });
+    ) + (fehlt ? ` Das fehlende Element ${ELEM[lack]} — ${ELEM_TRAIT[lack]} — ist dein Wachstumsfeld; Menschen und Situationen, die es verkörpern, fordern und bereichern dich besonders.` : ` Dein Bild ist dabei gut durchmischt, sodass die anderen Elemente ausgleichend mitwirken.`) });
   const mMax = m.indexOf(Math.max(...m));
   out.push({ id: "mode", kind: "balance", title: `Überwiegend ${MODE[mMax]}`, human: MODE_HUMAN[mMax], glyphs: [],
     text: `Verteilung über die Modi — ${MODE.map((l, i) => `${l}: ${m[i]}`).join(", ")}.`,
@@ -193,8 +187,7 @@ export function chartPatterns(): Pattern[] {
     task: patternTask(
       `Modus-Verteilung der Kräfte im Geburtsbild: ${MODE.map((l, i) => `${l}: ${m[i]}`).join(", ")}.\nÜberwiegend ${MODE[mMax]}: ${MODE_TRAIT[mMax]}.`,
       "Sag, wie dieser Grundrhythmus im Alltag aussieht — wie dieser Mensch typischerweise an Vorhaben herangeht, wo er stark ist und wo genau ihm dieser Rhythmus im Weg steht.",
-    ),
-    detail: `Im Alltag zeigt sich das daran, dass du ${mMax === 0 ? "gern startest, Impulse gibst und Dinge ins Rollen bringst" : mMax === 1 ? "Begonnenes konsequent zu Ende bringst und Kurs hältst" : "dich geschmeidig an Veränderungen anpasst und mehrere Wege offenhältst"}. Deine anderen Anteile runden das ab, sodass du nicht in einem Modus feststeckst.` });
+    ) });
 
   // ── dominant planet (most aspects) ──
   const cnt: Record<string, number> = {};
@@ -207,8 +200,7 @@ export function chartPatterns(): Pattern[] {
       task: patternTask(
         `Am stärksten verknüpfte Kraft im Geburtsbild: ${pos(domKey)} mit ${cnt[domKey]} Aspekten.\nSein Thema: ${THEME[domKey] ?? nm(domKey)}.\nSeine Verbindungen: ${aspects.filter((x) => x.A.key === domKey || x.B.key === domKey).map((x) => `${x.A.name} ${x.def.type} ${x.B.name}`).join("; ")}`,
         `Sag, woran dieser Mensch merkt, dass ${lc(THEME[domKey] ?? nm(domKey))} sich durch fast alles bei ihm zieht — an einer konkreten Situation. Sag auch, was passiert, wenn er dieses Prinzip nicht bewusst führt.`,
-      ),
-      detail: `Weil ${nm(domKey)} so viele Verbindungen hat, mischt sein Thema fast überall mit: ${lc(THEME[domKey] ?? nm(domKey))} zieht sich als roter Faden durch viele Lebensbereiche. Wenn du dieses eine Prinzip verstehst und bewusst führst, ordnet sich vieles andere wie von selbst.` });
+      ) });
 
   // ── chart ruler ──
   const ascSign = signName(ASC);
@@ -221,8 +213,7 @@ export function chartPatterns(): Pattern[] {
       task: patternTask(
         `Aszendent in ${ascSign}, damit ist ${ruler.name} der Herrscher des ganzen Geburtsbildes.\nEr steht: ${pos(rulerKey)}.\nSein Thema: ${THEME[rulerKey] ?? ruler.name}.`,
         `Erkläre in einem Halbsatz, warum ausgerechnet dieser Planet das ganze Bild anführt (er beherrscht das Zeichen am Aszendenten). Sag dann, was seine konkrete Stellung für die Entwicklung dieses Menschen bedeutet — welcher Lebensbereich dadurch zum Dreh- und Angelpunkt wird und woran er das merkt.`,
-      ),
-      detail: `Wie es ${ruler.name} in ${signName(ruler.lon)} (${ruler.house ?? houseOf(ruler.lon)}. Haus) geht, so geht es dem ganzen Bild — dieser Planet ist dein wichtigster Bezugspunkt. ${THEME[rulerKey] ? `${THEME[rulerKey]} ist damit das übergeordnete Thema deines Weges.` : ""} Beobachte ihn als Wegweiser: Hier entscheidet sich, wohin sich dein Leben entwickeln will.` });
+      ) });
 
   // ── lunar phase at birth ──
   const sun = CHART.find((p) => p.key === "sun");
@@ -242,8 +233,7 @@ export function chartPatterns(): Pattern[] {
       task: patternTask(
         `Mondphase bei der Geburt: ${pn} (${Math.round(ang)}° zwischen Sonne und Mond${naehe ? `,${naehe.replace(" — ", " ")}` : ""}).\nSonne: ${pos("sun")}\nMond: ${pos("moon")}\nGrundzug dieser Phase: ${pt}`,
         "Sag, was dieser Grundrhythmus für das Timing dieses Menschen bedeutet — wann er in Fahrt kommt, wann nicht, und woran er merkt, dass er gegen den eigenen Takt arbeitet. Kein Zwang, sondern ein Muster, das er nutzen kann.",
-      ),
-      detail: `Die Mondphase bei deiner Geburt beschreibt deinen Grundrhythmus — nicht als Zwang, sondern als dein natürliches Timing. Wenn du ihm folgst, statt dagegen zu arbeiten, läuft vieles leichter und stimmiger. ${pt}` });
+      ) });
   }
 
   // priority: configurations & stelliums first, then dominances

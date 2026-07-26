@@ -66,19 +66,32 @@ const lc = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
 // so no two hit texts read like the same sentence with swapped nouns.
 const SLOW_T = new Set(["jupiter", "saturn", "uranus", "neptune", "pluto"]);
 
+/**
+ * Was am Himmel steht — die BEOBACHTUNG plus die Mechanik des Aspekts.
+ *
+ * Bewusst ohne Anrede. Der Satz galt vorher als Deutung („eine Gelegenheit,
+ * die wirkt, wenn DU sie aktiv nutzt") und stand doch bei jedem Menschen mit
+ * demselben Transit identisch da — eine Schablone (check:schablonen). Was ein
+ * Quadrat mechanisch tut, ist Lexikonwissen und darf sich gleichen; was es
+ * für EINEN Menschen bedeutet, kommt aus seiner erzeugten Deutung.
+ */
 function hitText(tKey: string, tName: string, aspType: string, nKey: string, nName: string): string {
-  const nT = THEME[nKey] ? `${lc(THEME[nKey])} (${nName})` : nName;
-  const dauer = SLOW_T.has(tKey)
-    ? "Das ist keine Tagesstimmung, sondern eine Entwicklung über Wochen bis Monate."
-    : "Das ist eine kurze Wetterlage von wenigen Tagen.";
+  // THEME ist in der Du-Form gehalten („Deine Sehnsucht") — hier wird daraus
+  // die neutrale Benennung, sonst trüge dieser Lexikonsatz eine Anrede, die
+  // bei jedem Menschen identisch dasteht.
+  const thema = THEME[nKey]?.replace(/^(dein|deine|deinen|deiner)\s+/i, "");
+  const nT = thema ? `${nName} im Geburtsbild (${lc(thema)})` : `${nName} im Geburtsbild`;
+  const tempo = SLOW_T.has(tKey)
+    ? `${tName} ist langsam — das zieht sich über Wochen bis Monate.`
+    : `${tName} ist schnell — das dauert wenige Tage.`;
   const mech: Record<string, string> = {
-    Konjunktion: `Der laufende ${tName} steht direkt auf ${nT} — beide Kräfte verschmelzen, das Thema wird neu angestoßen und will jetzt bewusst gestaltet werden.`,
-    Sextil: `Der laufende ${tName} bildet eine leichte Brücke zu ${nT} — eine Gelegenheit, die wirkt, wenn du sie aktiv nutzt.`,
-    Quadrat: `Der laufende ${tName} steht quer zu ${nT} — Reibung, die Druck macht und eine Entscheidung oder Anpassung fordert.`,
-    Trigon: `Der laufende ${tName} fließt mühelos mit ${nT} zusammen — was du hier angehst, läuft gerade leichter als sonst.`,
-    Opposition: `Der laufende ${tName} steht ${nT} direkt gegenüber — etwas von außen, oft über andere Menschen, fordert hier eine neue Balance.`,
+    Konjunktion: `Der laufende ${tName} steht genau auf ${nT}. Eine Konjunktion legt beide Kräfte übereinander und stößt das Thema neu an.`,
+    Sextil: `Der laufende ${tName} bildet ein Sextil zu ${nT}. Ein Sextil öffnet eine Gelegenheit, die Zutun braucht, um zu wirken.`,
+    Quadrat: `Der laufende ${tName} steht im Quadrat zu ${nT}. Ein Quadrat erzeugt Reibung und drängt auf eine Entscheidung.`,
+    Trigon: `Der laufende ${tName} bildet ein Trigon zu ${nT}. Ein Trigon lässt beide Kräfte mühelos ineinandergreifen.`,
+    Opposition: `Der laufende ${tName} steht ${nT} gegenüber. Eine Opposition stellt zwei Pole einander gegenüber; sichtbar wird das meist über andere Menschen.`,
   };
-  return `${mech[aspType] ?? `Der laufende ${tName} berührt ${nT}.`} ${dauer}`;
+  return `${mech[aspType] ?? `Der laufende ${tName} berührt ${nT}.`} ${tempo}`;
 }
 
 export function computeTransits(natal: Planet[], date: Date): TransitHit[] {
