@@ -14,12 +14,21 @@ export const supabase = createClient<Database>(URL, ANON, {
 export const FUNCTIONS_URL = `${URL}/functions/v1`;
 export const SUPABASE_ANON = ANON;
 
-// The Gemini models the app asks the edge functions to use. Central constants
-// so all call sites stay in sync.
-// AI_MODEL — fast tier: chat, single-factor tap readings. gemini-2.5-flash
-// (3.5-flash was sustained-503 overloaded).
-// AI_MODEL_CORE — quality tier for the one-time deep readings (theme
-// sections, portrait): gemini-pro-latest, chosen via a real A/B on the
-// client's own chart (more concrete, more tangible, more logical output).
-export const AI_MODEL = "gemini-2.5-flash";
+/**
+ * Die Gemini-Modelle, um die die App ihre Edge Functions bittet. Eine Stelle,
+ * damit alle Aufrufe zusammenbleiben.
+ *
+ * NUR `-latest`-ALIASE, keine festgenagelten Versionen. Grund, gemessen am
+ * 26.07.2026: `gemini-2.5-pro` antwortete mit 404 — "no longer available to
+ * new users". Eine festgenagelte Version war einfach verschwunden. Hier stand
+ * bis dahin `gemini-2.5-flash`; wäre die genauso zurückgezogen worden, wären
+ * Chat und Nachlade-Deutungen still auf die Notfalltexte gefallen — dieselbe
+ * Kette, die Marco eine Schablone beschert hat. Die Aliase wandern mit.
+ *
+ * AI_MODEL — schnelle Stufe: Chat, Deutungen beim Antippen, Musterkarten.
+ * AI_MODEL_CORE — Tiefe: das Portrait. Das ist der einzige Pro-Aufruf pro
+ * Kunde; die kurzen Kartentexte schreibt die Edge Function selbst mit Flash
+ * (rund zehnmal günstiger, im A/B ohne erkennbaren Abstand).
+ */
+export const AI_MODEL = "gemini-flash-latest";
 export const AI_MODEL_CORE = "gemini-pro-latest";

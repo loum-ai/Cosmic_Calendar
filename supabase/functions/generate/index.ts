@@ -118,7 +118,10 @@ Deno.serve(async (req) => {
 
     const key = (Deno.env.get("Gemini_API_Key") || Deno.env.get("GEMINI_API_KEY") || "").trim();
     if (!key) return json({ error: "Gemini key not configured" }, 500);
-    const mdl = model || Deno.env.get("GEMINI_MODEL") || "gemini-3.5-flash";
+    // Nur ein `-latest`-Alias als Rückfall: festgenagelte Versionen werden
+    // zurückgezogen (gemini-2.5-pro → 404 am 26.07.), und dann fällt die App
+    // still auf Notfalltexte zurück.
+    const mdl = model || Deno.env.get("GEMINI_MODEL") || "gemini-flash-latest";
     const svc = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
     if (chart_hash && cacheKey) {
