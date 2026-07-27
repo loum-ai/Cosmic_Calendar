@@ -287,3 +287,57 @@ export function transitWindow(
     tage: vor.tage + nach.tage + 1,
   };
 }
+
+/**
+ * Die Dimensionen eines Transits, die eine Deutung überhaupt erst konkret
+ * machen — und die das Modell bisher nie erfahren hat.
+ *
+ * ANLASS (27.07.): Laura hat ihre Fachbibliothek abgelegt. Robert Hands „Buch
+ * der Transite" behandelt auf 240.000 Wörtern rund 500 Kombinationen einzeln
+ * und trennt dabei vier Dinge, die unser Auftrag ans Modell nicht enthielt:
+ * wie lange der Transit läuft, ob er durch Rückläufigkeit mehrfach exakt wird,
+ * in welchem Lebensbereich (Haus) er ankommt, und ob er zu- oder abnimmt.
+ * Der Auftrag nannte nur Planet, Aspekt, Planet und Orbis — also genau die
+ * Angaben, die für JEDEN Transit dieser Art gleich sind.
+ *
+ * Aus den Büchern übernommen ist die Unterscheidung, nicht ein Satz Text.
+ * Gerechnet wird alles hier, aus der Ephemeride.
+ */
+export interface TransitDetails {
+  /** Zeitfenster im Orbis — null, wenn es sich nicht bestimmen ließ. */
+  fenster: TransitWindow | null;
+  /** Nimmt der Aspekt zu (läuft auf exakt zu) oder klingt er ab? */
+  richtung: "zunehmend" | "abnehmend" | "exakt";
+  /** Haus, in dem der laufende Planet gerade steht — der Lebensbereich, der berührt wird. */
+  tHaus: number | null;
+  /** Haus des Geburtsplaneten — der Bereich, der angesprochen wird. */
+  nHaus: number | null;
+  /** Läuft der Transitplanet rückwärts? Dann kommt der Aspekt mehrfach. */
+  retro: boolean;
+}
+
+export function transitDetails(hit: TransitHit, natal: Planet[], date: Date = new Date()): TransitDetails {
+  const n = natal.find((p) => p.key === hit.nKey);
+  const a = ASPECTS.find((x) => x.type === hit.type);
+  const t = bodiesAt(date).find((b) => b.key === hit.tKey);
+
+  let richtung: TransitDetails["richtung"] = "exakt";
+  let fenster: TransitWindow | null = null;
+  if (n && a) {
+    fenster = transitWindow(n.lon, hit.tKey, hit.type, date);
+    const morgen = new Date(date);
+    morgen.setUTCDate(morgen.getUTCDate() + 3);
+    const jetzt = orbAt(n.lon, hit.tKey, a.angle, date);
+    const spaeter = orbAt(n.lon, hit.tKey, a.angle, morgen);
+    richtung = Math.abs(spaeter - jetzt) < 0.02 ? "exakt" : spaeter < jetzt ? "zunehmend" : "abnehmend";
+  }
+
+  return {
+    fenster,
+    richtung,
+    // Häuserspitzen dieses Charts (Placidus) — nicht die Gleich-Haus-Notlösung.
+    tHaus: t ? houseOfCusps(t.lon) : null,
+    nHaus: n ? (n.house ?? houseOfCusps(n.lon)) : null,
+    retro: !!hit.tRetro,
+  };
+}

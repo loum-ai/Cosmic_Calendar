@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { create } from "zustand";
-import { supabase, AI_MODEL_CORE } from "./supabase";
+import { supabase, AI_MODEL } from "./supabase";
 import { kontingentAus, kontingentText, fehlerKoerper } from "./kontingent";
 import { chartContext, chartHash } from "./factsContext";
 import { ASC, CHART, NODES, HOUSE, signName, houseOf, computeAspects } from "./data";
@@ -53,7 +53,17 @@ export const useReadings = create<ReadingsState>((set, get) => ({
     set((st) => ({ loading: { ...st.loading, [full]: true }, hinweis: { ...st.hinweis, [full]: "" } }));
     try {
       const { data, error } = await supabase.functions.invoke("generate", {
-        body: { chart_hash: chartHash(), cacheKey: viewKey, context, task, model: AI_MODEL_CORE },
+        // FLASH, nicht Pro. Hier entstehen die kurzen Nachlade-Texte: eine
+        // Transit-Deutung, eine Musterkarte, eine Stellung. Davon fordert eine
+        // Chart-Seite Dutzende an.
+        //
+        // Gemessen am 27.07. im laufenden Dev-Server: zwei solche Anfragen auf
+        // gemini-pro-latest brauchten 123 und 133 Sekunden — die Karte zeigte
+        // zwei Minuten lang Platzhalter. Dasselbe Missverhältnis wie in
+        // `interpret`, wo die kurzen Karten inzwischen ebenfalls auf Flash
+        // laufen: die Tiefe steckt im Portrait und in den langen
+        // Themen-Abschnitten (ThemenHub, `long: true`) — die bleiben bei Pro.
+        body: { chart_hash: chartHash(), cacheKey: viewKey, context, task, model: AI_MODEL },
       });
       if (error || !data?.text) {
         // Den Grund NICHT verschlucken: ist das Tageskontingent erschöpft, soll

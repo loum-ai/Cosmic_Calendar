@@ -5,7 +5,7 @@ import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { useReading } from "@/lib/genReadings";
 import { useApp } from "@/store/useApp";
 import { CHART, HOUSE, signName } from "@/lib/data";
-import { computeTransits, skySummary, transitingBodies, SIGN_GLYPH, type TransitHit } from "@/lib/transits";
+import { computeTransits, skySummary, transitingBodies, transitDetails, SIGN_GLYPH, type TransitHit, type TransitDetails } from "@/lib/transits";
 import { PLANET_PHOTO, PLANET_GLOW } from "@/lib/planetPhotos";
 import { EASE } from "@/lib/tokens";
 import { LAYER } from "@/lib/layers";
@@ -15,12 +15,55 @@ const IMPACT_COLOR: Record<string, string> = { "+": "#20F0D0", "-": "#ff8fb0", "
 const IMPACT_RGB: Record<string, string> = { "+": "32,240,208", "-": "255,143,176", "~": "201,182,255" };
 const IMPACT_LABEL: Record<string, string> = { "+": "fördernd", "-": "fordernd", "~": "gemischt" };
 
-/** EIN Auftrag pro Transit — Detailbühne und Hero-Karte teilen ihn sich, damit
- *  beide dieselbe (server-gecachte) Deutung zeigen statt zweier Varianten. */
-function transitReading(tr: TransitHit) {
+const TAG = (d: Date) => d.toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" });
+
+/**
+ * EIN Auftrag pro Transit — Detailbühne und Hero-Karte teilen ihn sich, damit
+ * beide dieselbe (server-gecachte) Deutung zeigen statt zweier Varianten.
+ *
+ * ERWEITERT am 27.07. Vorher stand im Auftrag nur: laufender Planet, Aspekt,
+ * Geburtsplanet, Orbis. Das sind genau die Angaben, die für JEDEN Transit
+ * dieser Art gleich sind — das Modell konnte daraus nichts über DIESE Phase
+ * sagen, weil es nichts über sie wusste.
+ *
+ * Vier Dimensionen kommen dazu, die die App längst rechnet und die ein
+ * ernsthaftes Transit-Werk (Robert Hand) für jede Kombination trennt:
+ *   · das Zeitfenster — seit wann, wie lange noch, wann exakt
+ *   · Rückläufigkeit — dann läuft derselbe Aspekt mehrfach über den Punkt
+ *   · die Häuser — welcher Lebensbereich berührt und welcher angesprochen wird
+ *   · Richtung — zieht der Aspekt an oder klingt er ab
+ *
+ * Aus dem Buch stammt die Unterscheidung, kein Satz Text. Gerechnet wird alles
+ * aus der Ephemeride.
+ */
+function transitReading(tr: TransitHit, d?: TransitDetails) {
+  const zeit: string[] = [];
+  if (d?.fenster) {
+    const f = d.fenster;
+    zeit.push(f.offenVorn ? "Er läuft schon länger als der geprüfte Zeitraum." : `Er läuft seit dem ${TAG(f.von)}.`);
+    zeit.push(f.offenHinten ? "Ein Ende liegt weiter als ein Jahr entfernt." : `Er hält bis zum ${TAG(f.bis)} an.`);
+    if (f.exakt) zeit.push(`Exakt wird er am ${TAG(f.exakt)}.`);
+  }
+  if (d?.retro) zeit.push("Der laufende Planet ist rückläufig — der Aspekt wird mehrfach exakt, das Thema kommt in Wellen zurück.");
+  if (d?.richtung === "zunehmend") zeit.push("Der Aspekt zieht gerade an.");
+  if (d?.richtung === "abnehmend") zeit.push("Der Aspekt klingt bereits ab.");
+
+  const haeuser: string[] = [];
+  if (d?.tHaus) haeuser.push(`Der laufende ${tr.tName} steht dabei im ${d.tHaus}. Haus (${HOUSE[d.tHaus - 1]}) — dort spielt sich das Geschehen ab.`);
+  if (d?.nHaus) haeuser.push(`${tr.nName} steht im Geburtsbild im ${d.nHaus}. Haus (${HOUSE[d.nHaus - 1]}) — dieser Bereich wird angesprochen.`);
+
+  const fakten = [
+    `Der laufende ${tr.tName} bildet ${tr.type === "Konjunktion" ? "eine" : "ein"} ${tr.type} zu ${tr.nName} im Geburtsbild (Orbis ${tr.orb.toFixed(1)}°, ${IMPACT_LABEL[tr.impact]}).`,
+    ...haeuser,
+    ...zeit,
+  ].join(" ");
+
   return {
-    viewKey: `transit:${tr.tKey}_${tr.nKey}_${tr.type}`,
-    task: `Deute den aktuellen Transit: Der laufende ${tr.tName} bildet ${tr.type === "Konjunktion" ? "eine" : "ein"} ${tr.type} zu ${tr.nName} im Geburtsbild (Orbis ${tr.orb.toFixed(1)}°, ${IMPACT_LABEL[tr.impact]}). Was bedeutet diese Phase konkret für die Person, worauf darf sie achten? 4–5 Sätze, Du-Form.`,
+    // v2: der Auftrag hat sich geändert, alte Deutungen im Cache würden ihn sonst verdecken.
+    viewKey: `transit:${tr.tKey}_${tr.nKey}_${tr.type}:v2`,
+    task: `${fakten}
+
+Deute GENAU DIESE Phase. Nutze die Angaben oben — Zeitraum, Häuser, Rückläufigkeit, Richtung — statt allgemein über ${tr.type}-Transite zu sprechen. Ein Satz über ${tr.type} im Allgemeinen wäre wertlos: er stünde bei jedem Menschen gleich da. Sag, was in diesem Zeitfenster in diesen Lebensbereichen ansteht und woran die Person es merkt. 4–5 Sätze, Du-Form.`,
   };
 }
 
@@ -67,7 +110,10 @@ function TransitStage({ tr, onPrev, onNext }: { tr: TransitHit; onPrev: () => vo
   const rgb = IMPACT_RGB[tr.impact];
   const photo = PLANET_PHOTO[tr.tKey];
   const pGlow = PLANET_GLOW[tr.tKey] ?? rgb;
-  const { viewKey, task } = transitReading(tr);
+  // Die Fenstersuche kostet knapp eine Sekunde — deshalb nur für den Transit,
+  // der gerade gezeigt wird, und memoisiert über den Kombinationsschlüssel.
+  const details = useMemo(() => transitDetails(tr, CHART), [tr.tKey, tr.nKey, tr.type]);
+  const { viewKey, task } = transitReading(tr, details);
   const { text, loading } = useReading(viewKey, task);
   return (
     <motion.div
@@ -277,7 +323,8 @@ function StrongestCard({ tr, onOpen }: { tr: TransitHit; onOpen: () => void }) {
   const toneRgb = IMPACT_RGB[tr.impact];
   const photo = PLANET_PHOTO[tr.tKey];
   const pGlow = PLANET_GLOW[tr.tKey] ?? toneRgb;
-  const { viewKey, task } = transitReading(tr);
+  const details = useMemo(() => transitDetails(tr, CHART), [tr.tKey, tr.nKey, tr.type]);
+  const { viewKey, task } = transitReading(tr, details);
   const { text, loading } = useReading(viewKey, task);
   return (
     <button
