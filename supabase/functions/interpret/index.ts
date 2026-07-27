@@ -156,17 +156,21 @@ const SCHEMA = {
  * Fehler" und dreht am falschen Rad.
  */
 /**
- * 24576 ist GESCHÄTZT, nicht gemessen: das Dreifache des Werts, der
- * nachweislich abgeschnitten hat. Wie viele Denk-Tokens gemini-3.1-pro
- * tatsächlich braucht, weiß hier niemand — deshalb loggt `generate()` jetzt
- * `usageMetadata` mit. Sobald ein Lauf durchkommt, steht die echte Zahl in den
- * Edge-Logs und diese Konstante wird durch eine Messung ersetzt.
+ * NACHTRAG 27.07.: Das Budget einfach hochzudrehen war die falsche Schraube.
+ * Mit 24576 und drei steigenden Anläufen brach die Funktion mit
+ * `WORKER_RESOURCE_LIMIT` ab — nicht die Tokens waren das Problem, sondern die
+ * Rechenzeit: ein Pro-Modell denkt bei großem Budget entsprechend lange, und
+ * drei solche Anläufe plus Portrait passen in keine Edge Function.
  *
- * Bis dahin trägt die Leiter darunter das Risiko: sie verdoppelt das Budget
- * bei jedem Anlauf, auch wenn der vorige mit HTTP 200 abgeschnitten wurde.
+ * Die richtige Schraube ist die Denkzeit. Für das strukturierte JSON braucht
+ * es keine Tiefenanalyse — es braucht wohlgeformte Felder. Anlauf 1 bekommt
+ * deshalb ein knappes `thinkingBudget` und dafür genug Platz für die Ausgabe.
+ * Das Denken bleibt dort, wo es hingehört: im Portrait.
  */
-const BUDGET_STRUKTUR = 24576;
-const BUDGET_PORTRAIT = 8192;
+const BUDGET_STRUKTUR = 16384;
+const BUDGET_PORTRAIT = 4096;
+/** Knappe Denkzeit fürs JSON — sie ging vorher vom selben Budget ab wie der Text. */
+const DENK_STRUKTUR = 2048;
 
 /** Bricht der Text mitten im Satz ab, lieber auf den letzten ganzen Satz
  *  zurückschneiden als einen halben ausliefern. */
@@ -343,15 +347,20 @@ async function generate(facts: any, model: string, key: string, wissen: string) 
     });
     return { ok: r.ok, status: r.status, data: await r.json() };
   };
-  // Drei Anläufe mit steigendem Budget. Wichtig: ein Anlauf gilt auch dann als
-  // gescheitert, wenn HTTP 200 kam, der Text aber abgeschnitten und damit kein
-  // gültiges JSON ist (finishReason MAX_TOKENS). Vorher wurde nur auf !r.ok
-  // geprüft — ein abgeschnittener Erfolg löste keinen Neuversuch aus und fiel
-  // still in die Schablone.
+  // ZWEI Anläufe, nicht drei: jeder kostet Rechenzeit, und die Edge Function
+  // hat davon ein hartes Limit (WORKER_RESOURCE_LIMIT, 27.07.).
+  //
+  // Anlauf 1 deckelt die Denkzeit und gibt dem Text den Rest — das ist der
+  // eigentliche Fix. Anlauf 2 lässt Schema und Deckel weg, falls das Modell
+  // mit `thinkingConfig` nichts anfangen kann oder das JSON verschachtelt.
+  //
+  // Wichtig: ein Anlauf gilt auch dann als gescheitert, wenn HTTP 200 kam, der
+  // Text aber abgeschnitten und damit kein gültiges JSON ist (MAX_TOKENS).
+  // Vorher wurde nur auf !r.ok geprüft — ein abgeschnittener Erfolg löste
+  // keinen Neuversuch aus und fiel still in die Schablone.
   const stufen = [
-    { temperature: 0.55, maxOutputTokens: BUDGET_STRUKTUR, responseMimeType: "application/json", responseJsonSchema: SCHEMA },
-    { temperature: 0.55, maxOutputTokens: BUDGET_STRUKTUR * 2, responseMimeType: "application/json" },
-    { temperature: 0.55, maxOutputTokens: BUDGET_STRUKTUR * 3 },
+    { temperature: 0.55, maxOutputTokens: BUDGET_STRUKTUR, responseMimeType: "application/json", responseJsonSchema: SCHEMA, thinkingConfig: { thinkingBudget: DENK_STRUKTUR } },
+    { temperature: 0.55, maxOutputTokens: BUDGET_STRUKTUR, responseMimeType: "application/json" },
   ];
 
   let letzterFehler: Record<string, unknown> = { detail: "kein Anlauf ausgeführt" };
