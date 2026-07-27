@@ -172,6 +172,23 @@ const BUDGET_PORTRAIT = 4096;
 /** Knappe Denkzeit fürs JSON — sie ging vorher vom selben Budget ab wie der Text. */
 const DENK_STRUKTUR = 2048;
 
+/**
+ * ZWEI MODELLE, nach Aufgabe getrennt (Laura, 27.07., wegen der Kosten).
+ *
+ * Vorher schrieb das Pro-Modell alles — auch die kurzen Kartentexte, von denen
+ * es pro Kunde rund drei Dutzend gibt. Das ist der teure Teil: viel Ausgabe,
+ * viel Denkzeit, und inhaltlich sind es zwei bis drei Sätze zu EINER Stellung.
+ *
+ * Die Tiefe steckt im PORTRAIT — dem synthetisierten Gesamtbild über das ganze
+ * Chart. Das bleibt bei Pro. Die Karten übernimmt Flash: rund zehnmal
+ * günstiger und für diese Textlänge ohne merklichen Abstand.
+ *
+ * `model` aus dem Aufruf ist damit das PORTRAIT-Modell (das Cockpit schickt
+ * weiterhin gemini-pro-latest). Über GEMINI_MODEL_KARTEN lässt sich das
+ * Kartenmodell umstellen, ohne die Funktion anzufassen.
+ */
+const MODEL_KARTEN_STD = "gemini-flash-latest";
+
 /** Bricht der Text mitten im Satz ab, lieber auf den letzten ganzen Satz
  *  zurückschneiden als einen halben ausliefern. */
 function trimToSentence(t: string): string {
@@ -428,8 +445,10 @@ Deno.serve(async (req) => {
     const body = await req.json().catch(() => ({}));
     const { client_id, model, publish } = body;
     const key = (Deno.env.get("Gemini_API_Key") || Deno.env.get("GEMINI_API_KEY") || "").trim();
-    const mdl = model || Deno.env.get("GEMINI_MODEL") || "gemini-3.5-flash";
-    const coreMdl = Deno.env.get("GEMINI_MODEL_CORE") || "gemini-3.5-pro";
+    // mdl = Portrait-Modell (das Cockpit schickt gemini-pro-latest).
+    // kartenMdl = Modell für die kurzen Kartentexte — Flash, wegen der Kosten.
+    const mdl = model || Deno.env.get("GEMINI_MODEL_CORE") || "gemini-pro-latest";
+    const kartenMdl = Deno.env.get("GEMINI_MODEL_KARTEN") || MODEL_KARTEN_STD;
     const svc = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
     if (client_id) {
@@ -445,11 +464,12 @@ Deno.serve(async (req) => {
 
       const facts = chartToFacts(client.name, chart.data);
       const wissen = key ? await fachwissen(factsToText(facts), key, svc) : "";
-      const res = key ? await generate(facts, mdl, key, wissen) : { error: { detail: "no key" } };
+      const res = key ? await generate(facts, kartenMdl, key, wissen) : { error: { detail: "no key" } };
       const usedFallback = !!res.error || !res.interpretation;
       const interpretation: any = usedFallback ? composeFallback(facts) : res.interpretation;
-      const usedModel = usedFallback ? "basis-komposition" : mdl;
-      interpretation.portrait = key ? await generatePortrait(facts, coreMdl, mdl, key, wissen) : "";
+      // Ehrlich beschriften: es waren zwei Modelle, also stehen beide da.
+      const usedModel = usedFallback ? "basis-komposition" : `${mdl}+${kartenMdl}`;
+      interpretation.portrait = key ? await generatePortrait(facts, mdl, kartenMdl, key, wissen) : "";
 
       // SCHUTZ (nach dem Vorfall vom 25.07.): Eine fehlgeschlagene Erzeugung
       // darf eine vorhandene, echte Deutung NICHT durch die Notfall-Schablone
@@ -488,11 +508,11 @@ Deno.serve(async (req) => {
     const facts = body.facts;
     if (!facts?.planets?.length) return json({ error: "missing facts.planets or client_id" }, 400);
     const wissen = key ? await fachwissen(factsToText(facts), key, svc) : "";
-    const res = key ? await generate(facts, mdl, key, wissen) : { error: { detail: "no key" } };
+    const res = key ? await generate(facts, kartenMdl, key, wissen) : { error: { detail: "no key" } };
     const usedFallback = !!res.error || !res.interpretation;
     const interpretation: any = usedFallback ? composeFallback(facts) : res.interpretation;
-    interpretation.portrait = key ? await generatePortrait(facts, coreMdl, mdl, key, wissen) : "";
-    return json({ ok: true, model: usedFallback ? "basis-komposition" : mdl, portrait: !!interpretation.portrait, grounded: !!wissen, fallback: usedFallback, ai_error: usedFallback ? (res.error ?? null) : null, interpretation });
+    interpretation.portrait = key ? await generatePortrait(facts, mdl, kartenMdl, key, wissen) : "";
+    return json({ ok: true, model: usedFallback ? "basis-komposition" : `${mdl}+${kartenMdl}`, portrait: !!interpretation.portrait, grounded: !!wissen, fallback: usedFallback, ai_error: usedFallback ? (res.error ?? null) : null, interpretation });
   } catch (e) {
     return json({ error: String(e) }, 500);
   }
