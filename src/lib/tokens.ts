@@ -10,7 +10,7 @@ export const COLORS = {
   violet: "#A78BFA",
   cyan: "#20F0D0",
   mint: "#20F0D0",
-  lilac: "#C4B5FD",
+  lilac: "#BBA8FF",
   mintSoft: "#7defd6",
   azure: "#5599FF",
   solar: "#FFAC89",

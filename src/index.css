@@ -226,20 +226,17 @@
     font-variant-emoji: text;
   }
 
-  /* ── VELA GLASS CHEMISTRY (cinematic-Iteration, claude.ai/design):
-     transluzente Karte + Blur — der Himmel scheint durch. Solide Flächen
-     bleiben Hero-Karten (.vela-card-grad) vorbehalten. */
+  /* ── KARTENCHEMIE — kanonische loum-Karte (utilities.css, Figma
+     reading-rest): SOLIDE dunkle Fläche, EINE 1px-Inset-Hairline, KEIN
+     äußerer Schatten, KEIN backdrop-blur. Tiefe kommt von innen.
+     Die transluzente Glas-Iteration aus claude.ai/design ist damit
+     zurückgenommen — sie war eine vela-Abweichung vom loum-System. */
   .glass-surface,
   .vela-glass {
     position: relative;
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.018) 38%, rgba(17, 16, 25, 0.40) 100%);
-    -webkit-backdrop-filter: blur(12px) saturate(1.25);
-    backdrop-filter: blur(12px) saturate(1.25);
+    background: var(--surface-card);
     border: 0;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.16),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.16),
-      0 16px 40px -24px rgba(0, 0, 4, 0.7);
+    box-shadow: inset 0 0 0 1px var(--card-hairline);
     transition:
       box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
       transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
@@ -247,33 +244,20 @@
   .glass-surface[data-interactive]:hover,
   .vela-glass:hover {
     transform: translateY(-2px);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.2),
-      inset 0 0 0 1px rgba(var(--rgb-iris), 0.45),
-      0 22px 44px -22px rgba(0, 0, 4, 0.8),
-      0 0 26px -6px rgba(var(--rgb-iris), 0.35);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
   }
-  /* ── TILE — gleiche Glass-Chemie, r18 ─────────────────────────────── */
+  /* ── TILE — gleiche Kartenchemie, r18 ─────────────────────────────── */
   .vela-tile {
     position: relative;
     border-radius: 18px;
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.018) 38%, rgba(17, 16, 25, 0.40) 100%);
-    -webkit-backdrop-filter: blur(12px) saturate(1.25);
-    backdrop-filter: blur(12px) saturate(1.25);
+    background: var(--surface-card);
     border: 0;
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.16),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.16),
-      0 16px 40px -24px rgba(0, 0, 4, 0.7);
+    box-shadow: inset 0 0 0 1px var(--card-hairline);
     transition: box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .vela-tile-hover:hover {
     transform: translateY(-2px);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.2),
-      inset 0 0 0 1px rgba(var(--rgb-iris), 0.45),
-      0 22px 44px -22px rgba(0, 0, 4, 0.8),
-      0 0 26px -6px rgba(var(--rgb-iris), 0.35);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
   }
 
   /* ── MOON BUTTON — der Haupt-CTA (loum 2026-07-13): WEISSE Fläche,
