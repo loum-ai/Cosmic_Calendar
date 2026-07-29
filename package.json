@@ -14,8 +14,9 @@
     "check:layers": "node scripts/check-layers.mjs",
     "check:antworten": "node scripts/check-antworten.mjs",
     "check:schablonen": "node scripts/check-schablonen.mjs",
-    "check": "npm run lint && npm run check:layers && npm run check:antworten && npm run check:schablonen && npm run check:ux",
-    "check:ux": "node scripts/check-ux.mjs"
+    "check": "bun run lint && bun run check:layers && bun run check:antworten && bun run check:schablonen && bun run check:ux && bun run check:sprache",
+    "check:ux": "node scripts/check-ux.mjs",
+    "check:sprache": "git ls-files '*.ts' '*.tsx' '*.css' '*.md' '*.sh' | xargs bash scripts/sprache-guard.sh"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",

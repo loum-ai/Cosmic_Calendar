@@ -41,6 +41,9 @@
  *   hip  Hipparcos-Katalognummer — zur Nachprüfbarkeit mitgeführt
  *
  * UMFANG
+ * (Mittlere Spalte = Datenschlüssel, keine deutsche Prosa. Als Codeblock
+ *  ausgezeichnet, damit der Sprach-Guard sie nicht als Rechtschreibfehler liest.)
+ * ```
  *   Ari  widder        4 Sterne,   3 Linien
  *   Tau  stier        12 Sterne,  10 Linien
  *   Gem  zwillinge    17 Sterne,  16 Linien
