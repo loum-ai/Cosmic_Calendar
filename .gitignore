@@ -38,3 +38,4 @@ vela-ux-test.html
 
 # Belege aus dem UX-Lauf — Artefakte, kein Quellcode
 screenshots/check/
+.playwright-mcp/
