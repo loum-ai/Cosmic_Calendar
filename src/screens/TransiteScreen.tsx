@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { ChevronLeft, ChevronRight, RotateCcw, X, Sparkles, Loader2 } from "lucide-react";
 import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { useReading } from "@/lib/genReadings";
@@ -10,7 +10,7 @@ import { PLANET_PHOTO, PLANET_GLOW } from "@/lib/planetPhotos";
 import { EASE } from "@/lib/tokens";
 import { LAYER } from "@/lib/layers";
 
-const IMPACT_COLOR: Record<string, string> = { "+": "#20F0D0", "-": "#ff8fb0", "~": "#c9b6ff" };
+const IMPACT_COLOR: Record<string, string> = { "+": "#72C4FF", "-": "#DA8FFF", "~": "#E8E5F2" };
 /** dieselben drei Töne als rgb-Tripel — für Inset-Hairlines und Innen-Glows */
 const IMPACT_RGB: Record<string, string> = { "+": "32,240,208", "-": "255,143,176", "~": "201,182,255" };
 const IMPACT_LABEL: Record<string, string> = { "+": "fördernd", "-": "fordernd", "~": "gemischt" };
@@ -199,7 +199,7 @@ function HimmelKarte({
     <div className={`relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass ${span ? "sm:col-span-2" : ""}`} style={{ background: fill }}>
       <span className="vela-glyph mt-0.5 text-xl text-lilac">{glyph}</span>
       <div className="min-w-0 flex-1">
-        <div className="font-cinzel text-[15px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">{titel}</div>
+        <div className="font-body text-body font-semibold uppercase leading-[1.2] tracking-[0.02em] text-txt">{titel}</div>
         <div className="mt-1 font-body text-[11px] uppercase tracking-[0.18em] text-txt-3">{eyebrow}</div>
         <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt-2">{fakt}</p>
         {text ? (
@@ -268,7 +268,7 @@ function TransitWheel({ date, size = 260 }: { date: Date; size?: number }) {
             key={b.key}
             title={`${b.name} · ${signName(b.lon)}${b.retro ? " · rückläufig" : ""}`}
             className="vela-glyph absolute flex items-center justify-center rounded-full text-[11px]"
-            style={{ left: q.x - 12, top: q.y - 12, width: 24, height: 24, background: "rgba(120,150,255,.16)", boxShadow: "inset 0 0 0 1px rgba(151,181,255,.6), 0 0 10px rgba(120,150,255,.5)", color: "var(--fg)", transition: "left .25s ease-out, top .25s ease-out" }}
+            style={{ left: q.x - 12, top: q.y - 12, width: 24, height: 24, background: "rgba(var(--rgb-iris),.16)", boxShadow: "inset 0 0 0 1px rgba(var(--rgb-iris),.6), 0 0 10px rgba(var(--rgb-iris),.5)", color: "var(--fg)", transition: "left .25s ease-out, top .25s ease-out" }}
           >
             {b.glyph}
           </span>
@@ -487,7 +487,7 @@ Sag in 2–3 kurzen Sätzen, was das für DIESEN Menschen bedeutet: in welchem L
             <div className="relative flex items-start gap-3.5 overflow-hidden rounded-card p-4 shadow-glass sm:col-span-2" style={{ background: CARD_FILL }}>
               <span className="vela-glyph mt-0.5 text-xl text-lilac"><RotateCcw className="h-4 w-4" /></span>
               <div className="min-w-0 flex-1">
-                <div className="font-cinzel text-[15px] font-normal uppercase leading-[1.2] tracking-[0.02em] text-txt">Keine rückläufigen Planeten</div>
+                <div className="font-body text-body font-semibold uppercase leading-[1.2] tracking-[0.02em] text-txt">Keine rückläufigen Planeten</div>
                 <div className="mt-1 font-body text-[11px] uppercase tracking-[0.18em] text-txt-3">Alles läuft vorwärts</div>
                 <p className="mt-2 font-body text-[13px] leading-[1.62] text-txt-2">Ein guter Moment für Dinge, die sonst gern verschoben werden: Verträge klären, Gespräche beginnen, Neues starten.</p>
               </div>

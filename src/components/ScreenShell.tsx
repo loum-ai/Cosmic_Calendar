@@ -1,5 +1,5 @@
 import * as React from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { useApp } from "@/store/useApp";
 import { EASE } from "@/lib/tokens";
 

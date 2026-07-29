@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "motion/react";
 import { IS_DEMO } from "@/lib/data";
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { TabBar } from "@/components/TabBar";

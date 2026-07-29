@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 
 /**
  * Neutral, understated starfield — plain white stars on anthracite, no colored

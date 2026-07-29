@@ -26,6 +26,7 @@ import {
 import type { Aspect } from "./data";
 import { GLOSSARY } from "./glossary";
 import { READINGS, ASPECT_TEXT } from "./readings";
+import { GROUP_COLORS } from "./tokens";
 import { aiSign, aiHouse, aiAspect } from "./interpret";
 
 export type SheetKind = "planet" | "node" | "house" | "sign" | "aspect" | "asptype" | "glossary";
@@ -70,7 +71,7 @@ export interface SheetContent {
   relations?: SheetRelation[];
 }
 
-const MINT = "#20F0D0";
+const MINT = "#72C4FF";
 const lc = (s: string) => (s ? s.charAt(0).toLowerCase() + s.slice(1) : s);
 
 /** Erster vollständiger Satz eines Textes — als Vorschauzeile. */
@@ -200,7 +201,8 @@ export function resolveSheet(d: SheetDescriptor): SheetContent | null {
       const b = beobachtung(`${n.name} in ${signName(n.lon)}, ${h}. Haus („${area}").${trait ? ` ${trait}` : ""}`);
       if (b) sections.push(b);
     }
-    return { title: n.name, glyph: n.glyph, color: "#9bc0ff", sections };
+    // Mondknoten sind rechnerische Punkte — dieselbe Gruppe wie Chiron und AC.
+    return { title: n.name, glyph: n.glyph, color: GROUP_COLORS.punkt, sections };
   }
 
   if (kind === "house") {

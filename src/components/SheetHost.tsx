@@ -86,7 +86,7 @@ function Prose({ text, tone = "quiet" }: { text: string; tone?: "quiet" | "loud"
  */
 function DeutungBox({ label, children }: { label: ReactNode; children: ReactNode }) {
   return (
-    <div className="relative overflow-hidden p-[18px]" style={{ ...cardSurface("#20F0D0", "lead", 0.15), boxShadow: "inset 0 0 0 1px rgba(32,240,208,0.22)" }}>
+    <div className="relative overflow-hidden p-[18px]" style={{ ...cardSurface("#72C4FF", "lead", 0.15), boxShadow: "inset 0 0 0 1px rgba(32,240,208,0.22)" }}>
       <div className="relative">
         <div className="mb-2.5 flex items-center gap-1.5 font-body text-[11px] font-semibold uppercase tracking-[0.18em] text-mint">
           {label}
@@ -209,14 +209,14 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
           >
             {content.glyph}
           </span>
-          <h2 className="absolute inset-x-4 bottom-4 pr-10 font-cinzel text-[23px] font-normal uppercase not-italic leading-[1.06] tracking-[0.02em] text-txt">
+          <h2 className="absolute inset-x-4 bottom-4 pr-10 font-body text-h4 font-semibold not-italic leading-[1.06] text-txt">
             {content.title}
           </h2>
         </div>
       ) : (
         <div className="flex items-center gap-3.5 pr-8">
           <GlyphBadge glyph={content.glyph} size={46} />
-          <h2 className="font-cinzel text-[22px] font-normal uppercase not-italic leading-[1.1] tracking-[0.02em] text-txt">{content.title}</h2>
+          <h2 className="font-body text-h4 font-semibold not-italic leading-[1.1] text-txt">{content.title}</h2>
         </div>
       )}
 
@@ -285,7 +285,7 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
 
         <button
           onClick={talkToVela}
-          className="flex w-full items-center justify-center gap-2 rounded-pill bg-card px-4 py-3.5 font-display text-[13px] font-semibold text-lilac shadow-[inset_0_0_0_1px_rgba(120,150,255,0.32)] transition hover:bg-surface-2 active:scale-[0.99]"
+          className="flex w-full items-center justify-center gap-2 rounded-pill bg-card px-4 py-3.5 font-display text-[13px] font-semibold text-lilac shadow-[inset_0_0_0_1px_rgba(var(--rgb-iris),0.32)] transition hover:bg-surface-2 active:scale-[0.99]"
         >
           <Sparkles className="h-4 w-4" /> Mit Vela darüber sprechen
         </button>

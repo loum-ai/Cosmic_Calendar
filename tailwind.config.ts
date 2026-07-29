@@ -17,14 +17,15 @@ export default {
         "space-2": "#1A1829",
         ink: "#F8F7F2",
         "ink-soft": "#FBFAFF",
-        // primary accent — Moodboard Explorations (mainColor): iris-Blau statt
-        // aura-Violett. Token-Name bleibt `violet`, damit Klassennamen halten.
-        violet: "#7896FF",
+        // primary accent — loum QUINTESSENCE v6 aura-400 (SSOT: colors.css,
+        // --accent-aura / --rgb-iris). Der Moodboard-Override auf Iris-Blau
+        // #7896FF ist zurückgenommen. Klassenname `violet` bleibt.
+        violet: "#A78BFA",
         // secondary punctual accent — mystic (the pulse)
         cyan: "#20F0D0",
         mint: "#20F0D0",
-        // rim-lights / soft accent — heller Tint des Akzents (iris-300)
-        lilac: "#97B5FF",
+        // rim-lights / soft accent — hellerer Tint des Akzents (aura-300)
+        lilac: "#BBA8FF",
         "mint-soft": "#68F8EE",
         // dialog/KI accent — azure (v6)
         azure: "#5599FF",
@@ -32,10 +33,10 @@ export default {
         //    use these instead of inline rgba literals) ──
         surface: "rgba(248,247,242,0.04)",
         "surface-2": "rgba(248,247,242,0.07)",
-        card: "rgba(120,150,255,0.06)",
+        card: "rgba(167,139,250,0.06)",
         line: "rgba(248,247,242,0.10)",
         "line-soft": "rgba(248,247,242,0.06)",
-        "line-accent": "rgba(120,150,255,0.25)",
+        "line-accent": "rgba(167,139,250,0.25)",
         txt: "#F8F7F2",
         "txt-2": "rgba(248,247,242,0.78)",
         "txt-3": "rgba(238,245,248,0.55)",
@@ -52,14 +53,37 @@ export default {
           asc: "#c4a6ff",
           node: "#9bc0ff",
         },
-        // aspect semantic colors (QUINTESSENCE-abgestimmt: Sextil=azure, Trigon=mystic)
+        // Aspekte: zwei Töne, nicht fünf — Fluss gegen Spannung. Muss mit
+        // ASPECT_TONE in src/lib/tokens.ts übereinstimmen; dort steht auch,
+        // warum. Türkis und Rosa sind raus (Entscheidung Grün/Pink).
         aspect: {
-          conj: "#e7dcff",
-          sextile: "#5599FF",
-          square: "#aa5cff",
-          trine: "#20F0D0",
-          opp: "#ff8fb0",
+          conj: "#E8E5F2", // moon-300      · neutral
+          sextile: "#72C4FF", // celestial-300 · Fluss
+          trine: "#72C4FF", // celestial-300 · Fluss
+          square: "#DA8FFF", // orchid-400    · Spannung
+          opp: "#DA8FFF", // orchid-400    · Spannung
         },
+      },
+      // Die Grössenleiter aus loums Typografie-Token (src/styles/loum/
+      // typography.css). Vorher gab es keine — deshalb stand überall
+      // text-[21px], text-[17px], text-[15px]: 27 verschiedene Grössen auf
+      // einem Bildschirm, keine davon aus dem System.
+      //
+      // Wer eine Grösse wählt, wählt damit auch die Schrift. loums Regel steht
+      // im Kopf von typography.css: Cinzel trägt Display/H1/H2, Bricolage
+      // trägt H3 abwärts. Deshalb hört Cinzel bei h2 auf.
+      fontSize: {
+        display: ["var(--fs-display)", { lineHeight: "var(--lh-display)", letterSpacing: "var(--tracking-display)" }],
+        h1: ["var(--fs-h1)", { lineHeight: "var(--lh-h1)", letterSpacing: "var(--tracking-h1)" }],
+        h2: ["var(--fs-h2)", { lineHeight: "var(--lh-h2)", letterSpacing: "var(--tracking-h2)" }],
+        h3: ["var(--fs-h3)", { lineHeight: "var(--lh-h3)", letterSpacing: "var(--tracking-h3)" }],
+        h4: ["var(--fs-h4)", { lineHeight: "var(--lh-h4)", letterSpacing: "var(--tracking-h4)" }],
+        h5: ["var(--fs-h5)", { lineHeight: "var(--lh-h5)", letterSpacing: "var(--tracking-h5)" }],
+        lede: ["var(--fs-lede)", { lineHeight: "var(--lh-lede)" }],
+        body: ["var(--fs-body)", { lineHeight: "var(--lh-body)" }],
+        "body-sm": ["var(--fs-body-sm)", { lineHeight: "var(--lh-body-sm)" }],
+        meta: ["var(--fs-meta)", { lineHeight: "var(--lh-meta-px)", letterSpacing: "var(--tracking-meta)" }],
+        micro: ["var(--fs-micro)", { lineHeight: "var(--lh-meta-px)", letterSpacing: "var(--tracking-meta)" }],
       },
       fontFamily: {
         // Two Faces (loum v6): Cinzel = Display, Cinzel Decorative = lit word,
@@ -90,7 +114,7 @@ export default {
         // die mit inline-Inset, das las sich wie zwei Kartensorten.
         glass: "inset 0 0 0 1px rgba(255,255,255,0.13)",
         // moon-CTA-Schatten — weicher iris-Schatten (Figma event-card CTA)
-        glow: "0 8px 20px rgba(120,150,255,0.25)",
+        glow: "0 8px 20px rgba(167,139,250,0.25)",
         // hover lift — hellere Hairline statt Drop-Shadow
         lift: "inset 0 0 0 1px rgba(255,255,255,0.12)",
       },
@@ -102,7 +126,7 @@ export default {
         "iris-text": "none",
         // chart-stage — SOLIDE dunkle Karte, Tiefe von INNEN (radiale Glows)
         "stage":
-          "radial-gradient(120% 90% at 80% 0%, rgba(120,150,255,0.10) 0%, transparent 55%), radial-gradient(80% 60% at 8% 105%, rgba(32,240,208,0.05) 0%, transparent 60%), linear-gradient(180deg, #16161F 0%, #12121D 100%)",
+          "radial-gradient(120% 90% at 80% 0%, rgba(167,139,250,0.10) 0%, transparent 55%), radial-gradient(80% 60% at 8% 105%, rgba(32,240,208,0.05) 0%, transparent 60%), linear-gradient(180deg, #16161F 0%, #12121D 100%)",
         // solide Karten-Füllung (--surface-card)
         "glasswash":
           "linear-gradient(180deg, #16161F 0%, #12121D 100%)",

@@ -33,7 +33,7 @@ export function SkyRitual({ name, date, time, place, timeUnknown, onDone }: { na
 
   return (
     <div style={{ zIndex: LAYER.ritual }} className="fixed inset-0 flex flex-col overflow-y-auto bg-[#0B0A12]">
-      <div aria-hidden className="pointer-events-none fixed inset-x-0 bottom-0 h-[380px]" style={{ background: "radial-gradient(120% 90% at 50% 118%, rgba(120,150,255,.45) 0%, rgba(120,157,255,.18) 42%, transparent 72%)" }} />
+      <div aria-hidden className="pointer-events-none fixed inset-x-0 bottom-0 h-[380px]" style={{ background: "radial-gradient(120% 90% at 50% 118%, rgba(var(--rgb-iris),.45) 0%, rgba(var(--rgb-iris),.18) 42%, transparent 72%)" }} />
       <div className="relative z-10 mx-auto flex min-h-full w-full max-w-[560px] flex-col items-center px-7 pb-8 pt-[calc(env(safe-area-inset-top,0px)+26px)]">
         {/* Journey Map III: das Ritual ist ein Angebot, kein Zwang */}
         <button onClick={onDone} className="absolute right-6 top-[max(20px,env(safe-area-inset-top))] font-body text-[13px] text-white/45 transition hover:text-white/80">
@@ -45,9 +45,9 @@ export function SkyRitual({ name, date, time, place, timeUnknown, onDone }: { na
             <ChartWheel />
           </div>
           <div className="text-center">
-            <div className="font-body text-[11px] uppercase tracking-[2.4px] text-[rgba(151,181,255,0.75)]">Der Himmel dreht zurück · {year}</div>
+            <div className="font-body text-[11px] uppercase tracking-[2.4px] text-[rgba(var(--rgb-iris),0.75)]">Der Himmel dreht zurück · {year}</div>
             {/* Copy-Lock (Journey Map, Sprach-Checkpoints) — Wortlaut nicht ändern */}
-            <p className="mx-3 mt-3.5 font-cinzel text-[21px] uppercase leading-[1.45] tracking-[0.07em] text-white">
+            <p className="mx-3 mt-3.5 font-body text-h4 leading-[1.45] tracking-[0.07em] text-white">
               So stand der Himmel,<br />als du deinen ersten<br />
               <em className="not-italic normal-case" style={{ fontFamily: '"Cinzel Decorative", "Cinzel", serif', letterSpacing: "-0.02em", textShadow: "var(--glow-lit)" }}>Atemzug</em> nahmst.
             </p>

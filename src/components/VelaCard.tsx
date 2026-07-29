@@ -25,9 +25,9 @@ export type VelaCardSize = "lead" | "row" | "tile";
 const RADIUS: Record<VelaCardSize, string> = { lead: "20px", row: "16px", tile: "14px" };
 const PADDING: Record<VelaCardSize, string> = { lead: "p-6", row: "px-4 py-3.5", tile: "p-3.5" };
 
-/** Farbe mit Alpha — nimmt „#7896FF" wie auch „120,150,255" entgegen. */
+/** Farbe mit Alpha — nimmt „#A78BFA" wie auch „167,139,250" entgegen. */
 export function tint(tone: string | undefined, alpha: number): string {
-  const t = tone ?? "120,150,255";
+  const t = tone ?? "167,139,250";
   if (t.startsWith("#")) return `${t}${Math.round(alpha * 255).toString(16).padStart(2, "0")}`;
   return `rgba(${t},${alpha})`;
 }
@@ -89,7 +89,7 @@ export function VelaCard({
           </div>
         )}
         {title && (
-          <div className={`font-cinzel font-normal uppercase tracking-[0.02em] text-txt ${size === "lead" ? "text-[22px] leading-[1.24]" : size === "row" ? "text-[17px] leading-[1.3]" : "text-[15px] leading-[1.3]"}`}>
+          <div className={`font-body font-semibold text-txt ${size === "lead" ? "text-h4 leading-[1.24]" : size === "row" ? "text-[17px] leading-[1.3]" : "text-[15px] leading-[1.3]"}`}>
             {title}
           </div>
         )}

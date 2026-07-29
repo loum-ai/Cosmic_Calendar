@@ -73,11 +73,11 @@ export function PrintFlow() {
 
   return (
     <div style={{ zIndex: LAYER.print }} className="fixed inset-0 flex items-center justify-center bg-[rgba(4,4,10,0.74)] p-4 backdrop-blur-md lg:pl-[120px]">
-      <div className="max-h-[88vh] w-full max-w-[440px] overflow-y-auto rounded-card border border-[rgba(120,150,255,0.25)] bg-[#0e0c1a] p-6 shadow-glass">
+      <div className="max-h-[88vh] w-full max-w-[440px] overflow-y-auto rounded-card border border-[rgba(var(--rgb-iris),0.25)] bg-[#0e0c1a] p-6 shadow-glass">
         <div className="flex items-start justify-between">
           <div>
             <div className="vela-label">Horoskop · PDF</div>
-            <h2 className="mt-1 font-cinzel text-[24px] font-semibold leading-tight text-white">Was soll rein?</h2>
+            <h2 className="mt-1 font-body text-h3 font-semibold leading-tight text-white">Was soll rein?</h2>
           </div>
           <button onClick={() => setPrintOpen(false)} className="-mr-1 -mt-1 flex h-8 w-8 items-center justify-center rounded-full text-txt-3 hover:text-txt">
             <X className="h-4 w-4" />

@@ -87,7 +87,7 @@ export function PrintView({ include }: { include?: PrintInclude }) {
         {/* ── COVER ── */}
         <header className="print-avoid text-center">
           <div className="font-display text-[11px] font-bold uppercase tracking-[0.3em] text-[#7c5bbf]">Vela · Geburtshoroskop</div>
-          <h1 className="mt-3 font-cinzel text-[40px] font-semibold leading-none text-[#1b1830]">{PROFILE.name}</h1>
+          <h1 className="mt-3 font-cinzel text-h1 font-semibold leading-none text-[#1b1830]">{PROFILE.name}</h1>
           <p className="mt-3 font-body text-[13px] text-[#5b5670]">{PROFILE.birth}</p>
           <p className="mt-1 font-body text-[13px] text-[#8b8699]">{PROFILE.memberSince}</p>
         </header>
@@ -273,7 +273,7 @@ function Section({ n, title, sub, children, breakBefore, show = true }: { n: str
     <section className={`mt-8 ${breakBefore ? "print-break" : ""}`}>
       <div className="mb-3 flex items-baseline gap-2 border-b-2 border-[#1b1830] pb-1.5">
         <span className="font-mono text-[11px] text-[#7c5bbf]">{n}</span>
-        <h2 className="font-cinzel text-[17px] font-semibold text-[#1b1830]">{title}</h2>
+        <h2 className="font-body text-body font-semibold text-[#1b1830]">{title}</h2>
       </div>
       {sub && <p className="mb-2.5 font-body text-[11px] text-[#6c6781]">{sub}</p>}
       {children}
