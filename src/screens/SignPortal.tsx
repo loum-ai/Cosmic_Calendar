@@ -52,23 +52,23 @@ function InfluenceRow({ row, open, onToggle }: { row: Row; open: boolean; onTogg
       style={{
         padding: open ? "14px 16px 15px" : "12px 16px",
         background: open ? "linear-gradient(180deg,#1B1926 0%,#151420 100%)" : "linear-gradient(180deg,#16161F 0%,#12121D 100%)",
-        boxShadow: open ? "inset 0 0 0 1px rgba(120,150,255,.32)" : "inset 0 0 0 1px rgba(255,255,255,0.13)",
+        boxShadow: open ? "inset 0 0 0 1px rgba(var(--rgb-iris),.32)" : "inset 0 0 0 1px rgba(255,255,255,0.13)",
       }}
     >
       <div className="flex items-center gap-3">
         <span
           className="vela-glyph inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[15px] transition-all"
           style={{
-            background: open ? "rgba(120,150,255,.14)" : "rgba(248,247,242,.05)",
-            boxShadow: open ? "inset 0 0 0 1px rgba(120,150,255,.4)" : "inset 0 0 0 1px rgba(255,255,255,.14)",
-            color: open ? "#97B5FF" : "rgba(255,255,255,.75)",
+            background: open ? "rgba(var(--rgb-iris),.14)" : "rgba(248,247,242,.05)",
+            boxShadow: open ? "inset 0 0 0 1px rgba(var(--rgb-iris),.4)" : "inset 0 0 0 1px rgba(255,255,255,.14)",
+            color: open ? "rgb(var(--rgb-iris))" : "rgba(255,255,255,.75)",
           }}
         >
           {row.glyph}
         </span>
         <div className="min-w-0 flex-1">
           <div className="font-body text-[15px] font-medium text-txt">{row.title}</div>
-          <div className="mt-[3px] font-body text-[9.5px] uppercase tracking-[1.8px] transition-colors" style={{ color: open ? "rgba(151,181,255,.75)" : "rgba(255,255,255,.38)" }}>
+          <div className="mt-[3px] font-body text-[9.5px] uppercase tracking-[1.8px] transition-colors" style={{ color: open ? "rgba(var(--rgb-iris),.75)" : "rgba(255,255,255,.38)" }}>
             {row.meta}
           </div>
         </div>
@@ -87,7 +87,7 @@ function InfluenceRow({ row, open, onToggle }: { row: Row; open: boolean; onTogg
           )}
           <button
             onClick={(e) => { e.stopPropagation(); openInfo(row.sheet); }}
-            className="mt-2.5 font-body text-[13px] text-[#97B5FF]"
+            className="mt-2.5 font-body text-[13px]" style={{ color: "rgb(var(--rgb-iris))" }}
           >
             Ganzes Sheet öffnen →
           </button>
@@ -117,7 +117,7 @@ function ZodiacArc({ active, onSelect }: { active: number; onSelect: (i: number)
               onClick={() => onSelect(i)}
               aria-label={n}
               className="vela-glyph absolute flex h-11 w-11 items-center justify-center"
-              style={{ left: x - 22, top: y - 22, background: "none", border: "none", cursor: "pointer", color: on ? "#fff" : "rgba(255,255,255,.34)", transform: `rotate(${i * 30}deg)`, transition: "color .4s, font-size .4s, filter .4s", fontSize: on ? 25 : 18, filter: on ? "drop-shadow(0 0 8px rgba(151,181,255,.7))" : "none", padding: 0 }}
+              style={{ left: x - 22, top: y - 22, background: "none", border: "none", cursor: "pointer", color: on ? "#fff" : "rgba(255,255,255,.34)", transform: `rotate(${i * 30}deg)`, transition: "color .4s, font-size .4s, filter .4s", fontSize: on ? 25 : 18, filter: on ? "drop-shadow(0 0 8px rgba(var(--rgb-iris),.7))" : "none", padding: 0 }}
             >
               {SG[i]}
             </button>
@@ -163,7 +163,7 @@ export function SignPortal({ initial, onClose }: { initial: number; onClose: () 
           Absolut platziert kollidierte sie mit dem Zeichennamen, sobald sich
           die Höhe des Portals änderte. */}
       <div key={sign} aria-hidden className="vela-fadeup pointer-events-none fixed inset-0">
-        <div className="absolute inset-0" style={{ background: "radial-gradient(90% 55% at 50% 30%, rgba(120,150,255,.16), transparent 70%)" }} />
+        <div className="absolute inset-0" style={{ background: "radial-gradient(90% 55% at 50% 30%, rgba(var(--rgb-iris),.16), transparent 70%)" }} />
         <div className="absolute inset-x-0 bottom-0 h-[56%]" style={{ background: "linear-gradient(180deg, rgba(0,0,4,0) 0%, rgba(0,0,4,.55) 50%, rgba(0,0,4,.94) 100%)" }} />
       </div>
 

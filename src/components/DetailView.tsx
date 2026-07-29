@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft } from "lucide-react";
 import { useApp } from "@/store/useApp";
 import { resolveSheet } from "@/lib/sheets";
@@ -48,7 +48,7 @@ export function DetailView() {
 
             {/* title */}
             <div className="flex items-center gap-4">
-              <span className="vela-glyph text-5xl" style={{ color: content.color, textShadow: "0 0 24px rgba(120,150,255,0.4)" }}>
+              <span className="vela-glyph text-5xl" style={{ color: content.color, textShadow: "0 0 24px rgba(var(--rgb-iris),0.4)" }}>
                 {content.glyph}
               </span>
               <h1 className="font-display text-[clamp(28px,7vw,40px)] font-extrabold leading-[1.05] tracking-[-0.02em] text-txt">

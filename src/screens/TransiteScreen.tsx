@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { ChevronLeft, ChevronRight, RotateCcw, X, Sparkles, Loader2 } from "lucide-react";
 import { ScreenShell, SectionHead, PageHead } from "@/components/ScreenShell";
 import { useReading } from "@/lib/genReadings";
@@ -268,7 +268,7 @@ function TransitWheel({ date, size = 260 }: { date: Date; size?: number }) {
             key={b.key}
             title={`${b.name} · ${signName(b.lon)}${b.retro ? " · rückläufig" : ""}`}
             className="vela-glyph absolute flex items-center justify-center rounded-full text-[11px]"
-            style={{ left: q.x - 12, top: q.y - 12, width: 24, height: 24, background: "rgba(120,150,255,.16)", boxShadow: "inset 0 0 0 1px rgba(151,181,255,.6), 0 0 10px rgba(120,150,255,.5)", color: "var(--fg)", transition: "left .25s ease-out, top .25s ease-out" }}
+            style={{ left: q.x - 12, top: q.y - 12, width: 24, height: 24, background: "rgba(var(--rgb-iris),.16)", boxShadow: "inset 0 0 0 1px rgba(var(--rgb-iris),.6), 0 0 10px rgba(var(--rgb-iris),.5)", color: "var(--fg)", transition: "left .25s ease-out, top .25s ease-out" }}
           >
             {b.glyph}
           </span>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { Download, Sparkles, Loader2, ChevronDown, ArrowLeft } from "lucide-react";
 import { subjectTask, useReading, useReadings, storedReading } from "@/lib/genReadings";
 import { chartContext } from "@/lib/factsContext";
@@ -68,8 +68,8 @@ function PatternCard({ p, lead = false }: { p: Pattern; lead?: boolean }) {
       aria-expanded={open}
       className={`relative w-full overflow-hidden rounded-[16px] text-left transition duration-300 ${lead ? "p-6" : "px-5 py-[18px]"} ${
         open
-          ? "shadow-[inset_0_0_0_1px_rgba(120,150,255,0.34)]"
-          : "shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.34)]"
+          ? "shadow-[inset_0_0_0_1px_rgba(var(--rgb-iris),0.34)]"
+          : "shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] hover:shadow-[inset_0_0_0_1px_rgba(var(--rgb-iris),0.34)]"
       }`}
       style={{ background: cardSurface(KIND_COL[p.kind], lead ? "lead" : "row").background }}
     >
@@ -280,10 +280,10 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
           {/* solide Ink-Fläche, einzige Kante = Inset-Hairline; Tiefe von innen */}
           <section className="relative overflow-hidden rounded-[20px] bg-stage p-6 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] lg:p-10">
             {/* glowing aura behind the wheel — the glass centrepiece breathes */}
-            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(120,150,255,0.28),rgba(120,150,255,0.06)_45%,transparent_66%)] blur-2xl animate-breath" />
-            <div className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[rgba(120,150,255,0.12)] blur-3xl" />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[86%] w-[86%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(var(--rgb-iris),0.28),rgba(var(--rgb-iris),0.06)_45%,transparent_66%)] blur-2xl animate-breath" />
+            <div className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[rgba(var(--rgb-iris),0.12)] blur-3xl" />
             <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-[rgba(32,240,208,0.10)] blur-3xl" />
-            <div className="relative mx-auto w-full max-w-[480px] drop-shadow-[0_0_40px_rgba(120,150,255,0.22)]">
+            <div className="relative mx-auto w-full max-w-[480px] drop-shadow-[0_0_40px_rgba(var(--rgb-iris),0.22)]">
               <ChartWheel onPick={select} highlight={highlight} />
             </div>
             <p className="relative mt-6 text-center font-body text-[15px] leading-relaxed text-txt-3">
@@ -293,7 +293,7 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
 
           {/* desktop reading panel */}
           <aside className="hidden lg:block">
-            <div className="sticky top-6 rounded-card bg-glasswash p-6 shadow-[inset_0_0_0_1px_rgba(120,150,255,0.18)]">
+            <div className="sticky top-6 rounded-card bg-glasswash p-6 shadow-[inset_0_0_0_1px_rgba(var(--rgb-iris),0.18)]">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={selKey(sel)}
@@ -317,7 +317,7 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
           <section>
             <button
               onClick={() => select({ kind: "aspect", key: tightest.key })}
-              className="relative w-full overflow-hidden rounded-[20px] bg-stage p-7 text-left shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] transition duration-300 hover:shadow-[inset_0_0_0_1px_rgba(151,181,255,0.45)] lg:p-10"
+              className="relative w-full overflow-hidden rounded-[20px] bg-stage p-7 text-left shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] transition duration-300 hover:shadow-[inset_0_0_0_1px_rgba(var(--rgb-iris),0.45)] lg:p-10"
             >
               {/* innerer Glow im Aspektton — Tiefe ohne Drop-Shadow */}
               <span aria-hidden className="pointer-events-none absolute -right-20 -top-24 h-80 w-80 rounded-full" style={{ background: `radial-gradient(circle, ${tightest.def.c}26 0%, ${tightest.def.c}0a 44%, transparent 70%)` }} />
@@ -370,7 +370,7 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
               <button
                 key={b.key}
                 onClick={() => select({ kind: "planet", key: b.key })}
-                className="group relative overflow-hidden rounded-[16px] p-5 text-left shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] transition duration-300 hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.38)]"
+                className="group relative overflow-hidden rounded-[16px] p-5 text-left shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)] transition duration-300 hover:shadow-[inset_0_0_0_1px_rgba(var(--rgb-iris),0.38)]"
                 style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)" }}
               >
                 {/* Tiefe von innen: tonaler Glow in der Planetenfarbe */}
@@ -434,8 +434,8 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
 
         {/* ── DEUTUNG (editorial) ── */}
         <Section title="Deine Deutung" sub="Dein Bild in Worten.">
-          <div className="relative overflow-hidden rounded-card bg-glasswash p-5 shadow-[inset_0_0_0_1px_rgba(120,150,255,0.16)] lg:p-8">
-            <span aria-hidden className="pointer-events-none absolute -right-24 -top-28 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(120,150,255,0.13)_0%,transparent_68%)]" />
+          <div className="relative overflow-hidden rounded-card bg-glasswash p-5 shadow-[inset_0_0_0_1px_rgba(var(--rgb-iris),0.16)] lg:p-8">
+            <span aria-hidden className="pointer-events-none absolute -right-24 -top-28 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(var(--rgb-iris),0.13)_0%,transparent_68%)]" />
             <span aria-hidden className="pointer-events-none absolute -bottom-28 -left-24 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(32,240,208,0.07)_0%,transparent_68%)]" />
             <div className="relative">
               {/* Regel 5: das Gesamtbild als Lede + ruhige Absätze, nie als Textwand */}
@@ -627,7 +627,7 @@ function PlanetCard({ p, on, onPick }: { p: (typeof CHART)[number]; on: boolean;
 function Bars({ title, labels, values, total, colors }: { title: string; labels: string[]; values: number[]; total: number; colors: string[] }) {
   return (
     <div className="relative overflow-hidden rounded-card p-5 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.13)]" style={{ background: "linear-gradient(180deg,#16161F 0%,#12121D 100%)" }}>
-      <span aria-hidden className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(120,150,255,0.12)_0%,transparent_68%)]" />
+      <span aria-hidden className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(var(--rgb-iris),0.12)_0%,transparent_68%)]" />
       <div className="vela-label relative mb-3.5">{title}</div>
       <div className="relative space-y-2.5">
         {labels.map((l, i) => (

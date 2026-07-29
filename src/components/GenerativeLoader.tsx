@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 /**
  * A tasteful "content is being written by Vela" state — for every place a
@@ -10,7 +10,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
  */
 export function GenerativeLoader({
   glyph = "✦",
-  accent = "#7896FF",
+  accent = "rgb(var(--rgb-iris))",
   messages,
   widths = [100, 94, 97, 86, 72],
 }: {

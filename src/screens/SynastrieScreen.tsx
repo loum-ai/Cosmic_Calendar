@@ -19,7 +19,7 @@ const CATEGORIES = [
   { key: "partner", label: "Partner", color: "#ff8fb0", glyph: "♥" },
   { key: "familie", label: "Familie", color: "#f8c050", glyph: "☖" },
   { key: "freund", label: "Freund", color: "#20F0D0", glyph: "✶" },
-  { key: "beruflich", label: "Beruflich", color: "#7896FF", glyph: "◇" },
+  { key: "beruflich", label: "Beruflich", color: "#5599FF", glyph: "◇" },
 ] as const;
 
 interface Person { name: string; cat: string; planets: Planet[] }
@@ -53,7 +53,7 @@ function ZweiBilder({ accent, glyph, partner }: { accent: string; glyph: string;
       <span
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-1/2 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{ background: `radial-gradient(circle, rgba(120,150,255,0.16) 0%, ${accent}14 42%, transparent 70%)`, mixBlendMode: "screen" }}
+        style={{ background: `radial-gradient(circle, rgba(var(--rgb-iris),0.16) 0%, ${accent}14 42%, transparent 70%)`, mixBlendMode: "screen" }}
       />
       <div className="relative w-[124px] shrink-0 opacity-90">
         <ChartWheel />
@@ -119,12 +119,12 @@ Deute DIESEN einen Kontakt für die Beziehung der beiden — 3–4 kurze Sätze,
         </span>
       ) : (
         <span aria-hidden className="pointer-events-none absolute left-0 top-0 h-32 w-32 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(120,150,255,0.14) 0%, transparent 70%)" }} />
+          style={{ background: "radial-gradient(circle, rgba(var(--rgb-iris),0.14) 0%, transparent 70%)" }} />
       )}
       {/* Glyphen-Paar: das Thema (links) trifft auf die Beziehungsart (rechts). */}
       <span aria-hidden className="relative mt-0.5 flex shrink-0 items-center">
         <span className="vela-glyph flex h-9 w-9 items-center justify-center rounded-full text-[15px] text-lilac"
-          style={{ background: "#191826", boxShadow: "inset 0 0 0 1px rgba(120,150,255,0.38)" }}>{t.glyph}</span>
+          style={{ background: "#191826", boxShadow: "inset 0 0 0 1px rgba(var(--rgb-iris),0.38)" }}>{t.glyph}</span>
         <span className="vela-glyph -ml-2.5 flex h-9 w-9 items-center justify-center rounded-full text-[15px]"
           style={{ background: "#14131E", boxShadow: `inset 0 0 0 1px ${m.color}55`, color: m.color }}>{m.glyph}</span>
       </span>
@@ -215,7 +215,7 @@ export function SynastrieScreen() {
           })}
           <button onClick={() => setAdding(true)}
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-lilac transition active:scale-90"
-            style={{ background: INK, boxShadow: "inset 0 0 0 1px rgba(120,150,255,0.34)" }}>
+            style={{ background: INK, boxShadow: "inset 0 0 0 1px rgba(var(--rgb-iris),0.34)" }}>
             <Plus className="h-4 w-4" />
           </button>
         </div>
@@ -302,7 +302,7 @@ export function SynastrieScreen() {
           <div className="relative overflow-hidden rounded-[20px] px-5 py-8 text-center"
             style={{ background: INK_HERO, boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.13), inset 0 1px 0 rgba(255,255,255,0.05)" }}>
             <span aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 -translate-y-1/3 rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(120,150,255,0.20) 0%, rgba(120,150,255,0.06) 46%, transparent 70%)" }} />
+              style={{ background: "radial-gradient(circle, rgba(var(--rgb-iris),0.20) 0%, rgba(var(--rgb-iris),0.06) 46%, transparent 70%)" }} />
             <div className="relative">
               <div className="flex items-center justify-center">
                 <OrbImage size={64} float={false} className="-mr-4" />

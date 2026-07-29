@@ -7,10 +7,10 @@ export const COLORS = {
   space2: "#1A1829",
   ink: "#F8F7F2",
   inkSoft: "rgba(238,245,248,0.80)",
-  violet: "#7896FF",
+  violet: "#A78BFA",
   cyan: "#20F0D0",
   mint: "#20F0D0",
-  lilac: "#97B5FF",
+  lilac: "#C4B5FD",
   mintSoft: "#7defd6",
   azure: "#5599FF",
   solar: "#FFAC89",
@@ -18,7 +18,7 @@ export const COLORS = {
 
 /* Aspekt-Töne (cinematic-Konzept): Fluss = mystic, Spannung = solar */
 export const TONE_RGB = {
-  iris: "120,150,255",
+  iris: "167,139,250",
   mystic: "32,240,208",
   solar: "255,172,137",
   azure: "85,153,255",

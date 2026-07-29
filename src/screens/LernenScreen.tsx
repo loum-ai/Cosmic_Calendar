@@ -30,7 +30,7 @@ const CATS = [
 const INK = "linear-gradient(180deg,#16161F 0%,#12121D 100%)";
 const INK_HERO = "linear-gradient(180deg,#201D2C 0%,#1B1926 55%,#17141F 100%)";
 const HAIR = "inset 0 0 0 1px rgba(255,255,255,0.13)";
-const HAIR_IRIS = "inset 0 0 0 1px rgba(120,150,255,0.42)";
+const HAIR_IRIS = "inset 0 0 0 1px rgba(var(--rgb-iris),0.42)";
 
 const EYEBROW = "font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3";
 /* Karten-Titel: Cinzel Regular, FLACH, VERSALIEN — nie kursiv, nie bold. */
@@ -121,12 +121,12 @@ export function LernenScreen() {
           beim eigenen Sonnenzeichen; das Rad unten dreht durch alle zwölf. */}
       <button
         onClick={() => setPortal(true)}
-        className="group relative mt-7 flex w-full items-center gap-4 overflow-hidden rounded-[16px] p-5 text-left transition-shadow duration-200 hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.42)]"
+        className="group relative mt-7 flex w-full items-center gap-4 overflow-hidden rounded-[16px] p-5 text-left transition-shadow duration-200 hover:shadow-[inset_0_0_0_1px_rgba(var(--rgb-iris),0.42)]"
         style={{ background: INK, boxShadow: HAIR }}
       >
         <span aria-hidden className="pointer-events-none absolute -right-3 -top-9 font-glyph text-[120px] leading-none text-lilac opacity-[0.1]">{SG[sunSign]}</span>
-        <span aria-hidden className="pointer-events-none absolute -bottom-20 left-6 h-48 w-48 rounded-full" style={{ background: "radial-gradient(circle, rgba(120,150,255,0.16) 0%, transparent 70%)" }} />
-        <span className="vela-glyph relative inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-[24px] text-lilac" style={{ background: "rgba(120,150,255,0.12)", boxShadow: "inset 0 0 0 1px rgba(120,150,255,0.4)" }}>
+        <span aria-hidden className="pointer-events-none absolute -bottom-20 left-6 h-48 w-48 rounded-full" style={{ background: "radial-gradient(circle, rgba(var(--rgb-iris),0.16) 0%, transparent 70%)" }} />
+        <span className="vela-glyph relative inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-[24px] text-lilac" style={{ background: "rgba(var(--rgb-iris),0.12)", boxShadow: "inset 0 0 0 1px rgba(var(--rgb-iris),0.4)" }}>
           {SG[sunSign]}
         </span>
         <span className="relative min-w-0 flex-1">
@@ -141,10 +141,10 @@ export function LernenScreen() {
         {items.map((it) => (
           <Explainable key={it.title} sheet={it.sheet} glow={false}>
             <div
-              className="group relative flex items-center gap-3.5 overflow-hidden rounded-[16px] p-4 transition-shadow duration-200 hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.42)]"
+              className="group relative flex items-center gap-3.5 overflow-hidden rounded-[16px] p-4 transition-shadow duration-200 hover:shadow-[inset_0_0_0_1px_rgba(var(--rgb-iris),0.42)]"
               style={{ background: INK, boxShadow: HAIR }}
             >
-              <span aria-hidden className="pointer-events-none absolute -left-10 -top-12 h-32 w-32 rounded-full" style={{ background: "radial-gradient(circle, rgba(120,150,255,0.13) 0%, transparent 70%)" }} />
+              <span aria-hidden className="pointer-events-none absolute -left-10 -top-12 h-32 w-32 rounded-full" style={{ background: "radial-gradient(circle, rgba(var(--rgb-iris),0.13) 0%, transparent 70%)" }} />
               <GlyphBadge glyph={it.glyph} size={38} className="relative" />
               <div className="relative min-w-0 flex-1">
                 <div className={CARD_TITLE}>{it.title}</div>

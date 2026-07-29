@@ -285,7 +285,7 @@ function Body({ content, descriptor }: { content: SheetContent; descriptor: Shee
 
         <button
           onClick={talkToVela}
-          className="flex w-full items-center justify-center gap-2 rounded-pill bg-card px-4 py-3.5 font-display text-[13px] font-semibold text-lilac shadow-[inset_0_0_0_1px_rgba(120,150,255,0.32)] transition hover:bg-surface-2 active:scale-[0.99]"
+          className="flex w-full items-center justify-center gap-2 rounded-pill bg-card px-4 py-3.5 font-display text-[13px] font-semibold text-lilac shadow-[inset_0_0_0_1px_rgba(var(--rgb-iris),0.32)] transition hover:bg-surface-2 active:scale-[0.99]"
         >
           <Sparkles className="h-4 w-4" /> Mit Vela darüber sprechen
         </button>

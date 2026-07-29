@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { useApp, type TabKey } from "@/store/useApp";
 import { LAYER } from "@/lib/layers";
 import { cn } from "@/lib/utils";
@@ -87,11 +87,11 @@ export function TabBar() {
                     aria-current={active ? "page" : undefined}
                     className={cn(
                       "group relative flex items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition-colors",
-                      active ? "bg-[rgba(120,150,255,0.14)]" : "hover:bg-white/[0.05]",
+                      active ? "bg-[rgba(var(--rgb-iris),0.14)]" : "hover:bg-white/[0.05]",
                     )}
                   >
                     {active && (
-                      <span className="absolute inset-0 rounded-2xl border border-[rgba(120,150,255,0.45)] shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]" />
+                      <span className="absolute inset-0 rounded-2xl border border-[rgba(var(--rgb-iris),0.45)] shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]" />
                     )}
                     <Icon
                       className={cn(
@@ -103,7 +103,7 @@ export function TabBar() {
                     <span
                       className={cn(
                         "relative font-body text-[15px] font-medium tracking-wide",
-                        active ? "text-[#97B5FF]" : "text-[rgba(226,236,242,0.82)]",
+                        active ? "text-[color:rgb(var(--rgb-iris))]" : "text-[rgba(226,236,242,0.82)]",
                       )}
                     >
                       {label}

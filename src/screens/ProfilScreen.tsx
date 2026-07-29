@@ -114,7 +114,7 @@ export function ProfilScreen() {
       {/* Kopf (Konzept ProfilScreen): Orb mit Puls-Halo, Name, Trio, Status */}
       <div className="mt-2 flex flex-col items-center gap-2 text-center">
         <span className="relative inline-flex">
-          <span aria-hidden className="vela-orb-halo pointer-events-none absolute -inset-5 rounded-full" style={{ background: "radial-gradient(circle, rgba(120,150,255,.55), transparent 62%)", mixBlendMode: "plus-lighter" }} />
+          <span aria-hidden className="vela-orb-halo pointer-events-none absolute -inset-5 rounded-full" style={{ background: "radial-gradient(circle, rgba(var(--rgb-iris),.55), transparent 62%)", mixBlendMode: "plus-lighter" }} />
           <OrbImage size={104} float={false} />
         </span>
         <h1 className="mt-1 font-cinzel text-[26px] font-normal uppercase leading-[1.08] tracking-[0.02em] text-txt">{PROFILE.name}</h1>
@@ -274,7 +274,7 @@ export function ProfilScreen() {
       {!viewer && (
         <button
           onClick={() => { window.location.hash = "#/admin"; }}
-          className="vela-card-soft mt-6 flex w-full items-center justify-between px-4 py-3.5 text-left transition hover:shadow-[inset_0_0_0_1px_rgba(120,150,255,0.35)]"
+          className="vela-card-soft mt-6 flex w-full items-center justify-between px-4 py-3.5 text-left transition hover:shadow-[inset_0_0_0_1px_rgba(var(--rgb-iris),0.35)]"
         >
           <span className="flex items-center gap-2.5">
             <ShieldCheck className="h-4 w-4 text-lilac" />
