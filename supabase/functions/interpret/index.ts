@@ -475,12 +475,25 @@ Deno.serve(async (req) => {
       // darf eine vorhandene, echte Deutung NICHT durch die Notfall-Schablone
       // ersetzen. Vorher wurde erst gelöscht und dann eingefügt — wer schon
       // eine gute Deutung hatte, verlor sie bei jedem misslungenen Neulauf.
-      if (usedFallback) {
+      // SCHUTZ 2 (nach dem Befund vom 29.07.): Ein LEERES Portrait darf nicht
+      // veröffentlicht werden. Der Schutz oben prüft nur, ob die Notfall-
+      // Schablone einsprang — nicht, ob überhaupt Text herauskam. Zwei Wege
+      // führen an ihm vorbei: ohne API-Schlüssel setzt Zeile 472 das Portrait
+      // stumm auf "", und generatePortrait kann leer zurückkommen, ohne dass
+      // usedFallback gesetzt wird.
+      //
+      // Warum das teuer ist: ThemenHub.tsx:396 rendert bei leerem Portrait
+      // `null`. Der Abschnitt "Dein Portrait" verschwindet dann einfach —
+      // ohne Meldung. Die Kundin sieht nicht, dass etwas fehlt; sie hält die
+      // Rechenwerte darunter für das Produkt. Im Cockpit steht "published".
+      const portraitLeer = !interpretation.portrait?.trim();
+
+      if (usedFallback || portraitLeer) {
         const { data: alt } = await svc
           .from("interpretations").select("id, model").eq("client_id", client_id).eq("kind", "natal").maybeSingle();
         if (alt && alt.model !== "basis-komposition") {
           return json({
-            error: "generation_failed",
+            error: portraitLeer && !usedFallback ? "portrait_leer" : "generation_failed",
             hinweis: "Die Erzeugung ist fehlgeschlagen. Die vorhandene Deutung bleibt unangetastet — bitte erneut versuchen.",
             ai_error: res.error ?? null,
           }, 502);
@@ -494,7 +507,8 @@ Deno.serve(async (req) => {
       // keine ältere Deutung existierte, ging er als "published" durch.
       // Sie wird als Entwurf abgelegt, damit im Cockpit sichtbar bleibt, was
       // schiefging — aber der Klienten-Link liefert sie nicht aus.
-      const status = publish === false || usedFallback ? "draft" : "published";
+      // portraitLeer sperrt mit: eine Deutung ohne Portrait ist keine Deutung.
+      const status = publish === false || usedFallback || portraitLeer ? "draft" : "published";
       const row = {
         client_id, kind: "natal", status, model: usedModel, temperature: 0.55,
         facts, draft: interpretation, published_at: status === "published" ? new Date().toISOString() : null,
@@ -502,7 +516,7 @@ Deno.serve(async (req) => {
       await svc.from("interpretations").delete().eq("client_id", client_id).eq("kind", "natal");
       const { error } = await svc.from("interpretations").insert(row);
       if (error) return json({ error: error.message }, 500);
-      return json({ ok: true, stored: true, status, model: usedModel, portrait: !!interpretation.portrait, grounded: !!wissen, fallback: usedFallback, ai_error: usedFallback ? (res.error ?? null) : null, interpretation });
+      return json({ ok: true, stored: true, status, model: usedModel, portrait: !portraitLeer, portrait_leer: portraitLeer, grounded: !!wissen, fallback: usedFallback, ai_error: usedFallback ? (res.error ?? null) : null, interpretation });
     }
 
     const facts = body.facts;
