@@ -8,6 +8,7 @@ import { Reveal } from "@/components/Reveal";
 import { resolveSheet, type SheetDescriptor } from "@/lib/sheets";
 import { CHART, ASC, PROFILE, SN, THEME, signName, computeAspects, IS_DEMO } from "@/lib/data";
 import { ASPECT_TEXT } from "@/lib/readings";
+import { ELEMENT_COLORS, MODE_COLORS, PLANET_COLORS, PLANET_FALLBACK } from "@/lib/tokens";
 import { aiSummary, aiAspect, aiSign } from "@/lib/interpret";
 import { chartPatterns, type Pattern } from "@/lib/patterns";
 import { PLANET_PHOTO, PLANET_GLOW, PLANET_SCALE } from "@/lib/planetPhotos";
@@ -15,7 +16,7 @@ import { useApp } from "@/store/useApp";
 import { cardSurface } from "@/components/VelaCard";
 
 const KIND_LABEL: Record<string, string> = { muster: "Aspektmuster", fokus: "Fokus", balance: "Balance", rhythmus: "Rhythmus" };
-const KIND_COL: Record<string, string> = { muster: "#c9bcff", fokus: "#ffce6e", balance: "#46e8c4", rhythmus: "#9db6ff" };
+const KIND_COL: Record<string, string> = { muster: "#A78BFA", fokus: "#E8E5F2", balance: "#72C4FF", rhythmus: "#6E52D8" };
 
 /** Bricht einen Fließtext in ruhige Absätze: erster Satz als Lede, Rest in
  *  2–3-Satz-Blöcken. Rein darstellend — der Text selbst bleibt unangetastet. */
@@ -82,7 +83,7 @@ function PatternCard({ p, lead = false }: { p: Pattern; lead?: boolean }) {
         </div>
         <div className="flex items-start justify-between gap-3">
           {/* … and the headline says what it MEANS */}
-          <h3 className={`font-cinzel font-normal uppercase tracking-[0.02em] text-txt ${lead ? "text-[22px] leading-[1.24] lg:text-[24px]" : "text-[17px] leading-[1.3]"}`}>{p.human}</h3>
+          <h3 className={`font-body font-semibold text-txt ${lead ? "text-h4 leading-[1.24] lg:text-[24px]" : "text-[17px] leading-[1.3]"}`}>{p.human}</h3>
           <ChevronDown className={`mt-1.5 h-5 w-5 shrink-0 text-txt-3 transition-transform duration-300 ${open ? "rotate-180" : ""}`} />
         </div>
         {/* collapsed: a single calm teaser line — no wall of text */}
@@ -128,12 +129,7 @@ function PatternCard({ p, lead = false }: { p: Pattern; lead?: boolean }) {
   );
 }
 
-const COL: Record<string, string> = {
-  sun: "#ffce6e", moon: "#d7e3ff", mercury: "#8fd0e6", venus: "#46e8c4", mars: "#ff6a52",
-  jupiter: "#ffce5e", saturn: "#cda6ff", uranus: "#79e6d6", neptune: "#9db6ff", pluto: "#d39aea",
-  chiron: "#8fd0ff", lilith: "#e3a8d6", asc: "#c9b6ff",
-};
-const col = (k: string) => COL[k] ?? "#cbb9ff";
+const col = (k: string) => PLANET_COLORS[k] ?? PLANET_FALLBACK;
 
 // meaning verbs for the signature headline — what the connection DOES
 const SIG_VERB: Record<string, string> = {
@@ -151,9 +147,9 @@ const PLANET_GROUPS: { label: string; keys: string[] }[] = [
   { label: "Weitere Punkte", keys: ["chiron", "lilith"] },
 ];
 const ELEM = ["Feuer", "Erde", "Luft", "Wasser"];
-const ELEM_COL = ["#ff6a52", "#46e8c4", "#8fd0e6", "#9db6ff"];
+const ELEM_COL = ELEMENT_COLORS;
 const MODE = ["kardinal", "fix", "veränderlich"];
-const MODE_COL = ["#cda6ff", "#ffce6e", "#79e6d6"];
+const MODE_COL = MODE_COLORS;
 
 function balance() {
   const e = [0, 0, 0, 0];
@@ -261,7 +257,7 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
               {viewer ? "Dein Geburtsbild" : "Geburtsbild"}
               {!viewer && IS_DEMO && <span className="rounded-pill border border-line px-2 py-0.5 font-body text-[9px] tracking-[0.12em] text-txt-3">BEISPIEL</span>}
             </div>
-            <h1 className="mt-1.5 truncate font-cinzel text-[25px] font-normal uppercase leading-tight tracking-[0.02em] text-txt lg:text-[31px]">
+            <h1 className="mt-1.5 truncate font-body text-h3 font-semibold leading-tight text-txt lg:text-[31px]">
               {viewer ? `Willkommen, ${String(PROFILE.name).split(" ")[0]}` : PROFILE.name}
             </h1>
           </div>
@@ -326,7 +322,7 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
                 {/* meaning-first (canonical): the aspect jargon is the eyebrow … */}
                 <div className="vela-label">Deine Signatur · {domElem}-betont · {tightest.A.name} {tightest.def.type} {tightest.B.name} · {tightest.orb.toFixed(1)}°</div>
                 {/* … and the headline says what it MEANS for this person */}
-                <h2 className="mt-4 font-cinzel text-[27px] font-normal uppercase leading-[1.22] tracking-[0.01em] text-txt lg:text-[37px]">
+                <h2 className="mt-4 font-body text-h3 font-semibold leading-[1.22] tracking-[0.01em] text-txt lg:text-[37px]">
                   <span style={{ color: col(tightest.A.key) }}>{THEME[tightest.A.key] ?? tightest.A.name}</span>
                   <span className="text-txt-2"> und </span>
                   <span style={{ color: col(tightest.B.key) }}>{(THEME[tightest.B.key] ?? tightest.B.name).charAt(0).toLowerCase() + (THEME[tightest.B.key] ?? tightest.B.name).slice(1)}</span>
@@ -382,7 +378,7 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
                   <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-glyph text-[19px]" style={{ color: b.color, background: `radial-gradient(circle, ${b.color}2b, transparent 72%)`, boxShadow: `0 0 20px -6px ${b.color}66`, border: `1px solid ${b.color}33` }}>{b.glyph}</span>
                 </div>
                 {/* big value = the sign */}
-                <div className="relative mt-3.5 font-cinzel text-[29px] font-normal uppercase leading-[1.04] tracking-[0.02em] text-txt">{b.sign}</div>
+                <div className="relative mt-3.5 font-cinzel text-h2 font-normal uppercase leading-[1.04] tracking-[0.02em] text-txt">{b.sign}</div>
                 {/* decorative sparkline in the card's accent */}
                 <svg className="relative mt-3 h-7 w-full" viewBox="0 0 120 28" preserveAspectRatio="none" fill="none" aria-hidden>
                   <path d="M1 22 C 18 22, 24 11, 40 13 S 70 21, 90 10 S 110 5, 118 4" stroke={b.color} strokeWidth="1.5" strokeLinecap="round" opacity="0.55" />
@@ -398,8 +394,8 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
         {/* ── ASPEKTE (grouped) ── */}
         <Section title="Aspekte" hint={`${aspects.length}`} sub="Wie deine Kräfte zusammenspielen.">
           <div className="grid gap-4 lg:grid-cols-2">
-            <AspectGroup title="Im Fluss" tone="leicht & unterstützend" accent="#20F0D0" items={flow} sel={highlight} onPick={select} />
-            <AspectGroup title="Unter Spannung" tone="Reibung & Antrieb" accent="#aa5cff" items={tension} sel={highlight} onPick={select} />
+            <AspectGroup title="Im Fluss" tone="leicht & unterstützend" accent="#72C4FF" items={flow} sel={highlight} onPick={select} />
+            <AspectGroup title="Unter Spannung" tone="Reibung & Antrieb" accent="#DA8FFF" items={tension} sel={highlight} onPick={select} />
           </div>
         </Section>
 
@@ -454,7 +450,7 @@ export function ChartExplorer({ embedded = false }: { embedded?: boolean }) {
                     <button key={p.key} onClick={() => select({ kind: "planet", key: p.key })} className="group flex gap-3.5 text-left">
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl font-glyph text-[17px]" style={{ color: col(p.key), boxShadow: `inset 0 0 0 1px ${col(p.key)}44`, background: `radial-gradient(circle, ${col(p.key)}1f, transparent 74%)` }}>{p.glyph}</span>
                       <span className="min-w-0">
-                        <span className="block font-cinzel text-[13px] font-normal uppercase tracking-[0.06em] text-txt transition group-hover:text-lilac">{p.name} · {signName(p.lon)}</span>
+                        <span className="block font-body text-meta font-semibold uppercase tracking-[0.06em] text-txt transition group-hover:text-lilac">{p.name} · {signName(p.lon)}</span>
                         <span className="mt-1.5 block font-body text-[13px] leading-[1.65] text-txt-2">{t}</span>
                       </span>
                     </button>
@@ -477,7 +473,7 @@ function GeneratedReading({ sel, fallback, folded }: { sel: SheetDescriptor; fal
   if (!st) {
     return fallback ? (
       <div className="rounded-2xl border border-mint/25 bg-mint/[0.06] p-3.5">
-        <div className="mb-1.5 flex items-center gap-1.5 font-body text-[9.5px] font-medium uppercase tracking-[0.18em] text-mint"><span className="inline-block h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#20F0D0]" /> Bei dir</div>
+        <div className="mb-1.5 flex items-center gap-1.5 font-body text-[9.5px] font-medium uppercase tracking-[0.18em] text-mint"><span className="inline-block h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_6px_#72C4FF]" /> Bei dir</div>
         <p className="font-body text-[15px] font-medium leading-[1.55] text-white">{fallback}</p>
       </div>
     ) : null;
@@ -513,7 +509,7 @@ function AspectGroup({ title, tone, accent, items, sel, onPick }: { title: strin
       {/* innerer Ton der Gruppe (Fluss = mystic, Spannung = violett) */}
       <span aria-hidden className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full" style={{ background: `radial-gradient(circle, ${accent}1c 0%, ${accent}08 44%, transparent 70%)` }} />
       <div className="relative mb-4 flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
-        <span className="font-cinzel text-[17px] font-normal uppercase leading-tight tracking-[0.02em] text-txt sm:text-[17px]">{title}</span>
+        <span className="font-body text-body font-semibold uppercase leading-tight tracking-[0.02em] text-txt sm:text-body">{title}</span>
         <span className="font-body text-[13px] text-txt-3">{tone}</span>
       </div>
       <div className="relative space-y-1">
@@ -614,7 +610,7 @@ function PlanetCard({ p, on, onPick }: { p: (typeof CHART)[number]; on: boolean;
         {p.glyph}
       </span>
       <span className="absolute inset-x-3 bottom-2.5">
-        <span className="block font-cinzel text-[15px] font-normal uppercase leading-tight tracking-[0.05em] text-txt">{p.name}</span>
+        <span className="block font-body text-body font-semibold uppercase leading-tight tracking-[0.05em] text-txt">{p.name}</span>
         <span className="mt-1 block font-body text-[11px] text-txt-2">
           {signName(p.lon)} <span className="font-body text-[11px] text-txt-3">{deg}°</span>
         </span>
@@ -649,7 +645,7 @@ function Section({ title, hint, sub, children }: { title: string; hint?: string;
     <Reveal className="mt-16">
       <section>
         <div className="mb-4 flex items-baseline gap-3">
-          <h2 className="font-cinzel text-[25px] font-normal uppercase leading-tight tracking-[0.02em] text-txt lg:text-[32px]">{title}</h2>
+          <h2 className="font-body text-h3 font-semibold leading-tight text-txt lg:text-[32px]">{title}</h2>
           {hint && <span className="rounded-pill border border-line px-2.5 py-0.5 font-body text-[11px] text-txt-3">{hint}</span>}
         </div>
         {sub && <p className="mb-6 max-w-[62ch] font-body text-[15px] leading-relaxed text-txt-3">{sub}</p>}
@@ -693,7 +689,7 @@ function DetailView({ content, sel, onPick }: { content: NonNullable<ReturnType<
         <span className="flex h-11 w-11 items-center justify-center rounded-2xl font-glyph text-[20px]" style={{ color: content.color, boxShadow: `inset 0 0 0 1px ${content.color}3d`, background: `radial-gradient(circle, ${content.color}1f, transparent 74%)` }}>
           {content.glyph}
         </span>
-        <h3 className="font-cinzel text-[19px] font-normal uppercase leading-tight tracking-[0.02em] text-txt">{content.title}</h3>
+        <h3 className="font-body text-h5 font-semibold leading-tight text-txt">{content.title}</h3>
       </div>
 
       {endpoints && (

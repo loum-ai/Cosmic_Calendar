@@ -111,7 +111,7 @@ export function Composer() {
                     )}
                   </div>
                 )}
-                {gefragt && <div className="mb-2 font-cinzel text-[15px] font-normal uppercase leading-snug tracking-[0.02em] text-txt">{gefragt}</div>}
+                {gefragt && <div className="mb-2 font-body text-body font-semibold uppercase leading-snug tracking-[0.02em] text-txt">{gefragt}</div>}
                 <p className="whitespace-pre-line font-body text-[15px] leading-[1.65] text-txt-2">{answer}</p>
                 {/* C3 · Belege — antippbar, öffnet die jeweilige Stellung. Das
                     ist der Unterschied zu The Pattern: die Astrologie ist da,

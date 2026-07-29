@@ -211,7 +211,7 @@ export function ThemenHub() {
           <div className="pointer-events-none mx-auto mb-7 w-full max-w-[220px] drop-shadow-[0_0_28px_rgba(var(--rgb-iris),0.22)]">
             <ChartWheel />
           </div>
-          <h1 className="text-center font-cinzel text-[27px] font-normal uppercase leading-[1.16] tracking-[0.03em] text-txt lg:text-[36px]">
+          <h1 className="text-center font-body text-h3 font-semibold leading-[1.16] text-txt lg:text-[36px]">
             Was beschäftigt dich gerade, {first}?
           </h1>
           <p className="mx-auto mt-3.5 max-w-[46ch] text-center font-body text-[15px] leading-relaxed text-txt-2">
@@ -232,7 +232,7 @@ export function ThemenHub() {
                     {th.glyph}
                   </span>
                   <span className="min-w-0">
-                    <span className="block font-cinzel text-[18px] font-normal uppercase leading-tight tracking-[0.03em] text-txt">{th.label}</span>
+                    <span className="block font-body text-h5 font-semibold leading-tight text-txt">{th.label}</span>
                     <span className="mt-1 block truncate font-body text-[13px] text-txt-3">{th.teaser}</span>
                   </span>
                 </button>
@@ -259,7 +259,7 @@ export function ThemenHub() {
             <div className="min-w-0">
               <div className="vela-wordmark text-[11px]">Vela <span className="ml-2 font-body text-[9px] normal-case tracking-normal text-txt-3">Stand {__BUILD_ID__}</span></div>
               <div className="v-eyebrow mt-5">Geburts-Chart</div>
-              <h1 className="mt-1.5 font-cinzel text-[27px] font-normal uppercase leading-tight tracking-[0.06em] text-txt lg:text-[34px]">{first}</h1>
+              <h1 className="mt-1.5 font-body text-h3 font-semibold leading-tight tracking-[0.06em] text-txt lg:text-[34px]">{first}</h1>
               <div className="mt-1.5 font-body text-[11px] text-txt-3">{PROFILE.birth}</div>
             </div>
             <IridescentOrb size={44} className="mt-2" />
@@ -341,8 +341,8 @@ export function ThemenHub() {
                   </span>
                   <ChevronRight className="mt-2 h-5 w-5 text-txt-3 transition-transform group-hover:translate-x-0.5" />
                 </div>
-                <div className="relative mt-5 font-cinzel text-[21px] font-normal uppercase leading-tight tracking-[0.02em] text-txt">{t.label}</div>
-                <div className="relative mt-2 font-body text-[15px] leading-relaxed text-txt-3">{t.teaser}</div>
+                <div className="relative mt-5 font-body text-h4 font-semibold text-txt">{t.label}</div>
+                <div className="relative mt-2 font-body text-body-sm leading-relaxed text-txt-3">{t.teaser}</div>
               </button>
             </Reveal>
           ))}
@@ -356,7 +356,7 @@ export function ThemenHub() {
                 <div className="flex items-center gap-3.5">
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[rgba(var(--rgb-iris),0.10)] text-lilac" style={{ boxShadow: "inset 0 0 0 1px rgba(var(--rgb-iris),0.34)" }}><Hexagon className="h-5 w-5" strokeWidth={1.7} /></span>
                   <div>
-                    <div className="font-cinzel text-[19px] font-normal uppercase tracking-[0.02em] text-txt">Human Design</div>
+                    <div className="font-body text-h4 font-semibold text-txt">Human Design</div>
                     <div className="mt-1 font-body text-[13px] text-txt-3">Typ, Strategie, Autorität, Profil & Zentren.</div>
                   </div>
                 </div>
@@ -526,7 +526,7 @@ Jede Zeile ist EIN konkretes Erkennungszeichen, woran diese Person im echten Leb
             </span>
             <div className="min-w-0">
               <div className="v-eyebrow">Lebensthema</div>
-              <h1 className="mt-1.5 font-cinzel text-[30px] font-normal uppercase leading-[1.08] tracking-[0.035em] text-txt lg:text-[40px]">{t.label}</h1>
+              <h1 className="mt-1.5 font-cinzel text-h2 font-normal uppercase leading-[1.08] tracking-[0.035em] text-txt">{t.label}</h1>
               <p className="mt-2 font-body text-[15px] leading-relaxed text-txt-3">{t.teaser}</p>
             </div>
           </div>
@@ -709,7 +709,7 @@ function ForceCard({ it, accent, onOpen }: { it: { key: string; name: string; gl
           <span className="absolute inset-x-6 bottom-4 flex items-center gap-3.5">
             <span className="font-glyph text-[26px] leading-none" style={{ color: `rgba(${glow},.95)` }}>{it.glyph}</span>
             <span className="min-w-0">
-              <span className="block font-cinzel text-[22px] font-normal uppercase leading-tight tracking-[0.03em] text-txt">{it.name}</span>
+              <span className="block font-body text-h4 font-semibold leading-tight text-txt">{it.name}</span>
               <span className="mt-1 block font-body text-[13px] text-txt-3">{it.pos}</span>
             </span>
           </span>
@@ -718,7 +718,7 @@ function ForceCard({ it, accent, onOpen }: { it: { key: string; name: string; gl
         <div className="relative flex items-center gap-3">
           <span className="font-glyph text-[22px]" style={{ color: accent }}>{it.glyph}</span>
           <div className="min-w-0">
-            <div className="font-cinzel text-[21px] font-normal uppercase leading-tight tracking-[0.03em] text-txt">{it.name}</div>
+            <div className="font-body text-h4 font-semibold leading-tight text-txt">{it.name}</div>
             <div className="mt-1 block font-body text-[13px] text-txt-3">{it.pos}</div>
           </div>
         </div>
@@ -756,7 +756,7 @@ function ThemeSection({ title, body, loading, accent, defaultOpen }: { title: st
       style={inkSurface(accent, 0.1)}
     >
       <div className="relative flex items-center justify-between gap-3">
-        <h3 className="font-cinzel text-[19px] font-normal uppercase leading-tight tracking-[0.03em] text-txt lg:text-[21px]">{title}</h3>
+        <h3 className="font-body text-h5 font-semibold leading-tight text-txt lg:text-[21px]">{title}</h3>
         <span
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-transform duration-300"
           style={{ color: accent, background: `${accent}14`, border: `1px solid ${accent}33`, transform: open ? "rotate(90deg)" : "none" }}
@@ -874,7 +874,7 @@ function HDView({ birth }: { birth: BirthInput }) {
             </span>
             <div className="min-w-0">
               <div className="v-eyebrow">Blueprint</div>
-              <h1 className="mt-1.5 font-cinzel text-[30px] font-normal uppercase leading-[1.08] tracking-[0.035em] text-txt lg:text-[40px]">Human Design</h1>
+              <h1 className="mt-1.5 font-cinzel text-h2 font-normal uppercase leading-[1.08] tracking-[0.035em] text-txt">Human Design</h1>
               <p className="mt-2 font-body text-[15px] text-txt-3">{first} · {hd.type}</p>
             </div>
           </div>
@@ -894,7 +894,7 @@ function HDView({ birth }: { birth: BirthInput }) {
                   <div className="vela-label">{f.k}</div>
                   <Info className={`h-4 w-4 shrink-0 transition-colors ${open === i ? "text-lilac" : "text-txt-3"}`} />
                 </div>
-                <div className="mt-2.5 font-cinzel text-[20px] font-normal leading-tight tracking-[0.01em] text-txt">{f.v}</div>
+                <div className="mt-2.5 font-body text-h4 font-normal leading-tight tracking-[0.01em] text-txt">{f.v}</div>
                 <AnimatePresence initial={false}>
                   {open === i && (
                     <motion.div
@@ -1035,7 +1035,7 @@ function WasLaeuft({ onOpen }: { onOpen: () => void }) {
             <div className="font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3">
               {t.orb < 1.5 ? "sehr eng" : t.orb < 3.5 ? "eng" : "weit"} · {t.orb.toFixed(1)}°
             </div>
-            <div className="mt-1 font-cinzel text-[16px] font-normal uppercase leading-snug tracking-[0.02em] text-txt">{t.title}</div>
+            <div className="mt-1 font-body text-body font-semibold uppercase leading-snug tracking-[0.02em] text-txt">{t.title}</div>
             <div className="mt-1 font-body text-[13px] text-txt-2">Der laufende {t.tName} berührt {deinAkk(t.nName)}.</div>
           </div>
           <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-txt-3" />

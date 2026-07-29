@@ -319,7 +319,7 @@ function Cockpit({ email }: { email: string }) {
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <div className="vela-label">Vela · Studio</div>
-            <h1 className="mt-1.5 font-cinzel text-[26px] font-semibold leading-tight tracking-wide text-white sm:text-[32px]">Dein Dashboard</h1>
+            <h1 className="mt-1.5 font-body text-h3 font-semibold leading-tight tracking-wide text-white sm:text-[32px]">Dein Dashboard</h1>
             <p className="mt-2 max-w-[44ch] font-body text-[13px] leading-relaxed text-txt-3">Erstelle & verwalte die persönlichen Astro-Websites deiner Kundinnen.</p>
           </div>
           <button onClick={() => supabase.auth.signOut()} title={email} className="flex shrink-0 items-center gap-1.5 rounded-pill border border-line px-3 py-1.5 font-body text-[11px] text-txt-2">
@@ -401,7 +401,7 @@ function Cockpit({ email }: { email: string }) {
         {/* clients */}
         <section className="mt-8">
           <div className="mb-3 flex items-baseline gap-2.5">
-            <h2 className="font-cinzel text-[20px] font-semibold tracking-wide text-white">Deine Kundinnen</h2>
+            <h2 className="font-body text-h4 font-semibold tracking-wide text-white">Deine Kundinnen</h2>
             <span className="rounded-pill border border-line bg-surface px-2 py-0.5 font-mono text-[11px] text-txt-3">{clients.length}</span>
           </div>
           {clients.length === 0 ? (
@@ -440,7 +440,7 @@ function Cockpit({ email }: { email: string }) {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="vela-label">Deutung prüfen</div>
-                  <h2 className="mt-1 font-cinzel text-[22px] font-semibold text-white">{review.name}</h2>
+                  <h2 className="mt-1 font-body text-h4 font-semibold text-white">{review.name}</h2>
                 </div>
                 <button onClick={() => setReview(null)} className="-mr-1 -mt-1 flex h-8 w-8 items-center justify-center rounded-full text-txt-3 hover:text-txt"><X className="h-4 w-4" /></button>
               </div>

@@ -57,7 +57,7 @@ function SignaturCard({ p }: { p: Pattern }) {
         <span className="vela-glyph text-[13px] leading-none text-lilac">{p.glyphs.join(" ")}</span>
         <span className="font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3">Signatur</span>
       </div>
-      <h3 className="font-cinzel text-[17px] font-normal uppercase leading-[1.16] tracking-[0.02em] text-txt">{p.human}</h3>
+      <h3 className="font-body text-body font-semibold uppercase leading-[1.16] tracking-[0.02em] text-txt">{p.human}</h3>
       <p className="mt-2 line-clamp-3 font-body text-[13px] leading-[1.62] text-txt-2">{gen || p.text}</p>
     </div>
   );
@@ -117,7 +117,7 @@ export function ProfilScreen() {
           <span aria-hidden className="vela-orb-halo pointer-events-none absolute -inset-5 rounded-full" style={{ background: "radial-gradient(circle, rgba(var(--rgb-iris),.55), transparent 62%)", mixBlendMode: "plus-lighter" }} />
           <OrbImage size={104} float={false} />
         </span>
-        <h1 className="mt-1 font-cinzel text-[26px] font-normal uppercase leading-[1.08] tracking-[0.02em] text-txt">{PROFILE.name}</h1>
+        <h1 className="mt-1 font-body text-h3 font-semibold leading-[1.08] text-txt">{PROFILE.name}</h1>
         <span className="font-body text-[11px] uppercase tracking-[0.18em] text-txt-3">
           {signName(CHART[0].lon)} · {signName(CHART[1].lon)} · {signName(ASC)}
         </span>

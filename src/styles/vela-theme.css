@@ -56,7 +56,10 @@ button:hover { filter: brightness(1.1); }
 .vela-aurora-card::before {
   content: ""; position: absolute; inset: 0; border-radius: inherit;
   padding: 1px; pointer-events: none; z-index: 2;
-  background: linear-gradient(135deg, rgba(32, 240, 208, .18), rgba(var(--rgb-iris), .16) 38%, rgba(242, 98, 181, .14) 72%, rgba(255, 172, 137, .18));
+  /* Kante ohne Türkis und Rosa: moon → aura → orchid → celestial. Ein
+     Verlauf mit mehreren Tönen ist nur auf einer KANTE erlaubt, nie als
+     Fläche — deshalb bleibt er hier und verschwindet unten im Schleier. */
+  background: linear-gradient(135deg, rgba(232, 229, 242, .18), rgba(var(--rgb-iris), .16) 38%, rgba(218, 143, 255, .14) 72%, rgba(114, 196, 255, .18));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -66,7 +69,7 @@ button:hover { filter: brightness(1.1); }
   position: absolute; inset: -44px;
   background:
     radial-gradient(58% 55% at 10% -2%, rgba(255, 172, 137, .34), transparent 60%),
-    radial-gradient(52% 58% at 90% 6%, rgba(242, 98, 181, .32), transparent 62%),
+    radial-gradient(52% 58% at 90% 6%, rgba(218, 143, 255, .32), transparent 62%),
     radial-gradient(75% 70% at 52% 118%, rgba(var(--rgb-iris), .42), transparent 66%);
   filter: blur(26px); mix-blend-mode: plus-lighter; pointer-events: none;
 }

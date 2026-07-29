@@ -34,7 +34,7 @@ const HAIR_IRIS = "inset 0 0 0 1px rgba(var(--rgb-iris),0.42)";
 
 const EYEBROW = "font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3";
 /* Karten-Titel: Cinzel Regular, FLACH, VERSALIEN — nie kursiv, nie bold. */
-const CARD_TITLE = "font-cinzel text-[13px] font-normal uppercase leading-tight tracking-[0.02em] text-txt";
+const CARD_TITLE = "font-body text-meta font-semibold uppercase leading-tight tracking-[0.02em] text-txt";
 
 function itemsFor(cat: string): LearnItem[] {
   switch (cat) {
@@ -83,7 +83,7 @@ export function LernenScreen() {
           <span aria-hidden className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 rounded-full" style={{ background: `radial-gradient(circle, ${featured.c}26 0%, transparent 70%)` }} />
           <div className="relative">
             <div className={EYEBROW}>Konzept des Tages</div>
-            <h2 className="mt-3 font-cinzel text-[clamp(24px,5.5vw,32px)] font-normal uppercase leading-[1.1] tracking-[-0.01em] text-txt">
+            <h2 className="mt-3 font-cinzel text-h2 font-normal uppercase leading-[1.1] tracking-[-0.01em] text-txt">
               {featured.type}
             </h2>
             <div className={cn(EYEBROW, "mt-2")} style={{ color: featured.c, opacity: 0.85 }}>{featured.nat}</div>
@@ -130,7 +130,7 @@ export function LernenScreen() {
           {SG[sunSign]}
         </span>
         <span className="relative min-w-0 flex-1">
-          <span className="block font-cinzel text-[18px] font-normal uppercase leading-tight tracking-[0.01em] text-txt">Zeichen-Portal</span>
+          <span className="block font-body text-h5 font-semibold leading-tight tracking-[0.01em] text-txt">Zeichen-Portal</span>
           <span className="mt-1 block font-body text-[13px] leading-relaxed text-txt-3">Alle zwölf Zeichen als Bühne — mit deinem Einfluss darin.</span>
         </span>
         <ChevronRight className="relative h-5 w-5 shrink-0 text-txt-3 transition-transform group-hover:translate-x-0.5" />

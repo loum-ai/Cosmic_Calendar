@@ -89,7 +89,7 @@ export function VelaCard({
           </div>
         )}
         {title && (
-          <div className={`font-cinzel font-normal uppercase tracking-[0.02em] text-txt ${size === "lead" ? "text-[22px] leading-[1.24]" : size === "row" ? "text-[17px] leading-[1.3]" : "text-[15px] leading-[1.3]"}`}>
+          <div className={`font-body font-semibold text-txt ${size === "lead" ? "text-h4 leading-[1.24]" : size === "row" ? "text-[17px] leading-[1.3]" : "text-[15px] leading-[1.3]"}`}>
             {title}
           </div>
         )}

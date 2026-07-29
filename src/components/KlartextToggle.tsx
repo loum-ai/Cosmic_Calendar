@@ -23,7 +23,7 @@ export function KlartextToggle() {
       <span
         className={cn(
           "h-1.5 w-1.5 rounded-full transition",
-          klartext ? "bg-mint shadow-[0_0_6px_#20F0D0]" : "bg-[rgba(var(--rgb-iris),0.9)]",
+          klartext ? "bg-mint shadow-[0_0_6px_#72C4FF]" : "bg-[rgba(var(--rgb-iris),0.9)]",
         )}
       />
       Klartext

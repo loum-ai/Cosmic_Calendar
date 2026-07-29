@@ -180,7 +180,7 @@ export function SignPortal({ initial, onClose }: { initial: number; onClose: () 
         </div>
 
         <div key={"t" + sign} className="vela-fadeup px-8 text-center">
-          <h1 className="font-cinzel text-[38px] font-normal uppercase leading-none text-white" style={{ letterSpacing: ".16em", paddingLeft: ".16em", textShadow: "0 0 32px rgba(120,100,220,.45)" }}>
+          <h1 className="font-cinzel text-h1 font-normal uppercase leading-none text-white" style={{ letterSpacing: ".16em", paddingLeft: ".16em", textShadow: "0 0 32px rgba(120,100,220,.45)" }}>
             {EN[sign]}
           </h1>
           <div className="mt-2.5 font-body text-[11px] uppercase tracking-[4.5px] text-white/[0.78]">{META[sign]}</div>

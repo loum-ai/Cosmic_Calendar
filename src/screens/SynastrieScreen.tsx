@@ -16,9 +16,9 @@ import { shortHash } from "@/lib/factsContext";
 import { searchPlace, type Place } from "@/lib/geocode";
 
 const CATEGORIES = [
-  { key: "partner", label: "Partner", color: "#ff8fb0", glyph: "♥" },
+  { key: "partner", label: "Partner", color: "#DA8FFF", glyph: "♥" },
   { key: "familie", label: "Familie", color: "#f8c050", glyph: "☖" },
-  { key: "freund", label: "Freund", color: "#20F0D0", glyph: "✶" },
+  { key: "freund", label: "Freund", color: "#72C4FF", glyph: "✶" },
   { key: "beruflich", label: "Beruflich", color: "#5599FF", glyph: "◇" },
 ] as const;
 
@@ -36,7 +36,7 @@ const TILE =
 /* Eyebrow: uppercase, weit gesperrt, klein, gedämpft — nie Akzentfarbe. */
 const EYEBROW = "font-body text-[11px] font-medium uppercase tracking-[0.18em] text-txt-3";
 /* Karten-Titel: Cinzel Regular, FLACH, VERSALIEN — nie kursiv, nie bold. */
-const CARD_TITLE = "font-cinzel text-[15px] font-normal uppercase leading-tight tracking-[0.01em] text-txt";
+const CARD_TITLE = "font-body text-body font-semibold uppercase leading-tight tracking-[0.01em] text-txt";
 
 const inputCls =
   "w-full rounded-xl border border-line bg-[#12121D] px-3.5 py-2.5 font-body text-sm text-txt outline-none transition-colors focus:border-lilac";
@@ -309,7 +309,7 @@ export function SynastrieScreen() {
                 <OrbImage size={64} float={false} className="-ml-4" />
               </div>
               <div className={cn(EYEBROW, "mt-5")}>Resonanz</div>
-              <div className="mt-1 font-cinzel text-[58px] font-normal leading-none tracking-[-0.01em] vela-iris-text">{syn.resonance}%</div>
+              <div className="mt-1 font-cinzel text-display font-normal leading-none tracking-[-0.01em] vela-iris-text">{syn.resonance}%</div>
 
               {/* die Zahl ist belegt — hier steht, woraus sie stammt */}
               <p className="mx-auto mt-4 max-w-[38ch] font-body text-[13px] leading-relaxed text-txt-2">

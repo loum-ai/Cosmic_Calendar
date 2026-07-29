@@ -123,7 +123,7 @@ export function Onboarding() {
 
           <div className="flex items-center gap-2.5 pr-8">
             <Sparkles className="h-5 w-5 text-lilac" />
-            <DialogPrimitive.Title className="font-cinzel text-[24px] font-semibold leading-[1.1] tracking-wide text-white">
+            <DialogPrimitive.Title className="font-body text-h3 font-semibold leading-[1.1] tracking-wide text-white">
               Eigenes Chart berechnen
             </DialogPrimitive.Title>
           </div>
@@ -217,7 +217,7 @@ export function Onboarding() {
               )}
             </div>
 
-            {err && <p className="font-body text-[13px] text-[#ff8fb0]">{err}</p>}
+            {err && <p className="font-body text-[13px] text-[#DA8FFF]">{err}</p>}
 
             <button
               onClick={submit}

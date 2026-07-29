@@ -2,11 +2,16 @@ import type { MouseEvent as ReactMouseEvent } from "react";
 import { useApp } from "@/store/useApp";
 import type { SheetDescriptor } from "@/lib/sheets";
 import { ASC, CHART, CUSPS, MC, NODES, SG, computeAspects } from "@/lib/data";
+import { ASPECT_MIN_OPACITY, PLANET_COLORS, PLANET_FALLBACK, istPunkt } from "@/lib/tokens";
 
 /**
- * Birth-chart wheel — a legible instrument. Crisp zodiac ring, readable
- * degree scale, colour-coded planets (each its own hue) so nothing blends
- * into the dark stage. Tapping a planet / node / aspect drives the panel.
+ * Geburtschart — ein lesbares Instrument. Klarer Tierkreisring, lesbare
+ * Gradskala. Ein Tipp auf Planet, Knoten oder Aspekt steuert das Panel.
+ *
+ * Farbe kodiert die GRUPPE, nicht den einzelnen Planeten — den unterscheidet
+ * sein Glyph. Vorher hatte jeder Körper einen eigenen Ton; dreizehn Töne
+ * lassen sich bei 24px Durchmesser nicht sicher trennen, und die Palette lag
+ * ausserhalb von loums Farbwelt. Siehe docs/VELA-LOUM-FARBEN.md.
  */
 const SIZE = 320;
 const C = SIZE / 2;
@@ -14,24 +19,7 @@ const C = SIZE / 2;
 const INK = "#f3eeff";
 const DOT = "#0a0814";
 
-// per-body hue — bright enough to read on the near-black stage
-const PCOL: Record<string, string> = {
-  sun: "#ffce6e",
-  moon: "#d7e3ff",
-  mercury: "#8fd0e6",
-  venus: "#46e8c4",
-  mars: "#ff6a52",
-  jupiter: "#ffce5e",
-  saturn: "#cda6ff",
-  uranus: "#79e6d6",
-  neptune: "#9db6ff",
-  pluto: "#d39aea",
-  chiron: "#8fd0ff",
-  lilith: "#e3a8d6",
-  node_n: "#a9c8ff",
-  node_s: "#a9c8ff",
-};
-const colOf = (k: string) => PCOL[k] ?? "#cbb9ff";
+const colOf = (k: string) => PLANET_COLORS[k] ?? PLANET_FALLBACK;
 
 function pt(lonDeg: number, r: number): [number, number] {
   const a = ((180 - lonDeg) * Math.PI) / 180;
@@ -158,7 +146,7 @@ export function ChartWheel({ onPick, highlight }: { onPick?: (d: SheetDescriptor
       ].map((m) => {
         const [x, y] = pt(m.lon, 154);
         return (
-          <text key={m.l} x={x} y={y} fill="#d8caff" fontSize={9.5} fontWeight={700} textAnchor="middle" dominantBaseline="central" fontFamily="'Space Mono',ui-monospace,monospace">
+          <text key={m.l} x={x} y={y} fill="#E8E5F2" fontSize={9.5} fontWeight={700} textAnchor="middle" dominantBaseline="central" fontFamily="'Space Mono',ui-monospace,monospace">
             {m.l}
           </text>
         );
@@ -173,14 +161,19 @@ export function ChartWheel({ onPick, highlight }: { onPick?: (d: SheetDescriptor
           <g key={a.key} style={{ cursor: "pointer" }} onClick={() => pick({ kind: "aspect", key: a.key })}>
             {/* fat invisible hit target */}
             <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#000" strokeOpacity={0} strokeWidth={16} style={{ pointerEvents: "all" }} />
+            {/* Deckkraft 0,55 statt 0,28: darunter reissen alle Linien WCAG
+                1.4.11 (3:1 gefordert, 0,28 ergab 1,44:1). Strichart und
+                Strichstärke kommen aus ASPDEF und tragen jetzt die
+                Unterscheidung mit — Farbe allein sagt nur Fluss oder Spannung. */}
             <line
               x1={x1}
               y1={y1}
               x2={x2}
               y2={y2}
               stroke={a.def.c}
-              strokeOpacity={on ? 1 : 0.28}
-              strokeWidth={on ? 1.8 : 0.9}
+              strokeOpacity={on ? 1 : ASPECT_MIN_OPACITY}
+              strokeWidth={on ? a.def.w * 1.6 : a.def.w}
+              strokeDasharray={a.def.dash || undefined}
               style={{ pointerEvents: "none", filter: on ? `drop-shadow(0 0 5px ${a.def.c})` : undefined }}
             />
           </g>
@@ -195,7 +188,8 @@ export function ChartWheel({ onPick, highlight }: { onPick?: (d: SheetDescriptor
         return (
           <g key={n.key} data-point={`node:${n.key}`} style={{ cursor: "pointer" }} onClick={pickNearest}>
             <circle cx={x} cy={y} r={19} fill="#000" fillOpacity={0} style={{ pointerEvents: "all" }} />
-            <circle cx={x} cy={y} r={on ? 13 : 11} fill={DOT} stroke={col} strokeWidth={on ? 2 : 1.4} style={{ pointerEvents: "none", filter: on ? `drop-shadow(0 0 6px ${col})` : undefined }} />
+            {/* Knoten sind rechnerische Punkte, keine Körper: offener Ring. */}
+            <circle cx={x} cy={y} r={on ? 13 : 11} fill="none" stroke={col} strokeWidth={on ? 2 : 1.5} style={{ pointerEvents: "none", filter: on ? `drop-shadow(0 0 6px ${col})` : undefined }} />
             <text x={x} y={y} fill={col} fontSize={11} textAnchor="middle" dominantBaseline="central" fontFamily='"Noto Sans Symbols","Segoe UI Symbol",system-ui,sans-serif'>
               {n.glyph}
             </text>
@@ -212,7 +206,17 @@ export function ChartWheel({ onPick, highlight }: { onPick?: (d: SheetDescriptor
         return (
           <g key={p.key} data-point={`planet:${p.key}`} style={{ cursor: "pointer" }} onClick={pickNearest}>
             <circle cx={x} cy={y} r={20} fill="#000" fillOpacity={0} style={{ pointerEvents: "all" }} />
-            <circle cx={x} cy={y} r={on ? 14 : 12} fill={DOT} stroke={col} strokeWidth={on ? 2.4 : 1.6} style={{ pointerEvents: "none", filter: `drop-shadow(0 0 ${on ? 7 : 2.5}px ${col})` }} />
+            {/* Dritte Unterscheidungsachse: Planeten gefüllt, rechnerische
+                Punkte (Chiron, Lilith, AC) als offener Ring. */}
+            <circle
+              cx={x}
+              cy={y}
+              r={on ? 14 : 12}
+              fill={istPunkt(p.key) ? "none" : DOT}
+              stroke={col}
+              strokeWidth={on ? 2.4 : istPunkt(p.key) ? 1.5 : 1.6}
+              style={{ pointerEvents: "none", filter: `drop-shadow(0 0 ${on ? 7 : 2.5}px ${col})` }}
+            />
             <text x={x} y={y} fill={on ? INK : col} fontSize={13} fontWeight={600} textAnchor="middle" dominantBaseline="central" pointerEvents="none" fontFamily='"Noto Sans Symbols","Segoe UI Symbol",system-ui,sans-serif'>
               {p.glyph}
             </text>

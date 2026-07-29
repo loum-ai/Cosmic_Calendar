@@ -53,14 +53,37 @@ export default {
           asc: "#c4a6ff",
           node: "#9bc0ff",
         },
-        // aspect semantic colors (QUINTESSENCE-abgestimmt: Sextil=azure, Trigon=mystic)
+        // Aspekte: zwei Töne, nicht fünf — Fluss gegen Spannung. Muss mit
+        // ASPECT_TONE in src/lib/tokens.ts übereinstimmen; dort steht auch,
+        // warum. Türkis und Rosa sind raus (Entscheidung Grün/Pink).
         aspect: {
-          conj: "#e7dcff",
-          sextile: "#5599FF",
-          square: "#aa5cff",
-          trine: "#20F0D0",
-          opp: "#ff8fb0",
+          conj: "#E8E5F2", // moon-300      · neutral
+          sextile: "#72C4FF", // celestial-300 · Fluss
+          trine: "#72C4FF", // celestial-300 · Fluss
+          square: "#DA8FFF", // orchid-400    · Spannung
+          opp: "#DA8FFF", // orchid-400    · Spannung
         },
+      },
+      // Die Grössenleiter aus loums Typografie-Token (src/styles/loum/
+      // typography.css). Vorher gab es keine — deshalb stand überall
+      // text-[21px], text-[17px], text-[15px]: 27 verschiedene Grössen auf
+      // einem Bildschirm, keine davon aus dem System.
+      //
+      // Wer eine Grösse wählt, wählt damit auch die Schrift. loums Regel steht
+      // im Kopf von typography.css: Cinzel trägt Display/H1/H2, Bricolage
+      // trägt H3 abwärts. Deshalb hört Cinzel bei h2 auf.
+      fontSize: {
+        display: ["var(--fs-display)", { lineHeight: "var(--lh-display)", letterSpacing: "var(--tracking-display)" }],
+        h1: ["var(--fs-h1)", { lineHeight: "var(--lh-h1)", letterSpacing: "var(--tracking-h1)" }],
+        h2: ["var(--fs-h2)", { lineHeight: "var(--lh-h2)", letterSpacing: "var(--tracking-h2)" }],
+        h3: ["var(--fs-h3)", { lineHeight: "var(--lh-h3)", letterSpacing: "var(--tracking-h3)" }],
+        h4: ["var(--fs-h4)", { lineHeight: "var(--lh-h4)", letterSpacing: "var(--tracking-h4)" }],
+        h5: ["var(--fs-h5)", { lineHeight: "var(--lh-h5)", letterSpacing: "var(--tracking-h5)" }],
+        lede: ["var(--fs-lede)", { lineHeight: "var(--lh-lede)" }],
+        body: ["var(--fs-body)", { lineHeight: "var(--lh-body)" }],
+        "body-sm": ["var(--fs-body-sm)", { lineHeight: "var(--lh-body-sm)" }],
+        meta: ["var(--fs-meta)", { lineHeight: "var(--lh-meta-px)", letterSpacing: "var(--tracking-meta)" }],
+        micro: ["var(--fs-micro)", { lineHeight: "var(--lh-meta-px)", letterSpacing: "var(--tracking-meta)" }],
       },
       fontFamily: {
         // Two Faces (loum v6): Cinzel = Display, Cinzel Decorative = lit word,

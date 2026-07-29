@@ -77,7 +77,7 @@ export function PrintFlow() {
         <div className="flex items-start justify-between">
           <div>
             <div className="vela-label">Horoskop · PDF</div>
-            <h2 className="mt-1 font-cinzel text-[24px] font-semibold leading-tight text-white">Was soll rein?</h2>
+            <h2 className="mt-1 font-body text-h3 font-semibold leading-tight text-white">Was soll rein?</h2>
           </div>
           <button onClick={() => setPrintOpen(false)} className="-mr-1 -mt-1 flex h-8 w-8 items-center justify-center rounded-full text-txt-3 hover:text-txt">
             <X className="h-4 w-4" />

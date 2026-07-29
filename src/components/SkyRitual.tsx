@@ -47,7 +47,7 @@ export function SkyRitual({ name, date, time, place, timeUnknown, onDone }: { na
           <div className="text-center">
             <div className="font-body text-[11px] uppercase tracking-[2.4px] text-[rgba(var(--rgb-iris),0.75)]">Der Himmel dreht zurück · {year}</div>
             {/* Copy-Lock (Journey Map, Sprach-Checkpoints) — Wortlaut nicht ändern */}
-            <p className="mx-3 mt-3.5 font-cinzel text-[21px] uppercase leading-[1.45] tracking-[0.07em] text-white">
+            <p className="mx-3 mt-3.5 font-body text-h4 leading-[1.45] tracking-[0.07em] text-white">
               So stand der Himmel,<br />als du deinen ersten<br />
               <em className="not-italic normal-case" style={{ fontFamily: '"Cinzel Decorative", "Cinzel", serif', letterSpacing: "-0.02em", textShadow: "var(--glow-lit)" }}>Atemzug</em> nahmst.
             </p>
